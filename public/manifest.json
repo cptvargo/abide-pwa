@@ -1,0 +1,25 @@
+{
+  "name": "ABIDE Bible App",
+  "short_name": "ABIDE",
+  "description": "A quiet, minimal offline Bible reading experience.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1C1C1A",
+  "theme_color": "#CBB27C",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/ABIDE.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/ABIDE.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

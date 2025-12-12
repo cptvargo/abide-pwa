@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ABIDE Global Theme (optional) */
+body {
+  @apply bg-abideDark text-white font-serif;
+}
+
+/* ⭐ Disable mobile text selection + highlight */
+.no-select {
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
