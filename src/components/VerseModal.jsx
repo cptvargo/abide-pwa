@@ -26,9 +26,10 @@ export default function VerseModal({ open, onClose, verse, hebrew, insight, note
           <div className="mb-6">
             <h3 className="text-abideGold font-semibold mb-2">Hebrew Words</h3>
             {Object.entries(hebrew).map(([word, info]) => (
-              <div key={word} className="mb-2">
-                <span className="text-abideGold">{info.root}</span>{" "}
-                <span className="opacity-80">({info.meaning})</span>
+              <div key={word} className="mb-2 leading-relaxed">
+                <span className="text-abideGold text-[20px]">{info.root}</span>
+                <span className="text-gray-300 italic"> ({info.translit})</span>
+                <span className="opacity-80"> — {info.meaning}</span>
               </div>
             ))}
           </div>
