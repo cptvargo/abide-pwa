@@ -75,8 +75,14 @@ export default function App() {
   // ⭐ Load Hebrew + Insight + Note for selected verse
   async function loadVerseData(verseNumber) {
     try {
-      const hebrew = await fetch("/data/lexicon/hebrew.json").then(r => r.json());
-      const insights = await fetch(`/data/insights/${book}.json`).then(r => r.json());
+const hebrew = await fetch(
+  `/data/lexicon/hebrew/${book}/${chapter}.json`
+).then(r => r.json());
+
+const insights = await fetch(
+  `/data/insights/${book}/${chapter}.json`
+).then(r => r.json());
+
 
       const verseText = verses.find(v => v.verse === verseNumber)?.text;
 

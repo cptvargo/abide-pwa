@@ -13,7 +13,7 @@ export async function loadChapter(book, chapter, translation = "vsv") {
    VSV Loader (per-book)
 --------------------------------*/
 async function loadVSVChapter(book, chapter) {
-  const path = `/data/vsv/${book.toLowerCase()}.json`;
+  const path = `/data/vsv/${book.toLowerCase()}/${chapter}.json`;
   const res = await fetch(path);
   const data = await res.json();
 
@@ -31,19 +31,16 @@ async function loadVSVChapter(book, chapter) {
    KJV Loader (single JSON)
 --------------------------------*/
 async function loadKJVChapter(book, chapter) {
-  const path = "/data/kjv/verses-1769.json";
+  const path = "/public/data/kjv/verses-1769.json";
   const res = await fetch(path);
   const data = await res.json();
 
   const verses = [];
-
-  const prefix = `${book} ${chapter}:`; // e.g., "Genesis 1:"
+  const prefix = `${book} ${chapter}:`;
 
   for (const ref in data) {
     if (ref.startsWith(prefix)) {
-      // Extract verse number
       const verseNum = ref.split(":")[1].trim();
-
       verses.push({
         verse: verseNum,
         text: data[ref],
@@ -51,11 +48,10 @@ async function loadKJVChapter(book, chapter) {
     }
   }
 
-  // Sort numerically
   verses.sort((a, b) => Number(a.verse) - Number(b.verse));
-
   return verses;
 }
+
 
 /* ------------------------------
    Utility
