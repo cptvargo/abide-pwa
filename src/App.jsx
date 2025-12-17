@@ -36,6 +36,44 @@ function ChapterHoldButton({ direction, onComplete }) {
   );
 }
 
+function BibleIcon({ className }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 3z" />
+      <path d="M17 4h3v16h-3" />
+      <path d="M9 8h4" />
+      <path d="M11 6v4" />
+    </svg>
+  );
+}
+
+function AbideLeafIcon({ className }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M20 4c-8 0-14 6-14 14" />
+      <path d="M4 20c8 0 14-6 14-14" />
+    </svg>
+  );
+}
+
+
+
 export default function App() {
   const [verses, setVerses] = useState([]);
   const [book, setBook] = useState("genesis");
@@ -281,34 +319,48 @@ export default function App() {
         )}
       </main>
 
-      {/* ⭐ Premium Floating Nav (UNCHANGED) */}
-      <nav
-        style={{
-          transform: `translateX(-50%) translateY(${navOffset}px)`,
-          opacity: `${1 - navOffset / 60}`,
-        }}
-        className="
-          fixed bottom-6 left-1/2
-          bg-[#292926]/85
-          backdrop-blur-xl
-          border border-[#CBB27C]/40
-          text-[#CBB27C]
-          px-5 py-3
-          rounded-full
-          shadow-[0_6px_30px_rgba(0,0,0,0.6)]
-          flex items-center justify-center
-          text-base font-medium whitespace-nowrap
-          transition-transform duration-150 ease-out
-        "
-      >
-        <button className="px-3">☰</button>
-        <div className="w-px h-5 bg-[#CBB27C]/30 mx-1"></div>
-        <button className="px-3 capitalize tracking-wide">
-          {book} {chapter}
-        </button>
-        <div className="w-px h-5 bg-[#CBB27C]/30 mx-1"></div>
-        <button className="px-3">🌿</button>
-      </nav>
+{/* ⭐ Premium Floating Nav (GOLD + DEEP CHARCOAL) */}
+<nav
+  style={{
+    transform: `translateX(-50%) translateY(${navOffset}px)`,
+    opacity: `${1 - navOffset / 60}`,
+  }}
+  className="
+    fixed bottom-6 left-1/2
+    bg-[#CBB27C]
+    px-6 py-2.5
+    rounded-full
+    shadow-[0_6px_22px_rgba(0,0,0,0.45)]
+    flex items-center justify-center
+    whitespace-nowrap
+    transition-transform duration-150 ease-out
+    border border-[#1C1C1A]/25
+  "
+>
+  {/* Menu */}
+  <button className="px-3 text-[#1C1C1A] font-semibold text-sm tracking-wide">
+    ☰
+  </button>
+
+  <div className="w-px h-4 bg-[#1C1C1A]/30 mx-2"></div>
+
+  {/* Book + Chapter */}
+  <button className="px-3 flex items-center gap-2 capitalize">
+    <BibleIcon className="w-5 h-5 text-[#1C1C1A]" />
+    <span className="text-[#1C1C1A] font-semibold tracking-wide text-sm">
+      {book} {chapter}
+    </span>
+  </button>
+
+  <div className="w-px h-4 bg-[#1C1C1A]/30 mx-2"></div>
+
+  {/* ABIDE / Devotional */}
+  <button className="px-3">
+    <AbideLeafIcon className="w-5 h-5 text-[#1C1C1A]" />
+  </button>
+</nav>
+
+
 
       {/* ⭐ Verse Modal */}
       <VerseModal
