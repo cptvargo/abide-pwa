@@ -72,8 +72,6 @@ function AbideLeafIcon({ className }) {
   );
 }
 
-
-
 export default function App() {
   const [verses, setVerses] = useState([]);
   const [book, setBook] = useState("genesis");
@@ -101,10 +99,11 @@ export default function App() {
   /* ⭐ Transition */
   const [fading, setFading] = useState(false);
 
-  // Tracks whether user has scrolled DOWN first
-  const hasScrolledDown = useRef(false);
+  // ⭐ Slide-out menu state
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
 
-  // ⭐ NEW: latch state for return control
+  const hasScrolledDown = useRef(false);
   const returnLatched = useRef(false);
 
   /* ===============================
@@ -149,7 +148,7 @@ export default function App() {
   }
 
   /* ===============================
-     Scroll Tracking (NAV + RETURN SYMMETRY)
+     Scroll Tracking
 ================================ */
   useEffect(() => {
     const el = scrollRef.current;
@@ -161,19 +160,12 @@ export default function App() {
       const current = el.scrollTop;
       const delta = current - lastScroll.current;
 
-      /* Floating nav behavior (unchanged) */
       let newNav = navOffset + delta;
       newNav = Math.max(0, Math.min(60, newNav));
       setNavOffset(newNav);
 
-      /* Track downward reading intent */
-      if (current > 40) {
-        hasScrolledDown.current = true;
-      }
+      if (current > 40) hasScrolledDown.current = true;
 
-      /* ===== Hold-to-return (latched) ===== */
-
-      // Pulling down at top to reveal
       if (
         chapter > 1 &&
         hasScrolledDown.current &&
@@ -184,23 +176,14 @@ export default function App() {
         let next = returnOffset - delta;
         next = Math.min(60, next);
         setReturnOffset(next);
-
-        if (next >= 60) {
-          returnLatched.current = true; // 🔒 latch when fully revealed
-        }
+        if (next >= 60) returnLatched.current = true;
       }
 
-      // Keep visible while latched
       if (returnLatched.current) {
         setReturnOffset(60);
-
-        // Scroll back into content → gently dismiss
-        if (delta > 4 && current > 10) {
-          returnLatched.current = false;
-        }
+        if (delta > 4 && current > 10) returnLatched.current = false;
       }
 
-      // Fade away naturally when unlatched
       if (!returnLatched.current && delta > 0) {
         let next = returnOffset - delta;
         next = Math.max(0, next);
@@ -235,13 +218,8 @@ export default function App() {
     load();
   }, [book, chapter]);
 
-  /* ===============================
-     Chapter Navigation
-================================ */
   function transitionTo(updateChapter) {
-    if (navigator.vibrate) {
-      navigator.vibrate([10, 30, 10]);
-    }
+    if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
 
     setFading(true);
 
@@ -271,12 +249,10 @@ export default function App() {
         fading ? "opacity-0" : "opacity-100"
       }`}
     >
-      {/* Scripture */}
       <main
         ref={scrollRef}
         className="flex-1 overflow-y-auto px-6 pt-4 pb-24"
       >
-        {/* ⭐ Hold to Return (latched, polite) */}
         {chapter > 1 && (
           <div
             className="mb-12 flex justify-center transition-opacity duration-200"
@@ -285,10 +261,7 @@ export default function App() {
               transform: `translateY(${10 - returnOffset / 6}px)`
             }}
           >
-            <ChapterHoldButton
-              direction="prev"
-              onComplete={goPrevChapter}
-            />
+            <ChapterHoldButton direction="prev" onComplete={goPrevChapter} />
           </div>
         )}
 
@@ -308,61 +281,94 @@ export default function App() {
             </p>
           ))}
 
-        {/* ⭐ End of Chapter (Continue) */}
         {!loading && (
           <div className="mt-20 flex justify-center">
-            <ChapterHoldButton
-              direction="next"
-              onComplete={goNextChapter}
-            />
+            <ChapterHoldButton direction="next" onComplete={goNextChapter} />
           </div>
         )}
       </main>
 
-{/* ⭐ Premium Floating Nav (GOLD + DEEP CHARCOAL) */}
-<nav
-  style={{
-    transform: `translateX(-50%) translateY(${navOffset}px)`,
-    opacity: `${1 - navOffset / 60}`,
-  }}
-  className="
-    fixed bottom-6 left-1/2
-    bg-[#CBB27C]
-    px-6 py-2.5
-    rounded-full
-    shadow-[0_6px_22px_rgba(0,0,0,0.45)]
-    flex items-center justify-center
-    whitespace-nowrap
-    transition-transform duration-150 ease-out
-    border border-[#1C1C1A]/25
-  "
->
-  {/* Menu */}
-  <button className="px-3 text-[#1C1C1A] font-semibold text-sm tracking-wide">
-    ☰
-  </button>
+      {/* ⭐ Premium Floating Nav */}
+      <nav
+        style={{
+          transform: `translateX(-50%) translateY(${navOffset}px)`,
+          opacity: `${1 - navOffset / 60}`,
+        }}
+        className="
+          fixed bottom-6 left-1/2
+          bg-[#CBB27C]
+          px-6 py-2.5
+          rounded-full
+          shadow-[0_6px_22px_rgba(0,0,0,0.45)]
+          flex items-center justify-center
+          whitespace-nowrap
+          transition-transform duration-150 ease-out
+          border border-[#1C1C1A]/25
+        "
+      >
+        <button
+          onClick={() => {
+            setMenuVisible(true);
+            requestAnimationFrame(() => setMenuOpen(true));
+          }}
+          className="px-3 text-[#1C1C1A] font-semibold text-sm tracking-wide"
+        >
+          ☰
+        </button>
 
-  <div className="w-px h-4 bg-[#1C1C1A]/30 mx-2"></div>
+        <div className="w-px h-4 bg-[#1C1C1A]/30 mx-2"></div>
 
-  {/* Book + Chapter */}
-  <button className="px-3 flex items-center gap-2 capitalize">
-    <BibleIcon className="w-5 h-5 text-[#1C1C1A]" />
-    <span className="text-[#1C1C1A] font-semibold tracking-wide text-sm">
-      {book} {chapter}
-    </span>
-  </button>
+        <button className="px-3 flex items-center gap-2 capitalize">
+          <BibleIcon className="w-5 h-5 text-[#1C1C1A]" />
+          <span className="text-[#1C1CA] font-semibold tracking-wide text-sm">
+            {book} {chapter}
+          </span>
+        </button>
 
-  <div className="w-px h-4 bg-[#1C1C1A]/30 mx-2"></div>
+        <div className="w-px h-4 bg-[#1C1C1A]/30 mx-2"></div>
 
-  {/* ABIDE / Devotional */}
-  <button className="px-3">
-    <AbideLeafIcon className="w-5 h-5 text-[#1C1C1A]" />
-  </button>
-</nav>
+        <button className="px-3">
+          <AbideLeafIcon className="w-5 h-5 text-[#1C1C1A]" />
+        </button>
+      </nav>
 
+      {/* ⭐ Slide-Out Menu */}
+      {menuVisible && (
+        <div
+          className="fixed inset-0 z-50 flex"
+          onClick={() => setMenuOpen(false)}
+        >
+          <div
+            className="
+              w-[80%] max-w-sm
+              bg-[#1C1C1A]
+              h-full
+              shadow-[4px_0_20px_rgba(0,0,0,0.6)]
+              transition-transform duration-700 ease-in-out
+            "
+            style={{
+              transform: menuOpen ? "translateX(0)" : "translateX(-100%)"
+            }}
+            onClick={e => e.stopPropagation()}
+            onTransitionEnd={() => {
+              if (!menuOpen) setMenuVisible(false);
+            }}
+          >
+            <div className="p-6 text-[#EEECE6] font-serif">
+              <h2 className="text-lg mb-4">Menu</h2>
+              <p className="opacity-60 text-sm">
+                Menu content coming soon.
+              </p>
+            </div>
+          </div>
 
+          {/* ✅ Overlay only while open */}
+          {menuOpen && (
+            <div className="flex-1 bg-black/40 backdrop-blur-sm" />
+          )}
+        </div>
+      )}
 
-      {/* ⭐ Verse Modal */}
       <VerseModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
