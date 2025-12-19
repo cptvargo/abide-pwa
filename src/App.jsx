@@ -72,6 +72,32 @@ function AbideLeafIcon({ className }) {
   );
 }
 
+function SettingsIcon({ className }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  );
+}
+
+
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning, Beloved";
+  if (hour < 18) return "Good afternoon, Beloved";
+  return "Good evening, Beloved";
+}
+
+
 export default function App() {
   const [verses, setVerses] = useState([]);
   const [book, setBook] = useState("genesis");
@@ -354,18 +380,37 @@ export default function App() {
               if (!menuOpen) setMenuVisible(false);
             }}
           >
-            <div className="p-6 text-[#EEECE6] font-serif">
-              <h2 className="text-lg mb-4">Menu</h2>
-              <p className="opacity-60 text-sm">
-                Menu content coming soon.
-              </p>
-            </div>
-          </div>
+<div className="relative h-full p-6 text-[#EEECE6] font-serif">
+  <p className="mb-6 text-sm text-[#CBB27C] tracking-wide">
+    {getGreeting()}
+  </p>
+
+  <h2 className="text-lg mb-4">Menu</h2>
+  <p className="opacity-60 text-sm">
+    Menu content coming soon.
+  </p>
+
+  {/* Settings (visual only) */}
+  <button
+    className="
+      absolute bottom-6 right-6
+      text-[#CBB27C]/80
+      hover:text-[#CBB27C]
+      transition-colors
+    "
+    aria-label="Settings"
+  >
+    <SettingsIcon className="w-6 h-6" />
+  </button>
+</div>
+
+
 
           {/* ✅ Overlay only while open */}
           {menuOpen && (
             <div className="flex-1 bg-black/40 backdrop-blur-sm" />
           )}
+          </div>
         </div>
       )}
 
