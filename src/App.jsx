@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { loadChapter } from "./lib/bible";
 import VerseModal from "./components/VerseModal";
 import { useGestureIntent } from "./hooks/useGestureIntent";
+import VSVInfo from "./components/VSVInfo";
 
 /* ===============================
    ABIDE Chapter Hold Button
@@ -89,14 +90,12 @@ function SettingsIcon({ className }) {
   );
 }
 
-
 function getGreeting() {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning, Beloved";
   if (hour < 18) return "Good afternoon, Beloved";
   return "Good evening, Beloved";
 }
-
 
 export default function App() {
   const [verses, setVerses] = useState([]);
@@ -105,6 +104,9 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   const [translation, setTranslation] = useState("VSV");
+
+  const [settingsView, setSettingsView] = useState("main");
+  // "main" | "vsv"
 
   /* ⭐ Smooth nav movement offset */
   const [navOffset, setNavOffset] = useState(0);
@@ -121,6 +123,8 @@ export default function App() {
   const [hebrewData, setHebrewData] = useState(null);
   const [insight, setInsight] = useState(null);
   const [note, setNote] = useState("");
+
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   /* ⭐ Transition */
   const [fading, setFading] = useState(false);
@@ -139,13 +143,13 @@ export default function App() {
     try {
       const hebrew = await fetch(
         `/data/lexicon/hebrew/${book}/${chapter}.json`
-      ).then(r => r.json());
+      ).then((r) => r.json());
 
       const insights = await fetch(
         `/data/insights/${book}/${chapter}.json`
-      ).then(r => r.json());
+      ).then((r) => r.json());
 
-      const verseText = verses.find(v => v.verse === verseNumber)?.text;
+      const verseText = verses.find((v) => v.verse === verseNumber)?.text;
 
       setSelectedVerse({
         ref: `${book} ${chapter}:${verseNumber}`,
@@ -167,10 +171,7 @@ export default function App() {
 
   function saveNote() {
     const verseNumber = selectedVerse.ref.split(":")[1];
-    localStorage.setItem(
-      `note-${book}-${chapter}-${verseNumber}`,
-      note
-    );
+    localStorage.setItem(`note-${book}-${chapter}-${verseNumber}`, note);
   }
 
   /* ===============================
@@ -262,11 +263,11 @@ export default function App() {
   }
 
   function goNextChapter() {
-    transitionTo(() => setChapter(c => c + 1));
+    transitionTo(() => setChapter((c) => c + 1));
   }
 
   function goPrevChapter() {
-    transitionTo(() => setChapter(c => Math.max(1, c - 1)));
+    transitionTo(() => setChapter((c) => Math.max(1, c - 1)));
   }
 
   return (
@@ -275,16 +276,13 @@ export default function App() {
         fading ? "opacity-0" : "opacity-100"
       }`}
     >
-      <main
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto px-6 pt-4 pb-24"
-      >
+      <main ref={scrollRef} className="flex-1 overflow-y-auto px-6 pt-4 pb-24">
         {chapter > 1 && (
           <div
             className="mb-12 flex justify-center transition-opacity duration-200"
             style={{
               opacity: returnOffset / 60,
-              transform: `translateY(${10 - returnOffset / 6}px)`
+              transform: `translateY(${10 - returnOffset / 6}px)`,
             }}
           >
             <ChapterHoldButton direction="prev" onComplete={goPrevChapter} />
@@ -292,7 +290,7 @@ export default function App() {
         )}
 
         {!loading &&
-          verses.map(v => (
+          verses.map((v) => (
             <p
               key={v.verse}
               onTouchStart={() =>
@@ -373,43 +371,170 @@ export default function App() {
               transition-transform duration-700 ease-in-out
             "
             style={{
-              transform: menuOpen ? "translateX(0)" : "translateX(-100%)"
+              transform: menuOpen ? "translateX(0)" : "translateX(-100%)",
             }}
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
             onTransitionEnd={() => {
               if (!menuOpen) setMenuVisible(false);
             }}
           >
-<div className="relative h-full p-6 text-[#EEECE6] font-serif">
-  <p className="mb-6 text-sm text-[#CBB27C] tracking-wide">
-    {getGreeting()}
-  </p>
+            <div className="relative h-full p-6 text-[#EEECE6] font-serif">
+              <p className="mb-6 text-sm text-[#CBB27C] tracking-wide">
+                {getGreeting()}
+              </p>
 
-  <h2 className="text-lg mb-4">Menu</h2>
-  <p className="opacity-60 text-sm">
-    Menu content coming soon.
-  </p>
+              <h2 className="text-lg mb-4">Menu</h2>
+              <p className="opacity-60 text-sm">Menu content coming soon.</p>
 
-  {/* Settings (visual only) */}
-  <button
-    className="
+              {/* Settings (visual only) */}
+              <button
+                className="
       absolute bottom-6 right-6
       text-[#CBB27C]/80
       hover:text-[#CBB27C]
       transition-colors
     "
-    aria-label="Settings"
-  >
-    <SettingsIcon className="w-6 h-6" />
-  </button>
-</div>
+                aria-label="Settings"
+                onClick={() => setSettingsOpen(true)}
+              >
+                <SettingsIcon className="w-6 h-6" />
+              </button>
+            </div>
 
+            {/* ✅ Overlay only while open */}
+            {menuOpen && (
+              <div className="flex-1 bg-black/40 backdrop-blur-sm" />
+            )}
+          </div>
+        </div>
+      )}
 
+      {settingsOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={() => {
+            setSettingsOpen(false);
+            setSettingsView("main");
+          }}
+        >
+          <div
+            className="
+        w-[94%]
+        max-w-[460px]
+        max-h-[82vh]
+        rounded-3xl
+        bg-[#1C1C1A]
+        shadow-2xl
+        overflow-hidden
+      "
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6 overflow-y-auto max-h-[82vh] text-[#EEECE6] font-serif">
+              {/* =====================
+            SETTINGS MAIN
+        ===================== */}
+              {settingsView === "main" && (
+                <>
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-semibold">Settings</h2>
+                    <button
+                      onClick={() => {
+                        setSettingsOpen(false);
+                        setSettingsView("main");
+                      }}
+                      className="text-[#CBB27C]"
+                      aria-label="Close settings"
+                    >
+                      ✕
+                    </button>
+                  </div>
 
-          {/* ✅ Overlay only while open */}
-          {menuOpen && (
-            <div className="flex-1 bg-black/40 backdrop-blur-sm" />
-          )}
+                  {/* Bible Translation */}
+                  <button
+                    onClick={() => setSettingsView("vsv")}
+                    className="
+                mb-4
+                w-full
+                rounded-2xl
+                bg-black/30
+                px-5
+                py-4
+                flex
+                items-center
+                justify-between
+                text-left
+              "
+                  >
+                    <div className="flex items-center gap-3">
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#CBB27C"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 3z" />
+                        <path d="M17 4h3v16h-3" />
+                      </svg>
+                      <span>Bible Translation</span>
+                    </div>
+                    <span className="text-[#CBB27C] opacity-80">VSV →</span>
+                  </button>
+
+                  {/* Hide Verse Numbers */}
+                  <div className="mb-6 rounded-2xl bg-black/30 px-5 py-4 flex items-start justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-3 mb-1">
+                        <svg
+                          width="22"
+                          height="22"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#CBB27C"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C7 20 2.73 16.11 1 12c.74-1.69 1.83-3.21 3.17-4.44" />
+                          <path d="M1 1l22 22" />
+                        </svg>
+                        <span>Hide Verse Numbers</span>
+                      </div>
+                      <p className="text-sm opacity-60">
+                        Create a more seamless reading experience closer to the
+                        original text.
+                      </p>
+                    </div>
+
+                    <div className="w-7 h-7 rounded-full bg-[#CBB27C] flex items-center justify-center text-black">
+                      ✓
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="mt-8 text-center opacity-60 text-sm">
+                    <p>
+                      Made with ♥ by{" "}
+                      <span className="text-[#CBB27C]">Jesus Vargas</span>
+                    </p>
+                    <p className="mt-1">Version 2.2.0</p>
+                  </div>
+                </>
+              )}
+
+              {/* =====================
+            VSV INFO PAGE
+        ===================== */}
+              {settingsView === "vsv" && (
+                <div className="animate-slide-in">
+                  <VSVInfo onBack={() => setSettingsView("main")} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
