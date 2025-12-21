@@ -105,6 +105,11 @@ export default function App() {
 
   const [translation, setTranslation] = useState("VSV");
 
+  // ⭐ Reading Preferences
+  const [hideVerseNumbers, setHideVerseNumbers] = useState(() => {
+    return localStorage.getItem("hideVerseNumbers") === "true";
+  });
+
   const [settingsView, setSettingsView] = useState("main");
   // "main" | "vsv"
 
@@ -224,6 +229,10 @@ export default function App() {
     return () => el.removeEventListener("scroll", handleScroll);
   }, [navOffset, returnOffset, gesture, chapter]);
 
+  useEffect(() => {
+    localStorage.setItem("hideVerseNumbers", hideVerseNumbers);
+  }, [hideVerseNumbers]);
+
   /* ===============================
      Load Chapter
 ================================ */
@@ -300,7 +309,9 @@ export default function App() {
               onTouchMove={gesture.cancel}
               className="mb-6 leading-relaxed text-[19px]"
             >
-              <sup className="text-abideGold mr-2">{v.verse}</sup>
+              {!hideVerseNumbers && (
+                <sup className="text-abideGold mr-2">{v.verse}</sup>
+              )}
               {v.text}
             </p>
           ))}
@@ -510,9 +521,20 @@ export default function App() {
                       </p>
                     </div>
 
-                    <div className="w-7 h-7 rounded-full bg-[#CBB27C] flex items-center justify-center text-black">
-                      ✓
-                    </div>
+                    <button
+                      onClick={() => setHideVerseNumbers((v) => !v)}
+                      className={`
+    w-10 h-6 rounded-full transition-colors flex items-center
+    ${hideVerseNumbers ? "bg-[#CBB27C]" : "bg-black/40"}
+  `}
+                    >
+                      <span
+                        className={`
+      w-5 h-5 rounded-full bg-[#1C1C1A] transition-transform
+      ${hideVerseNumbers ? "translate-x-4" : "translate-x-1"}
+    `}
+                      />
+                    </button>
                   </div>
 
                   {/* Footer */}
