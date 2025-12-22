@@ -127,7 +127,6 @@ export default function App() {
   const [selectedVerse, setSelectedVerse] = useState(null);
   const [hebrewData, setHebrewData] = useState(null);
   const [insight, setInsight] = useState(null);
-  const [note, setNote] = useState("");
 
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -164,19 +163,10 @@ export default function App() {
       setHebrewData(hebrew[verseNumber] || null);
       setInsight(insights[verseNumber] || null);
 
-      const savedNote =
-        localStorage.getItem(`note-${book}-${chapter}-${verseNumber}`) || "";
-      setNote(savedNote);
-
       setModalOpen(true);
     } catch (err) {
       console.error("Error loading verse data:", err);
     }
-  }
-
-  function saveNote() {
-    const verseNumber = selectedVerse.ref.split(":")[1];
-    localStorage.setItem(`note-${book}-${chapter}-${verseNumber}`, note);
   }
 
   /* ===============================
@@ -567,9 +557,6 @@ export default function App() {
         verse={selectedVerse}
         hebrew={hebrewData}
         insight={insight}
-        note={note}
-        setNote={setNote}
-        onSaveNote={saveNote}
       />
     </div>
   );
