@@ -56,23 +56,6 @@ function BibleIcon({ className }) {
   );
 }
 
-function AbideLeafIcon({ className }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M20 4c-8 0-14 6-14 14" />
-      <path d="M4 20c8 0 14-6 14-14" />
-    </svg>
-  );
-}
-
 function SettingsIcon({ className }) {
   return (
     <svg
@@ -86,6 +69,26 @@ function SettingsIcon({ className }) {
     >
       <circle cx="12" cy="12" r="3" />
       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  );
+}
+
+function NotesIcon({ className }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M21 15V5a2 2 0 0 0-2-2H9" />
+      <path d="M7 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2" />
+      <path d="M17 8H7" />
+      <path d="M17 12H7" />
+      <path d="M17 16H7" />
     </svg>
   );
 }
@@ -129,6 +132,8 @@ export default function App() {
   const [insight, setInsight] = useState(null);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [journalOpen, setJournalOpen] = useState(false);
+  const [journalText, setJournalText] = useState("");
 
   /* ⭐ Transition */
   const [fading, setFading] = useState(false);
@@ -352,8 +357,12 @@ export default function App() {
 
         <div className="w-px h-4 bg-[#1C1C1A]/30 mx-2"></div>
 
-        <button className="px-3">
-          <AbideLeafIcon className="w-5 h-5 text-[#1C1C1A]" />
+        <button
+          onClick={() => setJournalOpen(true)}
+          className="px-3"
+          aria-label="Journal"
+        >
+          <NotesIcon className="w-5 h-5 text-[#1C1C1A]" />
         </button>
       </nav>
 
@@ -546,6 +555,60 @@ export default function App() {
                   <VSVInfo onBack={() => setSettingsView("main")} />
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Journal Shell */}
+      {journalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={() => setJournalOpen(false)}
+        >
+          <div
+            className="
+        w-[94%]
+        max-w-[460px]
+        max-h-[82vh]
+        rounded-3xl
+        bg-[#1C1C1A]
+        shadow-2xl
+        overflow-hidden
+      "
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6 flex flex-col h-full text-[#EEECE6] font-serif">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-sm opacity-70">
+                  {new Date().toLocaleString()}
+                </div>
+                <button
+                  onClick={() => setJournalOpen(false)}
+                  className="text-[#CBB27C] font-semibold"
+                >
+                  Done
+                </button>
+              </div>
+
+              {/* Journal Input */}
+              <textarea
+                autoFocus
+                value={journalText}
+                onChange={(e) => setJournalText(e.target.value)}
+                placeholder="Write what was revealed to you…"
+                className="
+            flex-1
+            w-full
+            resize-none
+            bg-transparent
+            outline-none
+            text-[17px]
+            leading-relaxed
+            placeholder:text-white/40
+          "
+              />
             </div>
           </div>
         </div>
