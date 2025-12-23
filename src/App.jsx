@@ -562,55 +562,58 @@ export default function App() {
 
       {/* Journal Shell */}
       {journalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-          onClick={() => setJournalOpen(false)}
-        >
-          <div
-            className="
-        w-[94%]
-        max-w-[460px]
-        max-h-[82vh]
-        rounded-3xl
-        bg-[#1C1C1A]
-        shadow-2xl
-        overflow-hidden
-      "
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-6 flex flex-col h-full text-[#EEECE6] font-serif">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-sm opacity-70">
-                  {new Date().toLocaleString()}
-                </div>
-                <button
-                  onClick={() => setJournalOpen(false)}
-                  className="text-[#CBB27C] font-semibold"
-                >
-                  Done
-                </button>
-              </div>
-
-              {/* Journal Input */}
-              <textarea
-                autoFocus
-                value={journalText}
-                onChange={(e) => setJournalText(e.target.value)}
-                placeholder="Write what was revealed to you…"
-                className="
-            flex-1
-            w-full
-            resize-none
-            bg-transparent
-            outline-none
-            text-[17px]
-            leading-relaxed
-            placeholder:text-white/40
-          "
-              />
+        <div className="fixed inset-0 z-[60] bg-[#1C1C1A] text-[#EEECE6] font-serif">
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[#CBB27C]/20">
+            <div className="text-sm text-[#CBB27C]/80">
+              {new Date().toLocaleDateString(undefined, {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}{" "}
+              ·{" "}
+              {new Date().toLocaleTimeString(undefined, {
+                hour: "numeric",
+                minute: "2-digit",
+              })}
             </div>
+
+            <button
+              onClick={() => setJournalOpen(false)}
+              className="text-[#CBB27C] font-semibold"
+            >
+              Done
+            </button>
           </div>
+
+          {/* Editor */}
+          <textarea
+            autoFocus
+            value={journalText}
+            onChange={(e) => setJournalText(e.target.value)}
+            placeholder="Begin writing…"
+            className="
+        w-full
+        h-[calc(100vh-64px)]
+        bg-transparent
+        resize-none
+        outline-none
+        px-5
+        py-6
+        text-lg
+        leading-relaxed
+        placeholder:text-[#EEECE6]/30
+      "
+          />
+
+          {/* Formatting Menu Trigger */}
+          <button
+            className="fixed bottom-6 left-6 text-[#CBB27C]/80 text-2xl"
+            aria-label="Formatting options"
+          >
+            •••
+          </button>
         </div>
       )}
 
