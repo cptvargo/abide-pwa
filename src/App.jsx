@@ -138,6 +138,9 @@ export default function App() {
   /* ⭐ Transition */
   const [fading, setFading] = useState(false);
 
+  const [activeScreen, setActiveScreen] = useState("scripture");
+  // scripture | journalIndex
+
   // ⭐ Slide-out menu state
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -281,39 +284,69 @@ export default function App() {
       }`}
     >
       <main ref={scrollRef} className="flex-1 overflow-y-auto px-6 pt-4 pb-24">
-        {chapter > 1 && (
-          <div
-            className="mb-12 flex justify-center transition-opacity duration-200"
-            style={{
-              opacity: returnOffset / 60,
-              transform: `translateY(${10 - returnOffset / 6}px)`,
-            }}
-          >
-            <ChapterHoldButton direction="prev" onComplete={goPrevChapter} />
-          </div>
+        {activeScreen === "scripture" && (
+          <>
+            {chapter > 1 && (
+              <div
+                className="mb-12 flex justify-center transition-opacity duration-200"
+                style={{
+                  opacity: returnOffset / 60,
+                  transform: `translateY(${10 - returnOffset / 6}px)`,
+                }}
+              >
+                <ChapterHoldButton
+                  direction="prev"
+                  onComplete={goPrevChapter}
+                />
+              </div>
+            )}
+
+            {!loading &&
+              verses.map((v) => (
+                <p
+                  key={v.verse}
+                  onTouchStart={() =>
+                    gesture.beginStudy(() => loadVerseData(v.verse), 500)
+                  }
+                  onTouchEnd={gesture.cancel}
+                  onTouchMove={gesture.cancel}
+                  className="mb-6 leading-relaxed text-[19px]"
+                >
+                  <sup className="text-abideGold mr-2">{v.verse}</sup>
+                  {v.text}
+                </p>
+              ))}
+
+            {!loading && (
+              <div className="mt-20 flex justify-center">
+                <ChapterHoldButton
+                  direction="next"
+                  onComplete={goNextChapter}
+                />
+              </div>
+            )}
+          </>
         )}
 
-        {!loading &&
-          verses.map((v) => (
-            <p
-              key={v.verse}
-              onTouchStart={() =>
-                gesture.beginStudy(() => loadVerseData(v.verse), 500)
-              }
-              onTouchEnd={gesture.cancel}
-              onTouchMove={gesture.cancel}
-              className="mb-6 leading-relaxed text-[19px]"
+        {activeScreen === "journalIndex" && (
+          <div className="space-y-6">
+            {/* Back to Scripture */}
+            <button
+              className="flex items-center gap-2 text-[#CBB27C] text-sm tracking-wide"
+              onClick={() => setActiveScreen("scripture")}
             >
-              {!hideVerseNumbers && (
-                <sup className="text-abideGold mr-2">{v.verse}</sup>
-              )}
-              {v.text}
-            </p>
-          ))}
+              ← Scripture
+            </button>
 
-        {!loading && (
-          <div className="mt-20 flex justify-center">
-            <ChapterHoldButton direction="next" onComplete={goNextChapter} />
+            <h1 className="text-xl text-[#CBB27C] tracking-wide">
+              ABIDE Journal
+            </h1>
+
+            <p className="opacity-60 text-sm">
+              Your journal entries will appear here.
+            </p>
+
+            {/* Entries will live here */}
           </div>
         )}
       </main>
@@ -394,7 +427,26 @@ export default function App() {
               </p>
 
               <h2 className="text-lg mb-4">Menu</h2>
-              <p className="opacity-60 text-sm">Menu content coming soon.</p>
+              <button
+                className="
+    w-full
+    flex items-center justify-between
+    py-3
+    text-[#EEECE6]
+    text-base
+    tracking-wide
+    hover:text-[#CBB27C]
+    transition-colors
+  "
+                onClick={() => {
+                  setMenuOpen(false);
+                  setMenuVisible(false);
+                  setActiveScreen("journalIndex");
+                }}
+              >
+                <span>ABIDE Journal</span>
+                <span className="text-[#CBB27C] text-lg">→</span>
+              </button>
 
               {/* Settings (visual only) */}
               <button
