@@ -135,6 +135,8 @@ export default function App() {
   const [journalOpen, setJournalOpen] = useState(false);
   const [journalText, setJournalText] = useState("");
 
+  const [journalEntries, setJournalEntries] = useState([]);
+
   /* ⭐ Transition */
   const [fading, setFading] = useState(false);
 
@@ -342,11 +344,26 @@ export default function App() {
               ABIDE Journal
             </h1>
 
-            <p className="opacity-60 text-sm">
-              Your journal entries will appear here.
-            </p>
+            {journalEntries.length === 0 ? (
+              <p className="opacity-60 text-sm">No journal entries yet.</p>
+            ) : (
+              <div className="space-y-4">
+                {journalEntries.map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="border-b border-[#CBB27C]/20 pb-3"
+                  >
+                    <div className="text-xs text-[#CBB27C]/70 mb-1">
+                      {new Date(entry.createdAt).toLocaleString()}
+                    </div>
 
-            {/* Entries will live here */}
+                    <div className="whitespace-pre-wrap text-sm">
+                      {entry.text}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </main>
@@ -632,13 +649,32 @@ export default function App() {
             </div>
 
             <button
-              onClick={() => setJournalOpen(false)}
+              onClick={() => {
+                const text = journalText.trim();
+                if (!text) {
+                  setJournalOpen(false);
+                  setActiveScreen("scripture");
+                  return;
+                }
+
+                setJournalEntries((prev) => [
+                  {
+                    id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+                    text,
+                    createdAt: new Date().toISOString(),
+                  },
+                  ...prev,
+                ]);
+
+                setJournalText("");
+                setJournalOpen(false);
+              }}
               className="text-[#CBB27C] font-semibold"
             >
               Done
             </button>
-          </div>
-
+          </div>{" "}
+          {/* ✅ HEADER CLOSED */}
           {/* Editor */}
           <textarea
             autoFocus
@@ -658,14 +694,6 @@ export default function App() {
         placeholder:text-[#EEECE6]/30
       "
           />
-
-          {/* Formatting Menu Trigger */}
-          <button
-            className="fixed bottom-6 left-6 text-[#CBB27C]/80 text-2xl"
-            aria-label="Formatting options"
-          >
-            •••
-          </button>
         </div>
       )}
 
