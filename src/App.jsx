@@ -108,6 +108,26 @@ export default function App() {
 
   const [translation, setTranslation] = useState("VSV");
 
+  // Group journal entries by Month + Year
+  function groupEntriesByMonth(entries) {
+    return entries.reduce((groups, entry) => {
+      const monthKey = new Date(entry.createdAt).toLocaleString(undefined, {
+        month: "long",
+        year: "numeric",
+      });
+
+      if (!groups[monthKey]) groups[monthKey] = [];
+      groups[monthKey].push(entry);
+
+      return groups;
+    }, {});
+  }
+
+  // Delete a journal entry
+  function deleteJournalEntry(id) {
+    setJournalEntries((prev) => prev.filter((entry) => entry.id !== id));
+  }
+
   // ⭐ Reading Preferences
   const [hideVerseNumbers, setHideVerseNumbers] = useState(() => {
     return localStorage.getItem("hideVerseNumbers") === "true";
@@ -347,22 +367,39 @@ export default function App() {
             {journalEntries.length === 0 ? (
               <p className="opacity-60 text-sm">No journal entries yet.</p>
             ) : (
-              <div className="space-y-4">
-                {journalEntries.map((entry) => (
-                  <div
-                    key={entry.id}
-                    className="border-b border-[#CBB27C]/20 pb-3"
-                  >
-                    <div className="text-xs text-[#CBB27C]/70 mb-1">
-                      {new Date(entry.createdAt).toLocaleString()}
-                    </div>
+              Object.entries(groupEntriesByMonth(journalEntries)).map(
+                ([month, entries]) => (
+                  <div key={month} className="space-y-4">
+                    <h2 className="text-sm uppercase tracking-wide text-[#CBB27C]/70">
+                      {month}
+                    </h2>
 
-                    <div className="whitespace-pre-wrap text-sm">
-                      {entry.text}
-                    </div>
+                    {entries.map((entry) => (
+                      <div
+                        key={entry.id}
+                        className="border-b border-[#CBB27C]/20 pb-3 space-y-2"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div className="text-xs text-[#CBB27C]/70">
+                            {new Date(entry.createdAt).toLocaleString()}
+                          </div>
+
+                          <button
+                            onClick={() => deleteJournalEntry(entry.id)}
+                            className="text-xs text-red-400 opacity-70 hover:opacity-100"
+                          >
+                            Delete
+                          </button>
+                        </div>
+
+                        <div className="whitespace-pre-wrap text-sm">
+                          {entry.text}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                )
+              )
             )}
           </div>
         )}
