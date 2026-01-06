@@ -1,6 +1,14 @@
 import React from "react";
 
-export default function VerseModal({ open, onClose, verse, hebrew, insight }) {
+export default function VerseModal({
+  open,
+  onClose,
+  verse,
+  hebrew,
+  insight,
+  note,
+  setNote,
+}) {
   if (!open) return null;
 
   return (
