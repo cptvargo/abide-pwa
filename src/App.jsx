@@ -175,12 +175,15 @@ export default function App() {
 ================================ */
   async function loadVerseData(verseNumber) {
     try {
+      // ✅ Vite-aware base path (handles /abide-pwa/)
+      const base = import.meta.env.BASE_URL;
+
       const hebrew = await fetch(
-        `/data/lexicon/hebrew/${book}/${chapter}.json`
+        `${base}data/lexicon/hebrew/${book}/${chapter}.json`
       ).then((r) => r.json());
 
       const insights = await fetch(
-        `/data/insights/${book}/${chapter}.json`
+        `${base}data/insights/${book}/${chapter}.json`
       ).then((r) => r.json());
 
       const verseText = verses.find((v) => v.verse === verseNumber)?.text;
@@ -192,6 +195,7 @@ export default function App() {
 
       setHebrewData(hebrew[verseNumber] || null);
 
+      // ✅ Supports BOTH Genesis 2 (string) and Genesis 3 (object)
       const rawInsight = insights[verseNumber];
       setInsight(
         typeof rawInsight === "string"
@@ -340,7 +344,11 @@ export default function App() {
                   onTouchMove={gesture.cancel}
                   className="mb-6 leading-relaxed text-[19px]"
                 >
-                  <sup className="text-abideGold mr-2">{v.verse}</sup>
+                  {!hideVerseNumbers && (
+                    <sup className="text-abideGold mr-2 select-none">
+                      {v.verse}
+                    </sup>
+                  )}
                   {v.text}
                 </p>
               ))}

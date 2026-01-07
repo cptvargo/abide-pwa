@@ -13,13 +13,21 @@ export async function loadChapter(book, chapter, translation = "vsv") {
    VSV Loader (per-book)
 --------------------------------*/
 async function loadVSVChapter(book, chapter) {
-  const path = `/data/vsv/${book.toLowerCase()}/${chapter}.json`;
-  const res = await fetch(path);
-  const data = await res.json();
+  const base = import.meta.env.BASE_URL;
 
+  const path = `${base}data/vsv/${book.toLowerCase()}/${chapter}.json`;
+  const res = await fetch(path);
+
+  if (!res.ok) {
+    throw new Error(`Failed to load VSV ${book} ${chapter}`);
+  }
+
+  const data = await res.json();
   const chapterData = data.chapters[String(chapter)];
 
-  if (!chapterData) throw new Error(`Missing chapter ${chapter}`);
+  if (!chapterData) {
+    throw new Error(`Missing chapter ${chapter}`);
+  }
 
   return Object.entries(chapterData).map(([verse, text]) => ({
     verse,
@@ -31,8 +39,15 @@ async function loadVSVChapter(book, chapter) {
    KJV Loader (single JSON)
 --------------------------------*/
 async function loadKJVChapter(book, chapter) {
-  const path = "/public/data/kjv/verses-1769.json";
+  const base = import.meta.env.BASE_URL;
+
+  const path = `${base}data/kjv/verses-1769.json`;
   const res = await fetch(path);
+
+  if (!res.ok) {
+    throw new Error("Failed to load KJV data");
+  }
+
   const data = await res.json();
 
   const verses = [];
@@ -51,7 +66,6 @@ async function loadKJVChapter(book, chapter) {
   verses.sort((a, b) => Number(a.verse) - Number(b.verse));
   return verses;
 }
-
 
 /* ------------------------------
    Utility
