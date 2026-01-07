@@ -9,9 +9,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      strategies: "injectManifest",
-      srcDir: "public",
-      filename: "sw.js",
+      strategies: "generateSW",
       registerType: "autoUpdate",
 
       includeAssets: [
@@ -55,8 +53,7 @@ export default defineConfig({
       },
 
       devOptions: {
-        enabled: true,
-        type: "module"
+        enabled: true
       }
     })
   ],
