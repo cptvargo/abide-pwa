@@ -1,0 +1,292 @@
+{
+  "1": {
+    "kalah": {
+      "root": "כָּלָה",
+      "translit": "kalah",
+      "meaning": "to be completed; brought to fulfillment"
+    },
+    "tsava": {
+      "root": "צָבָא",
+      "translit": "tsava",
+      "meaning": "host; ordered array; complete assembly"
+    }
+  },
+
+  "2": {
+    "shabat": {
+      "root": "שָׁבַת",
+      "translit": "shabat",
+      "meaning": "to cease; stop; rest from completed work"
+    },
+    "melakah": {
+      "root": "מְלָאכָה",
+      "translit": "melakah",
+      "meaning": "purposeful work; skilled labor"
+    }
+  },
+
+  "3": {
+    "barak": {
+      "root": "בָּרַךְ",
+      "translit": "barak",
+      "meaning": "to bless; empower for fruitfulness"
+    },
+    "qadash": {
+      "root": "קָדַשׁ",
+      "translit": "qadash",
+      "meaning": "to set apart; make holy"
+    }
+  },
+
+  "4": {
+    "toledot": {
+      "root": "תּוֹלְדוֹת",
+      "translit": "toledot",
+      "meaning": "generations; account; origins"
+    },
+    "yhwh": {
+      "root": "יְהוָה",
+      "translit": "YHWH",
+      "meaning": "the LORD; covenant name of God"
+    }
+  },
+
+  "5": {
+    "terem": {
+      "root": "טֶרֶם",
+      "translit": "terem",
+      "meaning": "not yet; prior to fulfillment"
+    },
+    "adam": {
+      "root": "אָדָם",
+      "translit": "adam",
+      "meaning": "humanity; man formed from the ground"
+    }
+  },
+
+  "6": {
+    "ed": {
+      "root": "אֵד",
+      "translit": "ed",
+      "meaning": "mist; vapor rising to water the land"
+    },
+    "shaqah": {
+      "root": "שָׁקָה",
+      "translit": "shaqah",
+      "meaning": "to water; irrigate; give drink"
+    }
+  },
+
+  "7": {
+    "yatsar": {
+      "root": "יָצַר",
+      "translit": "yatsar",
+      "meaning": "to form; shape intentionally like a potter"
+    },
+    "aphar": {
+      "root": "עָפָר",
+      "translit": "aphar",
+      "meaning": "dust; soil; ground material"
+    },
+    "neshamah": {
+      "root": "נְשָׁמָה",
+      "translit": "neshamah",
+      "meaning": "breath of life; divine life-giving breath"
+    },
+    "nephesh": {
+      "root": "נֶפֶשׁ",
+      "translit": "nephesh",
+      "meaning": "living being; life-soul"
+    }
+  },
+
+  "8": {
+    "nata": {
+      "root": "נָטַע",
+      "translit": "nata",
+      "meaning": "to plant deliberately"
+    },
+    "gan": {
+      "root": "גַּן",
+      "translit": "gan",
+      "meaning": "garden; enclosed cultivated space"
+    },
+    "eden": {
+      "root": "עֵדֶן",
+      "translit": "eden",
+      "meaning": "delight; pleasure"
+    }
+  },
+
+  "9": {
+    "nechmad": {
+      "root": "נֶחְמָד",
+      "translit": "nechmad",
+      "meaning": "desirable; delightful to the sight"
+    },
+    "etz": {
+      "root": "עֵץ",
+      "translit": "etz",
+      "meaning": "tree; source of life or sustenance"
+    },
+    "chayim": {
+      "root": "חַיִּים",
+      "translit": "chayim",
+      "meaning": "life; living vitality"
+    },
+    "daat": {
+      "root": "דַּעַת",
+      "translit": "daat",
+      "meaning": "knowledge; discernment gained by experience"
+    }
+  },
+
+  "10": {
+    "nahar": {
+      "root": "נָהָר",
+      "translit": "nahar",
+      "meaning": "river; flowing source"
+    }
+  },
+
+  "11": {},
+
+  "12": {
+    "tov": {
+      "root": "טוֹב",
+      "translit": "tov",
+      "meaning": "good; beneficial; valuable"
+    }
+  },
+
+  "13": {},
+
+  "14": {},
+
+  "15": {
+    "abad": {
+      "root": "עָבַד",
+      "translit": "abad",
+      "meaning": "to serve; cultivate; work with purpose"
+    },
+    "shamar": {
+      "root": "שָׁמַר",
+      "translit": "shamar",
+      "meaning": "to keep; guard; protect"
+    }
+  },
+
+  "16": {
+    "tsavah": {
+      "root": "צָוָה",
+      "translit": "tsavah",
+      "meaning": "to command; give authoritative instruction"
+    },
+    "akal": {
+      "root": "אָכַל",
+      "translit": "akal",
+      "meaning": "to eat; consume"
+    }
+  },
+
+  "17": {
+    "muth": {
+      "root": "מוּת",
+      "translit": "muth",
+      "meaning": "to die; experience death"
+    }
+  },
+
+  "18": {
+    "lo-tov": {
+      "root": "לֹא־טוֹב",
+      "translit": "lo tov",
+      "meaning": "not good; lacking completeness"
+    },
+    "ezer": {
+      "root": "עֵזֶר",
+      "translit": "ezer",
+      "meaning": "helper; strong support"
+    },
+    "kenegdo": {
+      "root": "כְּנֶגְדּוֹ",
+      "translit": "kenegdo",
+      "meaning": "corresponding to; equal counterpart"
+    }
+  },
+
+  "19": {
+    "qara": {
+      "root": "קָרָא",
+      "translit": "qara",
+      "meaning": "to call; name; assign identity"
+    }
+  },
+
+  "20": {},
+
+  "21": {
+    "tardemah": {
+      "root": "תַּרְדֵּמָה",
+      "translit": "tardemah",
+      "meaning": "deep sleep; divine stillness"
+    },
+    "tsela": {
+      "root": "צֵלָע",
+      "translit": "tsela",
+      "meaning": "side; flank; part taken for building"
+    }
+  },
+
+  "22": {
+    "banah": {
+      "root": "בָּנָה",
+      "translit": "banah",
+      "meaning": "to build; construct with intention"
+    }
+  },
+
+  "23": {
+    "ish": {
+      "root": "אִישׁ",
+      "translit": "ish",
+      "meaning": "man"
+    },
+    "ishah": {
+      "root": "אִשָּׁה",
+      "translit": "ishah",
+      "meaning": "woman"
+    }
+  },
+
+  "24": {
+    "azav": {
+      "root": "עָזַב",
+      "translit": "azav",
+      "meaning": "to leave; depart from"
+    },
+    "dabaq": {
+      "root": "דָּבַק",
+      "translit": "dabaq",
+      "meaning": "to cling; cleave; unite closely"
+    },
+    "echad": {
+      "root": "אֶחָד",
+      "translit": "echad",
+      "meaning": "one; unified whole"
+    }
+  },
+
+  "25": {
+    "arum": {
+      "root": "עָרוֹם",
+      "translit": "arum",
+      "meaning": "naked; uncovered"
+    },
+    "bosh": {
+      "root": "בּוֹשׁ",
+      "translit": "bosh",
+      "meaning": "to feel shame; disgrace"
+    }
+  }
+}

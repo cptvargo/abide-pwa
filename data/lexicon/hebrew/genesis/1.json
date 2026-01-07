@@ -1,0 +1,329 @@
+{
+  "1": {
+    "bereshit": {
+      "root": "בְּרֵאשִׁית",
+      "translit": "bereshit",
+      "meaning": "beginning; foundational moment; origin of God's ordered purpose"
+    },
+    "bara": {
+      "root": "בָּרָא",
+      "translit": "bara",
+      "meaning": "to create out of nothing; divine bringing-forth"
+    },
+    "elohim": {
+      "root": "אֱלֹהִים",
+      "translit": "elohim",
+      "meaning": "God; the Mighty One; fullness of divine power"
+    },
+    "shamayim": {
+      "root": "שָׁמַיִם",
+      "translit": "shamayim",
+      "meaning": "heavens; realms above; unseen spiritual expanse"
+    },
+    "erets": {
+      "root": "אֶרֶץ",
+      "translit": "erets",
+      "meaning": "earth; land; the created world below"
+    }
+  },
+
+  "2": {
+    "tohu": {
+      "root": "תֹּהוּ",
+      "translit": "tohu",
+      "meaning": "formlessness; emptiness; unstructured state"
+    },
+    "bohu": {
+      "root": "בֹּהוּ",
+      "translit": "bohu",
+      "meaning": "void; emptiness requiring divine ordering"
+    },
+    "tehom": {
+      "root": "תְּהוֹם",
+      "translit": "tehom",
+      "meaning": "the deep; primordial waters; abyss"
+    },
+    "ruach": {
+      "root": "רוּחַ",
+      "translit": "ruach",
+      "meaning": "Spirit; breath; wind — representing God's active presence"
+    }
+  },
+
+  "3": {
+    "amar": {
+      "root": "אָמַר",
+      "translit": "amar",
+      "meaning": "to speak; to declare with effectual authority"
+    },
+    "or": {
+      "root": "אוֹר",
+      "translit": "or",
+      "meaning": "light; illumination; revelation"
+    }
+  },
+
+  "4": {
+    "badal": {
+      "root": "בָּדַל",
+      "translit": "badal",
+      "meaning": "to separate; distinguish; set apart with purpose"
+    },
+    "tov": {
+      "root": "טוֹב",
+      "translit": "tov",
+      "meaning": "good; beautiful; functioning as intended by God"
+    }
+  },
+
+  "5": {
+    "yom": {
+      "root": "יוֹם",
+      "translit": "yom",
+      "meaning": "day; period of light; a defined time of purpose"
+    },
+    "laylah": {
+      "root": "לַיְלָה",
+      "translit": "laylah",
+      "meaning": "night; absence of light; time of rest or obscurity"
+    },
+    "erev": {
+      "root": "עֶרֶב",
+      "translit": "erev",
+      "meaning": "evening; transition; blending or mixing of light"
+    },
+    "boker": {
+      "root": "בֹּקֶר",
+      "translit": "boker",
+      "meaning": "morning; breaking forth; clarity; renewal"
+    }
+  },
+
+  "6": {
+    "raqia": {
+      "root": "רָקִיעַ",
+      "translit": "raqia",
+      "meaning": "expanse; stretched space; firmament"
+    }
+  },
+
+  "7": {
+    "badal": {
+      "root": "בָּדַל",
+      "translit": "badal",
+      "meaning": "to separate or divide with intentional order"
+    }
+  },
+
+  "8": {
+    "shamayim": {
+      "root": "שָׁמַיִם",
+      "translit": "shamayim",
+      "meaning": "heavens; sky; celestial realm"
+    }
+  },
+
+  "9": {
+    "qavah": {
+      "root": "קָוָה",
+      "translit": "qavah",
+      "meaning": "to gather together; collect into unity"
+    },
+    "yabashah": {
+      "root": "יַבָּשָׁה",
+      "translit": "yabashah",
+      "meaning": "dry land; stable ground"
+    }
+  },
+
+  "10": {
+    "yam": {
+      "root": "יָם",
+      "translit": "yam",
+      "meaning": "sea; gathered waters"
+    }
+  },
+
+  "11": {
+    "deshe": {
+      "root": "דֶּשֶׁא",
+      "translit": "deshe",
+      "meaning": "grass; sprouting vegetation"
+    },
+    "eseb": {
+      "root": "עֵשֶׂב",
+      "translit": "eseb",
+      "meaning": "herb; seed-bearing plant"
+    },
+    "peri": {
+      "root": "פְּרִי",
+      "translit": "peri",
+      "meaning": "fruit; produce; result of growth"
+    }
+  },
+
+  "12": {},
+
+  "13": {},
+
+  "14": {
+    "maor": {
+      "root": "מָאוֹר",
+      "translit": "maor",
+      "meaning": "light-bearer; luminary"
+    },
+    "ot": {
+      "root": "אוֹת",
+      "translit": "ot",
+      "meaning": "sign; marker of divine purpose"
+    },
+    "moed": {
+      "root": "מוֹעֵד",
+      "translit": "moed",
+      "meaning": "appointed time; sacred season"
+    }
+  },
+
+  "15": {},
+
+  "16": {
+    "gadol": {
+      "root": "גָּדוֹל",
+      "translit": "gadol",
+      "meaning": "great; mighty; significant in purpose"
+    },
+    "qaton": {
+      "root": "קָטֹן",
+      "translit": "qaton",
+      "meaning": "lesser; smaller in role, not value"
+    },
+    "kokhav": {
+      "root": "כּוֹכָב",
+      "translit": "kokhav",
+      "meaning": "star; celestial witness"
+    }
+  },
+
+  "17": {},
+
+  "18": {},
+
+  "19": {},
+
+  "20": {
+    "sharats": {
+      "root": "שָׁרַץ",
+      "translit": "sharats",
+      "meaning": "to swarm; teem with abundant life"
+    },
+    "oph": {
+      "root": "עוֹף",
+      "translit": "oph",
+      "meaning": "bird; winged creature"
+    }
+  },
+
+  "21": {
+    "tannin": {
+      "root": "תַּנִּין",
+      "translit": "tannin",
+      "meaning": "sea creature; large aquatic being"
+    },
+    "nephesh": {
+      "root": "נֶפֶשׁ",
+      "translit": "nephesh",
+      "meaning": "living being; soul; life-breath"
+    }
+  },
+
+  "22": {
+    "barak": {
+      "root": "בָּרַךְ",
+      "translit": "barak",
+      "meaning": "to bless; speak divine favor over"
+    }
+  },
+
+  "23": {},
+
+  "24": {
+    "chayah": {
+      "root": "חָיָה",
+      "translit": "chayah",
+      "meaning": "living creature; life-bearer"
+    }
+  },
+
+  "25": {},
+
+  "26": {
+    "tselem": {
+      "root": "צֶלֶם",
+      "translit": "tselem",
+      "meaning": "image; reflection; representation"
+    },
+    "demut": {
+      "root": "דְּמוּת",
+      "translit": "demut",
+      "meaning": "likeness; resemblance; patterned after"
+    },
+    "radah": {
+      "root": "רָדָה",
+      "translit": "radah",
+      "meaning": "to rule; shepherd; guide with care"
+    }
+  },
+
+  "27": {
+    "bara": {
+      "root": "בָּרָא",
+      "translit": "bara",
+      "meaning": "to create by divine act"
+    },
+    "zakar": {
+      "root": "זָכָר",
+      "translit": "zakar",
+      "meaning": "male"
+    },
+    "neqevah": {
+      "root": "נְקֵבָה",
+      "translit": "neqevah",
+      "meaning": "female"
+    }
+  },
+
+  "28": {
+    "parah": {
+      "root": "פָּרָה",
+      "translit": "parah",
+      "meaning": "to be fruitful; flourish"
+    },
+    "rabah": {
+      "root": "רָבָה",
+      "translit": "rabah",
+      "meaning": "to multiply; increase greatly"
+    },
+    "kabash": {
+      "root": "כָּבַשׁ",
+      "translit": "kabash",
+      "meaning": "to steward; to subdue responsibly"
+    }
+  },
+
+  "29": {},
+
+  "30": {},
+
+  "31": {
+    "tov": {
+      "root": "טוֹב",
+      "translit": "tov",
+      "meaning": "good; exceedingly good; fully aligned with God's design"
+    },
+    "meod": {
+      "root": "מְאֹד",
+      "translit": "meod",
+      "meaning": "very; exceedingly; abundantly"
+    }
+  }
+}
