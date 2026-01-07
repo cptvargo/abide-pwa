@@ -3,6 +3,9 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  // GitHub Pages base (repo name)
+  base: "/abide-pwa/",
+
   plugins: [
     react(),
     VitePWA({
@@ -13,29 +16,37 @@ export default defineConfig({
 
       includeAssets: [
         "favicon.ico",
-        "ABIDE.png",
         "pwa-192x192.png",
-        "pwa-512x512.png"
+        "pwa-512x512.png",
+        "apple-icon.png"
       ],
 
       manifest: {
         name: "ABIDE Bible App",
         short_name: "ABIDE",
-        description: "A minimal, quiet, offline-first Bible reader.",
-        start_url: "/",
-        scope: "/",
+        description: "A quiet, minimal offline Bible reading experience.",
+        start_url: "/abide-pwa/",
+        scope: "/abide-pwa/",
         display: "standalone",
         background_color: "#1C1C1A",
         theme_color: "#CBB27C",
         orientation: "portrait",
+
         icons: [
           {
-            src: "ABIDE.png",
-            sizes: "512x512",
-            type: "image/png"
+            src: "/abide-pwa/pwa-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any"
           },
           {
-            src: "ABIDE.png",
+            src: "/abide-pwa/pwa-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any"
+          },
+          {
+            src: "/abide-pwa/pwa-512x512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable"

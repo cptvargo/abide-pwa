@@ -191,7 +191,13 @@ export default function App() {
       });
 
       setHebrewData(hebrew[verseNumber] || null);
-      setInsight(insights[verseNumber] || null);
+
+      const rawInsight = insights[verseNumber];
+      setInsight(
+        typeof rawInsight === "string"
+          ? rawInsight
+          : rawInsight?.insight || null
+      );
 
       setModalOpen(true);
     } catch (err) {
