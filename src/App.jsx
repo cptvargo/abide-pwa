@@ -108,6 +108,8 @@ export default function App() {
 
   const [translation, setTranslation] = useState("VSV");
 
+  const [vsvMeta, setVsvMeta] = useState(null);
+
   // Group journal entries by Month + Year
   function groupEntriesByMonth(entries) {
     return entries.reduce((groups, entry) => {
@@ -193,7 +195,8 @@ export default function App() {
         text: verseText,
       });
 
-      setHebrewData(hebrew[verseNumber] || null);
+      const verseKey = String(verseNumber);
+      setHebrewData(hebrew[verseKey] || null);
 
       // ✅ Supports BOTH Genesis 2 (string) and Genesis 3 (object)
       const rawInsight = insights[verseNumber];
@@ -284,6 +287,21 @@ export default function App() {
     load();
   }, [book, chapter]);
 
+  useEffect(() => {
+    async function loadVsvMetadata() {
+      try {
+        const base = import.meta.env.BASE_URL;
+        const response = await fetch(`${base}vsv.metadata.json`);
+        const data = await response.json();
+        setVsvMeta(data);
+      } catch (err) {
+        console.error("Failed to load VSV metadata:", err);
+      }
+    }
+
+    loadVsvMetadata();
+  }, []);
+
   function transitionTo(updateChapter) {
     if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
 
@@ -354,12 +372,19 @@ export default function App() {
               ))}
 
             {!loading && (
-              <div className="mt-20 flex justify-center">
-                <ChapterHoldButton
-                  direction="next"
-                  onComplete={goNextChapter}
-                />
-              </div>
+              <>
+                <div className="mt-20 flex justify-center">
+                  <ChapterHoldButton
+                    direction="next"
+                    onComplete={goNextChapter}
+                  />
+                </div>
+
+                {/* ✅ VSV Footer — Scripture ONLY */}
+                <div className="mt-8 text-center opacity-60 text-xs">
+                  {vsvMeta?.display?.default_footer}
+                </div>
+              </>
             )}
           </>
         )}
@@ -475,12 +500,12 @@ export default function App() {
         >
           <div
             className="
-              w-[80%] max-w-sm
-              bg-[#1C1C1A]
-              h-full
-              shadow-[4px_0_20px_rgba(0,0,0,0.6)]
-              transition-transform duration-700 ease-in-out
-            "
+        w-[80%] max-w-sm
+        bg-[#1C1C1A]
+        h-full
+        shadow-[4px_0_20px_rgba(0,0,0,0.6)]
+        transition-transform duration-700 ease-in-out
+      "
             style={{
               transform: menuOpen ? "translateX(0)" : "translateX(-100%)",
             }}
@@ -490,22 +515,26 @@ export default function App() {
             }}
           >
             <div className="relative h-full p-6 text-[#EEECE6] font-serif">
-              <p className="mb-6 text-sm text-[#CBB27C] tracking-wide">
+              {/* Greeting */}
+              <p className="mb-1 text-lg text-[#CBB27C] tracking-wide">
                 {getGreeting()}
               </p>
+              <p className="mb-6 text-xs opacity-60 tracking-wide">
+                Abide in God’s Word
+              </p>
 
-              <h2 className="text-lg mb-4">Menu</h2>
+              {/* ABIDE Journal */}
               <button
                 className="
-    w-full
-    flex items-center justify-between
-    py-3
-    text-[#EEECE6]
-    text-base
-    tracking-wide
-    hover:text-[#CBB27C]
-    transition-colors
-  "
+            w-full
+            flex items-center justify-between
+            py-3
+            text-[#EEECE6]
+            text-base
+            tracking-wide
+            hover:text-[#CBB27C]
+            transition-colors
+          "
                 onClick={() => {
                   setMenuOpen(false);
                   setMenuVisible(false);
@@ -516,14 +545,69 @@ export default function App() {
                 <span className="text-[#CBB27C] text-lg">→</span>
               </button>
 
-              {/* Settings (visual only) */}
+              {/* Devotionals (Coming Soon) */}
+              <div className="w-full py-3 opacity-50 flex items-center justify-between">
+                <span>Devotionals</span>
+                <span className="text-xs tracking-wide">Coming Soon</span>
+              </div>
+
+              {/* Words of the Faith */}
               <button
                 className="
-      absolute bottom-6 right-6
-      text-[#CBB27C]/80
-      hover:text-[#CBB27C]
-      transition-colors
-    "
+            w-full
+            flex items-center justify-between
+            py-3
+            hover:text-[#CBB27C]
+            transition-colors
+          "
+                onClick={() => {
+                  setMenuOpen(false);
+                  setMenuVisible(false);
+                  // future screen hook
+                }}
+              >
+                <span>Words of the Faith</span>
+                <span className="text-[#CBB27C] text-lg">→</span>
+              </button>
+
+              {/* Cross References (Coming Soon) */}
+              <div className="w-full py-3 opacity-50 flex items-center justify-between">
+                <span>Cross References</span>
+                <span className="text-xs tracking-wide">Coming Soon</span>
+              </div>
+
+              {/* Jesus Revealed */}
+              <button
+                className="
+            w-full
+            flex items-center justify-between
+            py-3
+            hover:text-[#CBB27C]
+            transition-colors
+          "
+                onClick={() => {
+                  setMenuOpen(false);
+                  setMenuVisible(false);
+                  // future screen hook
+                }}
+              >
+                <div className="flex flex-col text-left">
+                  <span>Jesus Revealed</span>
+                  <span className="text-xs opacity-60">
+                    Discovering Christ from Genesis to Revelation
+                  </span>
+                </div>
+                <span className="text-[#CBB27C] text-lg">→</span>
+              </button>
+
+              {/* Settings */}
+              <button
+                className="
+            absolute bottom-6 right-6
+            text-[#CBB27C]/80
+            hover:text-[#CBB27C]
+            transition-colors
+          "
                 aria-label="Settings"
                 onClick={() => setSettingsOpen(true)}
               >
