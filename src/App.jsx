@@ -3,6 +3,7 @@ import { loadChapter } from "./lib/bible";
 import VerseModal from "./components/VerseModal";
 import { useGestureIntent } from "./hooks/useGestureIntent";
 import VSVInfo from "./components/VSVInfo";
+import { useNavigate } from "react-router-dom";
 
 /* ===============================
    ABIDE Chapter Hold Button
@@ -109,6 +110,8 @@ export default function App() {
   const [translation, setTranslation] = useState("VSV");
 
   const [vsvMeta, setVsvMeta] = useState(null);
+
+  const navigate = useNavigate();
 
   // Group journal entries by Month + Year
   function groupEntriesByMonth(entries) {
@@ -542,6 +545,31 @@ export default function App() {
                 }}
               >
                 <span>ABIDE Journal</span>
+                <span className="text-[#CBB27C] text-lg">→</span>
+              </button>
+
+              {/* ABIDE — Grow */}
+              <button
+                className="
+    w-full
+    flex items-center justify-between
+    py-3
+    hover:text-[#CBB27C]
+    transition-colors
+  "
+                onClick={() => {
+                  setMenuOpen(false);
+                  setMenuVisible(false);
+                  navigate("/grow");
+                }}
+              >
+                <div className="flex flex-col text-left">
+                  <span>ABIDE — Grow</span>
+                  <span className="text-xs opacity-60">
+                    Designed for children. Helpful for anyone learning to listen
+                    and obey.
+                  </span>
+                </div>
                 <span className="text-[#CBB27C] text-lg">→</span>
               </button>
 
