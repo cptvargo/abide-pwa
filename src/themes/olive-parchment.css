@@ -1,0 +1,29 @@
+/* ===============================
+   OLIVE & PARCHMENT — MANUSCRIPT
+================================ */
+
+[data-theme="olive-parchment"] {
+  /* Core surfaces */
+  --bg-app: #2f3e2e;
+  --bg-nav: #d6c89f;
+  --bg-menu: #232f23;
+
+  /* Text */
+  --text-primary: #ece8dc;
+  --text-accent: #d6c89f;
+  --text-muted: #b7b1a1;
+  --text-inverse: #2a2a1e;
+
+  /* Typography */
+  --font-body: "Cormorant Garamond", serif;
+  --font-ui: "Inter", system-ui, sans-serif;
+  --font-verse: "Cormorant Garamond", serif;
+
+  /* Reading rhythm */
+  --line-height: 1.75;
+  --paragraph-spacing: 1.8rem;
+
+  /* Verse numbers */
+  --verse-opacity: 0.7;
+  --verse-size: 0.7em;
+}

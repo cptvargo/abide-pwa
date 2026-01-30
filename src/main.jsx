@@ -14,5 +14,5 @@ createRoot(document.getElementById("root")).render(
         <Route path="/grow" element={<Grow />} />
       </Routes>
     </BrowserRouter>
-  </StrictMode>
+  </StrictMode>,
 );

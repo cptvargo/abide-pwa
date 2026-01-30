@@ -1,0 +1,30 @@
+/* ===============================
+   STONE & FIRE — BOLD / PROPHETIC
+================================ */
+
+[data-theme="stone-fire"] {
+  /* Core surfaces */
+  --bg-app: #141414;
+--bg-nav: #f97316;   /* fire orange */
+--bg-menu: #3b1d0f;  /* deep ember brown */
+
+
+  /* Text */
+  --text-primary: #f2efe9;
+  --text-accent: #f97316; /* fire */
+  --text-muted: #b8ada4;
+  --text-inverse: #140a05;
+
+  /* Typography */
+  --font-body: "Crimson Pro", serif;
+  --font-ui: "Inter", system-ui, sans-serif;
+  --font-verse: "Inter", system-ui, sans-serif;
+
+  /* Reading rhythm */
+  --line-height: 1.6;
+  --paragraph-spacing: 1.6rem;
+
+  /* Verse numbers */
+  --verse-opacity: 0.9;
+  --verse-size: 0.75em;
+}

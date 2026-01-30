@@ -1,0 +1,42 @@
+/* ===============================
+   STILL WATERS — THEME OVERRIDES
+   =============================== */
+
+[data-theme="still-waters"] {
+  /* Core surfaces */
+  --bg-app: #0e2a32;
+  --bg-nav: #1f6f78;
+  --bg-menu: #0b1f24;
+
+  /* Text */
+  --text-primary: #e6f4f6;
+  --text-accent: #7ed0d8;
+  --text-inverse: #082025;
+}
+
+/* NAV BAR */
+[data-theme="still-waters"] .bg-\[\#CBB27C\] {
+  background-color: var(--bg-nav);
+}
+
+[data-theme="still-waters"] .text-\[\#1C1C1A\] {
+  color: var(--text-inverse);
+}
+
+/* SLIDE-OUT MENU */
+[data-theme="still-waters"] .bg-\[\#1C1C1A\] {
+  background-color: var(--bg-menu);
+}
+
+[data-theme="still-waters"] .text-\[\#EEECE6\] {
+  color: var(--text-primary);
+}
+
+[data-theme="still-waters"] .text-\[\#CBB27C\] {
+  color: var(--text-accent);
+}
+
+/* SETTINGS MODAL */
+[data-theme="still-waters"] .bg-black\/30 {
+  background-color: rgba(255, 255, 255, 0.06);
+}

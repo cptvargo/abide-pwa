@@ -1,0 +1,30 @@
+/* ===============================
+   CLASSIC — ABIDE DEFAULT
+================================ */
+
+[data-theme="classic"] {
+  --bg-app: #1c1c1a;
+  --bg-nav: #cbb27c;
+  --bg-menu: #1c1c1a;
+
+  --text-primary: #eeece6;
+  --text-accent: #cbb27c;
+  --text-muted: #b8b6ae;
+  --text-inverse: #1c1c1a;
+
+  --font-ui: Inter, system-ui, sans-serif;
+  --font-body: "Cormorant Garamond", serif;
+  --font-verse: Inter, system-ui, sans-serif;
+
+  --line-height: 1.65;
+  --paragraph-spacing: 1.5rem;
+
+  --verse-opacity: 0.85;
+  --verse-size: 0.75em;
+}
+
+html {
+  background: red !important;
+}
+
+
