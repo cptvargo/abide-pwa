@@ -1,9 +1,10 @@
 {
-    "book": "Genesis",
-    "translation": "VSV",
-    "chapters": {
-        "1": {
-            "1": "In the beginning God created the heaven and the earth.",
+  "chapter": 1,
+  "book": "Genesis",
+  "translation": "VSV",
+  "title": "The beginning of God’s creative work",
+  "verses": {
+            "1": "In the beginning God created the Heavens and the earth.",
             "2": "And the earth was without form, and void; darkness lay over the deep, and the Spirit of God moved over the waters.",
             "3": "And God said, \"Let there be light,\" and light came to be.",
             "4": "And God saw the light, that it was good; and God separated the light from the darkness.",
@@ -34,13 +35,12 @@
             "29": "And God said, \"Behold, I have given you every seed-bearing plant that is upon the face of all the earth, and every tree in which is the fruit of a tree yielding seed; to you it shall be for food.\"",
             "30": "\"And to every beast of the earth, and to every bird of the heavens, and to everything that creeps upon the earth, in which is the breath of life, I have given every green plant for food.\" And it was so.",
             "31": "And God saw everything that He had made, and behold, it was very good. And there was evening, and there was morning—the sixth day."
-        }
-    },
-    "metadata": {
-        "translator": "Jesus Vargas",
-        "version": "Vine Standard Version",
-        "abbreviation": "VSV",
-        "source": "Based on the Authorized King James Version (1769), reinterpreted through the theology of abiding in Christ.",
-        "createdAt": "2025-10-17T00:00:00Z"
-    }
+        },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "Vine Standard Version",
+    "abbreviation": "VSV",
+    "source": "Based on the Authorized King James Version (1769), reinterpreted through the theology of abiding in Christ.",
+    "createdAt": "2025-10-17T00:00:00Z"
+  }
 }
