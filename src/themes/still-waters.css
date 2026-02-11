@@ -1,0 +1,38 @@
+/* ===============================
+   STILL WATERS — QUIET DEPTH
+================================ */
+
+[data-theme="still-waters"] {
+  /* App surfaces */
+  --bg-app: #0e2a32;
+  --bg-nav: #1f6f78;    /* water blue - SOLID */
+  --bg-menu: #0b1f24;
+
+  /* Reading surface */
+  --surface: #102c33;
+
+  /* Text */
+  --text-primary: #e6f4f6;
+  --text-accent: #7ed0d8;
+  --text-muted: #b9dadd;
+  --text-inverse: #082025;
+
+  /* Red-letter */
+  --red-letter: #c46a5b;
+
+  /* Fonts */
+  --font-ui: Inter, system-ui, sans-serif;
+  --font-body: "Cormorant Garamond", serif;
+  --font-verse: Inter, system-ui, sans-serif;
+
+  /* Typography */
+  --line-height: 1.65;
+  --paragraph-spacing: 1.5rem;
+
+  /* Verse numbers */
+  --verse-opacity: 0.75;
+  --verse-size: 0.75em;
+
+  /* Highlight */
+  --highlight-bg: rgba(126, 208, 216, 0.18);
+}

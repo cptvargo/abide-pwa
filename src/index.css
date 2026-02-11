@@ -1,0 +1,377 @@
+/* ===============================
+   Font Imports (Reading)
+================================ */
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap");
+
+/* ===============================
+   Theme Imports - MUST BE FIRST
+================================ */
+@import "./themes/classic.css";
+@import "./themes/still-waters.css";
+@import "./themes/stone-fire.css";
+@import "./themes/olive-parchment.css";
+
+/* ===============================
+   Tailwind Base
+================================ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===============================
+   Global Defaults
+================================ */
+:root {
+  /* Typography */
+  --font-scripture: "Source Serif Pro", serif;
+
+  /* Reader rhythm */
+  --reader-max-width: 38rem;
+  --reader-line-height: 1.65;
+  --reader-letter-spacing: 0.015em;
+
+  /* Fallback values (in case theme doesn't load) */
+  --surface-primary: #1c1c1a;
+  --surface-muted: rgba(255, 255, 255, 0.08);
+  --surface-hover: rgba(255, 255, 255, 0.14);
+  --surface-thumb: #000000;
+  --text-primary: #eeece6;
+  --text-secondary: rgba(238, 236, 230, 0.65);
+  --text-inverse: #000000;
+  --accent-primary: #cbb27c;
+  --highlight-bg: rgba(255, 255, 255, 0.35);
+  
+  /* Nav fallback - solid gold */
+  --bg-nav: #cbb27c;
+  --bg-app: #1c1c1a;
+  --text-accent: #cbb27c;
+}
+
+/* ===============================
+   Global Body
+================================ */
+body {
+  margin: 0;
+  background-color: var(--surface-primary);
+  color: var(--text-primary);
+}
+
+/* ===============================
+   Disable mobile text selection
+================================ */
+.no-select {
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+/* ===============================
+   Reader Container
+================================ */
+.reader {
+  max-width: var(--reader-max-width);
+  margin: 0 auto;
+}
+
+/* ===============================
+   Scripture Text
+================================ */
+.reader p {
+  font-family: var(--font-scripture);
+  line-height: var(--reader-line-height);
+  letter-spacing: var(--reader-letter-spacing);
+}
+
+/* ===============================
+   Verse Highlight
+================================ */
+.highlight {
+  background-color: var(--highlight-bg);
+  border-radius: 4px;
+  padding: 0 2px;
+}
+
+/* ===============================
+   COMPLETE THEME DEFINITIONS
+   Add this at the END of index.css
+================================ */
+
+[data-theme="classic"] {
+  --bg-app: #1c1c1a;
+  --bg-nav: linear-gradient(135deg, #cbb27c 0%, #8b7355 100%);
+  --bg-menu: #1c1c1a;
+  --text-primary: #eeece6;
+  --text-accent: #cbb27c;
+  --text-muted: #b8b6ae;
+  --text-inverse: #1c1c1a;
+  --text-secondary: rgba(238, 236, 230, 0.65);
+  --font-ui: Inter, system-ui, sans-serif;
+  --font-body: "Cormorant Garamond", serif;
+  --font-verse: Inter, system-ui, sans-serif;
+  --line-height: 1.65;
+  --paragraph-spacing: 1.5rem;
+  --verse-opacity: 0.85;
+  --verse-size: 0.75em;
+}
+
+[data-theme="stone-fire"] {
+  --bg-app: #141414;
+  --bg-nav: #f97316;
+  --bg-menu: #3b1d0f;
+  --surface: #1a1a18;
+  --text-primary: #f2efe9;
+  --text-accent: #f97316;
+  --text-muted: #b8ada4;
+  --text-inverse: #140a05;
+  --text-secondary: rgba(242, 239, 233, 0.65);
+  --red-letter: #c84e2f;
+  --font-ui: Inter, system-ui, sans-serif;
+  --font-body: "Cormorant Garamond", serif;
+  --font-verse: Inter, system-ui, sans-serif;
+  --line-height: 1.65;
+  --paragraph-spacing: 1.5rem;
+  --verse-opacity: 0.9;
+  --verse-size: 0.75em;
+  --highlight-bg: rgba(249, 115, 22, 0.14);
+}
+
+[data-theme="still-waters"] {
+  --bg-app: #0e2a32;
+  --bg-nav: #1f6f78;
+  --bg-menu: #0b1f24;
+  --surface: #102c33;
+  --text-primary: #e6f4f6;
+  --text-accent: #7ed0d8;
+  --text-muted: #b9dadd;
+  --text-inverse: #082025;
+  --text-secondary: rgba(230, 244, 246, 0.65);
+  --red-letter: #c46a5b;
+  --font-ui: Inter, system-ui, sans-serif;
+  --font-body: "Cormorant Garamond", serif;
+  --font-verse: Inter, system-ui, sans-serif;
+  --line-height: 1.65;
+  --paragraph-spacing: 1.5rem;
+  --verse-opacity: 0.75;
+  --verse-size: 0.75em;
+  --highlight-bg: rgba(126, 208, 216, 0.18);
+}
+
+[data-theme="olive-parchment"] {
+  --bg-app: #2f3e2e;
+  --bg-nav: #d6c89f;
+  --bg-menu: #232f23;
+  --surface: #323f31;
+  --text-primary: #ece8dc;
+  --text-accent: #d6c89f;
+  --text-muted: #b7b1a1;
+  --text-inverse: #2a2a1e;
+  --text-secondary: rgba(236, 232, 220, 0.65);
+  --red-letter: #b45a4d;
+  --font-ui: Inter, system-ui, sans-serif;
+  --font-body: "Cormorant Garamond", serif;
+  --font-verse: Inter, system-ui, sans-serif;
+  --line-height: 1.65;
+  --paragraph-spacing: 1.5rem;
+  --verse-opacity: 0.7;
+  --verse-size: 0.7em;
+  --highlight-bg: rgba(214, 200, 159, 0.18);
+}
+/* ===============================
+   PARCHMENT THEME - 5th Theme
+   Add to index.css after other themes
+================================ */
+
+[data-theme="parchment"] {
+  /* Backgrounds */
+  --bg-app: #e8e3d8;  /* Warm parchment paper */
+  --bg-nav: #8b7355;  /* Brown leather nav */
+  --bg-menu: #d9d4c9;  /* Slightly darker parchment */
+  
+  /* Text Colors */
+  --text-primary: #2b2520;  /* Dark brown text */
+  --text-accent: #8b7355;  /* Warm brown accent */
+  --text-muted: #6b5744;  /* Muted brown */
+  --text-inverse: #f5f1e8;  /* Light cream for nav */
+  --text-secondary: #4a4139;  /* Secondary dark brown */
+  
+  /* Fonts - Classic Serif */
+  --font-ui: 'Crimson Text', 'Baskerville', 'Garamond', serif;
+  --font-body: 'Crimson Text', 'Baskerville', 'Garamond', serif;
+  --font-verse: 'Crimson Text', 'Baskerville', 'Garamond', serif;
+  
+  /* Typography */
+  --line-height: 1.8;
+  --paragraph-spacing: 1.5em;
+  
+  /* Verse Display */
+  --verse-opacity: 0.95;
+  --verse-size: 1.1rem;
+  
+  /* Highlight */
+  --highlight-bg: rgba(139, 115, 85, 0.15);
+}
+/* ===============================
+   Rich Text Editor Styles - FIXED LISTS
+   Replace/add to your index.css
+================================ */
+
+/* Editor container */
+.ProseMirror {
+  min-height: 100%;
+  padding: 1.5rem;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+/* Focus state */
+.ProseMirror:focus {
+  outline: none;
+}
+
+/* Placeholder - TipTap Placeholder extension */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--text-primary);
+  opacity: 0.4;
+  pointer-events: none;
+  height: 0;
+  font-style: normal;
+}
+
+/* Headings */
+.ProseMirror h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.ProseMirror h3 {
+  font-size: 1.25em;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+/* Paragraphs */
+.ProseMirror p {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+/* Bold */
+.ProseMirror strong {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Italic */
+.ProseMirror em {
+  font-style: italic;
+}
+
+/* Underline */
+.ProseMirror u {
+  text-decoration: underline;
+}
+
+/* Blockquote - Day One style */
+.ProseMirror blockquote {
+  border-left: 3px solid var(--text-accent);
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+  color: var(--text-primary);
+  opacity: 0.9;
+  background: rgba(203, 178, 124, 0.05);
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+}
+
+/* Lists - FIXED to show bullets */
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.ProseMirror li {
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  display: list-item;
+}
+
+.ProseMirror li p {
+  margin: 0;
+  display: inline;
+}
+
+/* Nested lists */
+.ProseMirror ul ul,
+.ProseMirror ol ol {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Force bullet markers to be visible */
+.ProseMirror ul > li {
+  list-style-type: disc;
+}
+
+.ProseMirror ul > li::marker {
+  color: var(--text-primary);
+}
+
+/* Code */
+.ProseMirror code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  color: var(--text-primary);
+}
+
+/* Selection color */
+.ProseMirror ::selection {
+  background: var(--text-accent);
+  color: var(--text-inverse);
+  opacity: 0.3;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

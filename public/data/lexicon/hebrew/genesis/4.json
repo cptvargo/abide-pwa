@@ -1,0 +1,389 @@
+{
+  "1": {
+    "adam": {
+      "root": "אָדָם",
+      "translit": "adam",
+      "meaning": "Adam; mankind; the man"
+    },
+    "yada": {
+      "root": "יָדַע",
+      "translit": "yada",
+      "meaning": "to know; to experience intimately"
+    },
+    "ishah": {
+      "root": "אִשָּׁה",
+      "translit": "ishah",
+      "meaning": "woman; wife"
+    },
+    "harah": {
+      "root": "הָרָה",
+      "translit": "harah",
+      "meaning": "to conceive; become pregnant"
+    },
+    "yalad": {
+      "root": "יָלַד",
+      "translit": "yalad",
+      "meaning": "to bear; bring forth"
+    },
+    "qayin": {
+      "root": "קַיִן",
+      "translit": "qayin",
+      "meaning": "Cain; acquired one"
+    },
+    "qanah": {
+      "root": "קָנָה",
+      "translit": "qanah",
+      "meaning": "to acquire; obtain; bring forth"
+    },
+    "ish": {
+      "root": "אִישׁ",
+      "translit": "ish",
+      "meaning": "man"
+    },
+    "yhwh": {
+      "root": "יְהוָה",
+      "translit": "YHWH",
+      "meaning": "the LORD; the self-existent One"
+    }
+  },
+
+  "2": {
+    "yasaph": {
+      "root": "יָסַף",
+      "translit": "yasaph",
+      "meaning": "to add; to do again; continue"
+    },
+    "yalad": {
+      "root": "יָלַד",
+      "translit": "yalad",
+      "meaning": "to bear; bring forth"
+    },
+    "ach": {
+      "root": "אָח",
+      "translit": "ach",
+      "meaning": "brother"
+    },
+    "hevel": {
+      "root": "הֶבֶל",
+      "translit": "hevel",
+      "meaning": "Abel; breath; vapor"
+    },
+    "raah": {
+      "root": "רָעָה",
+      "translit": "raah",
+      "meaning": "to pasture; tend; shepherd"
+    },
+    "tson": {
+      "root": "צֹאן",
+      "translit": "tson",
+      "meaning": "sheep; flock"
+    },
+    "abad": {
+      "root": "עָבַד",
+      "translit": "abad",
+      "meaning": "to work; serve"
+    },
+    "adamah": {
+      "root": "אֲדָמָה",
+      "translit": "adamah",
+      "meaning": "ground; soil"
+    }
+  },
+
+  
+  "3": {
+    "miqets": {
+      "root": "מִקֵּץ",
+      "translit": "miqets",
+      "meaning": "at the end of; after a period of time"
+    },
+    "yamim": {
+      "root": "יָמִים",
+      "translit": "yamim",
+      "meaning": "days; time; period"
+    },
+    "qayin": {
+      "root": "קַיִן",
+      "translit": "qayin",
+      "meaning": "Cain; acquired one"
+    },
+    "bo": {
+      "root": "בּוֹא",
+      "translit": "bo",
+      "meaning": "to come; bring"
+    },
+    "minchah": {
+      "root": "מִנְחָה",
+      "translit": "minchah",
+      "meaning": "offering; gift; tribute"
+    },
+    "yhwh": {
+      "root": "יְהוָה",
+      "translit": "YHWH",
+      "meaning": "the LORD; the self-existent One"
+    },
+    "peri": {
+      "root": "פְּרִי",
+      "translit": "peri",
+      "meaning": "fruit; produce"
+    },
+    "adamah": {
+      "root": "אֲדָמָה",
+      "translit": "adamah",
+      "meaning": "ground; soil"
+    }
+  },
+
+  "4": {
+    "hevel": {
+      "root": "הֶבֶל",
+      "translit": "hevel",
+      "meaning": "Abel; breath; vapor"
+    },
+    "gam": {
+      "root": "גַּם",
+      "translit": "gam",
+      "meaning": "also; likewise"
+    },
+    "bo": {
+      "root": "בּוֹא",
+      "translit": "bo",
+      "meaning": "to bring; come"
+    },
+    "bekor": {
+      "root": "בְּכוֹר",
+      "translit": "bekor",
+      "meaning": "firstborn"
+    },
+    "tson": {
+      "root": "צֹאן",
+      "translit": "tson",
+      "meaning": "sheep; flock"
+    },
+    "cheleb": {
+      "root": "חֵלֶב",
+      "translit": "cheleb",
+      "meaning": "fat; choice portion"
+    },
+    "shaah": {
+      "root": "שָׁעָה",
+      "translit": "shaah",
+      "meaning": "to look upon with favor; regard"
+    },
+    "yhwh": {
+      "root": "יְהוָה",
+      "translit": "YHWH",
+      "meaning": "the LORD; the self-existent One"
+    }
+  },
+
+  "5": {
+    "qayin": {
+      "root": "קַיִן",
+      "translit": "qayin",
+      "meaning": "Cain; acquired one"
+    },
+    "shaah": {
+      "root": "שָׁעָה",
+      "translit": "shaah",
+      "meaning": "to look upon with favor; regard"
+    },
+    "charah": {
+      "root": "חָרָה",
+      "translit": "charah",
+      "meaning": "to burn with anger; be kindled"
+    },
+    "meod": {
+      "root": "מְאֹד",
+      "translit": "meod",
+      "meaning": "very; greatly; exceedingly"
+    },
+    "panim": {
+      "root": "פָּנִים",
+      "translit": "panim",
+      "meaning": "face; countenance; presence"
+    },
+    "naphal": {
+      "root": "נָפַל",
+      "translit": "naphal",
+      "meaning": "to fall; collapse; descend"
+    }
+  },
+
+    "6": {
+    "yhwh": {
+      "root": "יְהוָה",
+      "translit": "YHWH",
+      "meaning": "the LORD; the self-existent One"
+    },
+    "amar": {
+      "root": "אָמַר",
+      "translit": "amar",
+      "meaning": "to say; speak"
+    },
+    "qayin": {
+      "root": "קַיִן",
+      "translit": "qayin",
+      "meaning": "Cain; acquired one"
+    },
+    "charah": {
+      "root": "חָרָה",
+      "translit": "charah",
+      "meaning": "to burn with anger; be kindled"
+    },
+    "lamah": {
+      "root": "לָמָה",
+      "translit": "lamah",
+      "meaning": "why?"
+    },
+    "panim": {
+      "root": "פָּנִים",
+      "translit": "panim",
+      "meaning": "face; countenance; presence"
+    },
+    "naphal": {
+      "root": "נָפַל",
+      "translit": "naphal",
+      "meaning": "to fall; collapse; descend"
+    }
+  },
+
+  "7": {
+    "im": {
+      "root": "אִם",
+      "translit": "im",
+      "meaning": "if; conditional"
+    },
+    "yatav": {
+      "root": "יָטַב",
+      "translit": "yatav",
+      "meaning": "to do well; act rightly"
+    },
+    "seeth": {
+      "root": "שְׂאֵת",
+      "translit": "seeth",
+      "meaning": "lifting up; acceptance; elevation"
+    },
+    "lo-yatav": {
+      "root": "לֹא־יָטַב",
+      "translit": "lo yatav",
+      "meaning": "to not do well"
+    },
+    "chatta": {
+      "root": "חַטָּאת",
+      "translit": "chatta",
+      "meaning": "sin; offense; missing the mark"
+    },
+    "ravats": {
+      "root": "רָבַץ",
+      "translit": "ravats",
+      "meaning": "to crouch; lie in wait"
+    },
+    "petach": {
+      "root": "פֶּתַח",
+      "translit": "petach",
+      "meaning": "door; opening; entrance"
+    },
+    "teshuqah": {
+      "root": "תְּשׁוּקָה",
+      "translit": "teshuqah",
+      "meaning": "desire; longing; impulse"
+    },
+    "mashal": {
+      "root": "מָשַׁל",
+      "translit": "mashal",
+      "meaning": "to rule; govern; exercise dominion"
+    }
+  },
+
+  "8": {
+    "qayin": {
+      "root": "קַיִן",
+      "translit": "qayin",
+      "meaning": "Cain; acquired one"
+    },
+    "amar": {
+      "root": "אָמַר",
+      "translit": "amar",
+      "meaning": "to say; speak"
+    },
+    "hevel": {
+      "root": "הֶבֶל",
+      "translit": "hevel",
+      "meaning": "Abel; breath; vapor"
+    },
+    "ach": {
+      "root": "אָח",
+      "translit": "ach",
+      "meaning": "brother"
+    },
+    "wayehi": {
+      "root": "וַיְהִי",
+      "translit": "wayehi",
+      "meaning": "and it came to pass; and it happened"
+    },
+    "sadeh": {
+      "root": "שָׂדֶה",
+      "translit": "sadeh",
+      "meaning": "field; open land"
+    },
+    "qum": {
+      "root": "קוּם",
+      "translit": "qum",
+      "meaning": "to rise up; stand"
+    },
+    "harag": {
+      "root": "הָרַג",
+      "translit": "harag",
+      "meaning": "to kill; slay"
+    }
+  },
+
+  "9": {
+    "yhwh": {
+      "root": "יְהוָה",
+      "translit": "YHWH",
+      "meaning": "the LORD; the self-existent One"
+    },
+    "amar": {
+      "root": "אָמַר",
+      "translit": "amar",
+      "meaning": "to say; speak"
+    },
+    "qayin": {
+      "root": "קַיִן",
+      "translit": "qayin",
+      "meaning": "Cain; acquired one"
+    },
+    "ayeh": {
+      "root": "אֵי",
+      "translit": "ayeh",
+      "meaning": "where?"
+    },
+    "hevel": {
+      "root": "הֶבֶל",
+      "translit": "hevel",
+      "meaning": "Abel; breath; vapor"
+    },
+    "ach": {
+      "root": "אָח",
+      "translit": "ach",
+      "meaning": "brother"
+    },
+    "yada": {
+      "root": "יָדַע",
+      "translit": "yada",
+      "meaning": "to know; perceive; acknowledge"
+    },
+    "shamar": {
+      "root": "שָׁמַר",
+      "translit": "shamar",
+      "meaning": "to keep; guard; watch over"
+    },
+    "anoki": {
+      "root": "אָנֹכִי",
+      "translit": "anoki",
+      "meaning": "I; myself"
+    }
+  }
+}

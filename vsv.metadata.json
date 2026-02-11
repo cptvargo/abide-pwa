@@ -1,0 +1,90 @@
+{
+  "translation": {
+    "name": "Vine Standard Version",
+    "abbreviation": "VSV",
+    "language": "English",
+    "year_started": 2025,
+    "status": "in_progress",
+    "description": "A Hebrew-anchored, KJV-rooted English Bible translation focused on textual faithfulness, clarity, and reverent cadence."
+  },
+
+  "authorship": {
+    "translator": {
+      "name": "Jesus Vargas",
+      "affiliation": "ABIDE",
+      "role": "Primary translator and editor"
+    }
+  },
+
+  "copyright": {
+    "notice": "© Vine Standard Version (VSV) 2025",
+    "registration": false,
+    "rights_statement": "Translation text is authored work. Scripture source languages are public domain."
+  },
+
+  "translation_philosophy": {
+    "approach": "Formal-equivalence with contextual clarity",
+    "source_texts": {
+      "hebrew": "Masoretic Text",
+      "aramaic": "Biblical Aramaic",
+      "greek": "Textus Receptus (for NT when applicable)"
+    },
+    "english_base": "King James Version (lexical influence, not sentence structure)",
+    "interpretive_policy": "Non-interpretive; avoids theological expansion beyond source text",
+    "notes": [
+      "Translation prioritizes Hebrew and Greek syntax over modern idiom when possible.",
+      "English punctuation is modernized for clarity without altering meaning."
+    ]
+  },
+
+  "editorial_features": {
+    "chapter_titles": {
+      "included": true,
+      "type": "editorial",
+      "description": "Non-inspired chapter summaries for navigation and orientation"
+    },
+    "word_guide": {
+      "included": true,
+      "purpose": "Explain original-language terms in context",
+      "scope": "Selected words and phrases, not exhaustive lexicon",
+      "non_authoritative": true
+    },
+    "insights": {
+      "included": true,
+      "style": "Expository and theological reflection",
+      "non_scriptural": true
+    }
+  },
+
+  "display": {
+    "default_footer": "© Vine Standard Version (VSV) 2025 · Translation by Jesus Vargas",
+    "show_translation_abbreviation": true,
+    "show_footer_on": [
+      "book",
+      "chapter",
+      "reading_view"
+    ]
+  },
+
+  "versioning": {
+    "current_version": "0.1.0",
+    "versioning_scheme": "semantic",
+    "changelog_managed": true
+  },
+
+  "distribution": {
+    "intended_use": [
+      "Personal study",
+      "Devotional reading",
+      "Private app usage"
+    ],
+    "public_release": false,
+    "licensing": "Unlicensed (private use)"
+  },
+
+  "integrity": {
+    "scripture_text_separation": true,
+    "editorial_content_labeled": true,
+    "no_embedded_metadata_in_verses": true
+  }
+}

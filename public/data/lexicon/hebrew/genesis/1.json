@@ -1,0 +1,2066 @@
+{
+  "1": {
+    "Elohim": {
+      "original": "אֱלֹהִים",
+      "transliteration": "ʾĔlōhîm",
+      "language": "Hebrew",
+      "part_of_speech": "Noun",
+      "basic_meaning": "God; the supreme Creator",
+      "usage_in_context": "Used here to identify the one true God acting before all creation begins.",
+      "clarification": "Although grammatically plural, this form expresses fullness and majesty, not multiple gods.",
+      "common_misunderstandings": "This does not suggest polytheism or a group of gods. Scripture consistently presents one sovereign God.",
+      "why_it_matters": "Genesis opens by presenting God as complete, authoritative, and uncontested before anything else exists."
+    },
+    "Bara": {
+      "original": "בָּרָא",
+      "transliteration": "bārāʾ",
+      "language": "Hebrew",
+      "part_of_speech": "Verb",
+      "basic_meaning": "To create",
+      "usage_in_context": "Describes God bringing the heavens and the earth into existence by divine will.",
+      "clarification": "This verb is used exclusively of God in Scripture and refers to origination, not shaping existing material.",
+      "common_misunderstandings": "It does not imply effort, struggle, or trial. Creation is not a process of experimentation.",
+      "why_it_matters": "Everything that exists does so because God commands it into being, reinforcing His absolute creative authority."
+    },
+    "Heaven and the earth": {
+      "original": "הַשָּׁמַיִם וְאֵת הָאָרֶץ",
+      "transliteration": "haššāmayim wəʾēt hāʾāreṣ",
+      "language": "Hebrew expression",
+      "part_of_speech": "Merism (totality phrase)",
+      "basic_meaning": "All of creation; everything that exists",
+      "usage_in_context": "This phrase summarizes the entire created order, both visible and invisible.",
+      "clarification": "It is not limited to sky and land, but refers to the totality of reality within creation.",
+      "common_misunderstandings": "This is not a partial description of creation, but a comprehensive one.",
+      "why_it_matters": "Nothing exists outside God’s creative authority or ownership."
+    }
+  },
+
+"2": {
+  "Without form": {
+    "original": "תֹהוּ",
+    "transliteration": "tohû",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Formlessness; lack of structure or order",
+    "usage_in_context": "Describes the earth as existing without defined shape or arrangement.",
+    "clarification": "This term describes condition, not corruption or judgment.",
+    "common_misunderstandings": "Often interpreted as chaos or ruin caused by catastrophe.",
+    "why_it_matters": "Establishes that creation begins unstructured, awaiting God’s ordering word."
+  },
+  "Void": {
+    "original": "בֹּהוּ",
+    "transliteration": "bohû",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Emptiness; unfilled state",
+    "usage_in_context": "Describes the earth as lacking content or inhabitation.",
+    "clarification": "Void refers to absence of filling, not absence of existence.",
+    "common_misunderstandings": "Taken to mean destruction or failure rather than incompleteness.",
+    "why_it_matters": "Pairs with ‘without form’ to show that God will both shape and fill creation."
+  },
+  "Darkness": {
+    "original": "חֹשֶׁךְ",
+    "transliteration": "ḥōšeḵ",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Darkness; absence of light",
+    "usage_in_context": "Describes the state of the unlit created order prior to God’s command.",
+    "clarification": "Darkness here is descriptive, not moral or symbolic.",
+    "common_misunderstandings": "Often equated with evil or opposition to God.",
+    "why_it_matters": "Shows that darkness exists under God’s authority and will be ordered by His word."
+  },
+  "The deep": {
+    "original": "תְּהוֹם",
+    "transliteration": "tehôm",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "The depths; the great deep waters",
+    "usage_in_context": "Refers to the vast, undifferentiated waters of the early created order.",
+    "clarification": "The deep is not portrayed as hostile or divine, but as part of creation.",
+    "common_misunderstandings": "Interpreted as a chaotic enemy or rival power.",
+    "why_it_matters": "Affirms that even the most vast and undefined elements are within God’s domain."
+  },
+  "Spirit of God": {
+    "original": "רוּחַ אֱלֹהִים",
+    "transliteration": "rûaḥ ʾĕlōhîm",
+    "language": "Hebrew phrase",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Spirit, breath, or wind belonging to God",
+    "usage_in_context": "Identifies God’s active presence prior to spoken creation.",
+    "clarification": "Context favors ‘Spirit’ as divine presence rather than impersonal wind.",
+    "common_misunderstandings": "Reduced to natural force or poetic imagery only.",
+    "why_it_matters": "Establishes that God is present and active before ordering begins."
+  },
+  "Moved": {
+    "original": "מְרַחֶפֶת",
+    "transliteration": "meraḥep̄et",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (participle)",
+    "basic_meaning": "To hover; to move gently over",
+    "usage_in_context": "Describes continuous, attentive motion over the waters.",
+    "clarification": "The verb implies active presence without indicating force or urgency.",
+    "common_misunderstandings": "Taken as a single completed action or as aggressive movement.",
+    "why_it_matters": "Shows that God’s presence precedes God’s speech and ordering."
+  },
+  "Waters": {
+    "original": "מַּיִם",
+    "transliteration": "mayim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Waters; fluid mass",
+    "usage_in_context": "Refers to the undivided waters present before separation.",
+    "clarification": "The waters are part of creation, not opposed to God.",
+    "common_misunderstandings": "Seen as symbolic of chaos or evil forces.",
+    "why_it_matters": "Prepares for later acts of separation and order without implying conflict."
+  }
+},
+
+
+  "3": {
+    "God said": {
+      "original": "וַיֹּאמֶר אֱלֹהִים",
+      "transliteration": "vayyōʾmer ʾĔlōhîm",
+      "language": "Hebrew",
+      "part_of_speech": "Verb phrase",
+      "basic_meaning": "God spoke",
+      "usage_in_context": "Introduces God’s spoken command as the means by which creation is brought into existence.",
+      "clarification": "This is not narration of thought, but an act of authoritative speech.",
+      "common_misunderstandings": "God’s speaking should not be understood as metaphorical or symbolic here; His word effects reality.",
+      "why_it_matters": "Creation responds directly to God’s voice, establishing speech as the primary instrument of divine action."
+    },
+    "Let there be light": {
+      "original": "יְהִי אוֹר",
+      "transliteration": "yehî ʾôr",
+      "language": "Hebrew",
+      "part_of_speech": "Imperative expression",
+      "basic_meaning": "Light, come into existence",
+      "usage_in_context": "God issues a direct command that brings light into being.",
+      "clarification": "The Hebrew form expresses immediacy and certainty, not wish or request.",
+      "common_misunderstandings": "This is not a hopeful statement or poetic expression, but a sovereign decree.",
+      "why_it_matters": "Reality conforms instantly to God’s command, demonstrating His absolute authority."
+    },
+    "Light came forth": {
+      "original": "וַיְהִי אוֹר",
+      "transliteration": "vayehî ʾôr",
+      "language": "Hebrew",
+      "part_of_speech": "Result clause",
+      "basic_meaning": "Light came to be",
+      "usage_in_context": "Records the immediate result of God’s spoken word.",
+      "clarification": "This phrase emphasizes effect rather than process; no mechanism is described.",
+      "common_misunderstandings": "It does not imply gradual development or dependence on created sources.",
+      "why_it_matters": "What God commands comes into existence without delay, resistance, or mediation."
+    }
+  },
+
+  "4": {
+  "God saw": {
+    "original": "וַיַּרְא אֱלֹהִים",
+    "transliteration": "wayyarʾ ʾĕlōhîm",
+    "language": "Hebrew",
+    "part_of_speech": "Verb phrase",
+    "basic_meaning": "And God saw; perceived and examined",
+    "usage_in_context": "Introduces divine evaluation of what has just been brought into existence.",
+    "clarification": "Seeing here is assessment, not discovery or learning.",
+    "common_misunderstandings": "Interpreted as passive observation rather than intentional evaluation.",
+    "why_it_matters": "Establishes God as the authoritative judge of creation’s fitness and order."
+  },
+  "That it was good": {
+    "original": "כִּי־טוֹב",
+    "transliteration": "kî-ṭôḇ",
+    "language": "Hebrew phrase",
+    "part_of_speech": "Evaluative declaration",
+    "basic_meaning": "That it was good; fitting and complete",
+    "usage_in_context": "Declares that the light aligns with God’s intended purpose.",
+    "clarification": "Good describes functional alignment, not moral contrast.",
+    "common_misunderstandings": "Reduced to emotional approval or moral judgment only.",
+    "why_it_matters": "Shows that creation is affirmed based on God’s design, not external standards."
+  },
+  "Separated": {
+    "original": "וַיַּבְדֵּל",
+    "transliteration": "wayyavdēl",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To separate; to divide by distinction",
+    "usage_in_context": "Describes God’s act of ordering creation by assigning distinct realms.",
+    "clarification": "Separation here is organizational, not destructive or hostile.",
+    "common_misunderstandings": "Interpreted as conflict or removal rather than placement.",
+    "why_it_matters": "Reveals that God brings order through distinction, not elimination."
+  },
+  "Light": {
+    "original": "אוֹר",
+    "transliteration": "ʾôr",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Light; illumination",
+    "usage_in_context": "Refers to the created light brought into existence by God’s word.",
+    "clarification": "The text does not yet assign function or source to the light.",
+    "common_misunderstandings": "Confused with later celestial light-bearers.",
+    "why_it_matters": "Introduces the element that will enable distinction, rhythm, and order."
+  },
+  "Darkness": {
+    "original": "חֹשֶׁךְ",
+    "transliteration": "ḥōšeḵ",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Darkness; absence of light",
+    "usage_in_context": "Identifies the contrasting condition to light within creation.",
+    "clarification": "Darkness is treated as a created condition, not a moral force.",
+    "common_misunderstandings": "Assumed to represent evil or opposition to God.",
+    "why_it_matters": "Shows that God orders both light and darkness within creation’s design."
+  }
+},
+
+
+  "5": {
+  "Called": {
+    "original": "וַיִּקְרָא",
+    "transliteration": "wayyiqrāʾ",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To call; to name",
+    "usage_in_context": "God assigns names to the light and the darkness, establishing identity and function.",
+    "clarification": "Naming here is authoritative definition, not description or discovery.",
+    "common_misunderstandings": "Treated as labeling without authority.",
+    "why_it_matters": "Shows that God defines reality by His word, assigning purpose and order."
+  },
+  "Day": {
+    "original": "יוֹם",
+    "transliteration": "yôm",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Day; period of light",
+    "usage_in_context": "Refers to the time associated with light, now formally identified by God.",
+    "clarification": "At this stage, the term defines function and rhythm, not duration by measurement.",
+    "common_misunderstandings": "Assumed to imply a later solar-based day prematurely.",
+    "why_it_matters": "Establishes time as a created and ordered reality under God’s authority."
+  },
+  "Night": {
+    "original": "לַיְלָה",
+    "transliteration": "laylāh",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Night; period of darkness",
+    "usage_in_context": "Identifies the time associated with darkness as a distinct, ordered part of creation.",
+    "clarification": "Night is defined, not condemned or opposed to God.",
+    "common_misunderstandings": "Interpreted as morally negative rather than functionally distinct.",
+    "why_it_matters": "Shows that both light and darkness are incorporated into God’s ordered design."
+  },
+  "Evening": {
+    "original": "עֶרֶב",
+    "transliteration": "ʿereḇ",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Evening; transition into darkness",
+    "usage_in_context": "Marks the beginning of the daily cycle within the creation account.",
+    "clarification": "Evening initiates the cycle, emphasizing completeness rather than chronology alone.",
+    "common_misunderstandings": "Assumed to be incidental or merely poetic.",
+    "why_it_matters": "Introduces rhythm and boundary to time as part of God’s ordered creation."
+  },
+  "Morning": {
+    "original": "בֹּקֶר",
+    "transliteration": "bōqer",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Morning; transition into light",
+    "usage_in_context": "Completes the daily cycle established by God.",
+    "clarification": "Morning signifies completion of a full cycle, not simply the start of activity.",
+    "common_misunderstandings": "Read as prioritizing productivity rather than completeness.",
+    "why_it_matters": "Reinforces that God defines time in full cycles, not partial segments."
+  },
+  "The first day": {
+    "original": "יוֹם אֶחָד",
+    "transliteration": "yôm ʾeḥāḏ",
+    "language": "Hebrew phrase",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Day one; a complete unit of time",
+    "usage_in_context": "Designates the completed cycle of light and darkness as a distinct day.",
+    "clarification": "The phrase emphasizes unity and completeness rather than sequence alone.",
+    "common_misunderstandings": "Interpreted strictly as ordinal numbering without regard to Hebrew nuance.",
+    "why_it_matters": "Establishes the foundational rhythm upon which subsequent days are built."
+  }
+},
+
+
+  "6": {
+"Firmament": {
+  "original": "רָקִיעַ",
+  "transliteration": "raqiaʿ",
+  "language": "Hebrew",
+  "part_of_speech": "Noun",
+  "basic_meaning": "Something spread out or extended",
+  "usage_in_context": "Refers to the space God establishes to order and structure the waters.",
+  "clarification": "The firmament is described functionally, not scientifically.",
+  "common_misunderstandings": "Interpreted as a solid dome or modern atmospheric explanation.",
+  "why_it_matters": "Shows that God creates order by establishing space and boundaries."
+},
+"Midst": {
+  "original": "בְּתוֹךְ",
+  "transliteration": "betokh",
+  "language": "Hebrew",
+  "part_of_speech": "Preposition",
+  "basic_meaning": "Middle, interior, within",
+  "usage_in_context": "Describes the firmament being placed within the waters rather than outside them.",
+  "clarification": "Emphasizes position, not material composition.",
+  "common_misunderstandings": "Assumed to imply layers or substances beyond the text.",
+  "why_it_matters": "Reveals that God brings order from within what already exists."
+},
+"Waters": {
+  "original": "מַיִם",
+  "transliteration": "mayim",
+  "language": "Hebrew",
+  "part_of_speech": "Noun (plural)",
+  "basic_meaning": "Waters, fluid masses",
+  "usage_in_context": "Represents the undifferentiated waters present before separation.",
+  "clarification": "The waters are part of creation, not opposed to God.",
+  "common_misunderstandings": "Seen as chaotic forces resisting God’s will.",
+  "why_it_matters": "Demonstrates that God orders creation without conflict or struggle."
+},
+"Separation": {
+  "original": "בָּדַל",
+  "transliteration": "badal",
+  "language": "Hebrew",
+  "part_of_speech": "Verb",
+  "basic_meaning": "To divide, distinguish, set apart",
+  "usage_in_context": "Describes the act of distinguishing waters by means of the firmament.",
+  "clarification": "Separation is functional, not moral or hostile.",
+  "common_misunderstandings": "Interpreted as division caused by conflict or judgment.",
+  "why_it_matters": "Establishes separation as a foundational principle of divine order."
+}
+
+  },
+
+"7": {
+  "Firmament": {
+    "original": "רָקִיעַ",
+    "transliteration": "raqiaʿ",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Something spread out or extended",
+    "usage_in_context": "Refers to what God actively makes to establish structure between the waters.",
+    "clarification": "The firmament is defined by its function of separation, not by material composition.",
+    "common_misunderstandings": "Assumed to describe a solid dome or modern atmospheric layers.",
+    "why_it_matters": "Affirms that God not only speaks order but also establishes it through action."
+  },
+  "Made": {
+    "original": "עָשָׂה",
+    "transliteration": "ʿasah",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To make, do, fashion, accomplish",
+    "usage_in_context": "Describes God actively bringing about what He previously spoke into being.",
+    "clarification": "This verb emphasizes execution rather than origin from nothing.",
+    "common_misunderstandings": "Confused with creation ex nihilo, which is not the focus of this verb.",
+    "why_it_matters": "Shows that God’s word is followed by deliberate and purposeful action."
+  },
+  "Separated": {
+    "original": "בָּדַל",
+    "transliteration": "badal",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To divide, distinguish, set apart",
+    "usage_in_context": "Describes the act of distinguishing the waters by means of the firmament.",
+    "clarification": "The separation is functional and ordered, not hostile or destructive.",
+    "common_misunderstandings": "Interpreted as division caused by conflict or judgment.",
+    "why_it_matters": "Establishes separation as a recurring pattern of divine order throughout creation."
+  },
+  "Waters": {
+    "original": "מַיִם",
+    "transliteration": "mayim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun (plural)",
+    "basic_meaning": "Waters, fluid masses",
+    "usage_in_context": "Refers to the waters positioned both beneath and above the firmament.",
+    "clarification": "The waters remain part of creation on both sides of the separation.",
+    "common_misunderstandings": "Viewed as opposing realms rather than ordered domains.",
+    "why_it_matters": "Reinforces that God assigns place and function without eliminating elements of creation."
+  },
+  "It was so": {
+    "original": "וַיְהִי־כֵן",
+    "transliteration": "vayehi ken",
+    "language": "Hebrew",
+    "part_of_speech": "Clause",
+    "basic_meaning": "And it came to be so; thus it was",
+    "usage_in_context": "Serves as a narrative seal confirming the fulfillment of God’s command.",
+    "clarification": "This phrase confirms completion, not mere agreement.",
+    "common_misunderstandings": "Taken as a stylistic filler rather than a declaration of accomplished order.",
+    "why_it_matters": "Affirms the certainty and effectiveness of God’s spoken word."
+  }
+},
+
+"8": {
+  "Called": {
+    "original": "קָרָא",
+    "transliteration": "qaraʾ",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To call, name, proclaim",
+    "usage_in_context": "Describes God assigning identity and function to the firmament.",
+    "clarification": "This act of calling is authoritative, not descriptive; God defines rather than labels.",
+    "common_misunderstandings": "Treated as a casual naming or linguistic convenience rather than an act of dominion.",
+    "why_it_matters": "Establishes that order is completed through divine definition, not merely formation."
+  },
+  "Heaven": {
+    "original": "שָׁמַיִם",
+    "transliteration": "shamayim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun (plural form)",
+    "basic_meaning": "Heavens; the elevated realm",
+    "usage_in_context": "Refers to the realm established by the firmament, now identified and set within creation.",
+    "clarification": "The term denotes a functional realm rather than a material description or theological abstraction.",
+    "common_misunderstandings": "Equated directly with God’s dwelling place or reduced to modern atmospheric categories.",
+    "why_it_matters": "Shows that God assigns realms with purpose, establishing structure without inviting speculation."
+  },
+  "Evening": {
+    "original": "עֶרֶב",
+    "transliteration": "ʿerev",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Evening; the transition toward darkness",
+    "usage_in_context": "Marks the beginning phase of the daily cycle God has established.",
+    "clarification": "Evening is presented as a natural component of ordered time, not a negative condition.",
+    "common_misunderstandings": "Interpreted symbolically as moral decline or disorder.",
+    "why_it_matters": "Reinforces that rhythm and completeness, not light alone, define God’s order of time."
+  },
+  "Morning": {
+    "original": "בֹּקֶר",
+    "transliteration": "boqer",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Morning; the breaking forth of light",
+    "usage_in_context": "Completes the daily cycle introduced by evening.",
+    "clarification": "Morning is not introduced as a new act of creation, but as the fulfillment of a set rhythm.",
+    "common_misunderstandings": "Treated as the start of the day rather than the completion of a full cycle.",
+    "why_it_matters": "Affirms that God defines completeness by rhythm and order, not by human convention."
+  },
+  "Second Day": {
+    "original": "יוֹם שֵׁנִי",
+    "transliteration": "yom sheni",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Day second",
+    "usage_in_context": "Designates the closure of the second stage of creation.",
+    "clarification": "The ordinal emphasizes sequence and completion, not duration or evaluation.",
+    "common_misunderstandings": "Interpreted as incomplete due to the absence of an explicit declaration of goodness.",
+    "why_it_matters": "Marks a finished stage of ordered work, reinforcing that not every act is immediately evaluated."
+  }
+},
+"9": {
+  "Said": {
+    "original": "אָמַר",
+    "transliteration": "amar",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To say, speak, declare",
+    "usage_in_context": "Introduces a divine command that orders what already exists.",
+    "clarification": "This speech initiates arrangement and revelation, not creation from nothing.",
+    "common_misunderstandings": "Assumed to signal a new act of creation rather than ordering.",
+    "why_it_matters": "Reinforces that God governs creation through authoritative speech."
+  },
+  "Gathered": {
+    "original": "קָוָה",
+    "transliteration": "qavah",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To collect, gather together",
+    "usage_in_context": "Describes the waters being directed into a defined boundary.",
+    "clarification": "The verb emphasizes arrangement and containment, not removal or conflict.",
+    "common_misunderstandings": "Read as forceful displacement or reduction of the waters.",
+    "why_it_matters": "Shows that God brings order by assigning place rather than eliminating elements."
+  },
+  "Waters": {
+    "original": "מַיִם",
+    "transliteration": "mayim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun (plural)",
+    "basic_meaning": "Waters; fluid masses",
+    "usage_in_context": "Refers to the waters beneath the heavens that are gathered.",
+    "clarification": "The waters remain part of creation, now governed by boundary.",
+    "common_misunderstandings": "Viewed as chaotic forces needing defeat.",
+    "why_it_matters": "Affirms that God orders creation through placement, not opposition."
+  },
+  "Appear": {
+    "original": "רָאָה",
+    "transliteration": "raʾah",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To be seen, become visible",
+    "usage_in_context": "Describes the dry land becoming visible as the waters are gathered.",
+    "clarification": "The land is revealed, not newly created in this verse.",
+    "common_misunderstandings": "Taken to imply creation ex nihilo at this moment.",
+    "why_it_matters": "Supports a reading of revelation and arrangement rather than origination."
+  },
+  "Dry Land": {
+    "original": "יַבָּשָׁה",
+    "transliteration": "yabbashah",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Dry ground; land",
+    "usage_in_context": "Refers to the land that becomes visible once the waters are gathered.",
+    "clarification": "The text focuses on visibility and function, not substance or origin.",
+    "common_misunderstandings": "Assumed to be created only at this point rather than revealed.",
+    "why_it_matters": "Establishes land as prepared space for what will follow in creation."
+  },
+  "It Was So": {
+    "original": "וַיְהִי־כֵן",
+    "transliteration": "vayehi ken",
+    "language": "Hebrew",
+    "part_of_speech": "Clause",
+    "basic_meaning": "And it came to be so; thus it was",
+    "usage_in_context": "Functions as a fulfillment seal confirming the effectiveness of God’s command.",
+    "clarification": "This clause declares completion, not explanation.",
+    "common_misunderstandings": "Read as narrative filler rather than a juridical confirmation.",
+    "why_it_matters": "Affirms the certainty and immediacy of God’s spoken authority."
+  }
+},
+"10": {
+  "Called": {
+    "original": "קָרָא",
+    "transliteration": "qaraʾ",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To call, name, proclaim",
+    "usage_in_context": "Describes God assigning identity and role to both land and seas.",
+    "clarification": "This act of calling establishes authority and definition, not description or discovery.",
+    "common_misunderstandings": "Reduced to a labeling act rather than an exercise of dominion.",
+    "why_it_matters": "Affirms that creation is ordered and governed by God through definition."
+  },
+  "Earth": {
+    "original": "אֶרֶץ",
+    "transliteration": "erets",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Land, earth, ground",
+    "usage_in_context": "Refers to the dry land now identified and distinguished from the waters.",
+    "clarification": "The term emphasizes function and realm rather than material composition.",
+    "common_misunderstandings": "Assumed to refer immediately to the inhabited world or later geographic concepts.",
+    "why_it_matters": "Establishes land as a defined domain prepared for life and order."
+  },
+  "Gathering": {
+    "original": "מִקְוֶה",
+    "transliteration": "miqveh",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "A collecting, gathering together",
+    "usage_in_context": "Describes the contained body of waters brought into ordered boundary.",
+    "clarification": "Focuses on collected state rather than the waters themselves.",
+    "common_misunderstandings": "Taken as a poetic reference rather than a structural designation.",
+    "why_it_matters": "Highlights that order is defined by boundary and placement, not removal."
+  },
+  "Seas": {
+    "original": "יַמִּים",
+    "transliteration": "yammim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun (plural)",
+    "basic_meaning": "Seas, large bodies of water",
+    "usage_in_context": "Names the gathered waters as a distinct and governed realm.",
+    "clarification": "The plural form reflects extent and domain, not multiplicity of deities or chaos.",
+    "common_misunderstandings": "Associated with disorder or threat rather than governed creation.",
+    "why_it_matters": "Affirms that even vast and powerful elements are named and ruled by God."
+  },
+  "Saw": {
+    "original": "רָאָה",
+    "transliteration": "raʾah",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To see, observe, assess",
+    "usage_in_context": "Introduces divine evaluation of what has been ordered and named.",
+    "clarification": "This seeing is judicial and intentional, not passive observation.",
+    "common_misunderstandings": "Read as emotional satisfaction rather than authoritative assessment.",
+    "why_it_matters": "Shows that creation advances under God’s deliberate judgment."
+  },
+  "Good": {
+    "original": "טוֹב",
+    "transliteration": "tov",
+    "language": "Hebrew",
+    "part_of_speech": "Adjective",
+    "basic_meaning": "Good, fitting, appropriate",
+    "usage_in_context": "Declares that the ordered domains align with God’s intent.",
+    "clarification": "This goodness denotes functional alignment, not moral perfection.",
+    "common_misunderstandings": "Interpreted sentimentally or morally rather than structurally.",
+    "why_it_matters": "Marks divine approval and readiness for the next stage of creation."
+  }
+},
+"11": {
+  "Bring Forth": {
+    "original": "דָּשָׁא",
+    "transliteration": "dashaʾ",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To sprout, cause to grow",
+    "usage_in_context": "Describes the earth producing vegetation in response to God’s command.",
+    "clarification": "The verb indicates delegated productivity under divine authority, not autonomous generation.",
+    "common_misunderstandings": "Read as naturalistic self-origination apart from God’s command.",
+    "why_it_matters": "Establishes that creation is entrusted to act only within the bounds of God’s word."
+  },
+  "Earth": {
+    "original": "אֶרֶץ",
+    "transliteration": "erets",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Land, earth, ground",
+    "usage_in_context": "Identifies the earth as the agent through which vegetation is produced.",
+    "clarification": "The earth acts as an instrument of God’s command, not an independent source.",
+    "common_misunderstandings": "Treated as possessing creative autonomy.",
+    "why_it_matters": "Shows that God often works through what He has made without relinquishing sovereignty."
+  },
+  "Vegetation": {
+    "original": "דֶּשֶׁא",
+    "transliteration": "desheʾ",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Green plants, sprouting growth",
+    "usage_in_context": "Functions as a broad category encompassing plant life produced on the land.",
+    "clarification": "The term is categorical, not exhaustive or scientific.",
+    "common_misunderstandings": "Assumed to correspond to modern biological classifications.",
+    "why_it_matters": "Introduces life that is ordered, productive, and governed by God’s design."
+  },
+  "Yielding Seed": {
+    "original": "זָרַע",
+    "transliteration": "zaraʿ",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To sow, produce seed",
+    "usage_in_context": "Describes plants that carry within themselves the means of continuation.",
+    "clarification": "Seed-bearing is presented as designed continuity, not evolutionary process.",
+    "common_misunderstandings": "Interpreted as implying self-directed development.",
+    "why_it_matters": "Affirms that fruitfulness is embedded by God and accountable to His order."
+  },
+  "According to Their Kind": {
+    "original": "לְמִינוֹ",
+    "transliteration": "lemino",
+    "language": "Hebrew",
+    "part_of_speech": "Prepositional phrase",
+    "basic_meaning": "According to its kind",
+    "usage_in_context": "Defines the boundaries of reproduction and continuity.",
+    "clarification": "This phrase establishes limitation and identity, not flexibility or mutation.",
+    "common_misunderstandings": "Taken as compatible with unrestricted transformation.",
+    "why_it_matters": "Safeguards order by affirming that fruitfulness operates within defined boundaries."
+  },
+  "Seed Is in Them": {
+    "original": "אֲשֶׁר זַרְעוֹ־בוֹ",
+    "transliteration": "asher zarʿo bo",
+    "language": "Hebrew",
+    "part_of_speech": "Relative clause",
+    "basic_meaning": "Whose seed is within it",
+    "usage_in_context": "Emphasizes internal capacity for reproduction.",
+    "clarification": "Continuity is internal by design, not sustained by repeated creative acts.",
+    "common_misunderstandings": "Read as mechanistic biology rather than theological design.",
+    "why_it_matters": "Reinforces that God builds endurance and responsibility into creation."
+  },
+  "It Was So": {
+    "original": "וַיְהִי־כֵן",
+    "transliteration": "vayehi ken",
+    "language": "Hebrew",
+    "part_of_speech": "Clause",
+    "basic_meaning": "And it came to be so; thus it was",
+    "usage_in_context": "Confirms the successful fulfillment of God’s command.",
+    "clarification": "This clause declares completion, not explanation.",
+    "common_misunderstandings": "Dismissed as narrative filler.",
+    "why_it_matters": "Affirms the certainty and effectiveness of God’s spoken authority."
+  }
+},
+"12": {
+  "Brought Forth": {
+    "original": "יָצָא",
+    "transliteration": "yatsaʾ",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To come out, bring forth",
+    "usage_in_context": "Describes the earth producing vegetation in direct response to God’s command.",
+    "clarification": "This verb records fulfillment, not initiation; the action corresponds to delegated instruction.",
+    "common_misunderstandings": "Read as spontaneous or autonomous production apart from divine command.",
+    "why_it_matters": "Confirms that creation acts obediently within the authority God has established."
+  },
+  "Earth": {
+    "original": "אֶרֶץ",
+    "transliteration": "erets",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Land, earth, ground",
+    "usage_in_context": "Functions as the instrument through which vegetation emerges.",
+    "clarification": "The earth operates under command, not as an independent source of life.",
+    "common_misunderstandings": "Assumed to possess creative autonomy.",
+    "why_it_matters": "Reinforces the pattern of delegated action established in verse 11."
+  },
+  "Vegetation": {
+    "original": "דֶּשֶׁא",
+    "transliteration": "desheʾ",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Green growth, sprouting plants",
+    "usage_in_context": "Identifies the category of life that emerges from the land.",
+    "clarification": "The term is broad and functional, not a technical classification.",
+    "common_misunderstandings": "Mapped directly onto modern biological taxonomy.",
+    "why_it_matters": "Demonstrates that life appears ordered, productive, and governed."
+  },
+  "Yielding Seed": {
+    "original": "זָרַע",
+    "transliteration": "zaraʿ",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To sow, produce seed",
+    "usage_in_context": "Describes plants reproducing with continuity according to design.",
+    "clarification": "Seed-bearing reflects intentional design, not self-directed development.",
+    "common_misunderstandings": "Interpreted as implying evolutionary autonomy.",
+    "why_it_matters": "Affirms that fruitfulness operates within boundaries God has set."
+  },
+  "According to Their Kind": {
+    "original": "לְמִינֵהוּ",
+    "transliteration": "leminehu",
+    "language": "Hebrew",
+    "part_of_speech": "Prepositional phrase",
+    "basic_meaning": "According to its kind",
+    "usage_in_context": "Appears repeatedly to confirm faithful correspondence between command and outcome.",
+    "clarification": "This phrase emphasizes stability and limitation, not variation or experimentation.",
+    "common_misunderstandings": "Taken to allow unrestricted transformation across kinds.",
+    "why_it_matters": "Shows that obedience in creation includes maintaining defined identity."
+  },
+  "Saw": {
+    "original": "רָאָה",
+    "transliteration": "raʾah",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To see, observe, assess",
+    "usage_in_context": "Introduces God’s evaluation of the fulfilled command.",
+    "clarification": "This seeing is deliberate and judicial, not passive observation.",
+    "common_misunderstandings": "Read as emotional satisfaction rather than authoritative judgment.",
+    "why_it_matters": "Marks divine approval based on alignment with God’s intent."
+  },
+  "Good": {
+    "original": "טוֹב",
+    "transliteration": "tov",
+    "language": "Hebrew",
+    "part_of_speech": "Adjective",
+    "basic_meaning": "Good, fitting, appropriate",
+    "usage_in_context": "Declares that the outcome corresponds fully to God’s design.",
+    "clarification": "Goodness here denotes functional alignment, not moral commentary.",
+    "common_misunderstandings": "Understood sentimentally or ethically rather than structurally.",
+    "why_it_matters": "Signals readiness for the next stage of creation to proceed."
+  }
+},
+"13": {
+  "Evening": {
+    "original": "עֶרֶב",
+    "transliteration": "ʿerev",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Evening; the transition into darkness",
+    "usage_in_context": "Marks the beginning phase of the daily cycle that brings Day Three to completion.",
+    "clarification": "Evening is presented as a normal and ordered component of time, not a negative state.",
+    "common_misunderstandings": "Interpreted symbolically as decline or disorder.",
+    "why_it_matters": "Reinforces that God defines completeness through rhythm, not uninterrupted activity."
+  },
+  "Morning": {
+    "original": "בֹּקֶר",
+    "transliteration": "boqer",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Morning; the breaking forth of light",
+    "usage_in_context": "Completes the daily cycle that concludes the third day.",
+    "clarification": "Morning is not a new act of creation, but the fulfillment of an established rhythm.",
+    "common_misunderstandings": "Assumed to represent a new beginning rather than completion.",
+    "why_it_matters": "Affirms that God’s work proceeds through complete cycles rather than continuous motion."
+  },
+  "Third Day": {
+    "original": "יוֹם שְׁלִישִׁי",
+    "transliteration": "yom shelishi",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Day third",
+    "usage_in_context": "Designates the closure of the third stage of creation.",
+    "clarification": "The ordinal marks sequence and completion, not duration or evaluation.",
+    "common_misunderstandings": "Treated as symbolic rather than a defined stage within ordered time.",
+    "why_it_matters": "Confirms that God’s creative work advances in deliberate, complete stages."
+  }
+},
+"14": {
+  "Lights": {
+    "original": "מְאֹרֹת",
+    "transliteration": "me'orot",
+    "language": "Hebrew",
+    "part_of_speech": "Noun (plural)",
+    "basic_meaning": "Lights; sources of illumination",
+    "usage_in_context": "Refers to the celestial lights placed by God within the firmament to govern time.",
+    "clarification": "These lights are defined by function, not identity or divinity.",
+    "common_misunderstandings": "Interpreted as autonomous powers or objects of worship.",
+    "why_it_matters": "Affirms that created lights serve God’s order rather than possessing authority of their own."
+  },
+  "Firmament": {
+    "original": "רָקִיעַ",
+    "transliteration": "raqiaʿ",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Something spread out or extended",
+    "usage_in_context": "Identifies the ordered space in which the lights are placed.",
+    "clarification": "The firmament functions as an assigned realm, not a material explanation.",
+    "common_misunderstandings": "Assumed to describe modern atmospheric layers or a solid dome.",
+    "why_it_matters": "Reinforces that God assigns location and function within creation deliberately."
+  },
+  "Divide": {
+    "original": "בָּדַל",
+    "transliteration": "badal",
+    "language": "Hebrew",
+    "part_of_speech": "Verb",
+    "basic_meaning": "To divide, distinguish, set apart",
+    "usage_in_context": "Describes the governing role of the lights in maintaining distinction between day and night.",
+    "clarification": "The division is functional and ongoing, not an act of conflict.",
+    "common_misunderstandings": "Read as symbolic opposition rather than ordered distinction.",
+    "why_it_matters": "Establishes that separation remains a foundational principle of God’s order."
+  },
+  "Signs": {
+    "original": "אֹתֹת",
+    "transliteration": "otot",
+    "language": "Hebrew",
+    "part_of_speech": "Noun (plural)",
+    "basic_meaning": "Signs, markers, indicators",
+    "usage_in_context": "Refers to the lights serving as indicators within God’s ordered creation.",
+    "clarification": "Signs communicate meaning but do not determine destiny.",
+    "common_misunderstandings": "Used to justify astrological or divinatory practices.",
+    "why_it_matters": "Affirms that meaning is communicated through creation without granting it authority."
+  },
+  "Appointed Times": {
+    "original": "מוֹעֲדִים",
+    "transliteration": "mo'adim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun (plural)",
+    "basic_meaning": "Appointed times; fixed occasions",
+    "usage_in_context": "Describes divinely scheduled times governed by the lights.",
+    "clarification": "These times are established by God, not discovered or controlled by humanity.",
+    "common_misunderstandings": "Flattened into generic seasons without covenantal weight.",
+    "why_it_matters": "Introduces the concept of sacred and ordered time within creation."
+  },
+  "Days and Years": {
+    "original": "יָמִים וְשָׁנִים",
+    "transliteration": "yamim ve-shanim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Days and years",
+    "usage_in_context": "Defines measurable units of time governed by the lights.",
+    "clarification": "Time is structured and finite, not cyclical or self-governing.",
+    "common_misunderstandings": "Viewed as abstract measurements rather than divinely ordered units.",
+    "why_it_matters": "Establishes history, accountability, and continuity within God’s creation."
+  }
+},
+"15": {
+  "Lights": {
+    "original": "מְאֹרֹת",
+    "transliteration": "me'orot",
+    "language": "Hebrew",
+    "part_of_speech": "Noun (plural)",
+    "basic_meaning": "Lights; sources of illumination",
+    "usage_in_context": "Refers to the heavenly lights appointed by God to provide illumination upon the earth.",
+    "clarification": "These lights function as instruments, not authorities or independent powers.",
+    "common_misunderstandings": "Viewed as governing forces or objects of worship.",
+    "why_it_matters": "Reinforces that created lights serve God’s purposes rather than ruling creation themselves."
+  },
+  "Firmament": {
+    "original": "רָקִיעַ",
+    "transliteration": "raqiaʿ",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Something spread out or extended",
+    "usage_in_context": "Identifies the ordered realm in which the lights are placed.",
+    "clarification": "Defined by assigned function and placement, not by material composition.",
+    "common_misunderstandings": "Assumed to describe modern atmospheric or astronomical models.",
+    "why_it_matters": "Shows that God assigns both position and purpose within creation."
+  },
+  "Give Light": {
+    "original": "לְהָאִיר",
+    "transliteration": "leha'ir",
+    "language": "Hebrew",
+    "part_of_speech": "Infinitive construct (Verb)",
+    "basic_meaning": "To shine, illuminate, give light",
+    "usage_in_context": "Describes the ongoing role of the lights toward the earth.",
+    "clarification": "Illumination is intentional and sustaining, not incidental.",
+    "common_misunderstandings": "Reduced to a passive byproduct rather than a designed function.",
+    "why_it_matters": "Affirms that God’s design includes provision and visibility for life."
+  },
+  "Earth": {
+    "original": "הָאָרֶץ",
+    "transliteration": "ha'aretz",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "The earth; land",
+    "usage_in_context": "Identifies the recipient of the lights’ illumination.",
+    "clarification": "The earth is portrayed as dependent upon what God establishes above it.",
+    "common_misunderstandings": "Treated as autonomous or self-sustaining.",
+    "why_it_matters": "Reinforces the ordered relationship between heavens and earth."
+  },
+  "It Was So": {
+    "original": "וַיְהִי־כֵן",
+    "transliteration": "vayehi ken",
+    "language": "Hebrew",
+    "part_of_speech": "Clause",
+    "basic_meaning": "And it came to be so; thus it was",
+    "usage_in_context": "Serves as a narrative seal confirming fulfillment of God’s command.",
+    "clarification": "Marks completion and certainty, not mere agreement.",
+    "common_misunderstandings": "Dismissed as stylistic repetition.",
+    "why_it_matters": "Affirms the reliability and effectiveness of God’s spoken word."
+  }
+},
+"16": {
+  "Great Lights": {
+    "original": "הַמְּאֹרֹת הַגְּדֹלִים",
+    "transliteration": "hamme'orot hagedolim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "The great lights",
+    "usage_in_context": "Refers to the two primary celestial lights appointed for governing day and night.",
+    "clarification": "The phrase emphasizes function and relative prominence, not inherent power or divinity.",
+    "common_misunderstandings": "Interpreted as divine beings or cosmic authorities.",
+    "why_it_matters": "Affirms that even the most prominent lights are created objects under God’s authority."
+  },
+  "Greater Light": {
+    "original": "הַמָּאוֹר הַגָּדוֹל",
+    "transliteration": "hamma'or hagadol",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "The greater light",
+    "usage_in_context": "Identifies the light assigned to govern the daytime period.",
+    "clarification": "The text avoids naming the sun, emphasizing role over identity.",
+    "common_misunderstandings": "Assumed to elevate the light beyond its assigned function.",
+    "why_it_matters": "Undermines ancient sun-worship by presenting the light as a servant, not a deity."
+  },
+  "Lesser Light": {
+    "original": "הַמָּאוֹר הַקָּטֹן",
+    "transliteration": "hamma'or haqqaton",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "The lesser light",
+    "usage_in_context": "Identifies the light assigned to govern the nighttime period.",
+    "clarification": "The distinction is functional, not qualitative or moral.",
+    "common_misunderstandings": "Viewed as inferior in value rather than differing in assignment.",
+    "why_it_matters": "Reinforces ordered hierarchy without rivalry or competition."
+  },
+  "Rule": {
+    "original": "לִמְשֹׁל",
+    "transliteration": "limshol",
+    "language": "Hebrew",
+    "part_of_speech": "Infinitive construct (Verb)",
+    "basic_meaning": "To govern, exercise authority",
+    "usage_in_context": "Describes the functional authority assigned to the lights over time periods.",
+    "clarification": "This rule is delegated and limited, not autonomous.",
+    "common_misunderstandings": "Taken to imply independent sovereignty.",
+    "why_it_matters": "Shows that authority in creation is granted by God and bounded by His will."
+  },
+  "Stars": {
+    "original": "וְאֵת הַכּוֹכָבִים",
+    "transliteration": "ve'et hakochavim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun (plural)",
+    "basic_meaning": "Stars",
+    "usage_in_context": "Briefly acknowledges the creation of the stars without elaboration.",
+    "clarification": "The understated mention minimizes their significance compared to the primary lights.",
+    "common_misunderstandings": "Later elevated as sources of fate, guidance, or divine influence.",
+    "why_it_matters": "Deliberately strips celestial bodies of mythic or governing status."
+  }
+},
+"17": {
+  "Set": {
+    "original": "וַיִּתֵּן",
+    "transliteration": "vayitten",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal, wayyiqtol)",
+    "basic_meaning": "To give, place, set",
+    "usage_in_context": "Describes God intentionally placing the lights in their appointed location.",
+    "clarification": "This action emphasizes deliberate placement rather than creation or naming.",
+    "common_misunderstandings": "Read as a repeat of creation rather than an act of positioning.",
+    "why_it_matters": "Shows that God not only creates but also orders and assigns function through placement."
+  },
+  "Firmament": {
+    "original": "רָקִיעַ",
+    "transliteration": "raqiaʿ",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Something spread out or extended",
+    "usage_in_context": "Identifies the structured realm where the lights are placed.",
+    "clarification": "Defined by its role as ordered space, not by material composition.",
+    "common_misunderstandings": "Equated with modern scientific categories.",
+    "why_it_matters": "Reinforces that God assigns spatial order within creation."
+  },
+  "Heavens": {
+    "original": "הַשָּׁמַיִם",
+    "transliteration": "hashamayim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun (plural)",
+    "basic_meaning": "The heavens; sky realms",
+    "usage_in_context": "Names the realm associated with the firmament.",
+    "clarification": "The plural form conveys expanse and scope, not multiple deities or layers.",
+    "common_misunderstandings": "Speculated as multiple cosmological tiers.",
+    "why_it_matters": "Maintains the Hebrew sense of vastness under God’s authority."
+  },
+  "Give Light": {
+    "original": "לְהָאִיר",
+    "transliteration": "leha'ir",
+    "language": "Hebrew",
+    "part_of_speech": "Infinitive construct (Verb)",
+    "basic_meaning": "To shine, illuminate",
+    "usage_in_context": "States the purpose of the lights toward the earth.",
+    "clarification": "Function is emphasized over origin or power.",
+    "common_misunderstandings": "Treated as incidental rather than assigned purpose.",
+    "why_it_matters": "Affirms that illumination is a deliberate provision within God’s design."
+  },
+  "Earth": {
+    "original": "הָאָרֶץ",
+    "transliteration": "ha'aretz",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "The earth; land",
+    "usage_in_context": "Identifies the recipient of the lights’ function.",
+    "clarification": "The earth is portrayed as dependent on what God establishes above it.",
+    "common_misunderstandings": "Viewed as self-sustaining or independent.",
+    "why_it_matters": "Reinforces ordered dependence within creation."
+  }
+},
+"18": {
+  "Rule": {
+    "original": "לִמְשֹׁל",
+    "transliteration": "limshol",
+    "language": "Hebrew",
+    "part_of_speech": "Infinitive construct (Verb)",
+    "basic_meaning": "To govern, exercise authority",
+    "usage_in_context": "Describes the delegated authority of the lights over the periods of day and night.",
+    "clarification": "This rule is functional and limited, not sovereign or autonomous.",
+    "common_misunderstandings": "Interpreted as independent power or dominance.",
+    "why_it_matters": "Reinforces that authority within creation is assigned by God and remains under His governance."
+  },
+  "Day": {
+    "original": "הַיּוֹם",
+    "transliteration": "hayom",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Day; daylight period",
+    "usage_in_context": "Identifies the time governed by the greater light.",
+    "clarification": "Refers to an ordered period within time, not merely daylight in general.",
+    "common_misunderstandings": "Flattened into an abstract concept rather than a governed span.",
+    "why_it_matters": "Shows that time itself operates under assigned order."
+  },
+  "Night": {
+    "original": "הַלַּיְלָה",
+    "transliteration": "hallaylah",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Night; period of darkness",
+    "usage_in_context": "Identifies the time governed by the lesser light.",
+    "clarification": "Night is governed, not opposed to the created order.",
+    "common_misunderstandings": "Moralized as a symbol of evil rather than a structured period.",
+    "why_it_matters": "Affirms that both light and darkness exist within God’s ordered design."
+  },
+  "Separate": {
+    "original": "לְהַבְדִּיל",
+    "transliteration": "lehavdil",
+    "language": "Hebrew",
+    "part_of_speech": "Infinitive construct (Verb)",
+    "basic_meaning": "To divide, distinguish, set apart",
+    "usage_in_context": "Describes the ongoing function of maintaining distinction between light and darkness.",
+    "clarification": "Separation is functional and ordered, not hostile.",
+    "common_misunderstandings": "Understood as moral opposition or conflict.",
+    "why_it_matters": "Establishes distinction as a sustaining principle of divine order."
+  },
+  "Light": {
+    "original": "הָאוֹר",
+    "transliteration": "ha'or",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Light; illumination",
+    "usage_in_context": "Refers to the light governed and maintained by the greater light.",
+    "clarification": "Light is treated as a created reality under regulation.",
+    "common_misunderstandings": "Elevated beyond its assigned function.",
+    "why_it_matters": "Shows that even foundational elements operate within God’s structure."
+  },
+  "Darkness": {
+    "original": "הַחֹשֶׁךְ",
+    "transliteration": "hachoshekh",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Darkness",
+    "usage_in_context": "Refers to the absence of light within the ordered cycle of time.",
+    "clarification": "Darkness is not portrayed as evil, but as a defined condition.",
+    "common_misunderstandings": "Moralized or personified as opposing God.",
+    "why_it_matters": "Maintains the non-moral, structural understanding of creation at this stage."
+  },
+  "It Was Good": {
+    "original": "כִּי־טוֹב",
+    "transliteration": "ki tov",
+    "language": "Hebrew",
+    "part_of_speech": "Clause",
+    "basic_meaning": "That it was good",
+    "usage_in_context": "Records God’s evaluation of the established order and function.",
+    "clarification": "Goodness here denotes fitness and alignment with divine intent.",
+    "common_misunderstandings": "Read as emotional approval rather than evaluative judgment.",
+    "why_it_matters": "Confirms that ordered governance meets God’s design standard."
+  }
+},
+"19": {
+  "Evening": {
+    "original": "עֶרֶב",
+    "transliteration": "erev",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Evening; dusk",
+    "usage_in_context": "Marks the closing phase of the daily cycle.",
+    "clarification": "Evening initiates the cycle, not merely concludes activity.",
+    "common_misunderstandings": "Assumed to be incidental rather than structurally significant.",
+    "why_it_matters": "Reinforces the ordered rhythm God establishes for time."
+  },
+  "Morning": {
+    "original": "בֹּקֶר",
+    "transliteration": "boqer",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Morning; dawn",
+    "usage_in_context": "Completes the daily cycle that began with evening.",
+    "clarification": "Morning signifies completion of a full period, not merely the start of activity.",
+    "common_misunderstandings": "Viewed as the beginning rather than the culmination of the cycle.",
+    "why_it_matters": "Shows that God defines time by completion, not productivity."
+  },
+  "Fourth Day": {
+    "original": "יוֹם רְבִיעִי",
+    "transliteration": "yom revi'i",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Fourth day",
+    "usage_in_context": "Designates the completion of the fourth ordered cycle of creation.",
+    "clarification": "The numbering reflects sequence and structure, not duration commentary.",
+    "common_misunderstandings": "Overinterpreted to address modern chronological debates.",
+    "why_it_matters": "Affirms that creation unfolds through deliberate, counted stages."
+  }
+},
+"20": {
+  "Bring Forth Abundantly": {
+    "original": "יִשְׁרְצוּ",
+    "transliteration": "yishretsu",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal, imperfect)",
+    "basic_meaning": "To swarm, teem, bring forth abundantly",
+    "usage_in_context": "Describes the waters producing life in great numbers.",
+    "clarification": "The abundance is a function of divine command, not autonomous generation.",
+    "common_misunderstandings": "Read as uncontrolled or chaotic proliferation.",
+    "why_it_matters": "Establishes abundance as ordered fruitfulness under God’s word."
+  },
+  "Moving Creature": {
+    "original": "שֶׁרֶץ",
+    "transliteration": "sherets",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "A moving or swarming creature",
+    "usage_in_context": "Refers broadly to living creatures that move within the waters.",
+    "clarification": "The term is descriptive of movement, not a value judgment.",
+    "common_misunderstandings": "Limited to a narrow category or treated as inferior by nature.",
+    "why_it_matters": "Shows that movement and life are intentional features of creation."
+  },
+  "Has Life": {
+    "original": "נֶפֶשׁ חַיָּה",
+    "transliteration": "nephesh chayyah",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "A living being; living life",
+    "usage_in_context": "Qualifies the creatures as possessing life.",
+    "clarification": "Life is attributed by God’s design, not by self-origin.",
+    "common_misunderstandings": "Collapsed into later theological categories not present here.",
+    "why_it_matters": "Introduces animate life as a distinct and intentional stage of creation."
+  },
+  "Birds": {
+    "original": "עוֹף",
+    "transliteration": "ʿof",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Flying creatures; birds",
+    "usage_in_context": "Identifies creatures appointed to the aerial domain.",
+    "clarification": "Defined by function and domain rather than taxonomy.",
+    "common_misunderstandings": "Forced into modern biological classifications.",
+    "why_it_matters": "Reinforces domain-specific ordering within creation."
+  },
+  "Fly Above": {
+    "original": "יְעוֹפֵף",
+    "transliteration": "yeʿofef",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Polel, imperfect)",
+    "basic_meaning": "To fly, flutter",
+    "usage_in_context": "Describes the assigned movement of birds within their domain.",
+    "clarification": "Movement is purposeful and bounded by God’s ordering.",
+    "common_misunderstandings": "Treated as incidental rather than assigned.",
+    "why_it_matters": "Affirms that motion within creation operates under divine structure."
+  },
+  "Firmament": {
+    "original": "רָקִיעַ",
+    "transliteration": "raqiaʿ",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Something spread out or extended",
+    "usage_in_context": "Names the ordered space across which birds fly.",
+    "clarification": "Defined by function as ordered space, not by material composition.",
+    "common_misunderstandings": "Equated with modern scientific models.",
+    "why_it_matters": "Maintains spatial order between waters, earth, and heavens."
+  },
+  "Heavens": {
+    "original": "הַשָּׁמַיִם",
+    "transliteration": "hashamayim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun (plural)",
+    "basic_meaning": "The heavens; sky realms",
+    "usage_in_context": "Identifies the upper domain associated with flight.",
+    "clarification": "The plural conveys expanse, not layered cosmology.",
+    "common_misunderstandings": "Overinterpreted as multiple spiritual realms.",
+    "why_it_matters": "Reinforces the ordered expanse under God’s authority."
+  }
+},
+"21": {
+  "Created": {
+    "original": "בָּרָא",
+    "transliteration": "bara",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal)",
+    "basic_meaning": "To create, bring into existence",
+    "usage_in_context": "Marks a direct act of divine creation associated with living beings.",
+    "clarification": "This verb is reserved for God’s creative action and emphasizes origination rather than arrangement.",
+    "common_misunderstandings": "Confused with general making or shaping verbs used elsewhere in the chapter.",
+    "why_it_matters": "Signals the significance of life as a direct creative act of God."
+  },
+  "Great Sea Creatures": {
+    "original": "הַתַּנִּינִם הַגְּדֹלִים",
+    "transliteration": "hattanninim hagedolim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "The great sea creatures",
+    "usage_in_context": "Refers to large and formidable aquatic creatures brought into existence by God.",
+    "clarification": "The term emphasizes size and presence, not specific species.",
+    "common_misunderstandings": "Narrowed to modern zoological categories such as whales only.",
+    "why_it_matters": "Affirms that even the most awe-inspiring creatures of the sea are part of God’s created order."
+  },
+  "Living Creature": {
+    "original": "נֶפֶשׁ חַיָּה",
+    "transliteration": "nephesh chayyah",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "A living being",
+    "usage_in_context": "Identifies animate life characterized by movement and vitality.",
+    "clarification": "Life is described functionally, not philosophically.",
+    "common_misunderstandings": "Loaded with later theological definitions not present here.",
+    "why_it_matters": "Introduces a category of life that will be expanded throughout the creation account."
+  },
+  "Moves": {
+    "original": "הָרֹמֶשֶׂת",
+    "transliteration": "haromeset",
+    "language": "Hebrew",
+    "part_of_speech": "Participle (Verb)",
+    "basic_meaning": "That moves, creeps, swarms",
+    "usage_in_context": "Describes the dynamic motion of aquatic life.",
+    "clarification": "The term highlights movement, not hierarchy or value.",
+    "common_misunderstandings": "Interpreted as implying inferiority.",
+    "why_it_matters": "Reinforces that motion and vitality are intentional features of life."
+  },
+  "According to Their Kinds": {
+    "original": "לְמִינֵהֶם",
+    "transliteration": "leminehem",
+    "language": "Hebrew",
+    "part_of_speech": "Prepositional phrase",
+    "basic_meaning": "According to their kinds",
+    "usage_in_context": "Establishes boundaries for reproduction and identity.",
+    "clarification": "This phrase emphasizes continuity and order within life.",
+    "common_misunderstandings": "Overextended to modern biological debates.",
+    "why_it_matters": "Affirms stability and structure within God’s design for living creatures."
+  },
+  "Winged Bird": {
+    "original": "כָּל־עוֹף כָּנָף",
+    "transliteration": "kol-ʿof kanaf",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Every winged flying creature",
+    "usage_in_context": "Identifies aerial life distinct from aquatic creatures.",
+    "clarification": "Defined by function and domain rather than taxonomy.",
+    "common_misunderstandings": "Forced into modern classification systems.",
+    "why_it_matters": "Reinforces God’s ordered assignment of life to specific realms."
+  },
+  "It Was Good": {
+    "original": "כִּי־טוֹב",
+    "transliteration": "ki tov",
+    "language": "Hebrew",
+    "part_of_speech": "Clause",
+    "basic_meaning": "That it was good",
+    "usage_in_context": "Records God’s evaluation of the created life.",
+    "clarification": "Goodness denotes fitness and alignment with God’s intent.",
+    "common_misunderstandings": "Reduced to emotional approval.",
+    "why_it_matters": "Confirms that the abundance and order of life meet God’s design standard."
+  }
+},
+"22": {
+  "Blessed": {
+    "original": "בָּרַךְ",
+    "transliteration": "barak",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Piel)",
+    "basic_meaning": "To bless; to endow with favor or capacity",
+    "usage_in_context": "Marks God’s bestowal of capacity for growth and continuation upon living creatures.",
+    "clarification": "The blessing grants ability and purpose rather than expressing sentiment.",
+    "common_misunderstandings": "Reduced to encouragement or approval without effect.",
+    "why_it_matters": "Introduces blessing as an active empowerment within creation."
+  },
+  "Be Fruitful": {
+    "original": "פְּרוּ",
+    "transliteration": "peru",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal imperative)",
+    "basic_meaning": "To bear fruit; to be productive",
+    "usage_in_context": "Commands living creatures toward productive life.",
+    "clarification": "Fruitfulness is commanded, not optional or self-generated.",
+    "common_misunderstandings": "Interpreted solely in metaphorical or later theological terms.",
+    "why_it_matters": "Establishes productivity as a core expectation of life under God’s blessing."
+  },
+  "Multiply": {
+    "original": "רְבוּ",
+    "transliteration": "revu",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal imperative)",
+    "basic_meaning": "To become many; to increase",
+    "usage_in_context": "Directs life to expand in number within assigned domains.",
+    "clarification": "Increase operates within boundaries set by God.",
+    "common_misunderstandings": "Read as unrestricted or chaotic expansion.",
+    "why_it_matters": "Shows that growth is intended but ordered."
+  },
+  "Fill": {
+    "original": "וּמִלְאוּ",
+    "transliteration": "u-mil'u",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal imperative)",
+    "basic_meaning": "To fill; to make full",
+    "usage_in_context": "Assigns life to occupy the seas fully.",
+    "clarification": "Filling completes prior preparation of space.",
+    "common_misunderstandings": "Treated as overpopulation rather than fulfillment.",
+    "why_it_matters": "Connects blessing with the fulfillment of God’s ordered spaces."
+  },
+  "Seas": {
+    "original": "יַּמִּים",
+    "transliteration": "yammim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun (plural)",
+    "basic_meaning": "Seas; bodies of water",
+    "usage_in_context": "Identifies the domain assigned to aquatic life.",
+    "clarification": "The seas are already named and bounded (v.10).",
+    "common_misunderstandings": "Viewed as chaotic or hostile realms.",
+    "why_it_matters": "Affirms that life flourishes within defined boundaries."
+  },
+  "Birds": {
+    "original": "עוֹף",
+    "transliteration": "ʿof",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Flying creatures; birds",
+    "usage_in_context": "Refers collectively to aerial life.",
+    "clarification": "Defined by domain and function, not species classification.",
+    "common_misunderstandings": "Narrowed to specific modern categories.",
+    "why_it_matters": "Completes the domain-specific blessing of life."
+  },
+  "On the Earth": {
+    "original": "בָּאָרֶץ",
+    "transliteration": "ba'aretz",
+    "language": "Hebrew",
+    "part_of_speech": "Prepositional phrase",
+    "basic_meaning": "On the earth; in the land",
+    "usage_in_context": "Locates the sphere of multiplication for birds.",
+    "clarification": "Earth is presented as an ordered domain prepared earlier.",
+    "common_misunderstandings": "Interpreted as unrestricted territory.",
+    "why_it_matters": "Reinforces spatial assignment within God’s design."
+  }
+},
+"23": {
+  "Evening": {
+    "original": "עֶרֶב",
+    "transliteration": "erev",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Evening; dusk",
+    "usage_in_context": "Marks the opening phase of the daily cycle for the fifth day.",
+    "clarification": "Evening initiates the cycle rather than concluding it.",
+    "common_misunderstandings": "Assumed to be a minor or incidental time marker.",
+    "why_it_matters": "Reinforces God’s definition of time as ordered by completion, not by activity."
+  },
+  "Morning": {
+    "original": "בֹּקֶר",
+    "transliteration": "boqer",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Morning; dawn",
+    "usage_in_context": "Completes the daily cycle that began with evening.",
+    "clarification": "Morning signifies the completion of a full cycle of time.",
+    "common_misunderstandings": "Interpreted as the beginning of the cycle rather than its culmination.",
+    "why_it_matters": "Shows that God defines a day by fulfillment, not productivity."
+  },
+  "Fifth Day": {
+    "original": "יוֹם חֲמִישִׁי",
+    "transliteration": "yom chamishi",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Fifth day",
+    "usage_in_context": "Designates the completion of the fifth ordered cycle of creation.",
+    "clarification": "The numbering reflects sequence and structure, not commentary on duration.",
+    "common_misunderstandings": "Overanalyzed to resolve chronological debates outside the text’s concern.",
+    "why_it_matters": "Affirms that creation progresses through deliberate, counted stages."
+  }
+},
+"24": {
+  "Bring Forth": {
+    "original": "תּוֹצֵא",
+    "transliteration": "totsē",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Hiphil, imperfect)",
+    "basic_meaning": "To cause to come out; bring forth",
+    "usage_in_context": "Describes the earth producing land-based life in response to God’s command.",
+    "clarification": "The earth acts as an instrument under divine authority, not an independent source of life.",
+    "common_misunderstandings": "Read as implying autonomous natural generation.",
+    "why_it_matters": "Reinforces delegated creation operating under God’s word."
+  },
+  "Living Creature": {
+    "original": "נֶפֶשׁ חַיָּה",
+    "transliteration": "nephesh chayyah",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "A living being",
+    "usage_in_context": "Identifies animate land life characterized by vitality and movement.",
+    "clarification": "Life is defined functionally, not philosophically.",
+    "common_misunderstandings": "Loaded with later theological or metaphysical meanings.",
+    "why_it_matters": "Shows continuity of life language used across creation domains."
+  },
+  "According to Its Kind": {
+    "original": "לְמִינָהּ",
+    "transliteration": "leminah",
+    "language": "Hebrew",
+    "part_of_speech": "Prepositional phrase",
+    "basic_meaning": "According to its kind",
+    "usage_in_context": "Establishes boundaries of identity and reproduction for land animals.",
+    "clarification": "Emphasizes continuity and order, not variability.",
+    "common_misunderstandings": "Pressed into modern biological or evolutionary debates.",
+    "why_it_matters": "Affirms stability and structure within God’s design for life."
+  },
+  "Livestock": {
+    "original": "בְּהֵמָה",
+    "transliteration": "behemah",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Beast; domesticated animal",
+    "usage_in_context": "Refers to land animals associated with human use and proximity.",
+    "clarification": "Defined by role and interaction, not species taxonomy.",
+    "common_misunderstandings": "Assumed to reflect later agricultural systems.",
+    "why_it_matters": "Anticipates humanity’s relationship with land animals."
+  },
+  "Creeping Thing": {
+    "original": "רֶמֶשׂ",
+    "transliteration": "remes",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Moving or creeping thing",
+    "usage_in_context": "Covers small land creatures characterized by ground movement.",
+    "clarification": "The term describes motion, not inferiority.",
+    "common_misunderstandings": "Viewed as lesser or unclean by nature.",
+    "why_it_matters": "Demonstrates the breadth of God’s creative intent."
+  },
+  "Beast of the Earth": {
+    "original": "חַיַּת הָאָרֶץ",
+    "transliteration": "chayyat ha'aretz",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Wild animal of the earth",
+    "usage_in_context": "Identifies untamed land animals within the created order.",
+    "clarification": "Wildness reflects domain and function, not moral status.",
+    "common_misunderstandings": "Interpreted as threatening or chaotic.",
+    "why_it_matters": "Affirms that all forms of land life are intentionally created and ordered."
+  },
+  "It Was So": {
+    "original": "וַיְהִי־כֵן",
+    "transliteration": "vayehi ken",
+    "language": "Hebrew",
+    "part_of_speech": "Clause",
+    "basic_meaning": "And it came to be so; thus it was",
+    "usage_in_context": "Serves as a narrative seal confirming fulfillment of God’s command.",
+    "clarification": "Confirms completion, not mere agreement.",
+    "common_misunderstandings": "Treated as stylistic filler.",
+    "why_it_matters": "Affirms the certainty and effectiveness of God’s spoken word."
+  }
+},
+"25": {
+  "Made": {
+    "original": "עָשָׂה",
+    "transliteration": "ʿasah",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal)",
+    "basic_meaning": "To make; to do; to fashion",
+    "usage_in_context": "Describes God actively forming land animals according to the categories previously commanded.",
+    "clarification": "This verb emphasizes execution and ordering rather than origination from nothing.",
+    "common_misunderstandings": "Assumed to imply lesser creative significance than other verbs.",
+    "why_it_matters": "Reinforces that God’s creative work includes both origination and deliberate formation."
+  },
+  "Beast of the Earth": {
+    "original": "חַיַּת הָאָרֶץ",
+    "transliteration": "chayyat ha'aretz",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Wild animal of the earth",
+    "usage_in_context": "Refers to untamed land animals within the created order.",
+    "clarification": "Wildness reflects domain and role, not moral status.",
+    "common_misunderstandings": "Viewed as chaotic or threatening by nature.",
+    "why_it_matters": "Affirms that even untamed life exists under God’s authority."
+  },
+  "Livestock": {
+    "original": "בְּהֵמָה",
+    "transliteration": "behemah",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Beast; domesticated animal",
+    "usage_in_context": "Identifies animals associated with human proximity and utility.",
+    "clarification": "Defined by function and relation, not species taxonomy.",
+    "common_misunderstandings": "Assumed to reflect later agricultural systems.",
+    "why_it_matters": "Anticipates the role of animals in relation to humanity."
+  },
+  "Creeps Upon the Ground": {
+    "original": "הָרֹמֵשׂ עַל־הָאֲדָמָה",
+    "transliteration": "haromes al-ha'adamah",
+    "language": "Hebrew",
+    "part_of_speech": "Verb phrase",
+    "basic_meaning": "That moves or creeps upon the ground",
+    "usage_in_context": "Describes small land creatures characterized by ground movement.",
+    "clarification": "Movement is descriptive, not hierarchical.",
+    "common_misunderstandings": "Interpreted as inferior or unclean by implication.",
+    "why_it_matters": "Demonstrates the inclusiveness of God’s creative intent."
+  },
+  "According to Its Kind": {
+    "original": "לְמִינָהּ",
+    "transliteration": "leminah",
+    "language": "Hebrew",
+    "part_of_speech": "Prepositional phrase",
+    "basic_meaning": "According to its kind",
+    "usage_in_context": "Establishes continuity and boundaries for land animals.",
+    "clarification": "Emphasizes stability and order rather than variability.",
+    "common_misunderstandings": "Pressed into modern scientific or philosophical debates.",
+    "why_it_matters": "Affirms that diversity operates within God-defined structure."
+  },
+  "It Was Good": {
+    "original": "כִּי־טוֹב",
+    "transliteration": "ki tov",
+    "language": "Hebrew",
+    "part_of_speech": "Clause",
+    "basic_meaning": "That it was good",
+    "usage_in_context": "Records God’s evaluative judgment of the completed work.",
+    "clarification": "Goodness denotes fitness and alignment with divine intent.",
+    "common_misunderstandings": "Reduced to emotional approval.",
+    "why_it_matters": "Confirms that land life fully meets God’s design standard."
+  }
+},
+"26": {
+  "Let Us Make": {
+    "original": "נַעֲשֶׂה",
+    "transliteration": "na'aseh",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal cohortative, plural)",
+    "basic_meaning": "Let us make; let us do",
+    "usage_in_context": "Introduces divine deliberation preceding the creation of humanity.",
+    "clarification": "The plural form reflects deliberative speech without explanation.",
+    "common_misunderstandings": "Flattened into singular speech or overexplained beyond the text.",
+    "why_it_matters": "Marks a unique pause and intentionality before humanity’s creation."
+  },
+  "Man": {
+    "original": "אָדָם",
+    "transliteration": "adam",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Man; humankind",
+    "usage_in_context": "Refers to humanity collectively, not an individual at this stage.",
+    "clarification": "Denotes mankind as a category rather than a proper name.",
+    "common_misunderstandings": "Restricted prematurely to a single male individual.",
+    "why_it_matters": "Establishes humanity as a unified category within creation."
+  },
+  "Image": {
+    "original": "צֶלֶם",
+    "transliteration": "tselem",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Image; representation",
+    "usage_in_context": "Describes humanity’s representational relationship to God.",
+    "clarification": "The term is presented without definition or expansion.",
+    "common_misunderstandings": "Overdefined philosophically or reduced to physical resemblance.",
+    "why_it_matters": "Introduces a unique status for humanity within creation."
+  },
+  "Likeness": {
+    "original": "דְּמוּת",
+    "transliteration": "demuth",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Likeness; similarity",
+    "usage_in_context": "Paired with image to describe humanity’s correspondence to God.",
+    "clarification": "The relationship between image and likeness is not explained here.",
+    "common_misunderstandings": "Merged indistinctly or forced into rigid theological categories.",
+    "why_it_matters": "Reinforces intentional correspondence without defining its mechanics."
+  },
+  "Have Dominion": {
+    "original": "וְיִרְדּוּ",
+    "transliteration": "veyirdu",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal imperfect)",
+    "basic_meaning": "To rule; to exercise dominion",
+    "usage_in_context": "Describes humanity’s assigned authority over other created life.",
+    "clarification": "Dominion is assigned, not inherent or autonomous.",
+    "common_misunderstandings": "Read as license for exploitation rather than stewardship.",
+    "why_it_matters": "Defines humanity’s role within creation under God’s authority."
+  },
+  "Fish of the Sea": {
+    "original": "דְּגַת הַיָּם",
+    "transliteration": "degat hayam",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Fish of the sea",
+    "usage_in_context": "Identifies aquatic life under human dominion.",
+    "clarification": "Matches prior domain assignments in the creation account.",
+    "common_misunderstandings": "Viewed as granting unrestricted control.",
+    "why_it_matters": "Shows continuity between God’s ordering and human responsibility."
+  },
+  "Birds of the Heavens": {
+    "original": "עוֹף הַשָּׁמַיִם",
+    "transliteration": "ʿof hash-shamayim",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Birds of the heavens",
+    "usage_in_context": "Refers to flying creatures within the upper domain.",
+    "clarification": "The term heavens denotes expanse, not layered cosmology.",
+    "common_misunderstandings": "Replaced with modern abstractions such as air.",
+    "why_it_matters": "Maintains domain consistency established earlier in Genesis 1."
+  },
+  "Livestock": {
+    "original": "בְּהֵמָה",
+    "transliteration": "behemah",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Beast; domesticated animal",
+    "usage_in_context": "Identifies animals associated with human proximity.",
+    "clarification": "Defined by role, not ownership.",
+    "common_misunderstandings": "Assumed to imply economic exploitation.",
+    "why_it_matters": "Anticipates humanity’s relational role with animals."
+  },
+  "All the Earth": {
+    "original": "כָּל־הָאָרֶץ",
+    "transliteration": "kol-ha'aretz",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "All the earth",
+    "usage_in_context": "Expands the scope of humanity’s assignment.",
+    "clarification": "Authority is comprehensive but derivative.",
+    "common_misunderstandings": "Read as ownership rather than stewardship.",
+    "why_it_matters": "Frames human dominion as wide-reaching yet accountable."
+  },
+  "Creeping Thing": {
+    "original": "רֶמֶשׂ",
+    "transliteration": "remes",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Moving or creeping thing",
+    "usage_in_context": "Includes small land creatures within human dominion.",
+    "clarification": "Describes motion, not value.",
+    "common_misunderstandings": "Interpreted as lesser or expendable.",
+    "why_it_matters": "Shows that dominion extends to all life without exception."
+  }
+},
+"27": {
+  "Created": {
+    "original": "בָּרָא",
+    "transliteration": "bara",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal)",
+    "basic_meaning": "To create; bring into existence",
+    "usage_in_context": "Describes God’s direct act in creating humanity.",
+    "clarification": "This verb emphasizes origination by God rather than formation from existing material.",
+    "common_misunderstandings": "Treated as interchangeable with verbs meaning to make or shape.",
+    "why_it_matters": "Highlights the unique creative act associated with humanity."
+  },
+  "Man": {
+    "original": "הָאָדָם",
+    "transliteration": "ha'adam",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "The man; humankind",
+    "usage_in_context": "Refers to humanity as a collective, not an individual person.",
+    "clarification": "The term is generic at this stage, not a personal name.",
+    "common_misunderstandings": "Read as referring only to a single male individual.",
+    "why_it_matters": "Establishes humanity as a unified category within creation."
+  },
+  "Image": {
+    "original": "צֶלֶם",
+    "transliteration": "tselem",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Image; representation",
+    "usage_in_context": "Defines humanity’s representational relationship to God.",
+    "clarification": "The text asserts the reality of the image without explaining its nature.",
+    "common_misunderstandings": "Reduced to physical likeness or overdefined philosophically.",
+    "why_it_matters": "Introduces humanity’s unique status within the created order."
+  },
+  "Male": {
+    "original": "זָכָר",
+    "transliteration": "zakar",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Male",
+    "usage_in_context": "Identifies one of the two sexes included in humanity’s creation.",
+    "clarification": "Denotes biological distinction without hierarchy.",
+    "common_misunderstandings": "Assumed to imply authority or superiority.",
+    "why_it_matters": "Affirms sex distinction as part of God’s created design."
+  },
+  "Female": {
+    "original": "נְקֵבָה",
+    "transliteration": "neqevah",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Female",
+    "usage_in_context": "Identifies the complementary sex within humanity.",
+    "clarification": "Presented alongside male without qualification or rank.",
+    "common_misunderstandings": "Treated as secondary or derivative in value.",
+    "why_it_matters": "Confirms shared participation in bearing God’s image."
+  },
+  "He Created Them": {
+    "original": "בָּרָא אֹתָם",
+    "transliteration": "bara otam",
+    "language": "Hebrew",
+    "part_of_speech": "Verb phrase",
+    "basic_meaning": "He created them",
+    "usage_in_context": "Summarizes the creation of humanity as plural and inclusive.",
+    "clarification": "Moves from singular to plural intentionally.",
+    "common_misunderstandings": "Overlooked as a stylistic repetition.",
+    "why_it_matters": "Affirms that the image of God is borne by humanity collectively."
+  }
+},
+"28": {
+  "Blessed": {
+    "original": "בָּרַךְ",
+    "transliteration": "barak",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Piel)",
+    "basic_meaning": "To bless; to endow with capacity or favor",
+    "usage_in_context": "Marks God’s empowerment of humanity for fruitfulness and responsibility.",
+    "clarification": "The blessing grants ability and purpose rather than expressing sentiment.",
+    "common_misunderstandings": "Reduced to encouragement without effect.",
+    "why_it_matters": "Establishes blessing as the source of humanity’s capacity to fulfill its calling."
+  },
+  "Be Fruitful": {
+    "original": "פְּרוּ",
+    "transliteration": "peru",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal imperative)",
+    "basic_meaning": "To bear fruit; to be productive",
+    "usage_in_context": "Commands humanity toward productive life and continuation.",
+    "clarification": "Fruitfulness is commanded and enabled by God.",
+    "common_misunderstandings": "Limited to biological reproduction alone.",
+    "why_it_matters": "Frames productivity as a response to divine blessing."
+  },
+  "Multiply": {
+    "original": "רְבוּ",
+    "transliteration": "revu",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal imperative)",
+    "basic_meaning": "To increase; to become many",
+    "usage_in_context": "Directs humanity to expand within the created order.",
+    "clarification": "Increase is purposeful and bounded by God’s design.",
+    "common_misunderstandings": "Read as unrestrained growth.",
+    "why_it_matters": "Shows that expansion operates within order, not chaos."
+  },
+  "Fill": {
+    "original": "וּמִלְאוּ",
+    "transliteration": "u-mil'u",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal imperative)",
+    "basic_meaning": "To fill; to make full",
+    "usage_in_context": "Assigns humanity to occupy the earth fully.",
+    "clarification": "Filling corresponds to spaces God has already prepared.",
+    "common_misunderstandings": "Interpreted as overconsumption.",
+    "why_it_matters": "Connects human presence to God’s ordered world."
+  },
+  "Subdue": {
+    "original": "כָּבַשׁ",
+    "transliteration": "kavash",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal imperative)",
+    "basic_meaning": "To bring under control; to subject",
+    "usage_in_context": "Describes humanity’s responsibility to bring the earth into ordered service.",
+    "clarification": "Subduing reflects stewardship under God, not violent domination.",
+    "common_misunderstandings": "Taken as license for exploitation.",
+    "why_it_matters": "Defines humanity’s role as active caretakers within creation."
+  },
+  "Have Dominion": {
+    "original": "וּרְדוּ",
+    "transliteration": "u-redu",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal imperative)",
+    "basic_meaning": "To rule; to exercise authority",
+    "usage_in_context": "Assigns humanity authority over living creatures.",
+    "clarification": "Dominion is delegated and accountable.",
+    "common_misunderstandings": "Viewed as autonomous control.",
+    "why_it_matters": "Reinforces humanity’s representative role under God’s authority."
+  },
+  "Living Thing": {
+    "original": "כָּל־חַיָּה",
+    "transliteration": "kol-chayyah",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Every living creature",
+    "usage_in_context": "Summarizes the scope of humanity’s dominion.",
+    "clarification": "Life is unified under God’s order.",
+    "common_misunderstandings": "Ranked hierarchically by value.",
+    "why_it_matters": "Affirms comprehensive yet responsible authority."
+  }
+},
+"29": {
+  "Behold": {
+    "original": "הִנֵּה",
+    "transliteration": "hinneh",
+    "language": "Hebrew",
+    "part_of_speech": "Interjection",
+    "basic_meaning": "Look; see; take notice",
+    "usage_in_context": "Introduces God’s direct provision to humanity.",
+    "clarification": "Functions as an attention marker, not emotional emphasis.",
+    "common_misunderstandings": "Treated as decorative or rhetorical filler.",
+    "why_it_matters": "Signals the importance of what is being granted."
+  },
+  "I Have Given": {
+    "original": "נָתַתִּי",
+    "transliteration": "natatti",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal perfect)",
+    "basic_meaning": "I have given; I have granted",
+    "usage_in_context": "Declares divine provision as an accomplished gift.",
+    "clarification": "The perfect tense emphasizes completed grant, not future promise.",
+    "common_misunderstandings": "Read as conditional or provisional.",
+    "why_it_matters": "Affirms provision as part of God’s finished creative work."
+  },
+  "Seed-Bearing Plant": {
+    "original": "כָּל־עֵשֶׂב זֹרֵעַ זֶרַע",
+    "transliteration": "kol-esev zorea zera",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Every plant producing seed",
+    "usage_in_context": "Identifies vegetation designed for ongoing reproduction.",
+    "clarification": "Emphasizes continuity and sustainability.",
+    "common_misunderstandings": "Limited to cultivated crops only.",
+    "why_it_matters": "Links provision with God’s design for ongoing life."
+  },
+  "Upon the Face of All the Earth": {
+    "original": "עַל־פְּנֵי כָּל־הָאָרֶץ",
+    "transliteration": "al-penei kol-ha'aretz",
+    "language": "Hebrew",
+    "part_of_speech": "Prepositional phrase",
+    "basic_meaning": "Over the surface of all the earth",
+    "usage_in_context": "Describes the global scope of provision.",
+    "clarification": "Indicates availability, not uniform distribution.",
+    "common_misunderstandings": "Interpreted as identical environmental conditions everywhere.",
+    "why_it_matters": "Affirms provision as sufficient for humanity’s calling to fill the earth."
+  },
+  "Every Tree": {
+    "original": "כָּל־הָעֵץ",
+    "transliteration": "kol-ha'etz",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Every tree",
+    "usage_in_context": "Introduces a second category of food source.",
+    "clarification": "Distinguished from seed-bearing plants.",
+    "common_misunderstandings": "Collapsed into vegetation generally.",
+    "why_it_matters": "Shows variety and abundance in God’s provision."
+  },
+  "Fruit of a Tree Yielding Seed": {
+    "original": "אֲשֶׁר־בּוֹ פְּרִי־עֵץ זֹרֵעַ זָרַע",
+    "transliteration": "asher-bo peri-etz zorea zera",
+    "language": "Hebrew",
+    "part_of_speech": "Relative clause",
+    "basic_meaning": "In which is fruit producing seed",
+    "usage_in_context": "Specifies trees that provide edible fruit with continuity.",
+    "clarification": "Focuses on reproductive capacity, not taste or preference.",
+    "common_misunderstandings": "Read as excluding non-fruit-bearing trees entirely.",
+    "why_it_matters": "Reinforces sustainable provision built into creation."
+  },
+  "For Food": {
+    "original": "לְאָכְלָה",
+    "transliteration": "le'okhlah",
+    "language": "Hebrew",
+    "part_of_speech": "Infinitive construct",
+    "basic_meaning": "For eating; as food",
+    "usage_in_context": "States the intended purpose of the provision.",
+    "clarification": "Defines function without moral or ritual qualification.",
+    "common_misunderstandings": "Overextended into later dietary regulations.",
+    "why_it_matters": "Affirms that provision is purposeful and sufficient for life."
+  }
+},
+"30": {
+  "Every Beast of the Earth": {
+    "original": "לְכָל־חַיַּת הָאָרֶץ",
+    "transliteration": "le-kol chayyat ha'aretz",
+    "language": "Hebrew",
+    "part_of_speech": "Prepositional noun phrase",
+    "basic_meaning": "To every wild animal of the earth",
+    "usage_in_context": "Extends God’s provision to land animals beyond humanity.",
+    "clarification": "Includes untamed land animals without distinction of value.",
+    "common_misunderstandings": "Restricted to certain species or ranked by importance.",
+    "why_it_matters": "Affirms God’s care for all land-based life."
+  },
+  "Bird of the Heavens": {
+    "original": "לְכָל־עוֹף הַשָּׁמַיִם",
+    "transliteration": "le-kol ʿof hash-shamayim",
+    "language": "Hebrew",
+    "part_of_speech": "Prepositional noun phrase",
+    "basic_meaning": "To every flying creature of the heavens",
+    "usage_in_context": "Includes all aerial life under God’s provision.",
+    "clarification": "Heavens denotes domain, not cosmological layers.",
+    "common_misunderstandings": "Replaced with modern abstractions such as air.",
+    "why_it_matters": "Maintains domain consistency across Genesis 1."
+  },
+  "Everything That Creeps": {
+    "original": "וּלְכֹל רֹמֵשׂ",
+    "transliteration": "u-lekhol romes",
+    "language": "Hebrew",
+    "part_of_speech": "Conjunctive noun phrase",
+    "basic_meaning": "And to everything that moves or creeps",
+    "usage_in_context": "Covers small land creatures characterized by movement.",
+    "clarification": "Movement is descriptive, not hierarchical.",
+    "common_misunderstandings": "Interpreted as implying lesser worth.",
+    "why_it_matters": "Demonstrates the inclusiveness of divine provision."
+  },
+  "Upon the Earth": {
+    "original": "עַל־הָאָרֶץ",
+    "transliteration": "al-ha'aretz",
+    "language": "Hebrew",
+    "part_of_speech": "Prepositional phrase",
+    "basic_meaning": "Upon the earth",
+    "usage_in_context": "Specifies the domain of land-based life.",
+    "clarification": "Earth is an ordered realm prepared earlier.",
+    "common_misunderstandings": "Assumed to imply unrestricted territory.",
+    "why_it_matters": "Reinforces spatial order within creation."
+  },
+  "Breath of Life": {
+    "original": "נֶפֶשׁ חַיָּה",
+    "transliteration": "nephesh chayyah",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Living being; breath of life",
+    "usage_in_context": "Identifies creatures characterized by animate life.",
+    "clarification": "Describes vitality, not spiritual status.",
+    "common_misunderstandings": "Equated with later theological concepts of soul.",
+    "why_it_matters": "Unifies animal life under the same life-giving provision."
+  },
+  "I Have Given": {
+    "original": "נָתַתִּי",
+    "transliteration": "natatti",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal perfect)",
+    "basic_meaning": "I have given; I have granted",
+    "usage_in_context": "Declares provision as an accomplished act.",
+    "clarification": "The perfect tense emphasizes completion.",
+    "common_misunderstandings": "Read as conditional or future.",
+    "why_it_matters": "Affirms provision as part of God’s finished creative decree."
+  },
+  "Every Green Plant": {
+    "original": "כָּל־יֶרֶק עֵשֶׂב",
+    "transliteration": "kol-yereq ʿesev",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "Every green plant",
+    "usage_in_context": "Identifies plant life given as food for animals.",
+    "clarification": "Distinguished from seed-bearing plants given to humanity.",
+    "common_misunderstandings": "Assumed to imply identical diets for all creatures.",
+    "why_it_matters": "Shows ordered provision tailored to different forms of life."
+  },
+  "For Food": {
+    "original": "לְאָכְלָה",
+    "transliteration": "le'okhlah",
+    "language": "Hebrew",
+    "part_of_speech": "Infinitive construct",
+    "basic_meaning": "For eating; as food",
+    "usage_in_context": "States the purpose of the provision.",
+    "clarification": "Defines function without moral or ritual implication.",
+    "common_misunderstandings": "Extended into later dietary laws.",
+    "why_it_matters": "Affirms that God’s provision is intentional and sufficient."
+  }
+},
+"31": {
+  "Saw": {
+    "original": "וַיַּרְא",
+    "transliteration": "vayyar",
+    "language": "Hebrew",
+    "part_of_speech": "Verb (Qal, waw-consecutive)",
+    "basic_meaning": "And He saw; perceived; observed",
+    "usage_in_context": "Describes God’s evaluative observation of the completed creation.",
+    "clarification": "Seeing here denotes assessment rather than discovery.",
+    "common_misunderstandings": "Interpreted as God learning something new.",
+    "why_it_matters": "Affirms that God intentionally evaluates His work."
+  },
+  "Everything": {
+    "original": "אֶת־כָּל",
+    "transliteration": "et-kol",
+    "language": "Hebrew",
+    "part_of_speech": "Direct object marker + noun",
+    "basic_meaning": "All; the entirety of",
+    "usage_in_context": "Summarizes the whole of creation without exception.",
+    "clarification": "The scope is comprehensive, not selective.",
+    "common_misunderstandings": "Limited to a particular category of creation.",
+    "why_it_matters": "Shows that God’s evaluation applies to the whole created order."
+  },
+  "That He Had Made": {
+    "original": "אֲשֶׁר עָשָׂה",
+    "transliteration": "asher asah",
+    "language": "Hebrew",
+    "part_of_speech": "Relative clause",
+    "basic_meaning": "Which He had made",
+    "usage_in_context": "Refers to the entirety of God’s creative work.",
+    "clarification": "Emphasizes deliberate action rather than accidental outcome.",
+    "common_misunderstandings": "Overlooked as a simple narrative filler.",
+    "why_it_matters": "Reinforces God’s active role in every aspect of creation."
+  },
+  "Behold": {
+    "original": "וְהִנֵּה",
+    "transliteration": "ve-hinneh",
+    "language": "Hebrew",
+    "part_of_speech": "Interjection",
+    "basic_meaning": "And look; take notice",
+    "usage_in_context": "Draws attention to the climactic evaluation.",
+    "clarification": "Functions as an attention marker, not emotional exaggeration.",
+    "common_misunderstandings": "Dismissed as stylistic decoration.",
+    "why_it_matters": "Signals the importance of the final judgment."
+  },
+  "Very Good": {
+    "original": "טוֹב מְאֹד",
+    "transliteration": "tov me'od",
+    "language": "Hebrew",
+    "part_of_speech": "Adjective + adverb",
+    "basic_meaning": "Good, exceedingly",
+    "usage_in_context": "Expresses an intensified evaluation of creation.",
+    "clarification": "Indicates completeness and full alignment with God’s intent.",
+    "common_misunderstandings": "Reduced to emotional satisfaction.",
+    "why_it_matters": "Marks the culmination and approval of God’s creative work."
+  },
+  "Evening": {
+    "original": "עֶרֶב",
+    "transliteration": "erev",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Evening; dusk",
+    "usage_in_context": "Initiates the closing cycle of the sixth day.",
+    "clarification": "Evening begins the cycle rather than ending it.",
+    "common_misunderstandings": "Assumed to be incidental.",
+    "why_it_matters": "Reinforces God’s ordered definition of time."
+  },
+  "Morning": {
+    "original": "בֹּקֶר",
+    "transliteration": "boqer",
+    "language": "Hebrew",
+    "part_of_speech": "Noun",
+    "basic_meaning": "Morning; dawn",
+    "usage_in_context": "Completes the daily cycle.",
+    "clarification": "Morning signals completion rather than commencement.",
+    "common_misunderstandings": "Treated as the beginning of the cycle.",
+    "why_it_matters": "Shows that creation days are defined by fulfillment."
+  },
+  "Sixth Day": {
+    "original": "יוֹם הַשִּׁשִּׁי",
+    "transliteration": "yom ha-shishi",
+    "language": "Hebrew",
+    "part_of_speech": "Noun phrase",
+    "basic_meaning": "The sixth day",
+    "usage_in_context": "Marks the completion of the creation week’s final day.",
+    "clarification": "The definite article emphasizes culmination.",
+    "common_misunderstandings": "Overanalyzed for chronological debates.",
+    "why_it_matters": "Signals the conclusion of God’s creative work before rest."
+  }
+}
+}

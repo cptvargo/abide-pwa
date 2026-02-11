@@ -1,0 +1,33 @@
+/* ===============================
+   PARCHMENT THEME - 5th Theme
+================================ */
+
+[data-theme="parchment"] {
+  /* Backgrounds */
+  --bg-app: #e8e3d8;  /* Warm parchment paper */
+  --bg-nav: #8b7355;  /* Brown leather nav */
+  --bg-menu: #d9d4c9;  /* Slightly darker parchment */
+  
+  /* Text Colors */
+  --text-primary: #2b2520;  /* Dark brown text */
+  --text-accent: #8b7355;  /* Warm brown accent */
+  --text-muted: #6b5744;  /* Muted brown */
+  --text-inverse: #f5f1e8;  /* Light cream for nav */
+  --text-secondary: #4a4139;  /* Secondary dark brown */
+  
+  /* Fonts - Classic Serif */
+  --font-ui: 'Crimson Text', 'Baskerville', 'Garamond', serif;
+  --font-body: 'Crimson Text', 'Baskerville', 'Garamond', serif;
+  --font-verse: 'Crimson Text', 'Baskerville', 'Garamond', serif;
+  
+  /* Typography */
+  --line-height: 1.8;
+  --paragraph-spacing: 1.5em;
+  
+  /* Verse Display */
+  --verse-opacity: 0.95;
+  --verse-size: 1.1rem;
+  
+  /* Highlight */
+  --highlight-bg: rgba(139, 115, 85, 0.15);
+}

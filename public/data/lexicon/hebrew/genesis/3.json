@@ -1,0 +1,318 @@
+{
+  "1": {
+    "nachash": {
+      "root": "נָחָשׁ",
+      "translit": "nachash",
+      "meaning": "serpent; one who practices deception"
+    },
+    "arum": {
+      "root": "עָרוּם",
+      "translit": "arum",
+      "meaning": "crafty; shrewd; subtly wise"
+    },
+    "amar": {
+      "root": "אָמַר",
+      "translit": "amar",
+      "meaning": "to say; speak"
+    }
+  },
+
+  "2": {
+    "ishah": {
+      "root": "אִשָּׁה",
+      "translit": "ishah",
+      "meaning": "woman"
+    },
+    "akal": {
+      "root": "אָכַל",
+      "translit": "akal",
+      "meaning": "to eat; consume"
+    }
+  },
+
+  "3": {
+    "naga": {
+      "root": "נָגַע",
+      "translit": "naga",
+      "meaning": "to touch; come into contact"
+    },
+    "muth": {
+      "root": "מוּת",
+      "translit": "muth",
+      "meaning": "to die; experience death"
+    }
+  },
+
+  "4": {
+    "lo-muth": {
+      "root": "לֹא־מוּת",
+      "translit": "lo muth",
+      "meaning": "you shall not die"
+    }
+  },
+
+  "5": {
+    "yada": {
+      "root": "יָדַע",
+      "translit": "yada",
+      "meaning": "to know; perceive; experience"
+    },
+    "elohim": {
+      "root": "אֱלֹהִים",
+      "translit": "elohim",
+      "meaning": "God; mighty one"
+    }
+  },
+
+  "6": {
+    "raah": {
+      "root": "רָאָה",
+      "translit": "raah",
+      "meaning": "to see; perceive"
+    },
+    "taavah": {
+      "root": "תַּאֲוָה",
+      "translit": "taavah",
+      "meaning": "desire; craving"
+    },
+    "chakam": {
+      "root": "חָכַם",
+      "translit": "chakam",
+      "meaning": "to become wise"
+    }
+  },
+
+  "7": {
+    "paqach": {
+      "root": "פָּקַח",
+      "translit": "paqach",
+      "meaning": "to open (eyes); gain awareness"
+    },
+    "yada": {
+      "root": "יָדַע",
+      "translit": "yada",
+      "meaning": "to know; recognize"
+    },
+    "arum": {
+      "root": "עֵירֹם",
+      "translit": "erom",
+      "meaning": "naked; exposed"
+    }
+  },
+
+  "8": {
+    "shama": {
+      "root": "שָׁמַע",
+      "translit": "shama",
+      "meaning": "to hear; listen"
+    },
+    "halak": {
+      "root": "הָלַךְ",
+      "translit": "halak",
+      "meaning": "to walk; move about"
+    },
+    "chaba": {
+      "root": "חָבָא",
+      "translit": "chaba",
+      "meaning": "to hide oneself"
+    }
+  },
+
+  "9": {
+    "qara": {
+      "root": "קָרָא",
+      "translit": "qara",
+      "meaning": "to call out; summon"
+    },
+    "ayekah": {
+      "root": "אַיֶּכָּה",
+      "translit": "ayekah",
+      "meaning": "where are you?"
+    }
+  },
+
+  "10": {
+    "yare": {
+      "root": "יָרֵא",
+      "translit": "yare",
+      "meaning": "to fear; be afraid"
+    },
+    "chaba": {
+      "root": "חָבָא",
+      "translit": "chaba",
+      "meaning": "to hide oneself"
+    }
+  },
+
+  "11": {
+    "mi": {
+      "root": "מִי",
+      "translit": "mi",
+      "meaning": "who?"
+    },
+    "nagad": {
+      "root": "נָגַד",
+      "translit": "nagad",
+      "meaning": "to declare; make known"
+    }
+  },
+
+  "12": {
+    "natan": {
+      "root": "נָתַן",
+      "translit": "natan",
+      "meaning": "to give; grant"
+    }
+  },
+
+  "13": {
+    "nasha": {
+      "root": "נָשָׁא",
+      "translit": "nasha",
+      "meaning": "to deceive; lead astray"
+    }
+  },
+
+  "14": {
+    "arar": {
+      "root": "אָרַר",
+      "translit": "arar",
+      "meaning": "to curse; bind with consequence"
+    }
+  },
+
+  "15": {
+    "eybah": {
+      "root": "אֵיבָה",
+      "translit": "eybah",
+      "meaning": "enmity; hostility"
+    },
+    "zera": {
+      "root": "זֶרַע",
+      "translit": "zera",
+      "meaning": "seed; offspring"
+    },
+    "shuph": {
+      "root": "שׁוּף",
+      "translit": "shuph",
+      "meaning": "to bruise; crush"
+    }
+  },
+
+  "16": {
+    "etsev": {
+      "root": "עֶצֶב",
+      "translit": "etsev",
+      "meaning": "pain; sorrow"
+    },
+    "teshuqah": {
+      "root": "תְּשׁוּקָה",
+      "translit": "teshuqah",
+      "meaning": "desire; longing"
+    }
+  },
+
+  "17": {
+    "adamah": {
+      "root": "אֲדָמָה",
+      "translit": "adamah",
+      "meaning": "ground; soil"
+    },
+    "arar": {
+      "root": "אָרַר",
+      "translit": "arar",
+      "meaning": "to curse"
+    }
+  },
+
+  "18": {
+    "qots": {
+      "root": "קוֹץ",
+      "translit": "qots",
+      "meaning": "thorn"
+    },
+    "dardar": {
+      "root": "דַּרְדַּר",
+      "translit": "dardar",
+      "meaning": "thistle"
+    }
+  },
+
+  "19": {
+    "zeah": {
+      "root": "זֵעָה",
+      "translit": "zeah",
+      "meaning": "sweat"
+    },
+    "aphar": {
+      "root": "עָפָר",
+      "translit": "aphar",
+      "meaning": "dust"
+    }
+  },
+
+  "20": {
+    "chavvah": {
+      "root": "חַוָּה",
+      "translit": "chavvah",
+      "meaning": "Eve; life-giver"
+    }
+  },
+
+  "21": {
+    "kethoneth": {
+      "root": "כְּתֹנֶת",
+      "translit": "kethoneth",
+      "meaning": "garment; tunic"
+    },
+    "labash": {
+      "root": "לָבַשׁ",
+      "translit": "labash",
+      "meaning": "to clothe"
+    }
+  },
+
+  "22": {
+    "yada": {
+      "root": "יָדַע",
+      "translit": "yada",
+      "meaning": "to know"
+    },
+    "chay": {
+      "root": "חַי",
+      "translit": "chay",
+      "meaning": "living; alive"
+    }
+  },
+
+  "23": {
+    "shalach": {
+      "root": "שָׁלַח",
+      "translit": "shalach",
+      "meaning": "to send away"
+    },
+    "abad": {
+      "root": "עָבַד",
+      "translit": "abad",
+      "meaning": "to work; serve"
+    }
+  },
+
+  "24": {
+    "garash": {
+      "root": "גָּרַשׁ",
+      "translit": "garash",
+      "meaning": "to drive out; expel"
+    },
+    "keruv": {
+      "root": "כְּרוּב",
+      "translit": "keruv",
+      "meaning": "cherub; guardian being"
+    },
+    "lahat": {
+      "root": "לַהַט",
+      "translit": "lahat",
+      "meaning": "flame; blazing fire"
+    }
+  }
+}
