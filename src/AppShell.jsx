@@ -273,6 +273,7 @@ export default function AppShell() {
           chapterlessMode={chapterlessMode}
           textSize={textSize}
           translation={translation}
+          theme={theme}
           onReadingContext={setReadingContext}
           onScrollProgress={setNavProgress}
           navigationTarget={navigationTarget}
