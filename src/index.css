@@ -181,18 +181,22 @@ body {
    Add to index.css after other themes
 ================================ */
 
+/* ===============================
+   PARCHMENT THEME - Enhanced Visibility
+================================ */
+
 [data-theme="parchment"] {
-  /* Backgrounds */
-  --bg-app: #e8e3d8;  /* Warm parchment paper */
-  --bg-nav: #8b7355;  /* Brown leather nav */
-  --bg-menu: #d9d4c9;  /* Slightly darker parchment */
+  /* Backgrounds - Much stronger contrast */
+  --bg-app: #f5f1e8;  /* Lighter parchment paper */
+  --bg-nav: #6b5744;  /* Darker brown leather nav */
+  --bg-menu: #c8bead;  /* Much darker menu background */
   
-  /* Text Colors */
-  --text-primary: #2b2520;  /* Dark brown text */
-  --text-accent: #8b7355;  /* Warm brown accent */
-  --text-muted: #6b5744;  /* Muted brown */
+  /* Text Colors - Much stronger contrast */
+  --text-primary: #0d0a06;  /* Nearly black text */
+  --text-accent: #6b5744;  /* Darker brown accent */
+  --text-muted: #4a3d2f;  /* Much darker muted */
   --text-inverse: #f5f1e8;  /* Light cream for nav */
-  --text-secondary: #4a4139;  /* Secondary dark brown */
+  --text-secondary: #2a2419;  /* Much darker secondary */
   
   /* Fonts - Classic Serif */
   --font-ui: 'Crimson Text', 'Baskerville', 'Garamond', serif;
@@ -204,11 +208,25 @@ body {
   --paragraph-spacing: 1.5em;
   
   /* Verse Display */
-  --verse-opacity: 0.95;
+  --verse-opacity: 1.0;  /* Full opacity */
   --verse-size: 1.1rem;
   
   /* Highlight */
-  --highlight-bg: rgba(139, 115, 85, 0.15);
+  --highlight-bg: rgba(107, 87, 68, 0.35);
+  
+  /* Footer & Menu text - ensure readability */
+  --footer-text: #0d0a06;
+  --menu-text: #0d0a06;
+}
+
+/* Extra specificity for parchment theme footer */
+[data-theme="parchment"] .opacity-60,
+[data-theme="parchment"] .opacity-70 {
+  opacity: 0.9 !important;
+}
+
+[data-theme="parchment"] .text-sm {
+  font-weight: 500;
 }
 /* ===============================
    Rich Text Editor Styles - FIXED LISTS
