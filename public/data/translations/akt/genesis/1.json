@@ -1,27 +1,46 @@
 {
-    "book": "Genesis",
-    "translation": "AKT",
-    "chapters": {
-        "1": {
-            "1": "In the beginning God created the heavens and the earth.",
-            "2": "The earth had no shape yet, and nothing was in its place. Darkness was over the deep waters. God’s Spirit was there, moving over it all.",
-            "3": "And God said, \"Let there be light,\" and there was light.",
-            "4": "God looked at the light and saw that it was good. He separated the light from the darkness.",
-            "5": "God named the light Day, and He named the darkness Night. Evening came, and morning followed—the first day.",
-            "6": "Then God said, \"Let there be a wide space between the waters, so that the waters are separated from one another.\"",
-            "7": "So God made the wide space, and He separated the waters below the space from the waters above it.",
-            "8": "God called the wide space Sky. Evening came, and morning followed—the second day.",
-            "9": "Then God said, \"Let the waters under the sky be gathered into one place, and let the dry land appear.\" And it was so.",
-            "10": "God called the dry land Earth, and the gathered waters He called Seas. And God saw that it was good.",
-            "11": "Then God said, \"Let the earth grow grass, plants that make seed, and trees that grow fruit with seed in it, each according to its kind.\" And it was so.",
-            "12": "The earth brought forth grass, plants that make seed, and trees that bear fruit with seed in it, each according to its kind. And God saw that it was good."
-        }
-    },
-    "metadata": {
-        "translator": "Jesus Vargas",
-        "version": "Abide Kids Translation",
-        "abbreviation": "AKT",
-        "source": "Based on the Authorized King James Version (1769), reinterpreted through the theology of abiding in Christ.",
-        "createdAt": "2026-01-27T00:00:00Z"
-    }
+  "book": "Genesis",
+  "translation": "AKT",
+  "chapter": 1,
+  "title": "God Creates Everything",
+  "verses": {
+    "1": "In the beginning God created the heavens and the earth.",
+    "2": "The earth had no shape yet, and nothing was in its place. Darkness was over the deep waters. God’s Spirit was there, moving over it all.",
+    "3": "And God said, \"Let there be light,\" and there was light.",
+    "4": "God looked at the light and saw that it was good. He separated the light from the darkness.",
+    "5": "God named the light Day, and He named the darkness Night. Evening came, and morning followed—the first day.",
+    "6": "Then God said, \"Let there be a wide space between the waters, so that the waters are separated from one another.\"",
+    "7": "So God made the wide space, and He separated the waters below the space from the waters above it.",
+    "8": "God called the wide space Sky. Evening came, and morning followed—the second day.",
+    "9": "Then God said, \"Let the waters under the sky be gathered into one place, and let the dry land appear.\" And it was so.",
+    "10": "God called the dry land Earth, and the gathered waters He called Seas. And God saw that it was good.",
+    "11": "Then God said, \"Let the earth grow grass, plants that make seed, and trees that grow fruit with seed in it, each according to its kind.\" And it was so.",
+    "12": "The earth brought forth grass, plants that make seed, and trees that bear fruit with seed in it, each according to its kind. And God saw that it was good.",
+    "13": "Evening came, and morning followed—the third day.",
+    "14": "Then God said, \"Let lights appear in the sky to separate the day from the night. Let them serve as signs to mark seasons, days, and years.\"",
+    "15": "Let these lights shine in the sky to give light to the earth.\" And it was so.",
+    "16": "So God made the two great lights—the greater light to rule the day and the smaller light to rule the night. He also made the stars.",
+    "17": "God placed these lights in the sky to shine on the earth,",
+    "18": "to rule over the day and the night and to separate the light from the darkness. And God saw that it was good.",
+    "19": "Evening came, and morning followed—the fourth day.",
+    "20": "Then God said, \"Let the waters be filled with living creatures, and let birds fly above the earth across the sky.\"",
+    "21": "So God created the great sea creatures and every living thing that moves in the waters, each according to its kind, and every winged bird according to its kind. And God saw that it was good.",
+    "22": "God blessed them and said, \"Be fruitful and multiply. Fill the waters in the seas, and let birds multiply on the earth.\"",
+    "23": "Evening came, and morning followed—the fifth day.",
+    "24": "Then God said, \"Let the earth bring forth living creatures according to their kinds—livestock, creatures that crawl, and wild animals, each according to its kind.\" And it was so.",
+    "25": "So God made the wild animals according to their kinds, the livestock according to their kinds, and all the creatures that crawl on the ground according to their kinds. And God saw that it was good.",
+    "26": "Then God said, \"Let Us make people in Our image, according to Our likeness. Let them rule over the fish of the sea, the birds of the sky, the livestock, all the earth, and every creature that crawls on the ground.\"",
+    "27": "So God created people in His own image; in the image of God He created them; male and female He created them.",
+    "28": "God blessed them and said to them, \"Be fruitful and multiply. Fill the earth and take responsibility for it. Rule over the fish of the sea, the birds of the sky, and every living creature that moves on the earth.\"",
+    "29": "Then God said, \"Look, I have given you every plant that makes seed on the face of the whole earth, and every tree that has fruit with seed in it. They will be food for you.\"",
+    "30": "And to every animal of the earth, every bird of the sky, and every creature that crawls on the ground—everything that has the breath of life in it—I have given every green plant for food.\" And it was so.",
+    "31": "God saw everything that He had made, and behold, it was very good. Evening came, and morning followed—the sixth day."
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "Abide Kids Translation",
+    "abbreviation": "AKT",
+    "source": "Based on the Authorized King James Version (1769), reinterpreted through the theology of abiding in Christ.",
+    "createdAt": "2026-01-27T00:00:00Z"
+  }
 }

@@ -1,19 +1,19 @@
 /* ===============================
-   PARCHMENT THEME - 5th Theme
+   PARCHMENT THEME - Enhanced Visibility
 ================================ */
 
 [data-theme="parchment"] {
-  /* Backgrounds */
-  --bg-app: #e8e3d8;  /* Warm parchment paper */
+  /* Backgrounds - Improved contrast */
+  --bg-app: #ede8dc;  /* Lighter parchment paper */
   --bg-nav: #8b7355;  /* Brown leather nav */
-  --bg-menu: #d9d4c9;  /* Slightly darker parchment */
+  --bg-menu: #d4ceba;  /* Darker menu background for better contrast */
   
-  /* Text Colors */
-  --text-primary: #2b2520;  /* Dark brown text */
+  /* Text Colors - Stronger contrast */
+  --text-primary: #1a1612;  /* Much darker brown text */
   --text-accent: #8b7355;  /* Warm brown accent */
-  --text-muted: #6b5744;  /* Muted brown */
+  --text-muted: #5a4d3e;  /* Darker muted brown */
   --text-inverse: #f5f1e8;  /* Light cream for nav */
-  --text-secondary: #4a4139;  /* Secondary dark brown */
+  --text-secondary: #3a342d;  /* Darker secondary */
   
   /* Fonts - Classic Serif */
   --font-ui: 'Crimson Text', 'Baskerville', 'Garamond', serif;
@@ -25,9 +25,12 @@
   --paragraph-spacing: 1.5em;
   
   /* Verse Display */
-  --verse-opacity: 0.95;
+  --verse-opacity: 0.98;  /* Increased from 0.95 */
   --verse-size: 1.1rem;
   
   /* Highlight */
-  --highlight-bg: rgba(139, 115, 85, 0.15);
+  --highlight-bg: rgba(139, 115, 85, 0.25);  /* Slightly more visible */
+  
+  /* Modal/Menu overlays - darker for better readability */
+  --overlay-bg: rgba(0, 0, 0, 0.15);
 }
