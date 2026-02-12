@@ -261,7 +261,6 @@ export default function SwipeReading({
   }
 
   function handleSkipPonder() {
-    // Save highlight without reflection
     const highlightData = {
       verses: selectedVerses,
       verseRange:
@@ -270,6 +269,7 @@ export default function SwipeReading({
           : `${selectedVerses[0].verse}-${selectedVerses[selectedVerses.length - 1].verse}`,
       book,
       chapter: currentChapter,
+      translation: translation,
       text: selectedVerses.map((v) => v.text).join(" "),
       color: selectedColor,
       reflection: "",
@@ -281,7 +281,7 @@ export default function SwipeReading({
     setHighlights(newHighlights);
     localStorage.setItem("highlights", JSON.stringify(newHighlights));
 
-    // Clear selection
+    // ✅ Clear selection INSIDE function
     setSelectedVerses([]);
     setIsSelectionMode(false);
     setPonderPromptOpen(false);
@@ -311,8 +311,49 @@ export default function SwipeReading({
       (h) =>
         h.chapter === currentChapter &&
         h.book === book &&
+        h.translation === translation &&
         h.verses.some((v) => v.verse === verseNum),
     );
+  }
+
+  function getExistingHighlightForSelection() {
+    if (selectedVerses.length === 0) return null;
+
+    const verseIds = selectedVerses.map((v) => v.verse);
+
+    return highlights.find(
+      (h) =>
+        h.chapter === currentChapter &&
+        h.book === book &&
+        h.translation === translation &&
+        JSON.stringify(h.verses.map((v) => v.verse)) ===
+          JSON.stringify(verseIds),
+    );
+  }
+
+  function handleRemoveHighlight() {
+    if (selectedVerses.length === 0) return;
+
+    const verseIds = selectedVerses.map((v) => v.verse);
+
+    const updated = highlights.filter(
+      (h) =>
+        !(
+          h.chapter === currentChapter &&
+          h.book === book &&
+          h.translation === translation &&
+          JSON.stringify(h.verses.map((v) => v.verse)) ===
+            JSON.stringify(verseIds)
+        ),
+    );
+
+    setHighlights(updated);
+    localStorage.setItem("highlights", JSON.stringify(updated));
+
+    setSelectedVerses([]);
+    setIsSelectionMode(false);
+    setColorPickerOpen(false);
+    setSelectedColor(null);
   }
 
   function getVerseHighlightColor(verseNum) {
@@ -487,7 +528,9 @@ export default function SwipeReading({
       {colorPickerOpen && (
         <ColorPicker
           theme={theme}
+          existingHighlight={getExistingHighlightForSelection()}
           onSelectColor={handleColorSelected}
+          onRemove={handleRemoveHighlight}
           onCancel={() => setColorPickerOpen(false)}
         />
       )}

@@ -151,7 +151,13 @@ export function SelectionToolbar({ selectedCount, onHighlight, onCancel }) {
 /* ===============================
    Color Picker Modal
 ================================ */
-export function ColorPicker({ theme, onSelectColor, onCancel }) {
+export function ColorPicker({
+  theme,
+  existingHighlight,
+  onSelectColor,
+  onRemove,
+  onCancel,
+}) {
   const colors = THEME_COLORS[theme] || THEME_COLORS.classic;
 
   return (
@@ -174,27 +180,55 @@ export function ColorPicker({ theme, onSelectColor, onCancel }) {
           </h2>
 
           <div className="space-y-3 mb-6">
-            {colors.map((colorOption) => (
-              <button
-                key={colorOption.id}
-                onClick={() => onSelectColor(colorOption)}
-                className="w-full p-4 rounded-xl transition-all border-2"
-                style={{
-                  background: colorOption.color,
-                  borderColor: "var(--text-accent)",
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-[var(--text-primary)]">
-                    {colorOption.name}
-                  </span>
-                  <div
-                    className="w-12 h-12 rounded-lg"
-                    style={{ background: colorOption.color }}
-                  />
-                </div>
-              </button>
-            ))}
+            {colors.map((colorOption) => {
+              const isActive =
+                existingHighlight &&
+                existingHighlight.color.id === colorOption.id;
+
+              return (
+                <button
+                  key={colorOption.id}
+                  onClick={() => {
+                    if (isActive) {
+                      onRemove();
+                    } else {
+                      onSelectColor(colorOption);
+                    }
+                  }}
+                  className="w-full p-4 rounded-xl transition-all border-2 relative"
+                  style={{
+                    background: colorOption.color,
+                    borderColor: isActive
+                      ? "var(--text-accent)"
+                      : "transparent",
+                    boxShadow: isActive
+                      ? "0 0 0 2px var(--text-accent)"
+                      : "none",
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col items-start">
+                      <span className="font-semibold text-[var(--text-primary)]">
+                        {colorOption.name}
+                      </span>
+
+                      {existingHighlight && isActive && (
+                        <span className="text-xs opacity-50 mt-1 text-[var(--text-primary)]">
+                          Tap again to clear
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-12 h-12 rounded-lg"
+                        style={{ background: colorOption.color }}
+                      />
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
 
           <button
@@ -312,6 +346,7 @@ export function PonderMode({
   highlightColor,
   book,
   chapter,
+  translation,
   onClose,
   audioUrl, // Optional instrumental music URL
 }) {

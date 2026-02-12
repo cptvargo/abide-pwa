@@ -30,6 +30,26 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
           available: true,
         },
         {
+          id: "highlights",
+          icon: (
+            <svg
+              viewBox="0 0 24 24"
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M12 2a10 10 0 0 0-10 10v1a10 10 0 0 0 20 0v-1A10 10 0 0 0 12 2z" />
+              <path d="M12 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
+              <path d="M12 14V8" />
+              <path d="M8 12h8" />
+            </svg>
+          ),
+          title: "My Highlights",
+          description: "View highlighted verses & reflections",
+          available: true,
+        },
+        {
           id: "grow",
           icon: (
             <svg

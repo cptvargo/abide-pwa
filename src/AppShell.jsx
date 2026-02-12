@@ -136,9 +136,9 @@ export default function AppShell() {
   );
 
   // Reading context supplied by CoreReading
-  const [readingContext, setReadingContext] = useState({
-    book: "Genesis",
-    chapter: 1,
+  const [readingContext, setReadingContext] = useState(() => {
+    const saved = localStorage.getItem("lastReadingPosition");
+    return saved ? JSON.parse(saved) : { book: "Genesis", chapter: 1 };
   });
 
   // Navigation target (for jumping to specific book/chapter)
@@ -218,6 +218,10 @@ export default function AppShell() {
   useEffect(() => {
     localStorage.setItem("translation", translation);
   }, [translation]);
+
+  useEffect(() => {
+    localStorage.setItem("lastReadingPosition", JSON.stringify(readingContext));
+  }, [readingContext]);
 
   useEffect(() => {
     // Save journal entries to localStorage whenever they change
@@ -694,6 +698,8 @@ export default function AppShell() {
         onNavigate={(id) => {
           if (id === "journal") {
             setActiveScreen("journalIndex");
+          } else if (id === "highlights") {
+            setActiveScreen("highlights");
           } else if (id === "grow") {
             navigate("/grow");
           } else if (id === "settings") {
