@@ -6,6 +6,7 @@
 import { useEffect, useState, useRef } from "react";
 import { loadChapter } from "./lib/bible";
 import ChapterReflectionPanel from "./components/ChapterReflectionPanel";
+import { BIBLE_ORDER, CHAPTER_COUNT } from "./data/bibleStructure";
 import {
   SelectionToolbar,
   ColorPicker,
@@ -24,6 +25,7 @@ export default function SwipeReading({
   onScrollProgress,
   navigationTarget,
   onNavigationComplete,
+  isModalOpen = false, // 👈 NEW: Prevents swipe when modal is open
 }) {
   const [verses, setVerses] = useState([]);
   const [title, setTitle] = useState("");
@@ -35,7 +37,7 @@ export default function SwipeReading({
   const [reflectionSummary, setReflectionSummary] = useState("");
 
   const scrollRef = useRef(null);
-  const touchStartX = useRef(0);
+  const touchStartX = useRef(null);
   const touchStartY = useRef(0);
   const lastScrollTop = useRef(0);
   const navOffsetRef = useRef(0);
@@ -97,6 +99,7 @@ export default function SwipeReading({
         // Scroll to top
         if (scrollRef.current) {
           scrollRef.current.scrollTop = 0;
+          scrollRef.current.scrollLeft = 0; // 👈 ADD THIS
         }
 
         // Update reading context
@@ -118,22 +121,59 @@ export default function SwipeReading({
   }, [currentChapter, translation, onReadingContext, book]);
 
   /* ===============================
+     Hard Reset When Modal Opens/Closes
+  ================================ */
+  useEffect(() => {
+    // Kill ALL swipe state whenever modal state changes
+    setSwipeOffset(0);
+    setIsSwiping(false);
+    touchStartX.current = null;
+    touchStartY.current = null;
+  }, [isModalOpen]);
+
+  /* ===============================
      Handle Navigation Target
   ================================ */
   useEffect(() => {
     if (!navigationTarget) return;
 
+    // 🚨 Prevent duplicate navigation (search bug fix)
+    if (
+      navigationTarget.book === book &&
+      navigationTarget.chapter === currentChapter
+    ) {
+      onNavigationComplete?.();
+      return;
+    }
+
+    // 🔥 HARD RESET swipe state
+    setSwipeOffset(0);
+    setIsSwiping(false);
+    touchStartX.current = null;
+    touchStartY.current = null;
+
+    // Reset scroll memory
+    lastScrollTop.current = 0;
+    navOffsetRef.current = 0;
+
     setBook(navigationTarget.book);
     setCurrentChapter(navigationTarget.chapter);
+
     onNavigationComplete?.();
-  }, [navigationTarget, onNavigationComplete]);
+  }, [navigationTarget]);
 
   /* ===============================
-     Swipe Navigation with Drag Preview
-  ================================ */
+   Swipe Navigation with Premium Drag Preview
+================================ */
   function handleTouchStart(e) {
-    // Don't start swipe if in selection mode
-    if (isSelectionMode) return;
+    console.log(
+      "🔍 Touch detected - isModalOpen:",
+      isModalOpen,
+      "isSelectionMode:",
+      isSelectionMode,
+    );
+
+    if (isSelectionMode || isModalOpen) return;
 
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
@@ -141,46 +181,62 @@ export default function SwipeReading({
   }
 
   function handleTouchMove(e) {
-    if (!touchStartX.current || isSelectionMode) return;
+    // 👈 Block swipe when modal is open
+    if (!touchStartX.current || isSelectionMode || isModalOpen) return;
 
     const touchCurrentX = e.touches[0].clientX;
     const touchCurrentY = e.touches[0].clientY;
+
     const diffX = touchCurrentX - touchStartX.current;
     const diffY = touchCurrentY - touchStartY.current;
 
-    // Only swipe if horizontal movement is greater than vertical
-    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+    if (Math.abs(diffX) > 12 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
       setIsSwiping(true);
       setSwipeOffset(diffX);
-      e.preventDefault();
     }
   }
 
-  function handleTouchEnd(e) {
-    if (!isSwiping) {
+  function handleTouchEnd() {
+    // 👈 Block swipe when modal is open
+    if (!isSwiping || isModalOpen) {
       setSwipeOffset(0);
+      touchStartX.current = null;
       return;
     }
 
     const threshold = 75;
-    const shouldChangePage = Math.abs(swipeOffset) > threshold;
 
-    if (shouldChangePage) {
+    if (Math.abs(swipeOffset) > threshold) {
+      const currentIndex = BIBLE_ORDER.indexOf(book);
+      const maxChapters = CHAPTER_COUNT[book];
+
       if (swipeOffset < 0) {
-        // Swipe left - next chapter
-        setCurrentChapter((c) => c + 1);
+        // Swipe left → Next
+
+        if (currentChapter < maxChapters) {
+          setCurrentChapter((c) => c + 1);
+        } else if (currentIndex < BIBLE_ORDER.length - 1) {
+          const nextBook = BIBLE_ORDER[currentIndex + 1];
+          setBook(nextBook);
+          setCurrentChapter(1);
+        }
       } else {
-        // Swipe right - previous chapter
+        // Swipe right → Previous
+
         if (currentChapter > 1) {
           setCurrentChapter((c) => c - 1);
+        } else if (currentIndex > 0) {
+          const prevBook = BIBLE_ORDER[currentIndex - 1];
+          const prevMax = CHAPTER_COUNT[prevBook];
+          setBook(prevBook);
+          setCurrentChapter(prevMax);
         }
       }
     }
 
-    // Reset
     setSwipeOffset(0);
     setIsSwiping(false);
-    touchStartX.current = 0;
+    touchStartX.current = null;
   }
 
   /* ===============================
@@ -406,15 +462,16 @@ export default function SwipeReading({
   }
 
   return (
-    <div className="no-select flex flex-col h-screen overflow-hidden">
+    <div className="no-select flex flex-col h-screen bg-[var(--bg-primary)]">
       <main
         ref={scrollRef}
-        className="reader flex-1 overflow-y-auto px-6 pt-6 pb-32"
+        className="reader flex-1 overflow-y-auto overflow-x-hidden overscroll-none px-6 pt-6 pb-32"
         style={{
           opacity: isSwiping
             ? Math.max(0.3, 1 - Math.abs(swipeOffset) / 200)
             : 1,
           transition: isSwiping ? "none" : "opacity 0.2s ease-out",
+          pointerEvents: isModalOpen ? "none" : "auto", // 👈 Completely disable touches when modal open
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}

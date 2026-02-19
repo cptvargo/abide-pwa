@@ -174,7 +174,11 @@ export default function BibleNavigator({
 
   // Smooth book selection
   function handleBookClick(book) {
+    // Clear search immediately
+    setSearchQuery("");
+
     setSelectedBook(book);
+
     setTimeout(() => {
       setView("chapters");
     }, 100);
@@ -182,16 +186,15 @@ export default function BibleNavigator({
 
   // Smooth chapter selection - start navigation early
   function handleChapterClick(chapter) {
-    setIsAnimatingOut(true);
-    // Trigger navigation immediately for responsiveness
-    setTimeout(() => {
-      onNavigate(selectedBook.id, chapter);
-    }, 100);
-    // Complete close animation
-    setTimeout(() => {
-      setIsVisible(false);
-      onClose();
-    }, 300);
+    // Reset scroll position BEFORE navigating
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+
+    // Navigate and close instantly - no animation needed
+    onNavigate(selectedBook.id, chapter);
+    setIsVisible(false);
+    onClose();
   }
 
   if (!open && !isVisible) return null;

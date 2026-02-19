@@ -282,6 +282,7 @@ export default function AppShell() {
           onScrollProgress={setNavProgress}
           navigationTarget={navigationTarget}
           onNavigationComplete={() => setNavigationTarget(null)}
+          isModalOpen={navigatorOpen}
         />
       )}
 
