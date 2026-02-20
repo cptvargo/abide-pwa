@@ -3,7 +3,7 @@
  * Theme-aware colors with 3 options per theme
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 /* ===============================
    Theme-Aware Highlight Colors (3 per theme)
@@ -348,11 +348,10 @@ export function PonderMode({
   chapter,
   translation,
   onClose,
-  audioUrl, // Optional instrumental music URL
+  audioUrl, // <-- still here so nothing breaks
 }) {
   const [reflection, setReflection] = useState("");
-  const [audioPlaying, setAudioPlaying] = useState(false);
-  const [audioElement, setAudioElement] = useState(null);
+  const [showTrackList, setShowTrackList] = useState(false);
 
   const verseRange =
     selectedVerses.length === 1
@@ -361,33 +360,110 @@ export function PonderMode({
 
   const combinedText = selectedVerses.map((v) => v.text).join(" ");
 
+  /* ===============================
+     Meditation Tracks
+  ================================ */
+  const MEDITATION_TRACKS = [
+    { id: "silence", name: "Silence", file: null },
+    {
+      id: "bliss",
+      name: "Bliss of His Presence",
+      file: "bliss_of_his_presence.m4a",
+    },
+    { id: "father", name: "Father of Spirits", file: "father_of_spirits.m4a" },
+    { id: "fresh", name: "Fresh Oil", file: "fresh_oil.m4a" },
+    { id: "hiding", name: "Hiding Place", file: "hiding_place.m4a" },
+    { id: "king", name: "King Jesus", file: "king_jesus.m4a" },
+    { id: "fire", name: "Set Us On Fire", file: "set_us_on_fire.m4a" },
+    { id: "heaven", name: "Sounds of Heaven", file: "sounds_of_heaven.m4a" },
+  ];
+
+  const audioRef = useRef(null);
+
+  const [selectedTrack, setSelectedTrack] = useState(() => {
+    const saved = localStorage.getItem("ponderTrack");
+    return (
+      MEDITATION_TRACKS.find((t) => t.id === saved) || MEDITATION_TRACKS[0]
+    );
+  });
+
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  /* ===============================
+     Persist Track
+  ================================ */
   useEffect(() => {
-    if (audioUrl) {
-      const audio = new Audio(audioUrl);
-      audio.loop = true;
-      audio.volume = 0.4;
-      setAudioElement(audio);
+    localStorage.setItem("ponderTrack", selectedTrack.id);
+  }, [selectedTrack]);
 
-      return () => {
-        audio.pause();
-        audio.src = "";
-      };
-    }
-  }, [audioUrl]);
-
-  function toggleAudio() {
-    if (!audioElement) return;
-
-    if (audioPlaying) {
-      audioElement.pause();
-    } else {
-      audioElement.play();
-    }
-    setAudioPlaying(!audioPlaying);
+  /* ===============================
+     Fade Helpers
+  ================================ */
+  function fadeIn(audio, targetVolume = 0.35, duration = 2000) {
+    const step = targetVolume / (duration / 50);
+    const fade = setInterval(() => {
+      if (audio.volume < targetVolume) {
+        audio.volume = Math.min(audio.volume + step, targetVolume);
+      } else {
+        clearInterval(fade);
+      }
+    }, 50);
   }
 
+  function fadeOut(audio, callback, duration = 1500) {
+    const step = audio.volume / (duration / 50);
+    const fade = setInterval(() => {
+      if (audio.volume > 0) {
+        audio.volume = Math.max(audio.volume - step, 0);
+      } else {
+        clearInterval(fade);
+        callback?.();
+      }
+    }, 50);
+  }
+
+  /* ===============================
+     Audio Lifecycle (Fixed – No Restart on Pause)
+  ================================ */
+  useEffect(() => {
+    // Stop existing audio if track changes
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+
+    if (!selectedTrack.file) {
+      setIsPlaying(false);
+      return;
+    }
+
+    const audio = new Audio(
+      `${import.meta.env.BASE_URL}audio/meditation/${selectedTrack.file}`,
+    );
+
+    audio.loop = true;
+    audio.volume = 0.35;
+
+    audioRef.current = audio;
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, [selectedTrack]);
+
+  /* ===============================
+     Auto-play when track selected
+  ================================ */
+  useEffect(() => {
+    if (isPlaying && audioRef.current) {
+      audioRef.current.play().catch(() => {});
+    }
+  }, [isPlaying]);
+
   function handleSave() {
-    // Save reflection to highlights
     const highlightData = {
       verses: selectedVerses,
       verseRange,
@@ -400,7 +476,6 @@ export function PonderMode({
       id: Date.now().toString(),
     };
 
-    // Get existing highlights
     const existing = JSON.parse(localStorage.getItem("highlights") || "[]");
     existing.push(highlightData);
     localStorage.setItem("highlights", JSON.stringify(existing));
@@ -408,20 +483,37 @@ export function PonderMode({
     onClose(highlightData);
   }
 
+  function handleClose() {
+    if (audioRef.current) {
+      fadeOut(audioRef.current, () => {
+        audioRef.current.pause();
+        audioRef.current = null;
+      });
+    }
+    onClose(null);
+  }
+
+  function toggleAudio() {
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play().catch(() => {});
+      setIsPlaying(true);
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-[100] bg-[var(--bg-app)] flex flex-col">
       {/* Header */}
       <div
         className="flex items-center justify-between px-6 py-4 border-b border-[var(--text-accent)]/10"
-        style={{
-          paddingTop: "calc(env(safe-area-inset-top) + 1rem)",
-        }}
+        style={{ paddingTop: "calc(env(safe-area-inset-top) + 1rem)" }}
       >
         <button
-          onClick={() => {
-            if (audioElement) audioElement.pause();
-            onClose(null);
-          }}
+          onClick={handleClose}
           className="text-[var(--text-accent)] font-semibold"
         >
           Cancel
@@ -463,93 +555,109 @@ export function PonderMode({
         </div>
 
         {/* Audio Controls */}
-        {audioUrl && (
-          <div className="flex justify-center mb-8">
-            <button
-              onClick={toggleAudio}
-              className="px-6 py-3 rounded-full flex items-center gap-3 transition"
-              style={{
-                background: "var(--text-accent)",
-                color: "var(--text-inverse)",
-              }}
-            >
-              {audioPlaying ? (
-                <>
+        <div className="mb-8">
+          <div
+            className="relative overflow-hidden rounded-2xl p-6"
+            style={{
+              background: "rgba(0, 0, 0, 0.2)",
+              border: "1px solid rgba(var(--accent-rgb), 0.2)",
+            }}
+          >
+            {/* Now Playing */}
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="text-xs text-[var(--text-primary)] opacity-50 mb-1">
+                  NOW PLAYING
+                </div>
+                <button
+                  onClick={() => setShowTrackList(!showTrackList)}
+                  className="text-sm font-semibold text-[var(--text-primary)] hover:opacity-70 transition text-left flex items-center gap-2"
+                >
+                  {selectedTrack.name}
                   <svg
                     viewBox="0 0 24 24"
-                    className="w-5 h-5"
-                    fill="currentColor"
+                    className={`w-4 h-4 transition-transform ${showTrackList ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
                   >
-                    <rect x="6" y="4" width="4" height="16" />
-                    <rect x="14" y="4" width="4" height="16" />
+                    <path d="M6 9l6 6 6-6" />
                   </svg>
-                  <span className="font-medium">Pause Music</span>
-                </>
-              ) : (
-                <>
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="w-5 h-5"
-                    fill="currentColor"
-                  >
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                  <span className="font-medium">Play Music</span>
-                </>
-              )}
-            </button>
-          </div>
-        )}
+                </button>
+              </div>
 
-        {/* Reflection Prompts */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-[var(--text-primary)] opacity-80 mb-4">
-            Reflect & Meditate
-          </h3>
-          <div className="space-y-3 mb-6">
-            <button className="w-full text-left p-4 rounded-xl bg-black/10 hover:bg-black/15 transition flex items-center gap-3">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-5 h-5 flex-shrink-0 text-[var(--text-accent)]"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-              <div className="text-sm font-medium text-[var(--text-primary)]">
-                What stood out to you with this verse(s)?
+              {/* Play/Pause Button */}
+              {selectedTrack.file && (
+                <button
+                  onClick={toggleAudio}
+                  className="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
+                  style={{
+                    background: "var(--text-accent)",
+                    color: "var(--text-inverse)",
+                  }}
+                >
+                  {isPlaying ? (
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="w-5 h-5"
+                      fill="currentColor"
+                    >
+                      <rect x="6" y="4" width="4" height="16" rx="1" />
+                      <rect x="14" y="4" width="4" height="16" rx="1" />
+                    </svg>
+                  ) : (
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="w-5 h-5"
+                      fill="currentColor"
+                    >
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  )}
+                </button>
+              )}
+            </div>
+
+            {/* Track List Accordion */}
+            {showTrackList && (
+              <div className="mt-4 pt-4 border-t border-[var(--text-accent)]/20 space-y-1 max-h-48 overflow-y-auto animate-fadeIn">
+                {MEDITATION_TRACKS.map((track) => (
+                  <button
+                    key={track.id}
+                    onClick={() => {
+                      setSelectedTrack(track);
+                      if (track.file) setIsPlaying(true);
+                      else setIsPlaying(false);
+                      setShowTrackList(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition text-[var(--text-primary)] ${
+                      selectedTrack.id === track.id
+                        ? "font-medium"
+                        : "opacity-60 hover:opacity-100"
+                    }`}
+                    style={{
+                      background:
+                        selectedTrack.id === track.id
+                          ? "rgba(var(--accent-rgb), 0.15)"
+                          : "transparent",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (selectedTrack.id !== track.id) {
+                        e.currentTarget.style.background =
+                          "rgba(var(--accent-rgb), 0.05)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (selectedTrack.id !== track.id) {
+                        e.currentTarget.style.background = "transparent";
+                      }
+                    }}
+                  >
+                    {track.name}
+                  </button>
+                ))}
               </div>
-            </button>
-            <button className="w-full text-left p-4 rounded-xl bg-black/10 hover:bg-black/15 transition flex items-center gap-3">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-5 h-5 flex-shrink-0 text-[var(--text-accent)]"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M12 2a7 7 0 0 0-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5a7 7 0 0 0-4-12z" />
-                <path d="M9 21h6" />
-              </svg>
-              <div className="text-sm font-medium text-[var(--text-primary)]">
-                Pray what the Holy Spirit leads you to pray?
-              </div>
-            </button>
-            <button className="w-full text-left p-4 rounded-xl bg-black/10 hover:bg-black/15 transition flex items-center gap-3">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-5 h-5 flex-shrink-0 text-[var(--text-accent)]"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-              </svg>
-              <div className="text-sm font-medium text-[var(--text-primary)]">
-                If any action, how can you apply this to your life?
-              </div>
-            </button>
+            )}
           </div>
         </div>
 
@@ -569,6 +677,17 @@ export function PonderMode({
           />
         </div>
       </div>
+
+      {/* CSS Animation */}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
