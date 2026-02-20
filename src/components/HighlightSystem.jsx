@@ -371,11 +371,8 @@ export function PonderMode({
       file: "bliss_of_his_presence.m4a",
     },
     { id: "father", name: "Father of Spirits", file: "father_of_spirits.m4a" },
-    { id: "fresh", name: "Fresh Oil", file: "fresh_oil.m4a" },
-    { id: "hiding", name: "Hiding Place", file: "hiding_place.m4a" },
     { id: "king", name: "King Jesus", file: "king_jesus.m4a" },
     { id: "fire", name: "Set Us On Fire", file: "set_us_on_fire.m4a" },
-    { id: "heaven", name: "Sounds of Heaven", file: "sounds_of_heaven.m4a" },
   ];
 
   const audioRef = useRef(null);
