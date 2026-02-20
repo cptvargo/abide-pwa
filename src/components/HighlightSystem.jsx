@@ -518,7 +518,7 @@ export function PonderMode({
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
               <div className="text-sm font-medium text-[var(--text-primary)]">
-                What is God speaking to me through this?
+                What stood out to you with this verse(s)?
               </div>
             </button>
             <button className="w-full text-left p-4 rounded-xl bg-black/10 hover:bg-black/15 transition flex items-center gap-3">
@@ -533,7 +533,7 @@ export function PonderMode({
                 <path d="M9 21h6" />
               </svg>
               <div className="text-sm font-medium text-[var(--text-primary)]">
-                How should I respond in prayer?
+                Pray what the Holy Spirit leads you to pray?
               </div>
             </button>
             <button className="w-full text-left p-4 rounded-xl bg-black/10 hover:bg-black/15 transition flex items-center gap-3">
@@ -547,7 +547,7 @@ export function PonderMode({
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
               </svg>
               <div className="text-sm font-medium text-[var(--text-primary)]">
-                What action is God calling me to take?
+                If any action, how can you apply this to your life?
               </div>
             </button>
           </div>

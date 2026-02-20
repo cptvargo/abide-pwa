@@ -462,7 +462,7 @@ export default function SwipeReading({
   }
 
   return (
-    <div className="no-select flex flex-col h-screen bg-[var(--bg-primary)]">
+    <div className="no-select flex flex-col min-h-screen bg-[var(--bg-primary)]">
       <main
         ref={scrollRef}
         className="reader flex-1 overflow-y-auto overflow-x-hidden overscroll-none px-6 pt-6 pb-32"
@@ -522,7 +522,7 @@ export default function SwipeReading({
                 onClick={() => handleVerseClick(v)}
                 className="leading-[var(--line-height)] text-[var(--text-primary)] font-[var(--font-body)] cursor-pointer transition-all"
                 style={{
-                  fontSize: `${textSize}rem`,
+                  fontSize: `${textSize * 16}px`,
                   background: isSelected
                     ? "var(--text-accent)"
                     : highlightColor || "transparent",

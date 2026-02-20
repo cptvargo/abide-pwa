@@ -414,7 +414,7 @@ export default function BibleNavigator({
                   borderRadius: "16px",
                   padding: "14px 20px 14px 48px",
                   color: "var(--text-primary)",
-                  fontSize: "15px",
+                  fontSize: "16px",
                   outline: "none",
                   transition: "all 0.2s",
                 }}
