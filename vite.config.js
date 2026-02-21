@@ -52,20 +52,9 @@ export default defineConfig({
       },
 
       workbox: {
-        globIgnores: ['**/node_modules/**', '**/audio/**'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/.*\.m4a$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'audio-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 30
-              }
-            }
-          }
-        ]
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,txt,woff,woff2,m4a}'],
+        maximumFileSizeToCacheInBytes: 20000000, // 20MB - allows large files
+        navigateFallback: null
       },
 
       devOptions: {
@@ -75,6 +64,10 @@ export default defineConfig({
   ],
 
   publicDir: 'public',
+
+  build: {
+    assetsInlineLimit: 0
+  },
 
   server: {
     host: true
