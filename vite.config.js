@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-  // GitHub Pages base (repo name)
   base: "/abide-pwa/",
 
   plugins: [
@@ -52,11 +51,30 @@ export default defineConfig({
         ]
       },
 
+      workbox: {
+        globIgnores: ['**/node_modules/**', '**/audio/**'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/.*\.m4a$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'audio-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 30
+              }
+            }
+          }
+        ]
+      },
+
       devOptions: {
         enabled: true
       }
     })
   ],
+
+  publicDir: 'public',
 
   server: {
     host: true
