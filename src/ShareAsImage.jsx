@@ -1,225 +1,285 @@
 /**
  * ShareAsImage.jsx - Generate shareable images from dialogue entries
- * Uses html2canvas to convert styled HTML to image
+ * Production-hardened for Vite PWA deployment on GitHub Pages
  */
 
 import html2canvas from "html2canvas";
 
-export async function shareDialogueAsImage(entry, theme) {
-  console.log("🎨 Starting image generation...");
+/**
+ * Preload an image with explicit CORS handling
+ * @param {string} src - Image source URL
+ * @returns {Promise<HTMLImageElement>} Loaded image element
+ */
+function loadImageWithCORS(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous"; // Critical for canvas tainting prevention
 
-  // Create invisible container
-  const container = document.createElement("div");
-  container.style.position = "fixed";
-  container.style.left = "-9999px";
-  container.style.top = "0";
-  document.body.appendChild(container);
+    img.onload = () => {
+      console.log("✅ Image loaded with CORS:", src);
+      resolve(img);
+    };
 
-  // Get theme colors
-  const themeColors = {
-    classic: { bg: "#2C2416", accent: "#CBB27C", text: "#E8DCC8" },
-    "still-waters": { bg: "#0A3940", accent: "#1F6F78", text: "#D4E8EB" },
-    "stone-fire": { bg: "#7C2D12", accent: "#F97316", text: "#FED7AA" },
-    "olive-parchment": { bg: "#403A2C", accent: "#9D8F6F", text: "#E8E3D6" },
-    parchment: { bg: "#2C2416", accent: "#8B7355", text: "#E8DCC8" },
-  };
+    img.onerror = (err) => {
+      console.error("❌ Image failed to load:", src, err);
+      reject(new Error(`Failed to load image: ${src}`));
+    };
 
-  const colors = themeColors[theme] || themeColors.classic;
-  console.log("🎨 Using theme:", theme, colors);
-
-  // Format date
-  const date = new Date(entry.createdAt);
-  const formattedDate = date.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
+    img.src = src;
   });
+}
 
-  // Create HTML for image
-  container.innerHTML = `
-    <div style="
-      width: 600px;
-      background: ${colors.bg};
-      color: ${colors.text};
-      padding: 60px 50px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      box-sizing: border-box;
-    ">
-      <!-- ABIDE Logo -->
-      <div style="
-        text-align: center;
-        margin-bottom: 40px;
-      ">
-        <img 
-          src="${import.meta.env.BASE_URL}ABIDE.png" 
-          alt="ABIDE"
-          style="
-            width: 200px;
-            height: auto;
-            opacity: 0.9;
-          "
-        />
-      </div>
+/**
+ * Share dialogue entry as a beautiful branded image
+ * @param {Object} entry - Dialogue entry data
+ * @param {string} theme - Current theme (classic, still-waters, etc)
+ * @returns {Promise<boolean>} True if share succeeded, false to fall back to text
+ */
+export async function shareDialogueAsImage(entry, theme) {
+  console.log(
+    "🎨 [ShareAsImage] Starting image generation for entry:",
+    entry.id,
+  );
+  console.log("🎨 [ShareAsImage] Theme:", theme);
+  console.log("🎨 [ShareAsImage] BASE_URL:", import.meta.env.BASE_URL);
 
-      <!-- Scripture Reference -->
-      ${
-        entry.type === "scripture" && entry.book && entry.chapter
-          ? `
-        <div style="
-          text-align: center;
-          font-size: 14px;
-          font-weight: 600;
-          color: ${colors.accent};
-          margin-bottom: 20px;
-        ">
-          ${entry.book} ${entry.chapter}${entry.verseRange ? `:${entry.verseRange}` : ""}
-          ${entry.translation ? ` • ${entry.translation}` : ""}
-        </div>
-      `
-          : ""
-      }
-
-      <!-- Highlighted Verse -->
-      ${
-        entry.type === "scripture" && entry.verseText
-          ? `
-        <div style="
-          background: ${entry.highlightColor?.color || colors.accent + "33"};
-          padding: 30px;
-          border-radius: 12px;
-          margin-bottom: 30px;
-          border-left: 4px solid ${colors.accent};
-        ">
-          <p style="
-            font-size: 18px;
-            line-height: 1.8;
-            font-style: italic;
-            margin: 0;
-            color: ${colors.text};
-          ">"${entry.verseText}"</p>
-        </div>
-      `
-          : ""
-      }
-
-      <!-- Reflection -->
-      <div style="
-        font-size: 16px;
-        line-height: 1.8;
-        color: ${colors.text};
-        margin-bottom: 30px;
-        white-space: pre-wrap;
-      ">${entry.text || entry.reflection.replace(/<[^>]*>/g, "")}</div>
-
-      <!-- Divider -->
-      <div style="
-        height: 1px;
-        background: linear-gradient(to right, transparent, ${colors.accent}40, transparent);
-        margin: 30px 0;
-      "></div>
-
-      <!-- Date -->
-      <div style="
-        text-align: center;
-        font-size: 12px;
-        color: ${colors.text};
-        opacity: 0.6;
-      ">${formattedDate}</div>
-    </div>
-  `;
+  let container = null;
 
   try {
-    console.log("🎨 HTML created, waiting for images...");
+    // Theme color mappings
+    const themeColors = {
+      classic: { bg: "#2C2416", accent: "#CBB27C", text: "#E8DCC8" },
+      "still-waters": { bg: "#0A3940", accent: "#1F6F78", text: "#D4E8EB" },
+      "stone-fire": { bg: "#7C2D12", accent: "#F97316", text: "#FED7AA" },
+      "olive-parchment": { bg: "#403A2C", accent: "#9D8F6F", text: "#E8E3D6" },
+      parchment: { bg: "#2C2416", accent: "#8B7355", text: "#E8DCC8" },
+    };
 
-    // Wait for images to load
-    const images = container.querySelectorAll("img");
-    console.log("🎨 Found", images.length, "images");
+    const colors = themeColors[theme] || themeColors.classic;
 
-    await Promise.all(
-      Array.from(images).map((img) => {
-        if (img.complete) {
-          console.log("🎨 Image already loaded:", img.src);
-          return Promise.resolve();
-        }
-        return new Promise((resolve, reject) => {
-          img.onload = () => {
-            console.log("🎨 Image loaded:", img.src);
-            resolve();
-          };
-          img.onerror = (err) => {
-            console.error("❌ Image failed to load:", img.src, err);
-            reject(err);
-          };
-        });
-      }),
+    // Format date
+    const date = new Date(entry.createdAt);
+    const formattedDate = date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+
+    // STEP 1: Preload logo with CORS
+    const logoUrl = `${import.meta.env.BASE_URL}ABIDE.png`;
+    console.log("🎨 [ShareAsImage] Preloading logo:", logoUrl);
+    const logoImg = await loadImageWithCORS(logoUrl);
+
+    // STEP 2: Create off-screen container
+    container = document.createElement("div");
+    container.style.position = "fixed";
+    container.style.left = "-9999px";
+    container.style.top = "0";
+    container.style.zIndex = "-1";
+    document.body.appendChild(container);
+
+    // STEP 3: Build HTML structure
+    const card = document.createElement("div");
+    card.style.width = "600px";
+    card.style.background = colors.bg;
+    card.style.color = colors.text;
+    card.style.padding = "60px 50px";
+    card.style.fontFamily =
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    card.style.boxSizing = "border-box";
+
+    // Logo section
+    const logoSection = document.createElement("div");
+    logoSection.style.textAlign = "center";
+    logoSection.style.marginBottom = "40px";
+
+    const logo = document.createElement("img");
+    logo.crossOrigin = "anonymous"; // Critical: prevent tainting
+    logo.src = logoImg.src; // Use preloaded image src
+    logo.style.width = "200px";
+    logo.style.height = "auto";
+    logo.style.opacity = "0.9";
+    logoSection.appendChild(logo);
+    card.appendChild(logoSection);
+
+    // Scripture reference (if applicable)
+    if (entry.type === "scripture" && entry.book && entry.chapter) {
+      const refDiv = document.createElement("div");
+      refDiv.style.textAlign = "center";
+      refDiv.style.fontSize = "14px";
+      refDiv.style.fontWeight = "600";
+      refDiv.style.color = colors.accent;
+      refDiv.style.marginBottom = "20px";
+      refDiv.textContent = `${entry.book} ${entry.chapter}${entry.verseRange ? `:${entry.verseRange}` : ""}${entry.translation ? ` • ${entry.translation}` : ""}`;
+      card.appendChild(refDiv);
+    }
+
+    // Verse text (if applicable)
+    if (entry.type === "scripture" && entry.verseText) {
+      const verseBox = document.createElement("div");
+      verseBox.style.background =
+        entry.highlightColor?.color || `${colors.accent}33`;
+      verseBox.style.padding = "30px";
+      verseBox.style.borderRadius = "12px";
+      verseBox.style.marginBottom = "30px";
+      verseBox.style.borderLeft = `4px solid ${colors.accent}`;
+
+      const verseText = document.createElement("p");
+      verseText.style.fontSize = "18px";
+      verseText.style.lineHeight = "1.8";
+      verseText.style.fontStyle = "italic";
+      verseText.style.margin = "0";
+      verseText.style.color = colors.text;
+      verseText.textContent = `"${entry.verseText}"`;
+      verseBox.appendChild(verseText);
+      card.appendChild(verseBox);
+    }
+
+    // Reflection text
+    const reflection = document.createElement("div");
+    reflection.style.fontSize = "16px";
+    reflection.style.lineHeight = "1.8";
+    reflection.style.color = colors.text;
+    reflection.style.marginBottom = "30px";
+    reflection.style.whiteSpace = "pre-wrap";
+    reflection.textContent =
+      entry.text || entry.reflection.replace(/<[^>]*>/g, "");
+    card.appendChild(reflection);
+
+    // Divider
+    const divider = document.createElement("div");
+    divider.style.height = "1px";
+    divider.style.background = `linear-gradient(to right, transparent, ${colors.accent}40, transparent)`;
+    divider.style.margin = "30px 0";
+    card.appendChild(divider);
+
+    // Date
+    const dateDiv = document.createElement("div");
+    dateDiv.style.textAlign = "center";
+    dateDiv.style.fontSize = "12px";
+    dateDiv.style.color = colors.text;
+    dateDiv.style.opacity = "0.6";
+    dateDiv.textContent = formattedDate;
+    card.appendChild(dateDiv);
+
+    container.appendChild(card);
+
+    // STEP 4: Allow DOM to settle
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    console.log("🎨 [ShareAsImage] Rendering canvas...");
+
+    // STEP 5: Render to canvas (strict CORS mode, no tainting)
+    const canvas = await html2canvas(card, {
+      backgroundColor: colors.bg,
+      scale: 2,
+      useCORS: true, // ONLY use CORS mode
+      logging: false,
+      allowTaint: false, // Never allow tainted canvas
+      foreignObjectRendering: false, // Avoid foreign object issues
+    });
+
+    console.log("✅ [ShareAsImage] Canvas rendered successfully");
+    console.log(
+      "🎨 [ShareAsImage] Canvas dimensions:",
+      canvas.width,
+      "x",
+      canvas.height,
     );
 
-    console.log("🎨 All images loaded, generating canvas...");
-
-    // Small delay to let DOM settle
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // Convert to canvas
-    const canvas = await html2canvas(container.firstChild, {
-      backgroundColor: colors.bg,
-      scale: 2, // High quality
-      logging: true, // Enable logging to see what's happening
-      useCORS: true, // Allow cross-origin images
-      allowTaint: true, // Allow cross-origin images without CORS
-    });
-
-    console.log("🎨 Canvas generated, converting to blob...");
-
-    // Convert canvas to blob
-    const blob = await new Promise((resolve) => {
-      canvas.toBlob(resolve, "image/png");
-    });
-
-    console.log("🎨 Blob created:", blob.size, "bytes");
-
-    // Clean up
+    // Clean up container
     document.body.removeChild(container);
+    container = null;
 
-    // Create file
-    const file = new File([blob], "dialogue.png", { type: "image/png" });
-
-    console.log("🎨 File created, checking share capabilities...");
-    console.log("🎨 navigator.share exists?", !!navigator.share);
-    console.log("🎨 navigator.canShare exists?", !!navigator.canShare);
-
-    // Share via native API
-    if (
-      navigator.share &&
-      navigator.canShare &&
-      navigator.canShare({ files: [file] })
-    ) {
-      console.log("🎨 Device supports file sharing, sharing now...");
-      await navigator.share({
-        files: [file],
-        title:
-          entry.type === "scripture"
-            ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
-            : "My Prayer",
-      });
-      console.log("✅ Share completed successfully!");
-      return true;
-    } else {
-      console.log(
-        "⚠️ Device does not support file sharing, downloading instead...",
+    // STEP 6: Convert to blob
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (result) => {
+          if (!result) {
+            reject(
+              new Error("Canvas toBlob returned null - canvas may be tainted"),
+            );
+            return;
+          }
+          resolve(result);
+        },
+        "image/png",
+        1.0,
       );
-      // Fallback: Download image
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "dialogue.png";
-      a.click();
-      URL.revokeObjectURL(url);
-      console.log("✅ Image downloaded");
-      return true;
+    });
+
+    if (!blob) {
+      throw new Error("Blob creation failed - received null");
     }
+
+    console.log("✅ [ShareAsImage] Blob created:", blob.size, "bytes");
+
+    // STEP 7: Create file for sharing
+    const filename = `abide-dialogue-${Date.now()}.png`;
+    const file = new File([blob], filename, { type: "image/png" });
+
+    console.log("🎨 [ShareAsImage] File created:", filename);
+
+    // STEP 8: Attempt native share
+    if (navigator.share) {
+      console.log(
+        "🎨 [ShareAsImage] Web Share API available, attempting share...",
+      );
+
+      try {
+        // Attempt share directly (don't gate on canShare - it's unreliable in PWAs)
+        await navigator.share({
+          files: [file],
+          title:
+            entry.type === "scripture"
+              ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
+              : "My Prayer",
+        });
+
+        console.log("✅ [ShareAsImage] Share completed successfully");
+        return true;
+      } catch (shareError) {
+        // User cancelled or share failed
+        if (shareError.name === "AbortError") {
+          console.log("ℹ️ [ShareAsImage] User cancelled share");
+          return true; // User cancelled is not a failure
+        }
+
+        console.warn(
+          "⚠️ [ShareAsImage] Share failed, falling back to download:",
+          shareError,
+        );
+        // Fall through to download
+      }
+    } else {
+      console.log("ℹ️ [ShareAsImage] Web Share API not available");
+    }
+
+    // STEP 9: Fallback to download
+    console.log("🎨 [ShareAsImage] Downloading image as fallback...");
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // Clean up blob URL after a delay
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    console.log("✅ [ShareAsImage] Image downloaded successfully");
+    return true;
   } catch (error) {
-    console.error("❌ Share failed:", error);
-    document.body.removeChild(container);
-    return false;
+    console.error("❌ [ShareAsImage] Fatal error:", error);
+    console.error("❌ [ShareAsImage] Error stack:", error.stack);
+
+    // Clean up container if it exists
+    if (container && container.parentNode) {
+      document.body.removeChild(container);
+    }
+
+    return false; // Signal to fall back to text sharing
   }
 }
