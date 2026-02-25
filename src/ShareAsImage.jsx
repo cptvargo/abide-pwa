@@ -156,12 +156,16 @@ export async function shareDialogueAsImage(entry, theme) {
 
     console.log("🎨 All images loaded, generating canvas...");
 
+    // Small delay to let DOM settle
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     // Convert to canvas
     const canvas = await html2canvas(container.firstChild, {
       backgroundColor: colors.bg,
       scale: 2, // High quality
-      logging: false,
+      logging: true, // Enable logging to see what's happening
       useCORS: true, // Allow cross-origin images
+      allowTaint: true, // Allow cross-origin images without CORS
     });
 
     console.log("🎨 Canvas generated, converting to blob...");
