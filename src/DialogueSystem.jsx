@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { shareDialogueAsImage } from "./ShareAsImage";
+import { shareDialogueAsImage } from "../ShareAsImage";
 import RichTextJournal from "./RichTextJournal";
 
 /* ===============================
