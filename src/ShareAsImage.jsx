@@ -126,11 +126,24 @@ export async function shareDialogueAsImage(entry, theme) {
   `;
 
   try {
+    // Wait for images to load
+    const images = container.querySelectorAll("img");
+    await Promise.all(
+      Array.from(images).map((img) => {
+        if (img.complete) return Promise.resolve();
+        return new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+      }),
+    );
+
     // Convert to canvas
     const canvas = await html2canvas(container.firstChild, {
       backgroundColor: colors.bg,
       scale: 2, // High quality
       logging: false,
+      useCORS: true, // Allow cross-origin images
     });
 
     // Convert canvas to blob
