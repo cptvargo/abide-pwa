@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
+import { shareDialogueAsImage } from "./ShareAsImage";
 import RichTextJournal from "./RichTextJournal";
 
 /* ===============================
@@ -66,53 +67,59 @@ export default function DialogueSystem({ theme, translation, onBack }) {
     setCreatingEntry(false);
   }
 
-  function handleShareEntry(entry) {
-    let shareText = "";
+  async function handleShareEntry(entry) {
+    // Try sharing as image first
+    const success = await shareDialogueAsImage(entry, theme);
 
-    // Add Scripture reference if present
-    if (entry.type === "scripture" && entry.book && entry.chapter) {
-      const ref = entry.verseRange
-        ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
-        : `${entry.book} ${entry.chapter}`;
-      shareText += `${ref}${entry.translation ? ` • ${entry.translation}` : ""}\n`;
+    // If image share fails, fall back to text
+    if (!success) {
+      let shareText = "";
 
-      if (entry.verseText) {
-        shareText += `"${entry.verseText}"\n\n`;
+      // Add Scripture reference if present
+      if (entry.type === "scripture" && entry.book && entry.chapter) {
+        const ref = entry.verseRange
+          ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
+          : `${entry.book} ${entry.chapter}`;
+        shareText += `${ref}${entry.translation ? ` • ${entry.translation}` : ""}\n`;
+
+        if (entry.verseText) {
+          shareText += `"${entry.verseText}"\n\n`;
+        }
       }
-    }
 
-    // Add reflection
-    shareText += entry.text || entry.reflection.replace(/<[^>]*>/g, "");
+      // Add reflection
+      shareText += entry.text || entry.reflection.replace(/<[^>]*>/g, "");
 
-    // Add timestamp
-    const date = new Date(entry.createdAt);
-    const timestamp = date.toLocaleString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
-    shareText += `\n\n— ${timestamp}`;
-
-    // Use native share API if available (iOS, Android)
-    if (navigator.share) {
-      navigator
-        .share({
-          title:
-            entry.type === "scripture"
-              ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
-              : "My Prayer",
-          text: shareText,
-        })
-        .catch(() => {
-          // User cancelled, do nothing
-        });
-    } else {
-      // Fallback: Copy to clipboard
-      navigator.clipboard.writeText(shareText).then(() => {
-        alert("Copied to clipboard!");
+      // Add timestamp
+      const date = new Date(entry.createdAt);
+      const timestamp = date.toLocaleString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
       });
+      shareText += `\n\n— ${timestamp}`;
+
+      // Use native share API if available (iOS, Android)
+      if (navigator.share) {
+        navigator
+          .share({
+            title:
+              entry.type === "scripture"
+                ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
+                : "My Prayer",
+            text: shareText,
+          })
+          .catch(() => {
+            // User cancelled, do nothing
+          });
+      } else {
+        // Fallback: Copy to clipboard
+        navigator.clipboard.writeText(shareText).then(() => {
+          alert("Copied to clipboard!");
+        });
+      }
     }
   }
 
@@ -403,7 +410,7 @@ function DialogueCard({ entry, theme, onView, onShare }) {
               e.stopPropagation();
               onShare();
             }}
-            className="p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+            className="p-2 rounded-lg transition-opacity"
             style={{
               background: "rgba(var(--accent-rgb), 0.1)",
               color: "var(--text-accent)",
