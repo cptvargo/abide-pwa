@@ -67,59 +67,60 @@ export default function DialogueSystem({ theme, translation, onBack }) {
     setCreatingEntry(false);
   }
 
-  async function handleShareEntry(entry) {
-    // Try sharing as image first
-    const success = await shareDialogueAsImage(entry, theme);
+  async function handleShareEntry(entry, shareType = "image") {
+    // If user chose image or default to image
+    if (shareType === "image") {
+      const success = await shareDialogueAsImage(entry, theme);
+      if (success) return; // Image share worked, we're done
+    }
 
-    // If image share fails, fall back to text
-    if (!success) {
-      let shareText = "";
+    // Fall back to text (either user chose text or image failed)
+    let shareText = "";
 
-      // Add Scripture reference if present
-      if (entry.type === "scripture" && entry.book && entry.chapter) {
-        const ref = entry.verseRange
-          ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
-          : `${entry.book} ${entry.chapter}`;
-        shareText += `${ref}${entry.translation ? ` • ${entry.translation}` : ""}\n`;
+    // Add Scripture reference if present
+    if (entry.type === "scripture" && entry.book && entry.chapter) {
+      const ref = entry.verseRange
+        ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
+        : `${entry.book} ${entry.chapter}`;
+      shareText += `${ref}${entry.translation ? ` • ${entry.translation}` : ""}\n`;
 
-        if (entry.verseText) {
-          shareText += `"${entry.verseText}"\n\n`;
-        }
+      if (entry.verseText) {
+        shareText += `"${entry.verseText}"\n\n`;
       }
+    }
 
-      // Add reflection
-      shareText += entry.text || entry.reflection.replace(/<[^>]*>/g, "");
+    // Add reflection
+    shareText += entry.text || entry.reflection.replace(/<[^>]*>/g, "");
 
-      // Add timestamp
-      const date = new Date(entry.createdAt);
-      const timestamp = date.toLocaleString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-      });
-      shareText += `\n\n— ${timestamp}`;
+    // Add timestamp
+    const date = new Date(entry.createdAt);
+    const timestamp = date.toLocaleString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+    shareText += `\n\n— ${timestamp}`;
 
-      // Use native share API if available (iOS, Android)
-      if (navigator.share) {
-        navigator
-          .share({
-            title:
-              entry.type === "scripture"
-                ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
-                : "My Prayer",
-            text: shareText,
-          })
-          .catch(() => {
-            // User cancelled, do nothing
-          });
-      } else {
-        // Fallback: Copy to clipboard
-        navigator.clipboard.writeText(shareText).then(() => {
-          alert("Copied to clipboard!");
+    // Use native share API if available (iOS, Android)
+    if (navigator.share) {
+      navigator
+        .share({
+          title:
+            entry.type === "scripture"
+              ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
+              : "My Prayer",
+          text: shareText,
+        })
+        .catch(() => {
+          // User cancelled, do nothing
         });
-      }
+    } else {
+      // Fallback: Copy to clipboard
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert("Copied to clipboard!");
+      });
     }
   }
 
@@ -144,7 +145,7 @@ export default function DialogueSystem({ theme, translation, onBack }) {
             setViewingEntry(null);
           }
         }}
-        onShare={() => handleShareEntry(viewingEntry)}
+        onShare={(shareType) => handleShareEntry(viewingEntry, shareType)}
       />
     );
   }
@@ -507,6 +508,7 @@ function DialogueCard({ entry, theme, onView, onShare }) {
    Dialogue Detail Component
 ================================ */
 function DialogueDetail({ entry, theme, onBack, onEdit, onDelete, onShare }) {
+  const [showShareMenu, setShowShareMenu] = useState(false);
   const date = new Date(entry.createdAt);
 
   return (
@@ -537,16 +539,77 @@ function DialogueDetail({ entry, theme, onBack, onEdit, onDelete, onShare }) {
         </button>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={onShare}
-            className="text-xs px-3 py-1.5 rounded-lg transition"
-            style={{
-              color: "var(--text-accent)",
-              background: "rgba(var(--accent-rgb), 0.1)",
-            }}
-          >
-            Share
-          </button>
+          {/* Share with menu */}
+          <div className="relative">
+            <button
+              onClick={() => setShowShareMenu(!showShareMenu)}
+              className="text-xs px-3 py-1.5 rounded-lg transition"
+              style={{
+                color: "var(--text-accent)",
+                background: "rgba(var(--accent-rgb), 0.1)",
+              }}
+            >
+              Share
+            </button>
+
+            {showShareMenu && (
+              <>
+                {/* Backdrop to close menu */}
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowShareMenu(false)}
+                />
+                {/* Menu */}
+                <div
+                  className="absolute right-0 top-full mt-2 rounded-xl overflow-hidden shadow-lg z-50"
+                  style={{
+                    background: "var(--bg-menu)",
+                    border: "1px solid rgba(var(--accent-rgb), 0.2)",
+                    minWidth: "160px",
+                  }}
+                >
+                  <button
+                    onClick={() => {
+                      onShare("image");
+                      setShowShareMenu(false);
+                    }}
+                    className="w-full px-4 py-3 text-left text-sm transition hover:bg-opacity-10"
+                    style={{
+                      color: "var(--text-primary)",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.background =
+                        "rgba(var(--accent-rgb), 0.1)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.background = "transparent")
+                    }
+                  >
+                    📸 Share as Image
+                  </button>
+                  <button
+                    onClick={() => {
+                      onShare("text");
+                      setShowShareMenu(false);
+                    }}
+                    className="w-full px-4 py-3 text-left text-sm transition"
+                    style={{
+                      color: "var(--text-primary)",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.background =
+                        "rgba(var(--accent-rgb), 0.1)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.background = "transparent")
+                    }
+                  >
+                    📝 Share as Text
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
 
           {/* Only show Edit/Delete for spontaneous entries, not Scripture */}
           {entry.type === "spontaneous" && (
