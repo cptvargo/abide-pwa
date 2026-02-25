@@ -11,7 +11,7 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
       section: "Tools",
       items: [
         {
-          id: "journal",
+          id: "dialogue",
           icon: (
             <svg
               viewBox="0 0 24 24"
@@ -20,33 +20,12 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
               stroke="currentColor"
               strokeWidth="2"
             >
-              <path d="M21 15V5a2 2 0 0 0-2-2H9" />
-              <path d="M7 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2" />
-              <path d="M17 8H7M17 12H7M17 16H7" />
+              <path d="M12 2a7 7 0 0 0-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5a7 7 0 0 0-4-12z" />
+              <path d="M9 21h6" />
             </svg>
           ),
-          title: "ABIDE Journal",
-          description: "Record your spiritual journey",
-          available: true,
-        },
-        {
-          id: "highlights",
-          icon: (
-            <svg
-              viewBox="0 0 24 24"
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M12 2a10 10 0 0 0-10 10v1a10 10 0 0 0 20 0v-1A10 10 0 0 0 12 2z" />
-              <path d="M12 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
-              <path d="M12 14V8" />
-              <path d="M8 12h8" />
-            </svg>
-          ),
-          title: "My Highlights",
-          description: "View highlighted verses & reflections",
+          title: "Dialoguing with God",
+          description: "Your highlights, reflections, and prayers",
           available: true,
         },
         {

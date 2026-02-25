@@ -1,6 +1,6 @@
 /**
  * SwipeReading.jsx — Single Chapter with Swipe Navigation (Kindle-style)
- * WITH Multi-Color Highlighting & Ponder Mode
+ * WITH Multi-Color Highlighting & Dialogue Bottom Sheet
  */
 
 import { useEffect, useState, useRef } from "react";
@@ -10,8 +10,7 @@ import { BIBLE_ORDER, CHAPTER_COUNT } from "./data/bibleStructure";
 import {
   SelectionToolbar,
   ColorPicker,
-  PonderPrompt,
-  PonderMode,
+  DialogueBottomSheet,
   getThemeColors,
 } from "./components/HighlightSystem";
 
@@ -25,7 +24,7 @@ export default function SwipeReading({
   onScrollProgress,
   navigationTarget,
   onNavigationComplete,
-  isModalOpen = false, // 👈 NEW: Prevents swipe when modal is open
+  isModalOpen = false,
 }) {
   const [verses, setVerses] = useState([]);
   const [title, setTitle] = useState("");
@@ -48,8 +47,7 @@ export default function SwipeReading({
   const [selectedVerses, setSelectedVerses] = useState([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
-  const [ponderPromptOpen, setPonderPromptOpen] = useState(false);
-  const [ponderModeOpen, setPonderModeOpen] = useState(false);
+  const [dialogueBottomSheetOpen, setDialogueBottomSheetOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(null);
   const [highlights, setHighlights] = useState(() => {
     const saved = localStorage.getItem("highlights");
@@ -99,7 +97,7 @@ export default function SwipeReading({
         // Scroll to top
         if (scrollRef.current) {
           scrollRef.current.scrollTop = 0;
-          scrollRef.current.scrollLeft = 0; // 👈 ADD THIS
+          scrollRef.current.scrollLeft = 0;
         }
 
         // Update reading context
@@ -124,7 +122,6 @@ export default function SwipeReading({
      Hard Reset When Modal Opens/Closes
   ================================ */
   useEffect(() => {
-    // Kill ALL swipe state whenever modal state changes
     setSwipeOffset(0);
     setIsSwiping(false);
     touchStartX.current = null;
@@ -137,7 +134,6 @@ export default function SwipeReading({
   useEffect(() => {
     if (!navigationTarget) return;
 
-    // 🚨 Prevent duplicate navigation (search bug fix)
     if (
       navigationTarget.book === book &&
       navigationTarget.chapter === currentChapter
@@ -146,13 +142,11 @@ export default function SwipeReading({
       return;
     }
 
-    // 🔥 HARD RESET swipe state
     setSwipeOffset(0);
     setIsSwiping(false);
     touchStartX.current = null;
     touchStartY.current = null;
 
-    // Reset scroll memory
     lastScrollTop.current = 0;
     navOffsetRef.current = 0;
 
@@ -166,13 +160,6 @@ export default function SwipeReading({
    Swipe Navigation with Premium Drag Preview
 ================================ */
   function handleTouchStart(e) {
-    console.log(
-      "🔍 Touch detected - isModalOpen:",
-      isModalOpen,
-      "isSelectionMode:",
-      isSelectionMode,
-    );
-
     if (isSelectionMode || isModalOpen) return;
 
     touchStartX.current = e.touches[0].clientX;
@@ -181,7 +168,6 @@ export default function SwipeReading({
   }
 
   function handleTouchMove(e) {
-    // 👈 Block swipe when modal is open
     if (!touchStartX.current || isSelectionMode || isModalOpen) return;
 
     const touchCurrentX = e.touches[0].clientX;
@@ -197,7 +183,6 @@ export default function SwipeReading({
   }
 
   function handleTouchEnd() {
-    // 👈 Block swipe when modal is open
     if (!isSwiping || isModalOpen) {
       setSwipeOffset(0);
       touchStartX.current = null;
@@ -211,8 +196,6 @@ export default function SwipeReading({
       const maxChapters = CHAPTER_COUNT[book];
 
       if (swipeOffset < 0) {
-        // Swipe left → Next
-
         if (currentChapter < maxChapters) {
           setCurrentChapter((c) => c + 1);
         } else if (currentIndex < BIBLE_ORDER.length - 1) {
@@ -221,8 +204,6 @@ export default function SwipeReading({
           setCurrentChapter(1);
         }
       } else {
-        // Swipe right → Previous
-
         if (currentChapter > 1) {
           setCurrentChapter((c) => c - 1);
         } else if (currentIndex > 0) {
@@ -251,7 +232,6 @@ export default function SwipeReading({
       const delta = scrollTop - lastScrollTop.current;
       lastScrollTop.current = scrollTop;
 
-      // Nav offset calculation
       const DAMPING = 0.35;
       let next = navOffsetRef.current + delta * DAMPING;
       next = Math.max(0, Math.min(60, next));
@@ -276,11 +256,9 @@ export default function SwipeReading({
   ================================ */
   function handleVerseClick(verse) {
     if (!isSelectionMode) {
-      // First tap - enter selection mode
       setIsSelectionMode(true);
       setSelectedVerses([verse]);
     } else {
-      // Toggle verse in selection
       const isSelected = selectedVerses.some((v) => v.verse === verse.verse);
 
       if (isSelected) {
@@ -292,7 +270,6 @@ export default function SwipeReading({
         }
         setSelectedVerses(newSelection);
       } else {
-        // Add to selection (keep sorted)
         const newSelection = [...selectedVerses, verse].sort(
           (a, b) => a.verse - b.verse,
         );
@@ -308,52 +285,20 @@ export default function SwipeReading({
   function handleColorSelected(colorOption) {
     setSelectedColor(colorOption);
     setColorPickerOpen(false);
-    setPonderPromptOpen(true);
+    setDialogueBottomSheetOpen(true);
   }
 
-  function handleEnterPonder() {
-    setPonderPromptOpen(false);
-    setPonderModeOpen(true);
-  }
+  function handleDialogueClose() {
+    // Reload highlights from localStorage to show newly saved highlight
+    const updatedHighlights = JSON.parse(
+      localStorage.getItem("highlights") || "[]",
+    );
+    setHighlights(updatedHighlights);
 
-  function handleSkipPonder() {
-    const highlightData = {
-      verses: selectedVerses,
-      verseRange:
-        selectedVerses.length === 1
-          ? selectedVerses[0].verse
-          : `${selectedVerses[0].verse}-${selectedVerses[selectedVerses.length - 1].verse}`,
-      book,
-      chapter: currentChapter,
-      translation: translation,
-      text: selectedVerses.map((v) => v.text).join(" "),
-      color: selectedColor,
-      reflection: "",
-      createdAt: new Date().toISOString(),
-      id: Date.now().toString(),
-    };
-
-    const newHighlights = [...highlights, highlightData];
-    setHighlights(newHighlights);
-    localStorage.setItem("highlights", JSON.stringify(newHighlights));
-
-    // ✅ Clear selection INSIDE function
+    // Clear selection state
     setSelectedVerses([]);
     setIsSelectionMode(false);
-    setPonderPromptOpen(false);
-    setSelectedColor(null);
-  }
-
-  function handlePonderClose(highlightData) {
-    if (highlightData) {
-      // Already saved in PonderMode
-      setHighlights(JSON.parse(localStorage.getItem("highlights") || "[]"));
-    }
-
-    // Clear selection
-    setSelectedVerses([]);
-    setIsSelectionMode(false);
-    setPonderModeOpen(false);
+    setDialogueBottomSheetOpen(false);
     setSelectedColor(null);
   }
 
@@ -471,7 +416,7 @@ export default function SwipeReading({
             ? Math.max(0.3, 1 - Math.abs(swipeOffset) / 200)
             : 1,
           transition: isSwiping ? "none" : "opacity 0.2s ease-out",
-          pointerEvents: isModalOpen ? "none" : "auto", // 👈 Completely disable touches when modal open
+          pointerEvents: isModalOpen ? "none" : "auto",
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -592,23 +537,14 @@ export default function SwipeReading({
         />
       )}
 
-      {ponderPromptOpen && selectedColor && (
-        <PonderPrompt
-          selectedVerses={selectedVerses}
-          highlightColor={selectedColor}
-          onEnterPonder={handleEnterPonder}
-          onSkip={handleSkipPonder}
-        />
-      )}
-
-      {ponderModeOpen && selectedColor && (
-        <PonderMode
+      {dialogueBottomSheetOpen && selectedColor && (
+        <DialogueBottomSheet
           selectedVerses={selectedVerses}
           highlightColor={selectedColor}
           book={book.charAt(0).toUpperCase() + book.slice(1)}
           chapter={currentChapter}
-          onClose={handlePonderClose}
-          audioUrl="/audio/meditation.mp3"
+          translation={translation}
+          onClose={handleDialogueClose}
         />
       )}
 

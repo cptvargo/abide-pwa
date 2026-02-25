@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CoreReading from "./SwipeReading";
 import VSVInfo from "./components/VSVInfo";
-import RichTextJournal from "./RichTextJournal";
 import BibleNavigator from "./components/BibleNavigator";
 import PremiumMenu from "./components/PremiumMenu";
+import DialogueSystem from "./DialogueSystem";
 
 /* ===============================
    Greeting Logic
@@ -34,26 +34,6 @@ function BibleIcon({ className }) {
       <path d="M17 4h3v16h-3" />
       <path d="M9 8h4" />
       <path d="M11 6v4" />
-    </svg>
-  );
-}
-
-function NotesIcon({ className }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M21 15V5a2 2 0 0 0-2-2H9" />
-      <path d="M7 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2" />
-      <path d="M17 8H7" />
-      <path d="M17 12H7" />
-      <path d="M17 16H7" />
     </svg>
   );
 }
@@ -105,15 +85,6 @@ export default function AppShell() {
   const [navigatorOpen, setNavigatorOpen] = useState(false);
 
   const [navProgress, setNavProgress] = useState(0);
-
-  const [journalOpen, setJournalOpen] = useState(false);
-  const [journalText, setJournalText] = useState("");
-  const [journalEntries, setJournalEntries] = useState(() => {
-    // Load from localStorage on init
-    const saved = localStorage.getItem("journalEntries");
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [viewingEntry, setViewingEntry] = useState(null);
 
   const [hideVerseNumbers, setHideVerseNumbers] = useState(
     () => localStorage.getItem("hideVerseNumbers") === "true",
@@ -223,30 +194,6 @@ export default function AppShell() {
     localStorage.setItem("lastReadingPosition", JSON.stringify(readingContext));
   }, [readingContext]);
 
-  useEffect(() => {
-    // Save journal entries to localStorage whenever they change
-    localStorage.setItem("journalEntries", JSON.stringify(journalEntries));
-  }, [journalEntries]);
-
-  /* ===============================
-     Journal Helpers
-  ================================ */
-  function groupEntriesByMonth(entries) {
-    return entries.reduce((groups, entry) => {
-      const key = new Date(entry.createdAt).toLocaleString(undefined, {
-        month: "long",
-        year: "numeric",
-      });
-      if (!groups[key]) groups[key] = [];
-      groups[key].push(entry);
-      return groups;
-    }, {});
-  }
-
-  function deleteJournalEntry(id) {
-    setJournalEntries((prev) => prev.filter((e) => e.id !== id));
-  }
-
   /* ===============================
      Navigation Handler
   ================================ */
@@ -271,6 +218,9 @@ export default function AppShell() {
         paddingBottom: "env(safe-area-inset-bottom)",
       }}
     >
+      {/* ===============================
+         Scripture Reading Screen
+      ================================ */}
       {activeScreen === "scripture" && (
         <CoreReading
           hideVerseNumbers={chapterlessMode}
@@ -287,335 +237,14 @@ export default function AppShell() {
       )}
 
       {/* ===============================
-         Journal Index Screen
+         Dialoguing with God Screen
       ================================ */}
-      {activeScreen === "journalIndex" && !viewingEntry && (
-        <div className="flex-1 overflow-y-auto p-6">
-          <button
-            className="flex items-center gap-2 text-[var(--text-accent)] text-sm tracking-wide mb-6"
-            onClick={() => setActiveScreen("scripture")}
-          >
-            ← Scripture
-          </button>
-
-          <h1 className="text-xl text-[var(--text-accent)] tracking-wide mb-6">
-            ABIDE Journal
-          </h1>
-
-          {journalEntries.length === 0 ? (
-            <p className="opacity-60 text-sm">No journal entries yet.</p>
-          ) : (
-            Object.entries(groupEntriesByMonth(journalEntries)).map(
-              ([month, entries]) => (
-                <div key={month} className="space-y-4 mb-8">
-                  <h2 className="text-sm uppercase tracking-wide text-[var(--text-accent)]/70">
-                    {month}
-                  </h2>
-
-                  {entries.map((entry, idx) => {
-                    // Calculate entry number (reverse chronological)
-                    const entryIndex = journalEntries.findIndex(
-                      (e) => e.id === entry.id,
-                    );
-                    const entryNumber = journalEntries.length - entryIndex;
-                    const previewText = entry.text?.substring(0, 150) || "";
-                    const hasMore = entry.text?.length > 150;
-
-                    return (
-                      <div
-                        key={entry.id}
-                        className="relative border-b pb-3"
-                        style={{
-                          borderColor: "rgba(var(--accent-rgb), 0.2)",
-                        }}
-                      >
-                        {/* Header with number and date */}
-                        <div className="flex justify-between items-start mb-2">
-                          <div className="flex items-center gap-3">
-                            {/* Entry Number Badge */}
-                            <div
-                              style={{
-                                background: "var(--text-accent)",
-                                color:
-                                  theme === "parchment" ? "#2C2416" : "#1C1C1A",
-                                borderRadius: "8px",
-                                padding: "0.25rem 0.625rem",
-                                fontSize: "0.75rem",
-                                fontWeight: "700",
-                                letterSpacing: "0.05em",
-                              }}
-                            >
-                              #{entryNumber}
-                            </div>
-
-                            {/* Date */}
-                            <div
-                              style={{
-                                fontSize: "0.75rem",
-                                color: "var(--text-accent)",
-                                opacity: 0.7,
-                              }}
-                            >
-                              {new Date(entry.createdAt).toLocaleString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  hour: "numeric",
-                                  minute: "2-digit",
-                                },
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Actions */}
-                          <div className="flex items-center gap-2">
-                            {/* Export PDF Button - FIXED WITH CLOSE BUTTON */}
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                // Export as PDF with close button
-                                const themeColors = {
-                                  classic: {
-                                    primary: "#CBB27C",
-                                    bg: "#1C1C1A",
-                                    text: "#E8E6E3",
-                                  },
-                                  "still-waters": {
-                                    primary: "#1F6F78",
-                                    bg: "#0F1419",
-                                    text: "#E8E6E3",
-                                  },
-                                  "stone-fire": {
-                                    primary: "#F97316",
-                                    bg: "#1C1917",
-                                    text: "#E8E6E3",
-                                  },
-                                  "olive-parchment": {
-                                    primary: "#9D8F6F",
-                                    bg: "#1A1814",
-                                    text: "#E8E6E3",
-                                  },
-                                  parchment: {
-                                    primary: "#8B7355",
-                                    bg: "#F5F1EA",
-                                    text: "#2C2416",
-                                  },
-                                };
-                                const colors =
-                                  themeColors[theme] || themeColors.classic;
-                                const date = new Date(
-                                  entry.createdAt,
-                                ).toLocaleString("en-US", {
-                                  weekday: "long",
-                                  month: "long",
-                                  day: "numeric",
-                                  year: "numeric",
-                                  hour: "numeric",
-                                  minute: "2-digit",
-                                });
-
-                                const htmlContent = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <style>
-    @page { size: letter; margin: 1in; }
-    @media print {
-      .no-print { display: none !important; }
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-      background: ${colors.bg};
-      color: ${colors.text};
-      line-height: 1.8;
-      padding: 40px;
-      max-width: 8.5in;
-      margin: 0 auto;
-    }
-    .close-button {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: ${colors.primary};
-      color: ${colors.bg};
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      z-index: 1000;
-    }
-    .close-button:hover {
-      opacity: 0.9;
-    }
-    .print-button {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      background: ${colors.primary};
-      color: ${colors.bg};
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      z-index: 1000;
-    }
-    .print-button:hover {
-      opacity: 0.9;
-    }
-    .header {
-      border-bottom: 2px solid ${colors.primary};
-      padding-bottom: 20px;
-      margin-bottom: 30px;
-      margin-top: 60px;
-    }
-    .title {
-      font-size: 28px;
-      font-weight: 700;
-      color: ${colors.primary};
-      margin-bottom: 10px;
-    }
-    .date { font-size: 14px; opacity: 0.7; font-style: italic; }
-    .content { font-size: 16px; line-height: 1.8; }
-    .content p { margin-bottom: 1em; }
-    .content strong { font-weight: 700; color: ${colors.primary}; }
-    .content em { font-style: italic; }
-    .content ul, .content ol { margin-left: 20px; margin-bottom: 1em; }
-    .footer {
-      margin-top: 60px;
-      padding-top: 20px;
-      border-top: 1px solid ${colors.primary}40;
-      text-align: center;
-      font-size: 12px;
-      opacity: 0.6;
-    }
-  </style>
-</head>
-<body>
-  <button class="close-button no-print" onclick="window.close()">✕ Close</button>
-  <button class="print-button no-print" onclick="window.print()">🖨️ Print / Save PDF</button>
-  <div class="header">
-    <div class="title">ABIDE Journal Entry #${entryNumber}</div>
-    <div class="date">${date}</div>
-  </div>
-  <div class="content">${entry.html || entry.text}</div>
-  <div class="footer">Created with ABIDE — Abide in God's Word</div>
-</body>
-</html>`;
-
-                                const printWindow = window.open("", "_blank");
-                                if (printWindow) {
-                                  printWindow.document.write(htmlContent);
-                                  printWindow.document.close();
-                                }
-                              }}
-                              className="p-1.5 rounded-lg hover:bg-[var(--text-accent)]/10 transition"
-                              style={{ color: "var(--text-accent)" }}
-                              title="Export as PDF"
-                            >
-                              <svg
-                                viewBox="0 0 24 24"
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              >
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                <polyline points="7 10 12 15 17 10" />
-                                <line x1="12" y1="15" x2="12" y2="3" />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Preview */}
-                        <button
-                          onClick={() => setViewingEntry(entry)}
-                          className="w-full text-left rounded-lg p-3 hover:bg-[var(--text-primary)]/5 transition"
-                        >
-                          <div
-                            className="text-sm text-[var(--text-primary)] line-clamp-3"
-                            dangerouslySetInnerHTML={{
-                              __html: previewText + (hasMore ? "…" : ""),
-                            }}
-                          />
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              ),
-            )
-          )}
-        </div>
-      )}
-
-      {/* ===============================
-         Journal Detail View
-      ================================ */}
-      {activeScreen === "journalIndex" && viewingEntry && (
-        <div className="flex-1 overflow-y-auto">
-          <div className="sticky top-0 bg-[var(--bg-app)] border-b border-[var(--text-accent)]/20 p-6 flex justify-between items-center z-10">
-            <button
-              className="flex items-center gap-2 text-[var(--text-accent)] text-sm"
-              onClick={() => setViewingEntry(null)}
-            >
-              ← Back
-            </button>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setJournalText(viewingEntry.html || viewingEntry.text || "");
-                  setJournalOpen(true);
-                  deleteJournalEntry(viewingEntry.id);
-                  setViewingEntry(null);
-                }}
-                className="text-xs text-[var(--text-accent)] opacity-70 hover:opacity-100"
-              >
-                Edit
-              </button>
-
-              <button
-                onClick={() => {
-                  if (confirm("Delete this entry?")) {
-                    deleteJournalEntry(viewingEntry.id);
-                    setViewingEntry(null);
-                  }
-                }}
-                className="text-xs text-red-400 opacity-70 hover:opacity-100"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-
-          <div className="p-6">
-            <div className="text-xs text-[var(--text-accent)]/70 mb-6">
-              {new Date(viewingEntry.createdAt).toLocaleString("en-US", {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-              })}
-            </div>
-
-            <div
-              className="prose prose-lg max-w-none text-[var(--text-primary)]"
-              dangerouslySetInnerHTML={{
-                __html: viewingEntry.html || viewingEntry.text,
-              }}
-            />
-          </div>
-        </div>
+      {activeScreen === "dialogue" && (
+        <DialogueSystem
+          theme={theme}
+          translation={translation}
+          onBack={() => setActiveScreen("scripture")}
+        />
       )}
 
       {/* ===============================
@@ -641,7 +270,7 @@ export default function AppShell() {
             ☰
           </button>
 
-          {/* Separator 1 */}
+          {/* Separator */}
           <div
             style={{
               width: "2px",
@@ -663,27 +292,6 @@ export default function AppShell() {
               {readingContext.book} {readingContext.chapter}
             </span>
           </button>
-
-          {/* Separator 2 */}
-          <div
-            style={{
-              width: "2px",
-              height: "24px",
-              backgroundColor: "var(--text-inverse)",
-              opacity: 0.25,
-              borderRadius: "9999px",
-              margin: "0 4px",
-            }}
-          />
-
-          {/* Journal Button */}
-          <button
-            onClick={() => setJournalOpen(true)}
-            className="px-3 py-1 hover:scale-105 transition-transform"
-            aria-label="Journal"
-          >
-            <NotesIcon className="w-5 h-5 text-[var(--text-inverse)] stroke-[2.5]" />
-          </button>
         </nav>
       )}
 
@@ -697,10 +305,8 @@ export default function AppShell() {
           setMenuVisible(false);
         }}
         onNavigate={(id) => {
-          if (id === "journal") {
-            setActiveScreen("journalIndex");
-          } else if (id === "highlights") {
-            setActiveScreen("highlights");
+          if (id === "dialogue") {
+            setActiveScreen("dialogue");
           } else if (id === "grow") {
             navigate("/grow");
           } else if (id === "settings") {
@@ -1044,31 +650,6 @@ export default function AppShell() {
             </div>
           </div>
         </div>
-      )}
-
-      {/* ===============================
-         Journal Editor
-      ================================ */}
-      {journalOpen && (
-        <RichTextJournal
-          initialText={journalText}
-          onSave={({ html, text }) => {
-            if (text.trim()) {
-              setJournalEntries((prev) => [
-                {
-                  id: Date.now().toString(),
-                  html: html,
-                  text: text,
-                  createdAt: new Date().toISOString(),
-                },
-                ...prev,
-              ]);
-            }
-            setJournalText("");
-            setJournalOpen(false);
-          }}
-          onClose={() => setJournalOpen(false)}
-        />
       )}
     </div>
   );
