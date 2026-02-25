@@ -6,6 +6,8 @@
 import html2canvas from "html2canvas";
 
 export async function shareDialogueAsImage(entry, theme) {
+  console.log("🎨 Starting image generation...");
+
   // Create invisible container
   const container = document.createElement("div");
   container.style.position = "fixed";
@@ -23,6 +25,7 @@ export async function shareDialogueAsImage(entry, theme) {
   };
 
   const colors = themeColors[theme] || themeColors.classic;
+  console.log("🎨 Using theme:", theme, colors);
 
   // Format date
   const date = new Date(entry.createdAt);
@@ -126,17 +129,32 @@ export async function shareDialogueAsImage(entry, theme) {
   `;
 
   try {
+    console.log("🎨 HTML created, waiting for images...");
+
     // Wait for images to load
     const images = container.querySelectorAll("img");
+    console.log("🎨 Found", images.length, "images");
+
     await Promise.all(
       Array.from(images).map((img) => {
-        if (img.complete) return Promise.resolve();
+        if (img.complete) {
+          console.log("🎨 Image already loaded:", img.src);
+          return Promise.resolve();
+        }
         return new Promise((resolve, reject) => {
-          img.onload = resolve;
-          img.onerror = reject;
+          img.onload = () => {
+            console.log("🎨 Image loaded:", img.src);
+            resolve();
+          };
+          img.onerror = (err) => {
+            console.error("❌ Image failed to load:", img.src, err);
+            reject(err);
+          };
         });
       }),
     );
+
+    console.log("🎨 All images loaded, generating canvas...");
 
     // Convert to canvas
     const canvas = await html2canvas(container.firstChild, {
@@ -146,10 +164,14 @@ export async function shareDialogueAsImage(entry, theme) {
       useCORS: true, // Allow cross-origin images
     });
 
+    console.log("🎨 Canvas generated, converting to blob...");
+
     // Convert canvas to blob
     const blob = await new Promise((resolve) => {
       canvas.toBlob(resolve, "image/png");
     });
+
+    console.log("🎨 Blob created:", blob.size, "bytes");
 
     // Clean up
     document.body.removeChild(container);
@@ -157,8 +179,17 @@ export async function shareDialogueAsImage(entry, theme) {
     // Create file
     const file = new File([blob], "dialogue.png", { type: "image/png" });
 
+    console.log("🎨 File created, checking share capabilities...");
+    console.log("🎨 navigator.share exists?", !!navigator.share);
+    console.log("🎨 navigator.canShare exists?", !!navigator.canShare);
+
     // Share via native API
-    if (navigator.share && navigator.canShare({ files: [file] })) {
+    if (
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({ files: [file] })
+    ) {
+      console.log("🎨 Device supports file sharing, sharing now...");
       await navigator.share({
         files: [file],
         title:
@@ -166,8 +197,12 @@ export async function shareDialogueAsImage(entry, theme) {
             ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
             : "My Prayer",
       });
+      console.log("✅ Share completed successfully!");
       return true;
     } else {
+      console.log(
+        "⚠️ Device does not support file sharing, downloading instead...",
+      );
       // Fallback: Download image
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -175,10 +210,11 @@ export async function shareDialogueAsImage(entry, theme) {
       a.download = "dialogue.png";
       a.click();
       URL.revokeObjectURL(url);
+      console.log("✅ Image downloaded");
       return true;
     }
   } catch (error) {
-    console.error("Share failed:", error);
+    console.error("❌ Share failed:", error);
     document.body.removeChild(container);
     return false;
   }
