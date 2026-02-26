@@ -85,6 +85,8 @@ export default function AppShell() {
   const [navigatorOpen, setNavigatorOpen] = useState(false);
 
   const [navProgress, setNavProgress] = useState(0);
+  const [navCollapsed, setNavCollapsed] = useState(false);
+  const [uiMode, setUiMode] = useState("reading"); // "reading" | "highlighting" | "dialogue"
 
   const [hideVerseNumbers, setHideVerseNumbers] = useState(
     () => localStorage.getItem("hideVerseNumbers") === "true",
@@ -233,6 +235,8 @@ export default function AppShell() {
           navigationTarget={navigationTarget}
           onNavigationComplete={() => setNavigationTarget(null)}
           isModalOpen={navigatorOpen}
+          uiMode={uiMode}
+          onUiModeChange={setUiMode}
         />
       )}
 
@@ -248,51 +252,153 @@ export default function AppShell() {
       )}
 
       {/* ===============================
-         Floating Nav
+         Floating Nav with Collapse (only in reading mode)
       ================================ */}
-      {activeScreen === "scripture" && (
-        <nav
-          style={{
-            transform: `translateX(-50%) translateY(${navProgress * 60}px)`,
-            opacity: 1 - navProgress,
-            background: "var(--bg-nav)",
-          }}
-          className="fixed bottom-6 left-1/2 px-5 py-3 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex items-center gap-1 whitespace-nowrap transition-transform transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
-        >
-          {/* Menu Button */}
-          <button
-            onClick={() => {
-              setMenuVisible(true);
-              requestAnimationFrame(() => setMenuOpen(true));
-            }}
-            className="px-3 py-1 text-[var(--text-inverse)] font-bold text-base hover:scale-105 transition-transform"
-          >
-            ☰
-          </button>
-
-          {/* Separator */}
-          <div
+      {activeScreen === "scripture" && uiMode === "reading" && (
+        <>
+          {/* Main Nav Pill */}
+          <nav
+            onClick={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
             style={{
-              width: "2px",
-              height: "24px",
-              backgroundColor: "var(--text-inverse)",
-              opacity: 0.25,
-              borderRadius: "9999px",
-              margin: "0 4px",
+              transform: navCollapsed
+                ? `translateX(-50%) translateY(calc(100% + 24px))`
+                : `translateX(-50%) translateY(${navProgress * 60}px)`,
+              opacity: navCollapsed ? 0 : 1 - navProgress,
+              background: "var(--bg-nav)",
+              transition: navCollapsed
+                ? "transform 250ms cubic-bezier(0.4, 0, 0.2, 1), opacity 200ms ease-out"
+                : "transform 300ms ease-[cubic-bezier(0.22,1,0.36,1)], opacity 300ms ease-[cubic-bezier(0.22,1,0.36,1)]",
+              pointerEvents: navCollapsed ? "none" : "auto",
+              zIndex: 50,
             }}
-          />
-
-          {/* Book & Chapter - CLICKABLE */}
-          <button
-            onClick={() => setNavigatorOpen(true)}
-            className="px-3 py-1 flex items-center gap-2 hover:scale-105 transition-transform"
+            className="fixed bottom-6 left-1/2 px-5 py-3 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex items-center gap-1 whitespace-nowrap"
           >
-            <BibleIcon className="w-5 h-5 text-[var(--text-inverse)] stroke-[2.5]" />
-            <span className="text-[var(--text-inverse)] font-bold tracking-wide text-base capitalize">
-              {readingContext.book} {readingContext.chapter}
-            </span>
-          </button>
-        </nav>
+            {/* Menu Button */}
+            <button
+              onClick={() => {
+                setMenuVisible(true);
+                requestAnimationFrame(() => setMenuOpen(true));
+              }}
+              className="px-3 py-1 text-[var(--text-inverse)] font-bold text-base hover:scale-105 transition-transform"
+            >
+              ☰
+            </button>
+
+            {/* Separator */}
+            <div
+              style={{
+                width: "2px",
+                height: "24px",
+                backgroundColor: "var(--text-inverse)",
+                opacity: 0.25,
+                borderRadius: "9999px",
+                margin: "0 4px",
+              }}
+            />
+
+            {/* Book & Chapter - CLICKABLE */}
+            <button
+              onClick={() => setNavigatorOpen(true)}
+              className="px-3 py-1 flex items-center gap-2 hover:scale-105 transition-transform"
+            >
+              <BibleIcon className="w-5 h-5 text-[var(--text-inverse)] stroke-[2.5]" />
+              <span className="text-[var(--text-inverse)] font-bold tracking-wide text-base capitalize">
+                {readingContext.book} {readingContext.chapter}
+              </span>
+            </button>
+
+            {/* Separator */}
+            <div
+              style={{
+                width: "2px",
+                height: "24px",
+                backgroundColor: "var(--text-inverse)",
+                opacity: 0.25,
+                borderRadius: "9999px",
+                margin: "0 4px",
+              }}
+            />
+
+            {/* Collapse Button */}
+            <button
+              onClick={() => setNavCollapsed(true)}
+              className="px-3 py-1 text-[var(--text-inverse)] opacity-60 hover:opacity-100 transition-opacity"
+              title="Hide navigation"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </nav>
+
+          {/* Floating Reveal Button (shown when collapsed) */}
+          {navCollapsed && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setNavCollapsed(false);
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              className="fixed left-1/2 -translate-x-1/2"
+              style={{
+                bottom: "90px",
+                width: "44px",
+                height: "44px",
+                background: "rgba(var(--bg-nav-rgb), 0.85)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.25)",
+                animation:
+                  "revealButtonIn 350ms cubic-bezier(0.4, 0, 0.2, 1) 150ms both",
+                zIndex: 50,
+                pointerEvents: "auto",
+              }}
+              title="Show navigation"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                style={{
+                  width: "18px",
+                  height: "18px",
+                  stroke: "var(--text-accent)",
+                  fill: "none",
+                  strokeWidth: "2.5",
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                }}
+              >
+                <path d="M5 15l7-7 7 7" />
+              </svg>
+            </button>
+          )}
+
+          {/* Animation styles */}
+          <style>{`
+            @keyframes revealButtonIn {
+              from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(12px);
+              }
+              to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+              }
+            }
+          `}</style>
+        </>
       )}
 
       {/* ===============================

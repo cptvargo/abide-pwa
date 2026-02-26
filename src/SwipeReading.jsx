@@ -8,9 +8,9 @@ import { loadChapter } from "./lib/bible";
 import ChapterReflectionPanel from "./components/ChapterReflectionPanel";
 import { BIBLE_ORDER, CHAPTER_COUNT } from "./data/bibleStructure";
 import {
-  SelectionToolbar,
-  ColorPicker,
+  HighlightPanel,
   DialogueBottomSheet,
+  getColorFromId,
   getThemeColors,
 } from "./components/HighlightSystem";
 
@@ -25,6 +25,8 @@ export default function SwipeReading({
   navigationTarget,
   onNavigationComplete,
   isModalOpen = false,
+  uiMode = "reading",
+  onUiModeChange,
 }) {
   const [verses, setVerses] = useState([]);
   const [title, setTitle] = useState("");
@@ -43,15 +45,15 @@ export default function SwipeReading({
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
 
-  // Highlighting state
+  // Highlighting state (verse-level storage with colorId)
   const [selectedVerses, setSelectedVerses] = useState([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
-  const [colorPickerOpen, setColorPickerOpen] = useState(false);
+  const [highlightPanelOpen, setHighlightPanelOpen] = useState(false);
   const [dialogueBottomSheetOpen, setDialogueBottomSheetOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(null);
   const [highlights, setHighlights] = useState(() => {
-    const saved = localStorage.getItem("highlights");
-    return saved ? JSON.parse(saved) : [];
+    const saved = localStorage.getItem("verseHighlights");
+    return saved ? JSON.parse(saved) : {};
   });
 
   /* ===============================
@@ -252,12 +254,54 @@ export default function SwipeReading({
   }, [onScrollProgress]);
 
   /* ===============================
-     Highlighting Functions
+     Highlighting Helper Functions
+  ================================ */
+  function getVerseKey(verseNum) {
+    return `${book}-${currentChapter}-${verseNum}-${translation}`;
+  }
+
+  function isVerseHighlighted(verseNum) {
+    const key = getVerseKey(verseNum);
+    return highlights[key] || null;
+  }
+
+  function getExistingColorForSelection() {
+    if (selectedVerses.length === 0) return null;
+
+    const firstKey = getVerseKey(selectedVerses[0].verse);
+    const firstHighlight = highlights[firstKey];
+
+    if (!firstHighlight) return null;
+
+    // Check if all verses have same colorId
+    const allSameColor = selectedVerses.every((v) => {
+      const key = getVerseKey(v.verse);
+      return highlights[key]?.colorId === firstHighlight.colorId;
+    });
+
+    return allSameColor ? firstHighlight.colorId : null;
+  }
+
+  function getVerseHighlightColor(verseNum) {
+    const highlight = isVerseHighlighted(verseNum);
+    if (!highlight) return null;
+
+    // Resolve color from colorId + theme
+    const colorObj = getColorFromId(highlight.colorId, highlight.theme);
+    return colorObj.color;
+  }
+
+  /* ===============================
+     Highlighting Action Functions
   ================================ */
   function handleVerseClick(verse) {
     if (!isSelectionMode) {
       setIsSelectionMode(true);
       setSelectedVerses([verse]);
+      // Auto-open highlight panel immediately
+      setHighlightPanelOpen(true);
+      // Set UI mode to highlighting
+      onUiModeChange?.("highlighting");
     } else {
       const isSelected = selectedVerses.some((v) => v.verse === verse.verse);
 
@@ -267,6 +311,9 @@ export default function SwipeReading({
         );
         if (newSelection.length === 0) {
           setIsSelectionMode(false);
+          setHighlightPanelOpen(false);
+          // Return to reading mode
+          onUiModeChange?.("reading");
         }
         setSelectedVerses(newSelection);
       } else {
@@ -278,88 +325,72 @@ export default function SwipeReading({
     }
   }
 
-  function handleOpenColorPicker() {
-    setColorPickerOpen(true);
+  function handleOpenHighlightPanel() {
+    setHighlightPanelOpen(true);
   }
 
   function handleColorSelected(colorOption) {
     setSelectedColor(colorOption);
-    setColorPickerOpen(false);
+    setHighlightPanelOpen(false);
+
+    // Save highlights immediately (verse-level)
+    const newHighlights = { ...highlights };
+    selectedVerses.forEach((verse) => {
+      const key = getVerseKey(verse.verse);
+      newHighlights[key] = {
+        colorId: colorOption.id,
+        theme: theme,
+        book: book,
+        chapter: currentChapter,
+        verse: verse.verse,
+        translation: translation,
+        text: verse.text,
+        createdAt: new Date().toISOString(),
+      };
+    });
+
+    setHighlights(newHighlights);
+    localStorage.setItem("verseHighlights", JSON.stringify(newHighlights));
+
+    // Open dialogue sheet and set UI mode to dialogue
     setDialogueBottomSheetOpen(true);
+    onUiModeChange?.("dialogue");
+  }
+
+  function handleClearHighlights() {
+    const newHighlights = { ...highlights };
+
+    selectedVerses.forEach((verse) => {
+      const key = getVerseKey(verse.verse);
+      delete newHighlights[key];
+    });
+
+    setHighlights(newHighlights);
+    localStorage.setItem("verseHighlights", JSON.stringify(newHighlights));
+
+    // Clear selection and return to reading mode
+    setSelectedVerses([]);
+    setIsSelectionMode(false);
+    setHighlightPanelOpen(false);
+    onUiModeChange?.("reading");
   }
 
   function handleDialogueClose() {
-    // Reload highlights from localStorage to show newly saved highlight
-    const updatedHighlights = JSON.parse(
-      localStorage.getItem("highlights") || "[]",
-    );
-    setHighlights(updatedHighlights);
-
-    // Clear selection state
+    // Highlights already saved, just clear selection
     setSelectedVerses([]);
     setIsSelectionMode(false);
     setDialogueBottomSheetOpen(false);
     setSelectedColor(null);
+    // Return to reading mode
+    onUiModeChange?.("reading");
   }
 
   function handleCancelSelection() {
     setSelectedVerses([]);
     setIsSelectionMode(false);
-  }
-
-  function isVerseHighlighted(verseNum) {
-    return highlights.find(
-      (h) =>
-        h.chapter === currentChapter &&
-        h.book === book &&
-        h.translation === translation &&
-        h.verses.some((v) => v.verse === verseNum),
-    );
-  }
-
-  function getExistingHighlightForSelection() {
-    if (selectedVerses.length === 0) return null;
-
-    const verseIds = selectedVerses.map((v) => v.verse);
-
-    return highlights.find(
-      (h) =>
-        h.chapter === currentChapter &&
-        h.book === book &&
-        h.translation === translation &&
-        JSON.stringify(h.verses.map((v) => v.verse)) ===
-          JSON.stringify(verseIds),
-    );
-  }
-
-  function handleRemoveHighlight() {
-    if (selectedVerses.length === 0) return;
-
-    const verseIds = selectedVerses.map((v) => v.verse);
-
-    const updated = highlights.filter(
-      (h) =>
-        !(
-          h.chapter === currentChapter &&
-          h.book === book &&
-          h.translation === translation &&
-          JSON.stringify(h.verses.map((v) => v.verse)) ===
-            JSON.stringify(verseIds)
-        ),
-    );
-
-    setHighlights(updated);
-    localStorage.setItem("highlights", JSON.stringify(updated));
-
-    setSelectedVerses([]);
-    setIsSelectionMode(false);
-    setColorPickerOpen(false);
-    setSelectedColor(null);
-  }
-
-  function getVerseHighlightColor(verseNum) {
-    const highlight = isVerseHighlighted(verseNum);
-    return highlight ? highlight.color.color : null;
+    setHighlightPanelOpen(false);
+    // Return to reading mode
+    onUiModeChange?.("reading");
   }
 
   /* ===============================
@@ -468,16 +499,19 @@ export default function SwipeReading({
                 className="leading-[var(--line-height)] text-[var(--text-primary)] font-[var(--font-body)] cursor-pointer transition-all"
                 style={{
                   fontSize: `${textSize * 16}px`,
-                  background: isSelected
-                    ? "var(--text-accent)"
-                    : highlightColor || "transparent",
-                  color: isSelected
-                    ? "var(--text-inverse)"
-                    : "var(--text-primary)",
+                  // Selection state: subtle outline, not color
+                  background: highlightColor || "transparent",
+                  border: isSelected
+                    ? "2px solid var(--text-accent)"
+                    : highlightColor
+                      ? "none"
+                      : "none",
+                  borderRadius: isSelected || highlightColor ? "0.5rem" : "0",
                   padding:
                     isSelected || highlightColor ? "0.25rem 0.5rem" : "0",
                   margin: isSelected || highlightColor ? "0.25rem 0" : "0",
-                  borderRadius: isSelected || highlightColor ? "0.5rem" : "0",
+                  color: "var(--text-primary)",
+                  opacity: isSelected ? 0.8 : 1,
                 }}
               >
                 {!chapterlessMode && !hideVerseNumbers && (
@@ -518,25 +552,22 @@ export default function SwipeReading({
         )}
       </main>
 
-      {/* Highlighting UI */}
-      {isSelectionMode && (
-        <SelectionToolbar
-          selectedCount={selectedVerses.length}
-          onHighlight={handleOpenColorPicker}
+      {/* YouVersion-Style Highlight Panel - Opens immediately on verse tap */}
+      {highlightPanelOpen && (
+        <HighlightPanel
+          theme={theme}
+          book={book.charAt(0).toUpperCase() + book.slice(1)}
+          chapter={currentChapter}
+          selectedVerses={selectedVerses}
+          translation={translation}
+          existingColorId={getExistingColorForSelection()}
+          onSelectColor={handleColorSelected}
+          onClear={handleClearHighlights}
           onCancel={handleCancelSelection}
         />
       )}
 
-      {colorPickerOpen && (
-        <ColorPicker
-          theme={theme}
-          existingHighlight={getExistingHighlightForSelection()}
-          onSelectColor={handleColorSelected}
-          onRemove={handleRemoveHighlight}
-          onCancel={() => setColorPickerOpen(false)}
-        />
-      )}
-
+      {/* Dialogue Bottom Sheet */}
       {dialogueBottomSheetOpen && selectedColor && (
         <DialogueBottomSheet
           selectedVerses={selectedVerses}
@@ -548,6 +579,7 @@ export default function SwipeReading({
         />
       )}
 
+      {/* Chapter Reflection Panel */}
       <ChapterReflectionPanel
         open={reflectionOpen}
         onClose={() => setReflectionOpen(false)}

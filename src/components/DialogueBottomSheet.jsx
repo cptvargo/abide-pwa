@@ -115,37 +115,22 @@ export default function DialogueBottomSheet({
   }
 
   function handleClose() {
-    // ALWAYS save highlight (visual color on verse)
-    const highlightData = {
-      verses: selectedVerses,
-      verseRange,
-      book: book.toLowerCase(), // Match SwipeReading's lowercase book state
-      chapter,
-      text: combinedText,
-      color: highlightColor,
-      translation,
-      reflection: reflection.trim(),
-      createdAt: new Date().toISOString(),
-      id: Date.now().toString(),
-    };
-
-    const existingHighlights = JSON.parse(
-      localStorage.getItem("highlights") || "[]",
-    );
-    existingHighlights.push(highlightData);
-    localStorage.setItem("highlights", JSON.stringify(existingHighlights));
-
-    // ALSO save dialogue if there's a reflection
+    // ALWAYS save highlight (already saved in SwipeReading when color selected)
+    // Just save dialogue if there's a reflection
     if (reflection.trim()) {
       const dialogueData = {
         id: Date.now().toString(),
         type: "scripture",
-        book,
+        book: book.toLowerCase(),
         chapter,
         verseRange,
         verseText: combinedText,
         translation,
-        highlightColor,
+        highlightColor: {
+          id: highlightColor.id,
+          color: highlightColor.color,
+          name: highlightColor.name,
+        },
         reflection: reflection.trim(),
         text: reflection.trim(),
         createdAt: new Date().toISOString(),

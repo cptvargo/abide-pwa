@@ -400,3 +400,27 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
+/* Classic Theme */
+[data-theme="classic"] {
+  --bg-nav-rgb: 44, 36, 22; /* #2c2416 converted to RGB */
+}
+
+/* Still Waters Theme */
+[data-theme="still-waters"] {
+  --bg-nav-rgb: 10, 57, 64; /* #0a3940 converted to RGB */
+}
+
+/* Stone & Fire Theme */
+[data-theme="stone-fire"] {
+  --bg-nav-rgb: 124, 45, 18; /* #7c2d12 converted to RGB */
+}
+
+/* Olive Parchment Theme */
+[data-theme="olive-parchment"] {
+  --bg-nav-rgb: 64, 58, 44; /* #403a2c converted to RGB */
+}
+
+/* Parchment Theme */
+[data-theme="parchment"] {
+  --bg-nav-rgb: 44, 36, 22; /* #2c2416 converted to RGB */
+}
