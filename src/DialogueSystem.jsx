@@ -154,11 +154,15 @@ export default function DialogueSystem({ theme, translation, onBack }) {
      Render: Index View
   ================================ */
   return (
-    <div className="flex-1 overflow-y-auto relative">
-      {/* Header */}
+    <div className="flex flex-col h-full relative">
+      {/* Fixed Header */}
       <div
-        className="sticky top-0 z-10 px-6 py-6 border-b"
+        className="fixed top-0 left-0 right-0 z-10 border-b"
         style={{
+          paddingTop: "calc(env(safe-area-inset-top) + 24px)",
+          paddingBottom: "24px",
+          paddingLeft: "24px",
+          paddingRight: "24px",
           background: "var(--bg-app)",
           borderColor: "rgba(var(--accent-rgb), 0.15)",
         }}
@@ -219,86 +223,96 @@ export default function DialogueSystem({ theme, translation, onBack }) {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="px-6 py-8 pb-24">
-        {dialogues.length === 0 ? (
-          <div
-            className="text-center py-16 rounded-2xl"
-            style={{
-              background: "rgba(var(--accent-rgb), 0.05)",
-              border: "1px dashed rgba(var(--accent-rgb), 0.2)",
-            }}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              className="w-16 h-16 mx-auto mb-4 opacity-30"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              style={{ color: "var(--text-accent)" }}
+      {/* Scrollable Content Container */}
+      <div
+        className="flex-1 overflow-y-auto"
+        style={{
+          paddingTop: "calc(env(safe-area-inset-top) + 160px)", // Header height + safe area
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
+        <div className="px-6 py-8 pb-24">
+          {dialogues.length === 0 ? (
+            <div
+              className="text-center py-16 rounded-2xl"
+              style={{
+                background: "rgba(var(--accent-rgb), 0.05)",
+                border: "1px dashed rgba(var(--accent-rgb), 0.2)",
+              }}
             >
-              <path d="M12 2a7 7 0 0 0-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5a7 7 0 0 0-4-12z" />
-              <path d="M9 21h6" />
-            </svg>
-            <p
-              className="text-sm opacity-50"
-              style={{ color: "var(--text-primary)" }}
-            >
-              No dialogue entries yet
-            </p>
-            <p
-              className="text-xs opacity-40 mt-2"
-              style={{ color: "var(--text-primary)" }}
-            >
-              Tap + to begin your spiritual journey
-            </p>
-          </div>
-        ) : (
-          Object.entries(groupByMonth(dialogues)).map(([month, entries]) => (
-            <div key={month} className="mb-12">
-              {/* Month Header */}
-              <div className="flex items-center gap-4 mb-6">
-                <div
-                  className="h-px flex-1"
-                  style={{
-                    background:
-                      "linear-gradient(to right, transparent, rgba(var(--accent-rgb), 0.3), transparent)",
-                  }}
-                />
-                <h2
-                  className="text-xs font-bold tracking-widest uppercase px-4 py-1 rounded-full"
-                  style={{
-                    color: "var(--text-accent)",
-                    background: "rgba(var(--accent-rgb), 0.1)",
-                  }}
-                >
-                  {month}
-                </h2>
-                <div
-                  className="h-px flex-1"
-                  style={{
-                    background:
-                      "linear-gradient(to left, transparent, rgba(var(--accent-rgb), 0.3), transparent)",
-                  }}
-                />
-              </div>
-
-              {/* Entries */}
-              <div className="space-y-4">
-                {entries.map((entry) => (
-                  <DialogueCard
-                    key={entry.id}
-                    entry={entry}
-                    theme={theme}
-                    onView={() => setViewingEntry(entry)}
-                    onShare={() => handleShareEntry(entry)}
-                  />
-                ))}
-              </div>
+              <svg
+                viewBox="0 0 24 24"
+                className="w-16 h-16 mx-auto mb-4 opacity-30"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                style={{ color: "var(--text-accent)" }}
+              >
+                <path d="M12 2a7 7 0 0 0-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5a7 7 0 0 0-4-12z" />
+                <path d="M9 21h6" />
+              </svg>
+              <p
+                className="text-sm opacity-50"
+                style={{ color: "var(--text-primary)" }}
+              >
+                No dialogue entries yet
+              </p>
+              <p
+                className="text-xs opacity-40 mt-2"
+                style={{ color: "var(--text-primary)" }}
+              >
+                Tap + to begin your spiritual journey
+              </p>
             </div>
-          ))
-        )}
+          ) : (
+            Object.entries(groupByMonth(dialogues)).map(([month, entries]) => (
+              <div key={month} className="mb-12">
+                {/* Month Header */}
+                <div className="flex items-center gap-4 mb-6">
+                  <div
+                    className="h-px flex-1"
+                    style={{
+                      background:
+                        "linear-gradient(to right, transparent, rgba(var(--accent-rgb), 0.3), transparent)",
+                    }}
+                  />
+                  <h2
+                    className="text-xs font-bold tracking-widest uppercase px-4 py-1 rounded-full"
+                    style={{
+                      color: "var(--text-accent)",
+                      background: "rgba(var(--accent-rgb), 0.1)",
+                    }}
+                  >
+                    {month}
+                  </h2>
+                  <div
+                    className="h-px flex-1"
+                    style={{
+                      background:
+                        "linear-gradient(to left, transparent, rgba(var(--accent-rgb), 0.3), transparent)",
+                    }}
+                  />
+                </div>
+
+                {/* Entries */}
+                <div className="space-y-4">
+                  {entries.map((entry) => (
+                    <DialogueCard
+                      key={entry.id}
+                      entry={entry}
+                      theme={theme}
+                      onView={() => setViewingEntry(entry)}
+                      onShare={() => handleShareEntry(entry)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+        {/* End inner content wrapper */}
       </div>
+      {/* End Scrollable Content Container */}
 
       {/* Floating + Button */}
       <button
@@ -474,32 +488,6 @@ function DialogueCard({ entry, theme, onView, onShare }) {
           </div>
         </button>
       </div>
-
-      {/* Prose styles for preview */}
-      <style>{`
-        .prose h1, .prose h2, .prose h3 {
-          color: var(--text-accent);
-          font-weight: 600;
-          margin: 0;
-        }
-        .prose h1 { font-size: 1.1em; }
-        .prose h2 { font-size: 1em; }
-        .prose h3 { font-size: 0.95em; }
-        .prose p { margin: 0; }
-        .prose strong {
-          color: var(--text-accent);
-          font-weight: 600;
-        }
-        .prose em {
-          font-style: italic;
-          opacity: 0.9;
-        }
-        .prose ul, .prose ol {
-          margin: 0;
-          padding-left: 1.5em;
-        }
-        .prose li { margin: 0; }
-      `}</style>
     </div>
   );
 }

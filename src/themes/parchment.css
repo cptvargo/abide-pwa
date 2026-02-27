@@ -1,19 +1,19 @@
-/* ===============================
+/* ========================================
    PARCHMENT THEME - Enhanced Visibility
-================================ */
+======================================== */
 
 [data-theme="parchment"] {
-  /* Backgrounds - Much stronger contrast */
+  /* Backgrounds - Stronger contrast */
   --bg-app: #f5f1e8;  /* Lighter parchment paper */
   --bg-nav: #6b5744;  /* Darker brown leather nav */
   --bg-menu: #c8bead;  /* Much darker menu background */
   
   /* Text Colors - Much stronger contrast */
-  --text-primary: #0d0a06;  /* Nearly black text */
+  --text-primary: #0d0a06;  /* Nearly black text - deep warm brown */
   --text-accent: #6b5744;  /* Darker brown accent */
-  --text-muted: #4a3d2f;  /* Much darker muted */
+  --text-muted: #4a3d2f;  /* Much darker muted - solid color, no opacity */
   --text-inverse: #f5f1e8;  /* Light cream for nav */
-  --text-secondary: #2a2419;  /* Much darker secondary */
+  --text-secondary: #2a2419;  /* Much darker secondary - solid color */
   
   /* Fonts - Classic Serif */
   --font-ui: 'Crimson Text', 'Baskerville', 'Garamond', serif;
@@ -34,14 +34,46 @@
   /* Footer & Menu text - ensure readability */
   --footer-text: #0d0a06;
   --menu-text: #0d0a06;
+  
+  /* Accent RGB for semi-transparent usage */
+  --accent-rgb: 107, 87, 68;
 }
 
 /* Extra specificity for parchment theme footer */
 [data-theme="parchment"] .opacity-60,
-[data-theme="parchment"] .opacity-70 {
+[data-theme="parchment"] .text-sm {
   opacity: 0.9 !important;
 }
 
+/* Stronger card separation in parchment */
+[data-theme="parchment"] .opacity-70 {
+  opacity: 1.0 !important;
+}
+
+/* Enhanced text contrast adjustments for parchment theme */
 [data-theme="parchment"] .text-sm {
   font-weight: 500;
+}
+
+/* ========================================
+   Additional CSS to add to your global styles for card enhancement
+======================================== */
+
+/* Parchment theme card improvements */
+[data-theme="parchment"] [class*="rounded-2xl"][class*="border"] {
+  background: rgba(139, 115, 85, 0.08) !important;
+  border-color: rgba(107, 87, 68, 0.25) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(107, 87, 68, 0.12) !important;
+}
+
+/* Parchment heading weight */
+[data-theme="parchment"] h1,
+[data-theme="parchment"] h2 {
+  font-weight: 700 !important;
+  opacity: 1.0 !important;
+}
+
+/* Parchment nav pill contrast */
+[data-theme="parchment"] [style*="--bg-nav"] {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
 }
