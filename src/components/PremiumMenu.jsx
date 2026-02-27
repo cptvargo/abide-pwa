@@ -136,9 +136,14 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
 
   function getGreeting() {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
+    const name = localStorage.getItem("abide_name") || "";
+
+    let timeGreeting;
+    if (hour < 12) timeGreeting = "Good morning";
+    else if (hour < 18) timeGreeting = "Good afternoon";
+    else timeGreeting = "Good evening";
+
+    return name ? `${timeGreeting}, ${name}` : timeGreeting;
   }
 
   function handleTouchStart(e) {
@@ -290,7 +295,7 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
                   textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
                 }}
               >
-                {getGreeting()}, Beloved
+                {getGreeting()}
               </h2>
               <p
                 style={{

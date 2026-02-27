@@ -11,9 +11,14 @@ import DialogueSystem from "./DialogueSystem";
 ================================ */
 function getGreeting() {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning, Beloved";
-  if (hour < 18) return "Good afternoon, Beloved";
-  return "Good evening, Beloved";
+  const name = localStorage.getItem("abide_name") || "";
+
+  let timeGreeting;
+  if (hour < 12) timeGreeting = "Good morning";
+  else if (hour < 18) timeGreeting = "Good afternoon";
+  else timeGreeting = "Good evening";
+
+  return name ? `${timeGreeting}, ${name}` : timeGreeting;
 }
 
 /* ===============================
