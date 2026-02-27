@@ -424,3 +424,56 @@ html {
 [data-theme="parchment"] {
   --bg-nav-rgb: 44, 36, 22; /* #2c2416 converted to RGB */
 }
+/* Prevent iOS elastic scroll overscroll background */
+html {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-app);
+}
+
+body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-app);
+  /* Prevent pull-to-refresh on iOS */
+  overscroll-behavior-y: none;
+}
+
+#root {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-app);
+}
+
+/* Ensure smooth scrolling on iOS */
+.reader {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+/* Remove any default margins/padding that could cause layout shifts */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Support for dvh units fallback */
+@supports not (height: 100dvh) {
+  /* Fallback for older browsers */
+  html,
+  body,
+  #root {
+    height: 100vh;
+  }
+}
+
+/* Prevent iOS Safari bottom bar from causing layout shifts */
+@media screen and (max-width: 768px) {
+  html {
+    height: -webkit-fill-available;
+  }
+  
+  body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}

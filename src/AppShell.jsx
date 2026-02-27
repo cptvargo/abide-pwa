@@ -87,6 +87,7 @@ export default function AppShell() {
   const [navProgress, setNavProgress] = useState(0);
   const [navCollapsed, setNavCollapsed] = useState(false);
   const [uiMode, setUiMode] = useState("reading"); // "reading" | "highlighting" | "dialogue"
+  const [reflectionOpen, setReflectionOpen] = useState(false);
 
   const [hideVerseNumbers, setHideVerseNumbers] = useState(
     () => localStorage.getItem("hideVerseNumbers") === "true",
@@ -210,16 +211,27 @@ export default function AppShell() {
   return (
     <div
       className="
-    no-select flex flex-col h-screen relative
+    no-select flex flex-col relative
     bg-[var(--bg-app)]
     text-[var(--text-primary)]
     font-[var(--font-ui)]
   "
       style={{
-        paddingTop: "env(safe-area-inset-top)",
-        paddingBottom: "env(safe-area-inset-bottom)",
+        height: "100dvh",
+        maxHeight: "100dvh",
+        overflow: "hidden",
       }}
     >
+      {/* Fixed Status Bar Background (iOS safe-area top) */}
+      <div
+        className="fixed top-0 left-0 right-0 z-40"
+        style={{
+          height: "env(safe-area-inset-top)",
+          background: "var(--bg-app)",
+          pointerEvents: "none",
+        }}
+      />
+
       {/* ===============================
          Scripture Reading Screen
       ================================ */}
@@ -237,6 +249,8 @@ export default function AppShell() {
           isModalOpen={navigatorOpen}
           uiMode={uiMode}
           onUiModeChange={setUiMode}
+          reflectionOpen={reflectionOpen}
+          onReflectionOpenChange={setReflectionOpen}
         />
       )}
 
@@ -252,141 +266,143 @@ export default function AppShell() {
       )}
 
       {/* ===============================
-         Floating Nav with Collapse (only in reading mode)
+         Floating Nav with Collapse (only in reading mode, not in reflection)
       ================================ */}
-      {activeScreen === "scripture" && uiMode === "reading" && (
-        <>
-          {/* Main Nav Pill */}
-          <nav
-            onClick={(e) => e.stopPropagation()}
-            onPointerDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-            style={{
-              transform: navCollapsed
-                ? `translateX(-50%) translateY(calc(100% + 24px))`
-                : `translateX(-50%) translateY(${navProgress * 60}px)`,
-              opacity: navCollapsed ? 0 : 1 - navProgress,
-              background: "var(--bg-nav)",
-              transition: navCollapsed
-                ? "transform 250ms cubic-bezier(0.4, 0, 0.2, 1), opacity 200ms ease-out"
-                : "transform 300ms ease-[cubic-bezier(0.22,1,0.36,1)], opacity 300ms ease-[cubic-bezier(0.22,1,0.36,1)]",
-              pointerEvents: navCollapsed ? "none" : "auto",
-              zIndex: 50,
-            }}
-            className="fixed bottom-6 left-1/2 px-5 py-3 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex items-center gap-1 whitespace-nowrap"
-          >
-            {/* Menu Button */}
-            <button
-              onClick={() => {
-                setMenuVisible(true);
-                requestAnimationFrame(() => setMenuOpen(true));
-              }}
-              className="px-3 py-1 text-[var(--text-inverse)] font-bold text-base hover:scale-105 transition-transform"
-            >
-              ☰
-            </button>
-
-            {/* Separator */}
-            <div
-              style={{
-                width: "2px",
-                height: "24px",
-                backgroundColor: "var(--text-inverse)",
-                opacity: 0.25,
-                borderRadius: "9999px",
-                margin: "0 4px",
-              }}
-            />
-
-            {/* Book & Chapter - CLICKABLE */}
-            <button
-              onClick={() => setNavigatorOpen(true)}
-              className="px-3 py-1 flex items-center gap-2 hover:scale-105 transition-transform"
-            >
-              <BibleIcon className="w-5 h-5 text-[var(--text-inverse)] stroke-[2.5]" />
-              <span className="text-[var(--text-inverse)] font-bold tracking-wide text-base capitalize">
-                {readingContext.book} {readingContext.chapter}
-              </span>
-            </button>
-
-            {/* Separator */}
-            <div
-              style={{
-                width: "2px",
-                height: "24px",
-                backgroundColor: "var(--text-inverse)",
-                opacity: 0.25,
-                borderRadius: "9999px",
-                margin: "0 4px",
-              }}
-            />
-
-            {/* Collapse Button */}
-            <button
-              onClick={() => setNavCollapsed(true)}
-              className="px-3 py-1 text-[var(--text-inverse)] opacity-60 hover:opacity-100 transition-opacity"
-              title="Hide navigation"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-          </nav>
-
-          {/* Floating Reveal Button (shown when collapsed) */}
-          {navCollapsed && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setNavCollapsed(false);
-              }}
+      {activeScreen === "scripture" &&
+        uiMode === "reading" &&
+        !reflectionOpen && (
+          <>
+            {/* Main Nav Pill */}
+            <nav
+              onClick={(e) => e.stopPropagation()}
               onPointerDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}
-              className="fixed left-1/2 -translate-x-1/2"
               style={{
-                bottom: "90px",
-                width: "44px",
-                height: "44px",
-                background: "rgba(var(--bg-nav-rgb), 0.85)",
-                backdropFilter: "blur(12px)",
-                WebkitBackdropFilter: "blur(12px)",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.25)",
-                animation:
-                  "revealButtonIn 350ms cubic-bezier(0.4, 0, 0.2, 1) 150ms both",
+                transform: navCollapsed
+                  ? `translateX(-50%) translateY(calc(100% + 24px))`
+                  : `translateX(-50%) translateY(${navProgress * 60}px)`,
+                opacity: navCollapsed ? 0 : 1 - navProgress,
+                background: "var(--bg-nav)",
+                transition: navCollapsed
+                  ? "transform 250ms cubic-bezier(0.4, 0, 0.2, 1), opacity 200ms ease-out"
+                  : "transform 300ms ease-[cubic-bezier(0.22,1,0.36,1)], opacity 300ms ease-[cubic-bezier(0.22,1,0.36,1)]",
+                pointerEvents: navCollapsed ? "none" : "auto",
                 zIndex: 50,
-                pointerEvents: "auto",
               }}
-              title="Show navigation"
+              className="fixed bottom-6 left-1/2 px-5 py-3 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex items-center gap-1 whitespace-nowrap"
             >
-              <svg
-                viewBox="0 0 24 24"
-                style={{
-                  width: "18px",
-                  height: "18px",
-                  stroke: "var(--text-accent)",
-                  fill: "none",
-                  strokeWidth: "2.5",
-                  strokeLinecap: "round",
-                  strokeLinejoin: "round",
+              {/* Menu Button */}
+              <button
+                onClick={() => {
+                  setMenuVisible(true);
+                  requestAnimationFrame(() => setMenuOpen(true));
                 }}
+                className="px-3 py-1 text-[var(--text-inverse)] font-bold text-base hover:scale-105 transition-transform"
               >
-                <path d="M5 15l7-7 7 7" />
-              </svg>
-            </button>
-          )}
+                ☰
+              </button>
 
-          {/* Animation styles */}
-          <style>{`
+              {/* Separator */}
+              <div
+                style={{
+                  width: "2px",
+                  height: "24px",
+                  backgroundColor: "var(--text-inverse)",
+                  opacity: 0.25,
+                  borderRadius: "9999px",
+                  margin: "0 4px",
+                }}
+              />
+
+              {/* Book & Chapter - CLICKABLE */}
+              <button
+                onClick={() => setNavigatorOpen(true)}
+                className="px-3 py-1 flex items-center gap-2 hover:scale-105 transition-transform"
+              >
+                <BibleIcon className="w-5 h-5 text-[var(--text-inverse)] stroke-[2.5]" />
+                <span className="text-[var(--text-inverse)] font-bold tracking-wide text-base capitalize">
+                  {readingContext.book} {readingContext.chapter}
+                </span>
+              </button>
+
+              {/* Separator */}
+              <div
+                style={{
+                  width: "2px",
+                  height: "24px",
+                  backgroundColor: "var(--text-inverse)",
+                  opacity: 0.25,
+                  borderRadius: "9999px",
+                  margin: "0 4px",
+                }}
+              />
+
+              {/* Collapse Button */}
+              <button
+                onClick={() => setNavCollapsed(true)}
+                className="px-3 py-1 text-[var(--text-inverse)] opacity-60 hover:opacity-100 transition-opacity"
+                title="Hide navigation"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <path d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </nav>
+
+            {/* Floating Reveal Button (shown when collapsed) */}
+            {navCollapsed && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setNavCollapsed(false);
+                }}
+                onPointerDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+                className="fixed left-1/2 -translate-x-1/2"
+                style={{
+                  bottom: "90px",
+                  width: "44px",
+                  height: "44px",
+                  background: "rgba(var(--bg-nav-rgb), 0.85)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.25)",
+                  animation:
+                    "revealButtonIn 350ms cubic-bezier(0.4, 0, 0.2, 1) 150ms both",
+                  zIndex: 50,
+                  pointerEvents: "auto",
+                }}
+                title="Show navigation"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  style={{
+                    width: "18px",
+                    height: "18px",
+                    stroke: "var(--text-accent)",
+                    fill: "none",
+                    strokeWidth: "2.5",
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round",
+                  }}
+                >
+                  <path d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+            )}
+
+            {/* Animation styles */}
+            <style>{`
             @keyframes revealButtonIn {
               from {
                 opacity: 0;
@@ -398,8 +414,8 @@ export default function AppShell() {
               }
             }
           `}</style>
-        </>
-      )}
+          </>
+        )}
 
       {/* ===============================
          Premium Menu

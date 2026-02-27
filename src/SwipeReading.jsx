@@ -27,6 +27,8 @@ export default function SwipeReading({
   isModalOpen = false,
   uiMode = "reading",
   onUiModeChange,
+  reflectionOpen = false,
+  onReflectionOpenChange,
 }) {
   const [verses, setVerses] = useState([]);
   const [title, setTitle] = useState("");
@@ -34,7 +36,6 @@ export default function SwipeReading({
   const [currentChapter, setCurrentChapter] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  const [reflectionOpen, setReflectionOpen] = useState(false);
   const [reflectionSummary, setReflectionSummary] = useState("");
 
   const scrollRef = useRef(null);
@@ -423,7 +424,7 @@ export default function SwipeReading({
 
   function handleReflection() {
     loadChapterSummary(currentChapter);
-    setReflectionOpen(true);
+    onReflectionOpenChange?.(true);
   }
 
   /* ===============================
@@ -438,16 +439,28 @@ export default function SwipeReading({
   }
 
   return (
-    <div className="no-select flex flex-col min-h-screen bg-[var(--bg-primary)]">
+    <div
+      className="no-select flex flex-col bg-[var(--bg-primary)]"
+      style={{
+        height: "100%",
+        maxHeight: "100%",
+      }}
+    >
       <main
         ref={scrollRef}
-        className="reader flex-1 overflow-y-auto overflow-x-hidden overscroll-none px-6 pt-6 pb-32"
+        className="reader flex-1 overflow-y-auto overflow-x-hidden overscroll-none"
         style={{
           opacity: isSwiping
             ? Math.max(0.3, 1 - Math.abs(swipeOffset) / 200)
             : 1,
           transition: isSwiping ? "none" : "opacity 0.2s ease-out",
           pointerEvents: isModalOpen ? "none" : "auto",
+          paddingTop: "calc(env(safe-area-inset-top) + 24px)",
+          paddingBottom:
+            "max(128px, calc(128px + env(safe-area-inset-bottom)))",
+          paddingLeft: "24px",
+          paddingRight: "24px",
+          WebkitOverflowScrolling: "touch",
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -582,7 +595,7 @@ export default function SwipeReading({
       {/* Chapter Reflection Panel */}
       <ChapterReflectionPanel
         open={reflectionOpen}
-        onClose={() => setReflectionOpen(false)}
+        onClose={() => onReflectionOpenChange?.(false)}
         book={book.charAt(0).toUpperCase() + book.slice(1)}
         chapter={currentChapter}
         summary={reflectionSummary}
