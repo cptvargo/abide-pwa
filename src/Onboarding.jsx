@@ -254,12 +254,12 @@ export default function Onboarding({ onComplete }) {
             </p>
 
             <p style={{ marginBottom: "1.5rem" }}>
-              The translations within ABIDE are developed using the Hebrew and
-              Greek Scriptures, with the King James Version serving as a
-              structural base. Artificial intelligence is used as a tool to
-              assist in clarity and structure, but every passage is personally
-              reviewed to ensure faithfulness to the biblical text and its full
-              context.
+              The translations within ABIDE are developed with careful reference
+              to the original Hebrew and Greek texts, with the King James
+              Version serving as a structural base. Artificial intelligence is
+              used as a tool to assist in clarity and structure, but every
+              passage is personally reviewed to ensure faithfulness to the
+              biblical text and its full context.
             </p>
 
             <p style={{ marginBottom: "1.5rem" }}>
