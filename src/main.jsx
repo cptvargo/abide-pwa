@@ -11,8 +11,9 @@ import { registerSW } from "virtual:pwa-register";
 
 const _updateSW = registerSW({
   onNeedRefresh() {
-    // Auto-reload when new version is available
-    window.location.reload();
+    // Tell the waiting SW to skip waiting, THEN reload
+    // This is the correct sequence for Android to pick up updates
+    _updateSW(true);
   },
   onOfflineReady() {
     console.log("App ready to work offline");

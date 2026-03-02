@@ -9,9 +9,9 @@ export default defineConfig({
     react(),
     VitePWA({
       strategies: "generateSW",
-      registerType: "prompt", // ← Changed from autoUpdate to prompt
+      registerType: "autoUpdate", // ← Back to autoUpdate to match main.jsx registerSW
       
-      injectRegister: 'auto', // Auto-inject registration code
+      injectRegister: 'auto',
 
       includeAssets: [
         "favicon.ico",
@@ -57,10 +57,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,txt,woff,woff2,m4a}'],
         maximumFileSizeToCacheInBytes: 20000000, // 20MB
         
-        // ← Clean up old caches automatically
         cleanupOutdatedCaches: true,
         
-        // ← NetworkFirst for navigation to ensure HTML updates
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.mode === 'navigate',

@@ -503,7 +503,7 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
                   marginTop: "0.25rem",
                 }}
               >
-                Version 2.3.0
+                Version 2.4.0
               </div>
             </div>
           </div>
