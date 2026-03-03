@@ -1,13 +1,11 @@
 /**
- * BibleNavigator.jsx - PREMIUM REDESIGN
- * Buttery smooth animations with proper timing and sequencing
+ * BibleNavigator.jsx — PREMIUM REDESIGN
+ * Sacred, luminous, manuscript-inspired navigation
+ * All logic preserved — only the design elevated
  */
 
 import { useState, useRef, useEffect } from "react";
 
-/* ===============================
-   Complete Bible Structure
-================================ */
 const BIBLE_STRUCTURE = [
   {
     section: "Torah",
@@ -129,9 +127,9 @@ const BIBLE_STRUCTURE = [
   },
 ];
 
-/* ===============================
-   Main Component
-================================ */
+/* ── Section accent colors — subtle gold variants ─────── */
+const SECTION_GLYPHS = ["✦", "◈", "◇", "⊕", "✧", "✦", "◈", "◇", "✧"];
+
 export default function BibleNavigator({
   open,
   onClose,
@@ -144,6 +142,7 @@ export default function BibleNavigator({
   const [searchQuery, setSearchQuery] = useState("");
   const [isAnimatingOut, setIsAnimatingOut] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [animateIn, setAnimateIn] = useState(false);
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -152,389 +151,491 @@ export default function BibleNavigator({
       setSelectedBook(null);
       setSearchQuery("");
       setIsAnimatingOut(false);
-      // Delay visibility for smooth entrance
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setIsVisible(true);
-        });
-      });
+      setIsVisible(true);
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => setAnimateIn(true)),
+      );
     } else {
+      setAnimateIn(false);
       setIsVisible(false);
     }
   }, [open]);
 
-  // Smooth close
   function handleClose() {
     setIsAnimatingOut(true);
+    setAnimateIn(false);
     setTimeout(() => {
       setIsVisible(false);
       onClose();
-    }, 300);
+    }, 320);
   }
 
-  // Smooth book selection
   function handleBookClick(book) {
-    // Clear search immediately
     setSearchQuery("");
-
     setSelectedBook(book);
-
-    setTimeout(() => {
-      setView("chapters");
-    }, 100);
+    setTimeout(() => setView("chapters"), 80);
   }
 
-  // Smooth chapter selection - start navigation early
   function handleChapterClick(chapter) {
-    // Reset scroll position BEFORE navigating
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = 0;
-    }
-
-    // Navigate and close instantly - no animation needed
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
     onNavigate(selectedBook.id, chapter);
     setIsVisible(false);
     onClose();
   }
-
-  if (!open && !isVisible) return null;
-
-  const filteredStructure = searchQuery
-    ? BIBLE_STRUCTURE.map((section) => ({
-        ...section,
-        books: section.books.filter((book) =>
-          book.name.toLowerCase().includes(searchQuery.toLowerCase()),
-        ),
-      })).filter((section) => section.books.length > 0)
-    : BIBLE_STRUCTURE;
 
   function handleBackToBooks() {
     setView("books");
     setSelectedBook(null);
   }
 
-  /* ===============================
-     Shared Styles
-  ================================ */
-  const sharedStyles = (
+  if (!open && !isVisible) return null;
+
+  const filteredStructure = searchQuery
+    ? BIBLE_STRUCTURE.map((s) => ({
+        ...s,
+        books: s.books.filter((b) =>
+          b.name.toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
+      })).filter((s) => s.books.length > 0)
+    : BIBLE_STRUCTURE;
+
+  /* ── Shared keyframes ───────────────────────────────── */
+  const styles = (
     <style>{`
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+      @keyframes bn-backdrop-in  { from { opacity:0 } to { opacity:1 } }
+      @keyframes bn-backdrop-out { from { opacity:1 } to { opacity:0 } }
+      @keyframes bn-modal-in  {
+        from { opacity:0; transform:translateY(32px) scale(0.96) }
+        to   { opacity:1; transform:translateY(0)    scale(1)    }
       }
-      @keyframes fadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; }
+      @keyframes bn-modal-out {
+        from { opacity:1; transform:translateY(0)    scale(1)    }
+        to   { opacity:0; transform:translateY(24px) scale(0.96) }
       }
-      @keyframes slideUp {
-        0% { 
-          opacity: 0;
-          transform: translateY(40px) scale(0.94);
-        }
-        100% { 
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
+      @keyframes bn-glow-pulse {
+        0%,100% { opacity:0.4 }
+        50%      { opacity:0.75 }
       }
-      @keyframes slideDown {
-        0% { 
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-        100% { 
-          opacity: 0;
-          transform: translateY(30px) scale(0.94);
-        }
+      @keyframes bn-rule {
+        from { transform:scaleX(0); opacity:0 }
+        to   { transform:scaleX(1); opacity:1 }
       }
-      @keyframes shimmer {
-        0%, 100% { opacity: 0.05; }
-        50% { opacity: 0.15; }
+      @keyframes bn-fade-up {
+        from { opacity:0; transform:translateY(8px) }
+        to   { opacity:1; transform:translateY(0)   }
       }
-      .book-card {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+      .bn-backdrop {
+        animation: ${isAnimatingOut ? "bn-backdrop-out 0.32s ease forwards" : "bn-backdrop-in 0.3s ease forwards"};
       }
-      .book-card:hover {
-        transform: translateX(8px);
-        background: rgba(var(--accent-rgb), 0.15) !important;
+      .bn-modal {
+        animation: ${isAnimatingOut ? "bn-modal-out 0.28s cubic-bezier(0.55,0,1,0.45) forwards" : "bn-modal-in 0.42s cubic-bezier(0.22,1,0.36,1) forwards"};
       }
-      .book-card:active {
-        transform: scale(0.98) translateX(8px);
+      .bn-header-content {
+        animation: bn-fade-up 0.4s ease 0.1s both;
       }
-      .chapter-btn {
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      .bn-glow {
+        animation: bn-glow-pulse 4s ease-in-out infinite;
       }
-      .chapter-btn:hover {
-        transform: scale(1.08);
+
+      /* Book row */
+      .bn-book {
+        transition: background 0.16s ease, transform 0.14s ease, border-color 0.16s ease;
+        -webkit-tap-highlight-color: transparent;
       }
-      .chapter-btn:active {
-        transform: scale(0.95);
+      .bn-book:active { transform: scale(0.985) }
+      .bn-book-available:hover {
+        background: rgba(var(--accent-rgb,203,178,124), 0.13) !important;
+        border-color: rgba(var(--accent-rgb,203,178,124), 0.3) !important;
       }
-      .navigator-backdrop {
-        will-change: opacity;
+
+      /* Chapter button */
+      .bn-ch {
+        transition: background 0.15s ease, transform 0.13s ease, box-shadow 0.15s ease;
+        -webkit-tap-highlight-color: transparent;
       }
-      .navigator-modal {
-        will-change: transform, opacity;
+      .bn-ch:hover { transform: scale(1.07) }
+      .bn-ch:active { transform: scale(0.93) }
+
+      /* Search input placeholder */
+      .bn-search::placeholder { color: rgba(var(--accent-rgb,203,178,124),0.3) }
+      .bn-search:focus { outline: none }
+
+      /* Scrollbar hide */
+      .bn-scroll::-webkit-scrollbar { display:none }
+      .bn-scroll { -ms-overflow-style:none; scrollbar-width:none }
+
+      /* Section sticky header */
+      .bn-sticky {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
       }
     `}</style>
   );
 
-  /* ===============================
-     Books View
-  ================================ */
+  /* ══════════════════════════════════════════════════════
+     BOOKS VIEW
+  ══════════════════════════════════════════════════════ */
   if (view === "books") {
     return (
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center navigator-backdrop"
+        className="bn-backdrop"
         style={{
-          background: "rgba(0, 0, 0, 0.85)",
-          backdropFilter: "blur(20px)",
-          animation: isAnimatingOut
-            ? "fadeOut 0.3s ease-out forwards"
-            : "fadeIn 0.35s ease-out",
+          position: "fixed",
+          inset: 0,
+          zIndex: 50,
+          background: "rgba(0,0,0,0.88)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
         onClick={handleClose}
       >
-        {sharedStyles}
+        {styles}
 
         <div
-          className="relative w-[95%] max-w-[520px] h-[90vh] flex flex-col overflow-hidden navigator-modal"
+          className="bn-modal bn-scroll"
           style={{
-            background: "var(--bg-menu)",
-            borderRadius: "28px",
-            boxShadow: "0 40px 100px rgba(0, 0, 0, 0.8)",
-            animation: isAnimatingOut
-              ? "slideDown 0.3s cubic-bezier(0.5, 0, 1, 1) forwards"
-              : "slideUp 0.45s cubic-bezier(0.34, 1.2, 0.64, 1)",
+            position: "relative",
+            width: "95%",
+            maxWidth: "520px",
+            height: "90vh",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            background: "var(--bg-menu, #141410)",
+            borderRadius: "26px",
+            boxShadow:
+              "0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(var(--accent-rgb,203,178,124),0.08)",
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Decorative gradient */}
+          {/* Top ambient glow */}
+          <div
+            className="bn-glow"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: "15%",
+              right: "15%",
+              height: "1px",
+              background:
+                "linear-gradient(90deg, transparent, rgba(var(--accent-rgb,203,178,124),0.8), transparent)",
+              filter: "blur(1px)",
+            }}
+          />
           <div
             style={{
               position: "absolute",
               top: 0,
               left: 0,
               right: 0,
-              height: "200px",
-              background: `linear-gradient(180deg, var(--text-accent) 0%, transparent 100%)`,
-              opacity: 0.08,
+              height: "180px",
+              background:
+                "radial-gradient(ellipse at 50% 0%, rgba(var(--accent-rgb,203,178,124),0.09), transparent 65%)",
               pointerEvents: "none",
-              animation: "shimmer 4s ease-in-out infinite",
             }}
           />
 
-          {/* Header */}
+          {/* ── Header ──────────────────────────────────────── */}
           <div
-            className="relative px-8 pt-8 pb-6"
+            className="bn-header-content"
             style={{
-              borderBottom: "1px solid rgba(var(--accent-rgb), 0.15)",
+              padding: "28px 28px 20px",
+              borderBottom: "1px solid rgba(var(--accent-rgb,203,178,124),0.1)",
+              position: "relative",
+              zIndex: 1,
+              flexShrink: 0,
             }}
           >
-            <div className="flex items-start justify-between mb-6">
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                marginBottom: "20px",
+              }}
+            >
               <div>
-                <h1
-                  className="text-4xl font-bold mb-1"
+                {/* Eyebrow */}
+                <div
                   style={{
-                    color: "var(--text-accent)",
-                    letterSpacing: "-0.02em",
-                    fontFamily: "var(--font-ui)",
+                    fontFamily: "var(--font-ui, system-ui)",
+                    fontSize: "10px",
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "rgba(var(--accent-rgb,203,178,124),0.6)",
+                    marginBottom: "8px",
+                  }}
+                >
+                  ✦ &nbsp;Scripture
+                </div>
+                <h1
+                  style={{
+                    fontFamily: "var(--font-ui, system-ui)",
+                    fontSize: "28px",
+                    fontWeight: "300",
+                    letterSpacing: "0.02em",
+                    color: "var(--text-primary, #f0ebe0)",
+                    lineHeight: 1.15,
+                    marginBottom: "5px",
                   }}
                 >
                   Holy Bible
                 </h1>
                 <p
-                  className="text-sm opacity-60"
-                  style={{ color: "var(--text-primary)" }}
+                  style={{
+                    fontFamily: "var(--font-ui, system-ui)",
+                    fontSize: "12px",
+                    color: "var(--text-primary, #f0ebe0)",
+                    opacity: 0.38,
+                    letterSpacing: "0.04em",
+                  }}
                 >
-                  66 Books · Old & New Testament
+                  66 Books · Old &amp; New Testament
                 </p>
               </div>
+
+              {/* Close */}
               <button
                 onClick={handleClose}
-                className="p-2 rounded-full transition-all"
                 style={{
-                  color: "var(--text-accent)",
-                  background: "rgba(var(--accent-rgb), 0.1)",
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "100px",
+                  background: "rgba(var(--accent-rgb,203,178,124),0.08)",
+                  border: "1px solid rgba(var(--accent-rgb,203,178,124),0.15)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  color: "var(--text-primary, #f0ebe0)",
+                  fontSize: "14px",
+                  opacity: 0.55,
+                  transition: "opacity 0.2s",
+                  WebkitTapHighlightColor: "transparent",
+                  flexShrink: 0,
                 }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background =
-                    "rgba(var(--accent-rgb), 0.2)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background =
-                    "rgba(var(--accent-rgb), 0.1)")
-                }
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
+                ✕
               </button>
             </div>
 
-            {/* Search Bar */}
-            <div className="relative">
-              <div
+            {/* Search */}
+            <div style={{ position: "relative" }}>
+              <span
                 style={{
                   position: "absolute",
-                  left: "16px",
+                  left: "14px",
                   top: "50%",
                   transform: "translateY(-50%)",
-                  color: "var(--text-accent)",
-                  opacity: 0.4,
+                  fontSize: "14px",
+                  color: "rgba(var(--accent-rgb,203,178,124),0.4)",
+                  pointerEvents: "none",
                 }}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.35-4.35" />
-                </svg>
-              </div>
+                ⌕
+              </span>
               <input
+                className="bn-search"
                 type="text"
-                placeholder="Search books..."
+                placeholder="Search books…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
                   width: "100%",
-                  background: "rgba(0, 0, 0, 0.3)",
-                  border: "1px solid rgba(var(--accent-rgb), 0.2)",
-                  borderRadius: "16px",
-                  padding: "14px 20px 14px 48px",
-                  color: "var(--text-primary)",
-                  fontSize: "16px",
-                  outline: "none",
-                  transition: "all 0.2s",
+                  background: "rgba(var(--accent-rgb,203,178,124),0.05)",
+                  border: "1px solid rgba(var(--accent-rgb,203,178,124),0.14)",
+                  borderRadius: "12px",
+                  padding: "12px 16px 12px 38px",
+                  color: "var(--text-primary, #f0ebe0)",
+                  fontFamily: "var(--font-ui, system-ui)",
+                  fontSize: "15px",
+                  transition: "border-color 0.2s, background 0.2s",
+                  boxSizing: "border-box",
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = "var(--text-accent)";
-                  e.target.style.background = "rgba(0, 0, 0, 0.4)";
+                  e.target.style.borderColor =
+                    "rgba(var(--accent-rgb,203,178,124),0.4)";
+                  e.target.style.background =
+                    "rgba(var(--accent-rgb,203,178,124),0.08)";
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = "rgba(var(--accent-rgb), 0.2)";
-                  e.target.style.background = "rgba(0, 0, 0, 0.3)";
+                  e.target.style.borderColor =
+                    "rgba(var(--accent-rgb,203,178,124),0.14)";
+                  e.target.style.background =
+                    "rgba(var(--accent-rgb,203,178,124),0.05)";
                 }}
               />
             </div>
           </div>
 
-          {/* Scrollable Book List */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto">
+          {/* ── Book list ───────────────────────────────────── */}
+          <div
+            ref={scrollRef}
+            className="bn-scroll"
+            style={{ flex: 1, overflowY: "auto" }}
+          >
             {filteredStructure.map((section, idx) => (
               <div key={idx}>
-                {/* Section Header - Complete coverage, no slivers */}
+                {/* Sticky section header */}
                 <div
-                  className="sticky"
+                  className="bn-sticky"
                   style={{
-                    top: "-4px",
-                    paddingLeft: "2rem",
-                    paddingRight: "2rem",
-                    paddingTop: "1.5rem",
-                    paddingBottom: "1.25rem",
-                    marginBottom: "-4px",
-                    background: "var(--bg-menu)",
-                    backdropFilter: "blur(20px)",
-                    borderBottom: "1px solid rgba(var(--accent-rgb), 0.1)",
-                    zIndex: 20,
-                    boxShadow: "0 8px 20px rgba(0, 0, 0, 0.7)",
+                    background: "var(--bg-menu, #141410)",
+                    padding: "16px 28px 10px",
+                    borderBottom:
+                      "1px solid rgba(var(--accent-rgb,203,178,124),0.07)",
                   }}
                 >
-                  <h2
-                    className="text-sm font-bold tracking-wider mb-1"
+                  <div
                     style={{
-                      color: "var(--text-accent)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.1em",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
                     }}
                   >
-                    {section.section}
-                  </h2>
-                  <p
-                    className="text-xs opacity-50"
-                    style={{ color: "var(--text-primary)" }}
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        color: "rgba(var(--accent-rgb,203,178,124),0.5)",
+                      }}
+                    >
+                      {SECTION_GLYPHS[idx % SECTION_GLYPHS.length]}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-ui, system-ui)",
+                        fontSize: "10px",
+                        fontWeight: "600",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.13em",
+                        color: "rgba(var(--accent-rgb,203,178,124),0.6)",
+                      }}
+                    >
+                      {section.section}
+                    </span>
+                    <div
+                      style={{
+                        flex: 1,
+                        height: "1px",
+                        background:
+                          "linear-gradient(90deg, rgba(var(--accent-rgb,203,178,124),0.15), transparent)",
+                      }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-body, Georgia, serif)",
+                      fontSize: "11px",
+                      fontStyle: "italic",
+                      color: "var(--text-primary, #f0ebe0)",
+                      opacity: 0.3,
+                      marginTop: "3px",
+                      paddingLeft: "18px",
+                    }}
                   >
                     {section.subtitle}
-                  </p>
+                  </div>
                 </div>
 
                 {/* Books */}
-                <div className="px-8 py-6 space-y-2">
+                <div style={{ padding: "8px 20px 4px" }}>
                   {section.books.map((book) => {
                     const isCurrent = book.id === currentBook?.toLowerCase();
-
                     return (
                       <button
                         key={book.id}
                         onClick={() => handleBookClick(book)}
-                        className="book-card w-full text-left rounded-2xl p-5"
+                        className="bn-book bn-book-available"
                         style={{
+                          width: "100%",
+                          textAlign: "left",
+                          padding: "13px 16px",
+                          marginBottom: "4px",
+                          borderRadius: "12px",
                           background: isCurrent
-                            ? "rgba(var(--accent-rgb), 0.15)"
-                            : "rgba(0, 0, 0, 0.25)",
+                            ? "rgba(var(--accent-rgb,203,178,124),0.14)"
+                            : "transparent",
                           border: isCurrent
-                            ? "1px solid var(--text-accent)"
-                            : "1px solid rgba(var(--accent-rgb), 0.15)",
+                            ? "1px solid rgba(var(--accent-rgb,203,178,124),0.35)"
+                            : "1px solid transparent",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "12px",
+                          cursor: "pointer",
                         }}
                       >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div
-                              className="text-lg font-semibold mb-1"
-                              style={{
-                                color: "var(--text-primary)",
-                                letterSpacing: "-0.01em",
-                              }}
-                            >
-                              {book.name}
-                            </div>
-                            <div
-                              className="text-sm opacity-60"
-                              style={{ color: "var(--text-primary)" }}
-                            >
-                              {book.chapters} chapters
-                            </div>
-                          </div>
-                          <svg
-                            viewBox="0 0 24 24"
-                            className="w-5 h-5"
-                            style={{
-                              color: "var(--text-accent)",
-                              opacity: 0.5,
-                            }}
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.5"
-                          >
-                            <path d="M9 18l6-6-6-6" />
-                          </svg>
-                        </div>
+                        {/* Chapter count pill */}
+                        <span
+                          style={{
+                            flexShrink: 0,
+                            fontFamily: "var(--font-ui, system-ui)",
+                            fontSize: "10px",
+                            color: "rgba(var(--accent-rgb,203,178,124),0.5)",
+                            background:
+                              "rgba(var(--accent-rgb,203,178,124),0.08)",
+                            border:
+                              "1px solid rgba(var(--accent-rgb,203,178,124),0.12)",
+                            borderRadius: "6px",
+                            padding: "2px 7px",
+                            minWidth: "28px",
+                            textAlign: "center",
+                            letterSpacing: "0.04em",
+                          }}
+                        >
+                          {book.chapters}
+                        </span>
+
+                        {/* Book name */}
+                        <span
+                          style={{
+                            flex: 1,
+                            fontFamily: "var(--font-ui, system-ui)",
+                            fontSize: "15px",
+                            fontWeight: isCurrent ? "500" : "400",
+                            color: isCurrent
+                              ? "var(--text-accent, #cbb27c)"
+                              : "var(--text-primary, #f0ebe0)",
+                            letterSpacing: "0.01em",
+                          }}
+                        >
+                          {book.name}
+                        </span>
+
+                        {/* Arrow */}
+                        <span
+                          style={{
+                            fontSize: "13px",
+                            color: "rgba(var(--accent-rgb,203,178,124),0.3)",
+                            flexShrink: 0,
+                          }}
+                        >
+                          ›
+                        </span>
                       </button>
                     );
                   })}
                 </div>
               </div>
             ))}
+
+            {/* Bottom padding */}
+            <div style={{ height: "24px" }} />
           </div>
         </div>
       </div>
     );
   }
 
-  /* ===============================
-     Chapter Grid
-  ================================ */
+  /* ══════════════════════════════════════════════════════
+     CHAPTER GRID VIEW
+  ══════════════════════════════════════════════════════ */
   if (view === "chapters" && selectedBook) {
     const chapters = Array.from(
       { length: selectedBook.chapters },
@@ -543,94 +644,172 @@ export default function BibleNavigator({
 
     return (
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center navigator-backdrop"
+        className="bn-backdrop"
         style={{
-          background: "rgba(0, 0, 0, 0.85)",
-          backdropFilter: "blur(20px)",
-          animation: isAnimatingOut
-            ? "fadeOut 0.3s ease-out forwards"
-            : "fadeIn 0.35s ease-out",
+          position: "fixed",
+          inset: 0,
+          zIndex: 50,
+          background: "rgba(0,0,0,0.88)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
         onClick={handleClose}
       >
-        {sharedStyles}
+        {styles}
 
         <div
-          className="relative w-[95%] max-w-[520px] h-[90vh] flex flex-col overflow-hidden navigator-modal"
+          className="bn-modal bn-scroll"
           style={{
-            background: "var(--bg-menu)",
-            borderRadius: "28px",
-            boxShadow: "0 40px 100px rgba(0, 0, 0, 0.8)",
-            animation: isAnimatingOut
-              ? "slideDown 0.3s cubic-bezier(0.5, 0, 1, 1) forwards"
-              : "slideUp 0.45s cubic-bezier(0.34, 1.2, 0.64, 1)",
+            position: "relative",
+            width: "95%",
+            maxWidth: "520px",
+            height: "90vh",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            background: "var(--bg-menu, #141410)",
+            borderRadius: "26px",
+            boxShadow:
+              "0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(var(--accent-rgb,203,178,124),0.08)",
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Decorative gradient */}
+          {/* Ambient top glow */}
+          <div
+            className="bn-glow"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: "15%",
+              right: "15%",
+              height: "1px",
+              background:
+                "linear-gradient(90deg, transparent, rgba(var(--accent-rgb,203,178,124),0.8), transparent)",
+              filter: "blur(1px)",
+            }}
+          />
           <div
             style={{
               position: "absolute",
               top: 0,
               left: 0,
               right: 0,
-              height: "200px",
-              background: `linear-gradient(180deg, var(--text-accent) 0%, transparent 100%)`,
-              opacity: 0.08,
+              height: "180px",
+              background:
+                "radial-gradient(ellipse at 50% 0%, rgba(var(--accent-rgb,203,178,124),0.09), transparent 65%)",
               pointerEvents: "none",
             }}
           />
 
-          {/* Header */}
+          {/* ── Header ──────────────────────────────────────── */}
           <div
-            className="relative px-8 pt-8 pb-6"
+            className="bn-header-content"
             style={{
-              borderBottom: "1px solid rgba(var(--accent-rgb), 0.15)",
+              padding: "28px 28px 20px",
+              borderBottom: "1px solid rgba(var(--accent-rgb,203,178,124),0.1)",
+              position: "relative",
+              zIndex: 1,
+              flexShrink: 0,
             }}
           >
+            {/* Back button */}
             <button
               onClick={handleBackToBooks}
-              className="mb-4 flex items-center gap-2 text-sm font-medium transition-all"
-              style={{ color: "var(--text-accent)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                background: "rgba(var(--accent-rgb,203,178,124),0.07)",
+                border: "1px solid rgba(var(--accent-rgb,203,178,124),0.14)",
+                borderRadius: "100px",
+                padding: "6px 14px 6px 10px",
+                cursor: "pointer",
+                marginBottom: "18px",
+                WebkitTapHighlightColor: "transparent",
+                transition: "background 0.15s",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background =
+                  "rgba(var(--accent-rgb,203,178,124),0.12)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background =
+                  "rgba(var(--accent-rgb,203,178,124),0.07)")
+              }
             >
-              <svg
-                viewBox="0 0 24 24"
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
+              <span
+                style={{
+                  fontSize: "13px",
+                  color: "rgba(var(--accent-rgb,203,178,124),0.7)",
+                }}
               >
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-              All Books
+                ‹
+              </span>
+              <span
+                style={{
+                  fontFamily: "var(--font-ui, system-ui)",
+                  fontSize: "12px",
+                  letterSpacing: "0.04em",
+                  color: "rgba(var(--accent-rgb,203,178,124),0.7)",
+                }}
+              >
+                All Books
+              </span>
             </button>
 
-            <h1
-              className="text-4xl font-bold mb-1"
+            {/* Title */}
+            <div
               style={{
-                color: "var(--text-primary)",
-                letterSpacing: "-0.02em",
+                fontFamily: "var(--font-ui, system-ui)",
+                fontSize: "10px",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "rgba(var(--accent-rgb,203,178,124),0.55)",
+                marginBottom: "7px",
+              }}
+            >
+              ✦ &nbsp;Select Chapter
+            </div>
+            <h1
+              style={{
+                fontFamily: "var(--font-ui, system-ui)",
+                fontSize: "28px",
+                fontWeight: "300",
+                letterSpacing: "0.02em",
+                color: "var(--text-primary, #f0ebe0)",
+                lineHeight: 1.15,
+                marginBottom: "5px",
               }}
             >
               {selectedBook.name}
             </h1>
             <p
-              className="text-sm opacity-60"
-              style={{ color: "var(--text-primary)" }}
+              style={{
+                fontFamily: "var(--font-ui, system-ui)",
+                fontSize: "12px",
+                color: "var(--text-primary, #f0ebe0)",
+                opacity: 0.35,
+                letterSpacing: "0.04em",
+              }}
             >
-              Select a chapter to begin reading
+              {selectedBook.chapters}{" "}
+              {selectedBook.chapters === 1 ? "chapter" : "chapters"}
             </p>
           </div>
 
-          {/* Chapter Grid */}
-          <div className="flex-1 overflow-y-auto px-8 py-8">
+          {/* ── Chapter grid ───────────────────────────────── */}
+          <div
+            className="bn-scroll"
+            style={{ flex: 1, overflowY: "auto", padding: "24px 24px 32px" }}
+          >
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(64px, 1fr))",
-                gap: "12px",
+                gridTemplateColumns: "repeat(auto-fill, minmax(60px, 1fr))",
+                gap: "10px",
               }}
             >
               {chapters.map((chapter) => {
@@ -642,25 +821,29 @@ export default function BibleNavigator({
                   <button
                     key={chapter}
                     onClick={() => handleChapterClick(chapter)}
-                    className="chapter-btn"
+                    className="bn-ch"
                     style={{
                       aspectRatio: "1",
-                      borderRadius: "16px",
+                      borderRadius: "13px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontSize: "18px",
-                      fontWeight: "600",
+                      fontFamily: "var(--font-ui, system-ui)",
+                      fontSize: "16px",
+                      fontWeight: isCurrent ? "600" : "400",
                       background: isCurrent
-                        ? "var(--text-accent)"
-                        : "rgba(0, 0, 0, 0.3)",
-                      color: isCurrent ? "#000" : "var(--text-primary)",
+                        ? "rgba(var(--accent-rgb,203,178,124),1)"
+                        : "rgba(var(--accent-rgb,203,178,124),0.06)",
+                      color: isCurrent
+                        ? "var(--text-inverse, #0d0d0d)"
+                        : "var(--text-primary, #f0ebe0)",
                       border: isCurrent
                         ? "none"
-                        : "1px solid rgba(var(--accent-rgb), 0.2)",
+                        : "1px solid rgba(var(--accent-rgb,203,178,124),0.12)",
                       boxShadow: isCurrent
-                        ? "0 8px 24px rgba(var(--accent-rgb), 0.4)"
+                        ? "0 6px 20px rgba(var(--accent-rgb,203,178,124),0.35)"
                         : "none",
+                      cursor: "pointer",
                     }}
                   >
                     {chapter}

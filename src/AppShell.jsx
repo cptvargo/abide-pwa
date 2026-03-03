@@ -1,10 +1,39 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CoreReading from "./SwipeReading";
-import VSVInfo from "./components/VSVInfo";
 import BibleNavigator from "./components/BibleNavigator";
 import PremiumMenu from "./components/PremiumMenu";
+import SettingsModal from "./components/SettingsModal";
 import DialogueSystem from "./DialogueSystem";
+
+/* ===============================
+   Book Display Name Lookup
+================================ */
+const BOOK_NAMES = {
+  "1john": "1 John",
+  "2john": "2 John",
+  "3john": "3 John",
+  "1samuel": "1 Samuel",
+  "2samuel": "2 Samuel",
+  "1kings": "1 Kings",
+  "2kings": "2 Kings",
+  "1chronicles": "1 Chronicles",
+  "2chronicles": "2 Chronicles",
+  "1corinthians": "1 Corinthians",
+  "2corinthians": "2 Corinthians",
+  "1thessalonians": "1 Thessalonians",
+  "2thessalonians": "2 Thessalonians",
+  "1timothy": "1 Timothy",
+  "2timothy": "2 Timothy",
+  "1peter": "1 Peter",
+  "2peter": "2 Peter",
+  songofsolomon: "Song of Solomon",
+};
+
+function getBookDisplayName(bookId) {
+  if (!bookId) return "";
+  return BOOK_NAMES[bookId] ?? bookId.charAt(0).toUpperCase() + bookId.slice(1);
+}
 
 /* ===============================
    Greeting Logic
@@ -12,12 +41,10 @@ import DialogueSystem from "./DialogueSystem";
 function getGreeting() {
   const hour = new Date().getHours();
   const name = localStorage.getItem("abide_name") || "";
-
   let timeGreeting;
   if (hour < 12) timeGreeting = "Good morning";
   else if (hour < 18) timeGreeting = "Good afternoon";
   else timeGreeting = "Good evening";
-
   return name ? `${timeGreeting}, ${name}` : timeGreeting;
 }
 
@@ -85,13 +112,12 @@ export default function AppShell() {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [settingsView, setSettingsView] = useState("main");
 
   const [navigatorOpen, setNavigatorOpen] = useState(false);
 
   const [navProgress, setNavProgress] = useState(0);
   const [navCollapsed, setNavCollapsed] = useState(false);
-  const [uiMode, setUiMode] = useState("reading"); // "reading" | "highlighting" | "dialogue"
+  const [uiMode, setUiMode] = useState("reading");
   const [reflectionOpen, setReflectionOpen] = useState(false);
 
   const [hideVerseNumbers, setHideVerseNumbers] = useState(
@@ -114,31 +140,12 @@ export default function AppShell() {
     () => localStorage.getItem("translation") || "VSV",
   );
 
-  // Reading context supplied by CoreReading
   const [readingContext, setReadingContext] = useState(() => {
     const saved = localStorage.getItem("lastReadingPosition");
     return saved ? JSON.parse(saved) : { book: "Genesis", chapter: 1 };
   });
 
-  // Navigation target (for jumping to specific book/chapter)
   const [navigationTarget, setNavigationTarget] = useState(null);
-
-  // Theme definitions
-  const themes = [
-    { id: "classic", name: "Classic", description: "Traditional Scripture" },
-    {
-      id: "still-waters",
-      name: "Still Waters",
-      description: "Calm & Reflective",
-    },
-    { id: "stone-fire", name: "Stone & Fire", description: "Bold & Prophetic" },
-    {
-      id: "olive-parchment",
-      name: "Olive & Parchment",
-      description: "Ancient Manuscript",
-    },
-    { id: "parchment", name: "Parchment", description: "Classic Book Style" },
-  ];
 
   /* ===============================
      Effects
@@ -148,18 +155,16 @@ export default function AppShell() {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
 
-    // Update PWA status bar color based on theme (for Android/iOS)
     const themeColors = {
-      classic: "#cbb27c", // Gold
-      "still-waters": "#1f6f78", // Teal
-      "stone-fire": "#f97316", // Orange
-      "olive-parchment": "#9d8f6f", // Olive
-      parchment: "#8b7355", // Brown leather
+      classic: "#cbb27c",
+      "still-waters": "#1f6f78",
+      "stone-fire": "#f97316",
+      "olive-parchment": "#9d8f6f",
+      parchment: "#8b7355",
     };
 
     const statusBarColor = themeColors[theme] || "#cbb27c";
 
-    // Update theme-color meta tag for Android status bar
     let metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (!metaThemeColor) {
       metaThemeColor = document.createElement("meta");
@@ -168,7 +173,6 @@ export default function AppShell() {
     }
     metaThemeColor.content = statusBarColor;
 
-    // Force a small delay to ensure CSS updates
     setTimeout(() => {
       const bgNav = getComputedStyle(document.documentElement).getPropertyValue(
         "--bg-nav",
@@ -204,9 +208,13 @@ export default function AppShell() {
 
   /* ===============================
      Navigation Handler
+     — converts raw book ID (e.g. "1john") to display name ("1 John")
+       before storing in readingContext and passing to CoreReading
   ================================ */
-  function handleNavigate(book, chapter) {
-    setNavigationTarget({ book, chapter });
+  function handleNavigate(bookId, chapter) {
+    const displayName = getBookDisplayName(bookId);
+    setNavigationTarget({ book: bookId, chapter });
+    setReadingContext({ book: displayName, chapter });
     setNavigatorOpen(false);
   }
 
@@ -215,19 +223,10 @@ export default function AppShell() {
   ================================ */
   return (
     <div
-      className="
-    no-select flex flex-col relative
-    bg-[var(--bg-app)]
-    text-[var(--text-primary)]
-    font-[var(--font-ui)]
-  "
-      style={{
-        height: "100dvh",
-        maxHeight: "100dvh",
-        overflow: "hidden",
-      }}
+      className="no-select flex flex-col relative bg-[var(--bg-app)] text-[var(--text-primary)] font-[var(--font-ui)]"
+      style={{ height: "100dvh", maxHeight: "100dvh", overflow: "hidden" }}
     >
-      {/* Fixed Status Bar Background (iOS safe-area top) */}
+      {/* Fixed Status Bar Background */}
       <div
         className="fixed top-0 left-0 right-0 z-40"
         style={{
@@ -237,9 +236,7 @@ export default function AppShell() {
         }}
       />
 
-      {/* ===============================
-         Scripture Reading Screen
-      ================================ */}
+      {/* Scripture Reading Screen */}
       {activeScreen === "scripture" && (
         <CoreReading
           hideVerseNumbers={chapterlessMode}
@@ -259,9 +256,7 @@ export default function AppShell() {
         />
       )}
 
-      {/* ===============================
-         Dialoguing with God Screen
-      ================================ */}
+      {/* Dialoguing with God Screen */}
       {activeScreen === "dialogue" && (
         <DialogueSystem
           theme={theme}
@@ -270,14 +265,11 @@ export default function AppShell() {
         />
       )}
 
-      {/* ===============================
-         Floating Nav with Collapse (only in reading mode, not in reflection)
-      ================================ */}
+      {/* Floating Nav */}
       {activeScreen === "scripture" &&
         uiMode === "reading" &&
         !reflectionOpen && (
           <>
-            {/* Main Nav Pill */}
             <nav
               onClick={(e) => e.stopPropagation()}
               onPointerDown={(e) => e.stopPropagation()}
@@ -296,7 +288,6 @@ export default function AppShell() {
               }}
               className="fixed bottom-6 left-1/2 px-5 py-3 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex items-center gap-1 whitespace-nowrap"
             >
-              {/* Menu Button */}
               <button
                 onClick={() => {
                   setMenuVisible(true);
@@ -307,7 +298,6 @@ export default function AppShell() {
                 ☰
               </button>
 
-              {/* Separator */}
               <div
                 style={{
                   width: "2px",
@@ -319,18 +309,16 @@ export default function AppShell() {
                 }}
               />
 
-              {/* Book & Chapter - CLICKABLE */}
               <button
                 onClick={() => setNavigatorOpen(true)}
                 className="px-3 py-1 flex items-center gap-2 hover:scale-105 transition-transform"
               >
                 <BibleIcon className="w-5 h-5 text-[var(--text-inverse)] stroke-[2.5]" />
-                <span className="text-[var(--text-inverse)] font-bold tracking-wide text-base capitalize">
+                <span className="text-[var(--text-inverse)] font-bold tracking-wide text-base">
                   {readingContext.book} {readingContext.chapter}
                 </span>
               </button>
 
-              {/* Separator */}
               <div
                 style={{
                   width: "2px",
@@ -342,7 +330,6 @@ export default function AppShell() {
                 }}
               />
 
-              {/* Collapse Button */}
               <button
                 onClick={() => setNavCollapsed(true)}
                 className="px-3 py-1 text-[var(--text-inverse)] opacity-60 hover:opacity-100 transition-opacity"
@@ -360,7 +347,6 @@ export default function AppShell() {
               </button>
             </nav>
 
-            {/* Floating Reveal Button (shown when collapsed) */}
             {navCollapsed && (
               <button
                 onClick={(e) => {
@@ -381,9 +367,9 @@ export default function AppShell() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.25)",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
                   animation:
-                    "revealButtonIn 350ms cubic-bezier(0.4, 0, 0.2, 1) 150ms both",
+                    "revealButtonIn 350ms cubic-bezier(0.4,0,0.2,1) 150ms both",
                   zIndex: 50,
                   pointerEvents: "auto",
                 }}
@@ -406,25 +392,16 @@ export default function AppShell() {
               </button>
             )}
 
-            {/* Animation styles */}
             <style>{`
             @keyframes revealButtonIn {
-              from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(12px);
-              }
-              to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-              }
+              from { opacity:0; transform:translateX(-50%) translateY(12px) }
+              to   { opacity:1; transform:translateX(-50%) translateY(0) }
             }
           `}</style>
           </>
         )}
 
-      {/* ===============================
-         Premium Menu
-      ================================ */}
+      {/* Premium Menu */}
       <PremiumMenu
         open={menuOpen}
         onClose={() => {
@@ -432,22 +409,16 @@ export default function AppShell() {
           setMenuVisible(false);
         }}
         onNavigate={(id) => {
-          if (id === "dialogue") {
-            setActiveScreen("dialogue");
-          } else if (id === "grow") {
-            navigate("/grow");
-          } else if (id === "settings") {
-            setSettingsOpen(true);
-          }
+          if (id === "dialogue") setActiveScreen("dialogue");
+          else if (id === "grow") navigate("/grow");
+          else if (id === "settings") setSettingsOpen(true);
           setMenuOpen(false);
           setMenuVisible(false);
         }}
         theme={theme}
       />
 
-      {/* ===============================
-         Bible Navigator Modal
-      ================================ */}
+      {/* Bible Navigator */}
       <BibleNavigator
         open={navigatorOpen}
         onClose={() => setNavigatorOpen(false)}
@@ -456,328 +427,19 @@ export default function AppShell() {
         currentChapter={readingContext.chapter}
       />
 
-      {/* ===============================
-         Settings Modal
-      ================================ */}
-      {settingsOpen && (
-        <div
-          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setSettingsOpen(false);
-              setSettingsView("main");
-            }
-          }}
-        >
-          <div className="bg-[var(--bg-menu)] rounded-3xl w-[94%] max-w-[460px] max-h-[85vh] overflow-y-auto">
-            <div className="p-6 text-[var(--text-primary)]">
-              {settingsView === "main" && (
-                <>
-                  <h2 className="text-2xl mb-6">Settings</h2>
-
-                  <button
-                    onClick={() => setSettingsView("translation")}
-                    className="w-full mb-4 bg-black/30 rounded-xl px-4 py-4 flex items-center justify-between hover:bg-black/40 transition"
-                  >
-                    <div className="flex items-center gap-3">
-                      <BibleIcon className="w-5 h-5 text-[var(--text-accent)]" />
-                      <div className="text-left">
-                        <div className="font-semibold">Translation</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm opacity-80">
-                      <span>{translation}</span>
-                      <span className="opacity-60">→</span>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => setSettingsView("appearance")}
-                    className="w-full mb-4 bg-black/30 rounded-xl px-4 py-4 flex items-center justify-between hover:bg-black/40 transition"
-                  >
-                    <div className="flex items-center gap-3">
-                      <svg
-                        className="w-5 h-5 text-[var(--text-accent)]"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <circle cx="12" cy="12" r="10" />
-                        <circle cx="8" cy="10" r="1.5" fill="currentColor" />
-                        <circle cx="16" cy="10" r="1.5" fill="currentColor" />
-                        <circle cx="8" cy="16" r="1.5" fill="currentColor" />
-                        <circle cx="16" cy="16" r="1.5" fill="currentColor" />
-                        <circle cx="12" cy="13" r="1.5" fill="currentColor" />
-                      </svg>
-                      <div className="text-left">
-                        <div className="font-semibold">Appearance</div>
-                      </div>
-                    </div>
-                    <span className="opacity-60">→</span>
-                  </button>
-
-                  <button
-                    onClick={() => setSettingsView("textSize")}
-                    className="w-full mb-4 bg-black/30 rounded-xl px-4 py-4 flex items-center justify-between hover:bg-black/40 transition"
-                  >
-                    <div className="flex items-center gap-3">
-                      <svg
-                        className="w-5 h-5 text-[var(--text-accent)]"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <circle cx="11" cy="11" r="8" />
-                        <path d="m21 21-4.35-4.35" />
-                      </svg>
-                      <div className="text-left">
-                        <div className="font-semibold">Bible Text Size</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm opacity-80">
-                      <span>{textSize.toFixed(1)}x</span>
-                      <span className="opacity-60">→</span>
-                    </div>
-                  </button>
-
-                  <div className="bg-black/30 rounded-xl px-4 py-4 mb-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-3">
-                        <svg
-                          className="w-5 h-5 text-[var(--text-accent)]"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                          <line x1="1" y1="1" x2="23" y2="23" />
-                        </svg>
-                        <div className="text-left">
-                          <div className="font-semibold">Chapterless Mode</div>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setChapterlessMode((v) => !v)}
-                        className="relative w-10 h-6 rounded-full transition"
-                        style={{
-                          backgroundColor: chapterlessMode
-                            ? "var(--text-accent)"
-                            : "rgba(0,0,0,0.4)",
-                        }}
-                      >
-                        <div
-                          className="absolute top-1 w-4 h-4 bg-white rounded-full transition-transform"
-                          style={{
-                            transform: chapterlessMode
-                              ? "translateX(20px)"
-                              : "translateX(4px)",
-                          }}
-                        />
-                      </button>
-                    </div>
-                    <div className="text-xs opacity-70 pl-8">
-                      Hides chapter titles and verse numbers
-                    </div>
-                  </div>
-
-                  <div className="text-center opacity-60 text-sm mt-6">
-                    Made with ♥ by{" "}
-                    <span className="text-[var(--text-accent)]">
-                      Jesus Vargas
-                    </span>
-                    <div className="mt-1">Version 2.3.0</div>
-                  </div>
-                </>
-              )}
-
-              {settingsView === "appearance" && (
-                <>
-                  <button
-                    className="flex items-center gap-3 mb-8 text-[var(--text-accent)]"
-                    onClick={() => setSettingsView("main")}
-                  >
-                    <span className="text-3xl">←</span>
-                    <span className="text-3xl font-semibold">Appearance</span>
-                  </button>
-
-                  <div className="text-sm opacity-70 mb-4">Choose Theme</div>
-
-                  <div className="space-y-3">
-                    {themes.map((t) => (
-                      <button
-                        key={t.id}
-                        onClick={() => setTheme(t.id)}
-                        className="w-full bg-black/30 rounded-xl px-4 py-4 flex items-center justify-between hover:bg-black/40 transition"
-                      >
-                        <div className="text-left">
-                          <div className="font-semibold">{t.name}</div>
-                          <div className="text-xs opacity-70">
-                            {t.description}
-                          </div>
-                        </div>
-
-                        <div
-                          className="relative w-10 h-6 rounded-full transition"
-                          style={{
-                            backgroundColor:
-                              theme === t.id
-                                ? "var(--text-accent)"
-                                : "rgba(0,0,0,0.4)",
-                          }}
-                        >
-                          <div
-                            className="absolute top-1 w-4 h-4 bg-white rounded-full transition-transform"
-                            style={{
-                              transform:
-                                theme === t.id
-                                  ? "translateX(20px)"
-                                  : "translateX(4px)",
-                            }}
-                          />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {settingsView === "textSize" && (
-                <>
-                  <button
-                    className="flex items-center gap-3 mb-8 text-[var(--text-accent)]"
-                    onClick={() => setSettingsView("main")}
-                  >
-                    <span className="text-3xl">←</span>
-                    <span className="text-3xl font-semibold">
-                      Bible Text Size
-                    </span>
-                  </button>
-
-                  <div className="bg-black/20 rounded-2xl p-6 mb-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <button
-                        onClick={() =>
-                          setTextSize(Math.max(0.8, textSize - 0.1))
-                        }
-                        disabled={textSize <= 0.8}
-                        className="w-12 h-12 rounded-xl bg-black/30 hover:bg-black/40 transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-2xl font-bold"
-                      >
-                        −
-                      </button>
-
-                      <div className="text-3xl font-bold">
-                        {textSize.toFixed(1)}x
-                      </div>
-
-                      <button
-                        onClick={() =>
-                          setTextSize(Math.min(2.0, textSize + 0.1))
-                        }
-                        disabled={textSize >= 2.0}
-                        className="w-12 h-12 rounded-xl bg-black/30 hover:bg-black/40 transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-2xl font-bold"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="text-sm opacity-70 mb-3">Preview</div>
-                  <div
-                    className="bg-black/20 rounded-2xl p-4 leading-relaxed"
-                    style={{ fontSize: `${textSize}rem` }}
-                  >
-                    <span className="opacity-60">1 </span>
-                    In the beginning God created the heavens and the earth.{" "}
-                    <span className="opacity-60">2 </span>
-                    And the earth was without form and empty, and darkness lay
-                    over the face of the deep. And the Spirit of God hovered
-                    over the waters.
-                  </div>
-                </>
-              )}
-
-              {settingsView === "translation" && (
-                <>
-                  <button
-                    className="flex items-center gap-3 mb-8 text-[var(--text-accent)]"
-                    onClick={() => setSettingsView("main")}
-                  >
-                    <span className="text-3xl">←</span>
-                    <span className="text-3xl font-semibold">Translations</span>
-                  </button>
-
-                  <div className="text-xs text-[var(--text-primary)]/70 mb-5">
-                    Choose Translation
-                  </div>
-
-                  <div className="space-y-3">
-                    {[
-                      {
-                        id: "VSV",
-                        label: "Vine Standard Version",
-                        why: "Faithful, readable, ABIDE's core translation",
-                      },
-                      {
-                        id: "AKT",
-                        label: "Abide Kids Translation",
-                        why: "Clear, accessible language for young readers",
-                      },
-                      {
-                        id: "KJV",
-                        label: "King James Version",
-                        why: "Historic English translation (1769)",
-                      },
-                      {
-                        id: "ASR",
-                        label: "Abide Source Reading",
-                        why: "Source-oriented reading for deeper understanding",
-                      },
-                    ].map((t) => (
-                      <button
-                        key={t.id}
-                        onClick={() => setTranslation(t.id)}
-                        className="w-full bg-black/30 rounded-xl px-4 py-4 flex items-center justify-between hover:bg-black/40 transition"
-                      >
-                        <div className="text-left">
-                          <div className="font-semibold">{t.label}</div>
-                          <div className="text-xs opacity-70 mt-1">{t.why}</div>
-                        </div>
-
-                        <div
-                          className="relative w-10 h-6 rounded-full transition"
-                          style={{
-                            backgroundColor:
-                              translation === t.id
-                                ? "var(--text-accent)"
-                                : "rgba(0,0,0,0.4)",
-                          }}
-                        >
-                          <div
-                            className="absolute top-1 w-4 h-4 bg-white rounded-full transition-transform"
-                            style={{
-                              transform:
-                                translation === t.id
-                                  ? "translateX(20px)"
-                                  : "translateX(4px)",
-                            }}
-                          />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {settingsView === "vsv" && (
-                <VSVInfo onBack={() => setSettingsView("main")} />
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Settings Modal */}
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        theme={theme}
+        setTheme={setTheme}
+        translation={translation}
+        setTranslation={setTranslation}
+        textSize={textSize}
+        setTextSize={setTextSize}
+        chapterlessMode={chapterlessMode}
+        setChapterlessMode={setChapterlessMode}
+      />
     </div>
   );
 }
