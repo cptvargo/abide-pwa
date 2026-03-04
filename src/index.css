@@ -176,50 +176,46 @@ body {
   --verse-size: 0.7em;
   --highlight-bg: rgba(214, 200, 159, 0.18);
 }
-/* ===============================
-   PARCHMENT THEME - 5th Theme
-   Add to index.css after other themes
-================================ */
-
 /* ========================================
    PARCHMENT THEME - Enhanced Visibility
 ======================================== */
 
 [data-theme="parchment"] {
-  /* Backgrounds - Stronger contrast */
-  --bg-app: #f5f1e8;  /* Lighter parchment paper */
-  --bg-nav: #6b5744;  /* Darker brown leather nav */
-  --bg-menu: #c8bead;  /* Much darker menu background */
-  
-  /* Text Colors - Much stronger contrast */
-  --text-primary: #0d0a06;  /* Nearly black text - deep warm brown */
-  --text-accent: #6b5744;  /* Darker brown accent */
-  --text-muted: #4a3d2f;  /* Much darker muted - solid color, no opacity */
-  --text-inverse: #f5f1e8;  /* Light cream for nav */
-  --text-secondary: #2a2419;  /* Much darker secondary - solid color */
-  
+
+  /* Backgrounds - Warmer parchment contrast */
+  --bg-app: #f6f1e6;  /* soft parchment page */
+  --bg-nav: #5c4632;  /* leather brown */
+  --bg-menu: #e7dcc9;  /* parchment menu background */
+
+  /* Text Colors - true ink hierarchy */
+  --text-primary: #1b140c;  /* dark ink */
+  --text-accent: #8b6b46;  /* warm bronze accent */
+  --text-muted: #6f5a45;  /* readable muted */
+  --text-inverse: #f6f1e6;
+  --text-secondary: #3b2e22;
+
   /* Fonts - Classic Serif */
   --font-ui: 'Crimson Text', 'Baskerville', 'Garamond', serif;
   --font-body: 'Crimson Text', 'Baskerville', 'Garamond', serif;
   --font-verse: 'Crimson Text', 'Baskerville', 'Garamond', serif;
-  
+
   /* Typography */
   --line-height: 1.8;
   --paragraph-spacing: 1.5em;
-  
+
   /* Verse Display */
-  --verse-opacity: 1.0;  /* Full opacity */
+  --verse-opacity: 1.0;
   --verse-size: 1.1rem;
-  
+
   /* Highlight */
-  --highlight-bg: rgba(107, 87, 68, 0.35);
-  
-  /* Footer & Menu text - ensure readability */
-  --footer-text: #0d0a06;
-  --menu-text: #0d0a06;
-  
-  /* Accent RGB for semi-transparent usage */
-  --accent-rgb: 107, 87, 68;
+  --highlight-bg: rgba(139,107,70,0.30);
+
+  /* Footer & Menu text */
+  --footer-text: #1b140c;
+  --menu-text: #1b140c;
+
+  /* Accent RGB */
+  --accent-rgb: 139,107,70;
 }
 
 /* Extra specificity for parchment theme footer */
@@ -228,37 +224,47 @@ body {
   opacity: 0.9 !important;
 }
 
-/* Stronger card separation in parchment */
+/* Stronger card separation */
 [data-theme="parchment"] .opacity-70 {
   opacity: 1.0 !important;
 }
 
-/* Enhanced text contrast adjustments for parchment theme */
+/* Enhanced text contrast adjustments */
 [data-theme="parchment"] .text-sm {
   font-weight: 500;
 }
 
 /* ========================================
-   Additional CSS to add to your global styles for card enhancement
+   Card Enhancement (same logic, cleaner look)
 ======================================== */
 
-/* Parchment theme card improvements */
 [data-theme="parchment"] [class*="rounded-2xl"][class*="border"] {
-  background: rgba(139, 115, 85, 0.08) !important;
-  border-color: rgba(107, 87, 68, 0.25) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(107, 87, 68, 0.12) !important;
+  background: rgba(139,115,85,0.10) !important;
+  border-color: rgba(90,65,35,0.22) !important;
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.06),
+    0 6px 16px rgba(101,72,40,0.08) !important;
 }
 
-/* Parchment heading weight */
+/* Heading weight */
 [data-theme="parchment"] h1,
 [data-theme="parchment"] h2 {
   font-weight: 700 !important;
   opacity: 1.0 !important;
 }
 
-/* Parchment nav pill contrast */
+/* Nav pill contrast */
 [data-theme="parchment"] [style*="--bg-nav"] {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12) !important;
+}
+/* ========================================
+   Subtle Parchment Texture (Optional)
+======================================== */
+
+[data-theme="parchment"] {
+  background-image:
+    radial-gradient(rgba(0,0,0,0.02) 1px, transparent 1px);
+  background-size: 4px 4px;
 }
 /* ===============================
    Rich Text Editor Styles - FIXED LISTS

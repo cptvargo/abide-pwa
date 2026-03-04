@@ -6,7 +6,8 @@
 import { useEffect, useState, useRef } from "react";
 import { loadChapter } from "./lib/bible";
 import ChapterReflectionPanel from "./components/ChapterReflectionPanel";
-import { BIBLE_ORDER, CHAPTER_COUNT } from "./data/bibleStructure";
+import { BIBLE_ORDER, CHAPTER_COUNT } from "./lib/bibleStructure";
+import { getBookDisplayName } from "./lib/bibleStructure";
 import {
   HighlightPanel,
   DialogueBottomSheet,
@@ -105,7 +106,7 @@ export default function SwipeReading({
 
         // Update reading context
         onReadingContext?.({
-          book: book.charAt(0).toUpperCase() + book.slice(1),
+          book: getBookDisplayName(book),
           chapter: currentChapter,
         });
       } catch (error) {
@@ -481,7 +482,7 @@ export default function SwipeReading({
                 !text-[26px]
               "
             >
-              {book.charAt(0).toUpperCase() + book.slice(1)} {currentChapter}
+              {getBookDisplayName(book)} {currentChapter}
             </div>
 
             {title && (
@@ -512,7 +513,6 @@ export default function SwipeReading({
                 className="leading-[var(--line-height)] text-[var(--text-primary)] font-[var(--font-body)] cursor-pointer transition-all"
                 style={{
                   fontSize: `${textSize * 16}px`,
-                  // Selection state: subtle outline, not color
                   background: highlightColor || "transparent",
                   border: isSelected
                     ? "2px solid var(--text-accent)"
@@ -565,11 +565,11 @@ export default function SwipeReading({
         )}
       </main>
 
-      {/* YouVersion-Style Highlight Panel - Opens immediately on verse tap */}
+      {/* YouVersion-Style Highlight Panel */}
       {highlightPanelOpen && (
         <HighlightPanel
           theme={theme}
-          book={book.charAt(0).toUpperCase() + book.slice(1)}
+          book={getBookDisplayName(book)}
           chapter={currentChapter}
           selectedVerses={selectedVerses}
           translation={translation}
@@ -585,7 +585,7 @@ export default function SwipeReading({
         <DialogueBottomSheet
           selectedVerses={selectedVerses}
           highlightColor={selectedColor}
-          book={book.charAt(0).toUpperCase() + book.slice(1)}
+          book={getBookDisplayName(book)}
           chapter={currentChapter}
           translation={translation}
           onClose={handleDialogueClose}
@@ -596,7 +596,7 @@ export default function SwipeReading({
       <ChapterReflectionPanel
         open={reflectionOpen}
         onClose={() => onReflectionOpenChange?.(false)}
-        book={book.charAt(0).toUpperCase() + book.slice(1)}
+        book={getBookDisplayName(book)}
         chapter={currentChapter}
         summary={reflectionSummary}
       />

@@ -5,35 +5,7 @@ import BibleNavigator from "./components/BibleNavigator";
 import PremiumMenu from "./components/PremiumMenu";
 import SettingsModal from "./components/SettingsModal";
 import DialogueSystem from "./DialogueSystem";
-
-/* ===============================
-   Book Display Name Lookup
-================================ */
-const BOOK_NAMES = {
-  "1john": "1 John",
-  "2john": "2 John",
-  "3john": "3 John",
-  "1samuel": "1 Samuel",
-  "2samuel": "2 Samuel",
-  "1kings": "1 Kings",
-  "2kings": "2 Kings",
-  "1chronicles": "1 Chronicles",
-  "2chronicles": "2 Chronicles",
-  "1corinthians": "1 Corinthians",
-  "2corinthians": "2 Corinthians",
-  "1thessalonians": "1 Thessalonians",
-  "2thessalonians": "2 Thessalonians",
-  "1timothy": "1 Timothy",
-  "2timothy": "2 Timothy",
-  "1peter": "1 Peter",
-  "2peter": "2 Peter",
-  songofsolomon: "Song of Solomon",
-};
-
-function getBookDisplayName(bookId) {
-  if (!bookId) return "";
-  return BOOK_NAMES[bookId] ?? bookId.charAt(0).toUpperCase() + bookId.slice(1);
-}
+import { getBookDisplayName } from "./lib/bibleStructure";
 
 /* ===============================
    Greeting Logic

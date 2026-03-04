@@ -5,6 +5,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { loadChapter } from "./lib/bible";
+import { getBookDisplayName } from "./lib/bibleStructure";
 import ChapterReflectionPanel from "./components/ChapterReflectionPanel";
 
 export default function CoreReading({
@@ -21,7 +22,7 @@ export default function CoreReading({
      Scripture State
   ================================ */
   const [verses, setVerses] = useState([]);
-  const [book] = useState("genesis");
+  const [book, setBook] = useState("genesis"); // FIXED: mutable so navigation can change it
   const [currentChapter, setCurrentChapter] = useState(1);
   const [loading, setLoading] = useState(false);
 
@@ -43,15 +44,16 @@ export default function CoreReading({
 
   /* ===============================
      Load & Append Chapter
+     FIXED: accepts bookId param to avoid stale closure on navigation
   ================================ */
-  async function appendChapter(chapterNumber) {
+  async function appendChapter(chapterNumber, bookId = book) {
     if (loadedChaptersRef.current.has(chapterNumber)) return;
 
     setLoading(true);
     loadedChaptersRef.current.add(chapterNumber);
 
     const rawData = await loadChapter(
-      book,
+      bookId,
       chapterNumber,
       translation.toLowerCase(),
     );
@@ -129,7 +131,7 @@ export default function CoreReading({
     setCurrentChapter(1);
 
     appendChapter(1);
-    onReadingContext?.({ book: "Genesis", chapter: 1 });
+    onReadingContext?.({ book: getBookDisplayName(book), chapter: 1 });
   }, [translation]);
 
   /* ===============================
@@ -149,11 +151,13 @@ export default function CoreReading({
   useEffect(() => {
     if (!navigationTarget) return;
 
-    // Clear and reload from target chapter
+    const newBook = navigationTarget.book; // FIXED: read book from navigationTarget
+
+    setBook(newBook); // FIXED: update book state
     setVerses([]);
     loadedChaptersRef.current.clear();
     setCurrentChapter(navigationTarget.chapter);
-    appendChapter(navigationTarget.chapter);
+    appendChapter(navigationTarget.chapter, newBook); // FIXED: pass book explicitly to avoid stale closure
 
     onNavigationComplete?.();
   }, [navigationTarget]);
@@ -198,7 +202,7 @@ export default function CoreReading({
         const rect = node.getBoundingClientRect();
         if (rect.top >= 0 && rect.top < window.innerHeight * 0.4) {
           const chapter = Number(node.dataset.chapter);
-          onReadingContext?.({ book: "Genesis", chapter });
+          onReadingContext?.({ book: getBookDisplayName(book), chapter });
           break;
         }
       }
@@ -236,7 +240,7 @@ export default function CoreReading({
                   !text-[26px]
                 "
               >
-                Genesis {v.chapter}
+                {getBookDisplayName(book)} {v.chapter}
               </div>
             );
           }
@@ -344,7 +348,7 @@ export default function CoreReading({
       <ChapterReflectionPanel
         open={reflectionOpen}
         onClose={() => setReflectionOpen(false)}
-        book="Genesis"
+        book={getBookDisplayName(book)}
         chapter={reflectionChapter}
         summary={reflectionSummary}
       />
