@@ -225,6 +225,10 @@ export default function AppShell() {
           onUiModeChange={setUiMode}
           reflectionOpen={reflectionOpen}
           onReflectionOpenChange={setReflectionOpen}
+          onCrossRefNavigate={(bookId, chapter) => {
+            handleNavigate(bookId, chapter);
+            setReflectionOpen(false);
+          }}
         />
       )}
 

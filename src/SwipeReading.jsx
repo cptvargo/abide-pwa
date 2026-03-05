@@ -30,6 +30,7 @@ export default function SwipeReading({
   onUiModeChange,
   reflectionOpen = false,
   onReflectionOpenChange,
+  onCrossRefNavigate,
 }) {
   const [verses, setVerses] = useState([]);
   const [title, setTitle] = useState("");
@@ -599,6 +600,8 @@ export default function SwipeReading({
         book={getBookDisplayName(book)}
         chapter={currentChapter}
         summary={reflectionSummary}
+        onNavigate={onCrossRefNavigate}
+        translation={translation}
       />
     </div>
   );
