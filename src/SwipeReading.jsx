@@ -402,15 +402,8 @@ export default function SwipeReading({
   async function loadChapterSummary(chapterNum) {
     try {
       const base = import.meta.env.BASE_URL;
-      let reflectionFolder;
-
-      if (translation === "AKT" || translation === "akt") {
-        reflectionFolder = "akt";
-      } else if (translation === "ASR" || translation === "asr") {
-        reflectionFolder = "asr";
-      } else {
-        reflectionFolder = "vsv";
-      }
+      const t = translation.toUpperCase();
+      const reflectionFolder = t === "AKT" ? "akt" : "shared";
 
       const res = await fetch(
         `${base}data/summaries/${reflectionFolder}/${book}/${chapterNum}.json`,
