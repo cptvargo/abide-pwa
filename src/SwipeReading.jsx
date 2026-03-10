@@ -668,7 +668,7 @@ export default function SwipeReading({
                   style={{
                     fontSize: `${textSize * 16.5}px`,
                     lineHeight: 2,
-                    fontFamily: "var(--font-body)",
+                    fontFamily: "var(--font-chapterless)",
                     color: "var(--text-primary)",
                     marginBottom: "1.6em",
                     textIndent: "1.5em",
