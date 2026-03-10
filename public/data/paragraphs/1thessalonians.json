@@ -1,0 +1,26 @@
+{
+  "book": "1thessalonians",
+  "note": "Paragraph break verse numbers. Derived from KJV USFM structure. Translation-agnostic.",
+  "chapters": {
+    "1": [
+      1
+    ],
+    "2": [
+      1,
+      13,
+      17
+    ],
+    "3": [
+      1
+    ],
+    "4": [
+      1,
+      13
+    ],
+    "5": [
+      1,
+      12,
+      26
+    ]
+  }
+}

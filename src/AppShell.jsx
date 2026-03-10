@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import CoreReading from "./SwipeReading";
 import BibleNavigator from "./components/BibleNavigator";
@@ -6,6 +6,14 @@ import PremiumMenu from "./components/PremiumMenu";
 import SettingsModal from "./components/SettingsModal";
 import DialogueSystem from "./DialogueSystem";
 import { getBookDisplayName } from "./lib/bibleStructure";
+
+const TRANSLATIONS = ["VSV", "AKT", "ASR", "KJV"];
+const TRANSLATION_FULL = {
+  VSV: "Vine Standard Version",
+  AKT: "ABIDE Kids Translation",
+  ASR: "ABIDE Source Reading",
+  KJV: "King James Version",
+};
 
 /* ===============================
    Greeting Logic
@@ -42,36 +50,6 @@ function BibleIcon({ className }) {
   );
 }
 
-function SettingsIcon({ className }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <circle cx="12" cy="12" r="3" />
-      <path
-        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06
-        a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09
-        a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06
-        a2 2 0 0 1-2.83-2.83l.06-.06 A1.65 1.65 0 0 0 4.6 15
-        a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09
-        a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06
-        a2 2 0 0 1 2.83-2.83l.06.06 A1.65 1.65 0 0 0 9 4.6
-        a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09
-        a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06
-        a2 2 0 0 1 2.83 2.83l-.06.06 A1.65 1.65 0 0 0 19.4 9
-        a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09
-        a1.65 1.65 0 0 0-1.51 1z"
-      />
-    </svg>
-  );
-}
-
 export default function AppShell() {
   const navigate = useNavigate();
 
@@ -84,11 +62,14 @@ export default function AppShell() {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
-
   const [navigatorOpen, setNavigatorOpen] = useState(false);
+  const [translationPickerOpen, setTranslationPickerOpen] = useState(false);
 
-  const [navProgress, setNavProgress] = useState(0);
-  const [navCollapsed, setNavCollapsed] = useState(false);
+  // Scroll-hide: true = visible, false = hidden
+  const [navVisible, setNavVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  const scrollElRef = useRef(null);
+
   const [uiMode, setUiMode] = useState("reading");
   const [reflectionOpen, setReflectionOpen] = useState(false);
 
@@ -120,10 +101,50 @@ export default function AppShell() {
   const [navigationTarget, setNavigationTarget] = useState(null);
 
   /* ===============================
+     Scroll-hide — attached directly to
+     SwipeReading's scroll element via ref
+  ================================ */
+  function handleScroll() {
+    const el = scrollElRef.current;
+    if (!el) return;
+    const y = el.scrollTop;
+    const delta = y - lastScrollY.current;
+
+    if (y < 10) {
+      setNavVisible(true);
+    } else if (delta > 6) {
+      setNavVisible(false);
+      setTranslationPickerOpen(false);
+    } else if (delta < -6) {
+      setNavVisible(true);
+    }
+
+    lastScrollY.current = y;
+  }
+
+  const handleScrollRef = useCallback((el) => {
+    // Detach from old element
+    if (scrollElRef.current) {
+      scrollElRef.current.removeEventListener("scroll", handleScroll);
+    }
+    scrollElRef.current = el;
+    if (el) {
+      lastScrollY.current = el.scrollTop;
+      el.addEventListener("scroll", handleScroll, { passive: true });
+    }
+  }, []);
+
+  // Always show nav when chapter changes (scroll resets to top in SwipeReading)
+  const handleReadingContext = useCallback((ctx) => {
+    setReadingContext(ctx);
+    setNavVisible(true);
+    lastScrollY.current = 0;
+  }, []);
+
+  /* ===============================
      Effects
   ================================ */
   useEffect(() => {
-    console.log("Theme changed to:", theme);
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
 
@@ -136,7 +157,6 @@ export default function AppShell() {
     };
 
     const statusBarColor = themeColors[theme] || "#cbb27c";
-
     let metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (!metaThemeColor) {
       metaThemeColor = document.createElement("meta");
@@ -144,14 +164,6 @@ export default function AppShell() {
       document.head.appendChild(metaThemeColor);
     }
     metaThemeColor.content = statusBarColor;
-
-    setTimeout(() => {
-      const bgNav = getComputedStyle(document.documentElement).getPropertyValue(
-        "--bg-nav",
-      );
-      console.log("New --bg-nav value:", bgNav);
-      console.log("Status bar color set to:", statusBarColor);
-    }, 100);
   }, [theme]);
 
   useEffect(() => {
@@ -174,20 +186,31 @@ export default function AppShell() {
     localStorage.setItem("translation", translation);
   }, [translation]);
 
+  // Cleanup scroll listener on unmount
   useEffect(() => {
-    localStorage.setItem("lastReadingPosition", JSON.stringify(readingContext));
-  }, [readingContext]);
+    return () => {
+      if (scrollElRef.current) {
+        scrollElRef.current.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
 
   /* ===============================
      Navigation Handler
-     — converts raw book ID (e.g. "1john") to display name ("1 John")
-       before storing in readingContext and passing to CoreReading
   ================================ */
   function handleNavigate(bookId, chapter) {
     const displayName = getBookDisplayName(bookId);
     setNavigationTarget({ book: bookId, chapter });
     setReadingContext({ book: displayName, chapter });
     setNavigatorOpen(false);
+  }
+
+  /* ===============================
+     Translation Handler
+  ================================ */
+  function handleSelectTranslation(t) {
+    setTranslation(t);
+    setTranslationPickerOpen(false);
   }
 
   /* ===============================
@@ -216,8 +239,9 @@ export default function AppShell() {
           textSize={textSize}
           translation={translation}
           theme={theme}
-          onReadingContext={setReadingContext}
-          onScrollProgress={setNavProgress}
+          onReadingContext={handleReadingContext}
+          onScrollProgress={() => {}} // kept for API compat, no longer drives nav
+          onScrollRef={handleScrollRef}
           navigationTarget={navigationTarget}
           onNavigationComplete={() => setNavigationTarget(null)}
           isModalOpen={navigatorOpen}
@@ -241,7 +265,7 @@ export default function AppShell() {
         />
       )}
 
-      {/* Floating Nav */}
+      {/* ── Floating Nav ── */}
       {activeScreen === "scripture" &&
         uiMode === "reading" &&
         !reflectionOpen && (
@@ -251,131 +275,280 @@ export default function AppShell() {
               onPointerDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}
               style={{
-                transform: navCollapsed
-                  ? `translateX(-50%) translateY(calc(100% + 24px))`
-                  : `translateX(-50%) translateY(${navProgress * 60}px)`,
-                opacity: navCollapsed ? 0 : 1 - navProgress,
-                background: "var(--bg-nav)",
-                transition: navCollapsed
-                  ? "transform 250ms cubic-bezier(0.4, 0, 0.2, 1), opacity 200ms ease-out"
-                  : "transform 300ms ease-[cubic-bezier(0.22,1,0.36,1)], opacity 300ms ease-[cubic-bezier(0.22,1,0.36,1)]",
-                pointerEvents: navCollapsed ? "none" : "auto",
+                position: "fixed",
+                bottom: "max(24px, env(safe-area-inset-bottom))",
+                left: "50%",
+                transform: navVisible
+                  ? "translateX(-50%) translateY(0)"
+                  : "translateX(-50%) translateY(calc(100% + 40px))",
+                opacity: navVisible ? 1 : 0,
+                transition:
+                  "transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease",
+                pointerEvents: navVisible ? "auto" : "none",
                 zIndex: 50,
+                background: "var(--bg-nav)",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+                borderRadius: "9999px",
+                padding: "10px 6px",
+                display: "flex",
+                alignItems: "center",
+                gap: 0,
+                whiteSpace: "nowrap",
               }}
-              className="fixed bottom-6 left-1/2 px-5 py-3 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex items-center gap-1 whitespace-nowrap"
             >
+              {/* Hamburger */}
               <button
                 onClick={() => {
                   setMenuVisible(true);
                   requestAnimationFrame(() => setMenuOpen(true));
                 }}
-                className="px-3 py-1 text-[var(--text-inverse)] font-bold text-base hover:scale-105 transition-transform"
+                style={{
+                  padding: "4px 14px",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "var(--text-inverse)",
+                  fontSize: 18,
+                  fontWeight: "bold",
+                  lineHeight: 1,
+                  opacity: 0.9,
+                }}
               >
                 ☰
               </button>
 
+              {/* Divider */}
               <div
                 style={{
-                  width: "2px",
-                  height: "24px",
-                  backgroundColor: "var(--text-inverse)",
-                  opacity: 0.25,
+                  width: "1px",
+                  height: "22px",
+                  background: "var(--text-inverse)",
+                  opacity: 0.2,
                   borderRadius: "9999px",
-                  margin: "0 4px",
+                  margin: "0 2px",
+                  flexShrink: 0,
                 }}
               />
 
+              {/* Book + Chapter */}
               <button
                 onClick={() => setNavigatorOpen(true)}
-                className="px-3 py-1 flex items-center gap-2 hover:scale-105 transition-transform"
+                style={{
+                  padding: "4px 14px",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}
               >
-                <BibleIcon className="w-5 h-5 text-[var(--text-inverse)] stroke-[2.5]" />
-                <span className="text-[var(--text-inverse)] font-bold tracking-wide text-base">
+                <BibleIcon
+                  className="w-5 h-5 text-[var(--text-inverse)]"
+                  style={{ strokeWidth: 2.5 }}
+                />
+                <span
+                  style={{
+                    color: "var(--text-inverse)",
+                    fontWeight: 700,
+                    fontSize: 15,
+                    letterSpacing: "0.02em",
+                    fontFamily: "var(--font-ui)",
+                  }}
+                >
                   {readingContext.book} {readingContext.chapter}
                 </span>
               </button>
 
+              {/* Divider */}
               <div
                 style={{
-                  width: "2px",
-                  height: "24px",
-                  backgroundColor: "var(--text-inverse)",
-                  opacity: 0.25,
+                  width: "1px",
+                  height: "22px",
+                  background: "var(--text-inverse)",
+                  opacity: 0.2,
                   borderRadius: "9999px",
-                  margin: "0 4px",
+                  margin: "0 2px",
+                  flexShrink: 0,
                 }}
               />
 
+              {/* Translation Badge */}
               <button
-                onClick={() => setNavCollapsed(true)}
-                className="px-3 py-1 text-[var(--text-inverse)] opacity-60 hover:opacity-100 transition-opacity"
-                title="Hide navigation"
+                onClick={() => setTranslationPickerOpen(true)}
+                style={{
+                  padding: "4px 14px",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                }}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
+                <span
+                  style={{
+                    color: "var(--text-inverse)",
+                    fontWeight: 700,
+                    fontSize: 13,
+                    letterSpacing: "0.1em",
+                    fontFamily: "var(--font-ui)",
+                    opacity: 0.85,
+                  }}
                 >
-                  <path d="M19 9l-7 7-7-7" />
-                </svg>
+                  {translation}
+                </span>
               </button>
             </nav>
 
-            {navCollapsed && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setNavCollapsed(false);
-                }}
-                onPointerDown={(e) => e.stopPropagation()}
-                onTouchStart={(e) => e.stopPropagation()}
-                className="fixed left-1/2 -translate-x-1/2"
-                style={{
-                  bottom: "90px",
-                  width: "44px",
-                  height: "44px",
-                  background: "rgba(var(--bg-nav-rgb), 0.85)",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
-                  animation:
-                    "revealButtonIn 350ms cubic-bezier(0.4,0,0.2,1) 150ms both",
-                  zIndex: 50,
-                  pointerEvents: "auto",
-                }}
-                title="Show navigation"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  style={{
-                    width: "18px",
-                    height: "18px",
-                    stroke: "var(--text-accent)",
-                    fill: "none",
-                    strokeWidth: "2.5",
-                    strokeLinecap: "round",
-                    strokeLinejoin: "round",
-                  }}
-                >
-                  <path d="M5 15l7-7 7 7" />
-                </svg>
-              </button>
-            )}
-
             <style>{`
-            @keyframes revealButtonIn {
-              from { opacity:0; transform:translateX(-50%) translateY(12px) }
-              to   { opacity:1; transform:translateX(-50%) translateY(0) }
-            }
-          `}</style>
+              @keyframes fadeIn  { from { opacity: 0 } to { opacity: 1 } }
+              @keyframes sheetUp { from { transform: translateY(100%) } to { transform: translateY(0) } }
+            `}</style>
           </>
         )}
+
+      {/* ── Translation Picker Bottom Sheet ── */}
+      {translationPickerOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={() => setTranslationPickerOpen(false)}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.45)",
+              zIndex: 60,
+              animation: "fadeIn 0.2s ease",
+            }}
+          />
+
+          {/* Sheet */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: "fixed",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: 70,
+              background: "var(--bg-menu)",
+              borderTop: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: "20px 20px 0 0",
+              paddingBottom: "max(24px, env(safe-area-inset-bottom))",
+              boxShadow: "0 -12px 48px rgba(0,0,0,0.4)",
+              animation: "sheetUp 0.32s cubic-bezier(0.4,0,0.2,1)",
+            }}
+          >
+            {/* Drag handle */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                padding: "12px 0 4px",
+              }}
+            >
+              <div
+                style={{
+                  width: 32,
+                  height: 3,
+                  background: "var(--text-primary)",
+                  opacity: 0.15,
+                  borderRadius: 2,
+                }}
+              />
+            </div>
+
+            {/* Header */}
+            <div
+              style={{
+                padding: "8px 24px 14px",
+                fontSize: 11,
+                letterSpacing: "0.16em",
+                color: "var(--text-primary)",
+                opacity: 0.35,
+                textTransform: "uppercase",
+                textAlign: "center",
+                fontFamily: "var(--font-ui)",
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+              }}
+            >
+              Translation
+            </div>
+
+            {/* Options */}
+            {TRANSLATIONS.map((t) => (
+              <button
+                key={t}
+                onClick={() => handleSelectTranslation(t)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  padding: "16px 24px",
+                  background: "transparent",
+                  border: "none",
+                  borderTop: "1px solid rgba(255,255,255,0.05)",
+                  cursor: "pointer",
+                  textAlign: "left",
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 700,
+                      letterSpacing: "0.08em",
+                      fontFamily: "var(--font-ui)",
+                      color:
+                        translation === t
+                          ? "var(--text-accent)"
+                          : "var(--text-primary)",
+                      marginBottom: 3,
+                    }}
+                  >
+                    {t}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 13,
+                      color: "var(--text-secondary)",
+                      fontFamily: "var(--font-body)",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {TRANSLATION_FULL[t]}
+                  </div>
+                </div>
+
+                {/* Selected indicator */}
+                <div
+                  style={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: "50%",
+                    border: `1.5px solid ${translation === t ? "var(--text-accent)" : "rgba(255,255,255,0.15)"}`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                    transition: "border-color 0.2s",
+                  }}
+                >
+                  {translation === t && (
+                    <div
+                      style={{
+                        width: 7,
+                        height: 7,
+                        borderRadius: "50%",
+                        background: "var(--text-accent)",
+                      }}
+                    />
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Premium Menu */}
       <PremiumMenu

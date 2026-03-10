@@ -1,0 +1,12 @@
+{
+  "book": "philemon",
+  "note": "Paragraph break verse numbers. Derived from KJV USFM structure. Translation-agnostic.",
+  "chapters": {
+    "1": [
+      1,
+      4,
+      21,
+      23
+    ]
+  }
+}

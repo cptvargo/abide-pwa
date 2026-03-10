@@ -15,6 +15,30 @@ import {
   getThemeColors,
 } from "./components/HighlightSystem";
 
+/* ===============================
+   Merge verses into paragraphs
+   using paragraph break markers
+================================ */
+function buildParagraphs(verses, breakSet) {
+  if (!verses.length || !breakSet.size) {
+    return [verses];
+  }
+
+  const paragraphs = [];
+  let current = [];
+
+  verses.forEach((v) => {
+    if (breakSet.has(v.verse) && current.length > 0) {
+      paragraphs.push(current);
+      current = [];
+    }
+    current.push(v);
+  });
+
+  if (current.length > 0) paragraphs.push(current);
+  return paragraphs;
+}
+
 export default function SwipeReading({
   hideVerseNumbers = false,
   chapterlessMode = false,
@@ -23,6 +47,7 @@ export default function SwipeReading({
   theme = "classic",
   onReadingContext,
   onScrollProgress,
+  onScrollRef,
   navigationTarget,
   onNavigationComplete,
   isModalOpen = false,
@@ -40,6 +65,9 @@ export default function SwipeReading({
 
   const [reflectionSummary, setReflectionSummary] = useState("");
 
+  // Paragraph break data for chapterless mode
+  const [paragraphBreaks, setParagraphBreaks] = useState({});
+
   const scrollRef = useRef(null);
   const touchStartX = useRef(null);
   const touchStartY = useRef(0);
@@ -48,7 +76,7 @@ export default function SwipeReading({
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
 
-  // Highlighting state (verse-level storage with colorId)
+  // Highlighting state
   const [selectedVerses, setSelectedVerses] = useState([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [highlightPanelOpen, setHighlightPanelOpen] = useState(false);
@@ -58,6 +86,27 @@ export default function SwipeReading({
     const saved = localStorage.getItem("verseHighlights");
     return saved ? JSON.parse(saved) : {};
   });
+
+  /* ===============================
+     Load Paragraph Break Data
+  ================================ */
+  useEffect(() => {
+    if (!chapterlessMode) return;
+
+    async function loadParagraphData() {
+      try {
+        const base = import.meta.env.BASE_URL;
+        const res = await fetch(`${base}data/paragraphs/${book}.json`);
+        if (!res.ok) return;
+        const data = await res.json();
+        setParagraphBreaks(data.chapters || {});
+      } catch {
+        setParagraphBreaks({});
+      }
+    }
+
+    loadParagraphData();
+  }, [book, chapterlessMode]);
 
   /* ===============================
      Load Single Chapter
@@ -99,13 +148,11 @@ export default function SwipeReading({
         setVerses(verseItems);
         setTitle(chapterTitle);
 
-        // Scroll to top
         if (scrollRef.current) {
           scrollRef.current.scrollTop = 0;
           scrollRef.current.scrollLeft = 0;
         }
 
-        // Update reading context
         onReadingContext?.({
           book: getBookDisplayName(book),
           chapter: currentChapter,
@@ -151,22 +198,19 @@ export default function SwipeReading({
     setIsSwiping(false);
     touchStartX.current = null;
     touchStartY.current = null;
-
     lastScrollTop.current = 0;
     navOffsetRef.current = 0;
 
     setBook(navigationTarget.book);
     setCurrentChapter(navigationTarget.chapter);
-
     onNavigationComplete?.();
   }, [navigationTarget]);
 
   /* ===============================
-   Swipe Navigation with Premium Drag Preview
-================================ */
+     Swipe Navigation
+  ================================ */
   function handleTouchStart(e) {
     if (isSelectionMode || isModalOpen) return;
-
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
     setIsSwiping(false);
@@ -177,7 +221,6 @@ export default function SwipeReading({
 
     const touchCurrentX = e.touches[0].clientX;
     const touchCurrentY = e.touches[0].clientY;
-
     const diffX = touchCurrentX - touchStartX.current;
     const diffY = touchCurrentY - touchStartY.current;
 
@@ -226,7 +269,7 @@ export default function SwipeReading({
   }
 
   /* ===============================
-     Scroll Progress (Nav Fade)
+     Scroll Progress
   ================================ */
   useEffect(() => {
     const el = scrollRef.current;
@@ -257,57 +300,46 @@ export default function SwipeReading({
   }, [onScrollProgress]);
 
   /* ===============================
-     Highlighting Helper Functions
+     Highlighting Helpers
   ================================ */
   function getVerseKey(verseNum) {
     return `${book}-${currentChapter}-${verseNum}-${translation}`;
   }
 
   function isVerseHighlighted(verseNum) {
-    const key = getVerseKey(verseNum);
-    return highlights[key] || null;
+    return highlights[getVerseKey(verseNum)] || null;
   }
 
   function getExistingColorForSelection() {
     if (selectedVerses.length === 0) return null;
-
     const firstKey = getVerseKey(selectedVerses[0].verse);
     const firstHighlight = highlights[firstKey];
-
     if (!firstHighlight) return null;
-
-    // Check if all verses have same colorId
-    const allSameColor = selectedVerses.every((v) => {
-      const key = getVerseKey(v.verse);
-      return highlights[key]?.colorId === firstHighlight.colorId;
-    });
-
+    const allSameColor = selectedVerses.every(
+      (v) =>
+        highlights[getVerseKey(v.verse)]?.colorId === firstHighlight.colorId,
+    );
     return allSameColor ? firstHighlight.colorId : null;
   }
 
   function getVerseHighlightColor(verseNum) {
     const highlight = isVerseHighlighted(verseNum);
     if (!highlight) return null;
-
-    // Resolve color from colorId + theme
     const colorObj = getColorFromId(highlight.colorId, highlight.theme);
     return colorObj.color;
   }
 
   /* ===============================
-     Highlighting Action Functions
+     Highlighting Actions
   ================================ */
   function handleVerseClick(verse) {
     if (!isSelectionMode) {
       setIsSelectionMode(true);
       setSelectedVerses([verse]);
-      // Auto-open highlight panel immediately
       setHighlightPanelOpen(true);
-      // Set UI mode to highlighting
       onUiModeChange?.("highlighting");
     } else {
       const isSelected = selectedVerses.some((v) => v.verse === verse.verse);
-
       if (isSelected) {
         const newSelection = selectedVerses.filter(
           (v) => v.verse !== verse.verse,
@@ -315,15 +347,13 @@ export default function SwipeReading({
         if (newSelection.length === 0) {
           setIsSelectionMode(false);
           setHighlightPanelOpen(false);
-          // Return to reading mode
           onUiModeChange?.("reading");
         }
         setSelectedVerses(newSelection);
       } else {
-        const newSelection = [...selectedVerses, verse].sort(
-          (a, b) => a.verse - b.verse,
+        setSelectedVerses(
+          [...selectedVerses, verse].sort((a, b) => a.verse - b.verse),
         );
-        setSelectedVerses(newSelection);
       }
     }
   }
@@ -336,17 +366,15 @@ export default function SwipeReading({
     setSelectedColor(colorOption);
     setHighlightPanelOpen(false);
 
-    // Save highlights immediately (verse-level)
     const newHighlights = { ...highlights };
     selectedVerses.forEach((verse) => {
-      const key = getVerseKey(verse.verse);
-      newHighlights[key] = {
+      newHighlights[getVerseKey(verse.verse)] = {
         colorId: colorOption.id,
-        theme: theme,
-        book: book,
+        theme,
+        book,
         chapter: currentChapter,
         verse: verse.verse,
-        translation: translation,
+        translation,
         text: verse.text,
         createdAt: new Date().toISOString(),
       };
@@ -354,24 +382,17 @@ export default function SwipeReading({
 
     setHighlights(newHighlights);
     localStorage.setItem("verseHighlights", JSON.stringify(newHighlights));
-
-    // Open dialogue sheet and set UI mode to dialogue
     setDialogueBottomSheetOpen(true);
     onUiModeChange?.("dialogue");
   }
 
   function handleClearHighlights() {
     const newHighlights = { ...highlights };
-
     selectedVerses.forEach((verse) => {
-      const key = getVerseKey(verse.verse);
-      delete newHighlights[key];
+      delete newHighlights[getVerseKey(verse.verse)];
     });
-
     setHighlights(newHighlights);
     localStorage.setItem("verseHighlights", JSON.stringify(newHighlights));
-
-    // Clear selection and return to reading mode
     setSelectedVerses([]);
     setIsSelectionMode(false);
     setHighlightPanelOpen(false);
@@ -379,12 +400,10 @@ export default function SwipeReading({
   }
 
   function handleDialogueClose() {
-    // Highlights already saved, just clear selection
     setSelectedVerses([]);
     setIsSelectionMode(false);
     setDialogueBottomSheetOpen(false);
     setSelectedColor(null);
-    // Return to reading mode
     onUiModeChange?.("reading");
   }
 
@@ -392,7 +411,6 @@ export default function SwipeReading({
     setSelectedVerses([]);
     setIsSelectionMode(false);
     setHighlightPanelOpen(false);
-    // Return to reading mode
     onUiModeChange?.("reading");
   }
 
@@ -404,13 +422,12 @@ export default function SwipeReading({
       const base = import.meta.env.BASE_URL;
       const t = translation.toUpperCase();
       const reflectionFolder = t === "AKT" ? "akt" : "shared";
-
       const res = await fetch(
         `${base}data/summaries/${reflectionFolder}/${book}/${chapterNum}.json`,
       );
       const data = await res.json();
       setReflectionSummary(data.summary);
-    } catch (err) {
+    } catch {
       setReflectionSummary(
         "This chapter invites reflection on God's work and purpose.",
       );
@@ -421,6 +438,40 @@ export default function SwipeReading({
     loadChapterSummary(currentChapter);
     onReflectionOpenChange?.(true);
   }
+
+  /* ===============================
+     Swipe indicator chapter numbers
+  ================================ */
+  const maxChapters = CHAPTER_COUNT[book] || 1;
+  const bookIndex = BIBLE_ORDER.indexOf(book);
+
+  const prevChapter =
+    currentChapter > 1
+      ? currentChapter - 1
+      : bookIndex > 0
+        ? CHAPTER_COUNT[BIBLE_ORDER[bookIndex - 1]]
+        : null;
+
+  const nextChapter =
+    currentChapter < maxChapters
+      ? currentChapter + 1
+      : bookIndex < BIBLE_ORDER.length - 1
+        ? 1
+        : null;
+
+  const swipeProgress = Math.min(Math.abs(swipeOffset) / 120, 1);
+  const showSwipeIndicator =
+    chapterlessMode && isSwiping && swipeProgress > 0.1;
+
+  /* ===============================
+     Paragraph groups for chapterless
+  ================================ */
+  const breakSet = chapterlessMode
+    ? new Set((paragraphBreaks[String(currentChapter)] || []).map(Number))
+    : new Set();
+  const paragraphGroups = chapterlessMode
+    ? buildParagraphs(verses, breakSet)
+    : null;
 
   /* ===============================
      Render
@@ -436,13 +487,84 @@ export default function SwipeReading({
   return (
     <div
       className="no-select flex flex-col bg-[var(--bg-primary)]"
-      style={{
-        height: "100%",
-        maxHeight: "100%",
-      }}
+      style={{ height: "100%", maxHeight: "100%", position: "relative" }}
     >
+      {/* ── Swipe Chapter Indicators (chapterless only) ── */}
+      {showSwipeIndicator && (
+        <>
+          {/* Going back → block on LEFT */}
+          {swipeOffset > 0 && prevChapter !== null && (
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                top: "50%",
+                transform: `translateY(-50%) translateX(${-44 + swipeProgress * 44}px)`,
+                opacity: swipeProgress,
+                zIndex: 20,
+                width: 44,
+                height: 72,
+                background: "var(--bg-nav)",
+                borderRadius: "0 12px 12px 0",
+                boxShadow: "2px 0 16px rgba(0,0,0,0.3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: "var(--text-inverse)",
+                }}
+              >
+                {prevChapter}
+              </span>
+            </div>
+          )}
+
+          {/* Going forward → block on RIGHT */}
+          {swipeOffset < 0 && nextChapter !== null && (
+            <div
+              style={{
+                position: "absolute",
+                right: 0,
+                top: "50%",
+                transform: `translateY(-50%) translateX(${44 - swipeProgress * 44}px)`,
+                opacity: swipeProgress,
+                zIndex: 20,
+                width: 44,
+                height: 72,
+                background: "var(--bg-nav)",
+                borderRadius: "12px 0 0 12px",
+                boxShadow: "-2px 0 16px rgba(0,0,0,0.3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: "var(--text-inverse)",
+                }}
+              >
+                {nextChapter}
+              </span>
+            </div>
+          )}
+        </>
+      )}
+
       <main
-        ref={scrollRef}
+        ref={(el) => {
+          scrollRef.current = el;
+          onScrollRef?.(el);
+        }}
         className="reader flex-1 overflow-y-auto overflow-x-hidden overscroll-none"
         style={{
           opacity: isSwiping
@@ -453,29 +575,18 @@ export default function SwipeReading({
           paddingTop: "calc(env(safe-area-inset-top) + 24px)",
           paddingBottom:
             "max(128px, calc(128px + env(safe-area-inset-bottom)))",
-          paddingLeft: "24px",
-          paddingRight: "24px",
+          paddingLeft: chapterlessMode ? "32px" : "24px",
+          paddingRight: chapterlessMode ? "32px" : "24px",
           WebkitOverflowScrolling: "touch",
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Chapter Title */}
+        {/* ── Standard Mode: Chapter Title ── */}
         {!chapterlessMode && (
           <>
-            <div
-              className="
-                my-16
-                text-center
-                tracking-wide
-                opacity-85
-                text-[var(--text-accent)]
-                font-[var(--font-ui)]
-                font-semibold
-                !text-[26px]
-              "
-            >
+            <div className="my-16 text-center tracking-wide opacity-85 text-[var(--text-accent)] font-[var(--font-ui)] font-semibold !text-[26px]">
               {getBookDisplayName(book)} {currentChapter}
             </div>
 
@@ -491,51 +602,99 @@ export default function SwipeReading({
           </>
         )}
 
-        {/* Verses */}
-        <div className="space-y-6">
-          {verses.map((v) => {
-            const isSelected = selectedVerses.some(
-              (sv) => sv.verse === v.verse,
-            );
-            const highlightColor = getVerseHighlightColor(v.verse);
+        {/* ── Standard Mode: Verses ── */}
+        {!chapterlessMode && (
+          <div className="space-y-6">
+            {verses.map((v) => {
+              const isSelected = selectedVerses.some(
+                (sv) => sv.verse === v.verse,
+              );
+              const highlightColor = getVerseHighlightColor(v.verse);
 
-            return (
-              <p
-                key={v.verse}
-                data-chapter={currentChapter}
-                onClick={() => handleVerseClick(v)}
-                className="leading-[var(--line-height)] text-[var(--text-primary)] font-[var(--font-body)] cursor-pointer transition-all"
-                style={{
-                  fontSize: `${textSize * 16}px`,
-                  background: highlightColor || "transparent",
-                  border: isSelected
-                    ? "2px solid var(--text-accent)"
-                    : highlightColor
-                      ? "none"
+              return (
+                <p
+                  key={v.verse}
+                  data-chapter={currentChapter}
+                  onClick={() => handleVerseClick(v)}
+                  className="leading-[var(--line-height)] text-[var(--text-primary)] font-[var(--font-body)] cursor-pointer transition-all"
+                  style={{
+                    fontSize: `${textSize * 16}px`,
+                    background: highlightColor || "transparent",
+                    border: isSelected
+                      ? "2px solid var(--text-accent)"
                       : "none",
-                  borderRadius: isSelected || highlightColor ? "0.5rem" : "0",
-                  padding:
-                    isSelected || highlightColor ? "0.25rem 0.5rem" : "0",
-                  margin: isSelected || highlightColor ? "0.25rem 0" : "0",
-                  color: "var(--text-primary)",
-                  opacity: isSelected ? 0.8 : 1,
-                }}
-              >
-                {!chapterlessMode && !hideVerseNumbers && (
-                  <sup
-                    className="mr-2 select-none text-[var(--text-accent)] opacity-[var(--verse-opacity)] font-[var(--font-verse)]"
-                    style={{ fontSize: `${textSize * 0.75}rem` }}
-                  >
-                    {v.verse}
-                  </sup>
-                )}
-                {v.text}
-              </p>
-            );
-          })}
-        </div>
+                    borderRadius: isSelected || highlightColor ? "0.5rem" : "0",
+                    padding:
+                      isSelected || highlightColor ? "0.25rem 0.5rem" : "0",
+                    margin: isSelected || highlightColor ? "0.25rem 0" : "0",
+                    color: "var(--text-primary)",
+                    opacity: isSelected ? 0.8 : 1,
+                  }}
+                >
+                  {!hideVerseNumbers && (
+                    <sup
+                      className="mr-2 select-none text-[var(--text-accent)] opacity-[var(--verse-opacity)] font-[var(--font-verse)]"
+                      style={{ fontSize: `${textSize * 0.75}rem` }}
+                    >
+                      {v.verse}
+                    </sup>
+                  )}
+                  {v.text}
+                </p>
+              );
+            })}
+          </div>
+        )}
 
-        {/* Chapter End Reflection */}
+        {/* ── Chapterless Mode: Prose Paragraphs ── */}
+        {chapterlessMode && (
+          <div style={{ marginTop: "48px" }}>
+            {paragraphGroups.map((group, groupIdx) => {
+              const paragraphText = group.map((v) => v.text).join(" ");
+              const groupSelected = group.some((v) =>
+                selectedVerses.some((sv) => sv.verse === v.verse),
+              );
+              const groupHighlightColor = group.reduce(
+                (color, v) => color || getVerseHighlightColor(v.verse),
+                null,
+              );
+
+              return (
+                <p
+                  key={groupIdx}
+                  onClick={() => {
+                    if (group.length > 0) handleVerseClick(group[0]);
+                  }}
+                  style={{
+                    fontSize: `${textSize * 16.5}px`,
+                    lineHeight: 2,
+                    fontFamily: "var(--font-body)",
+                    color: "var(--text-primary)",
+                    marginBottom: "1.6em",
+                    textIndent: "1.5em",
+                    cursor: "pointer",
+                    background: groupHighlightColor || "transparent",
+                    borderRadius:
+                      groupSelected || groupHighlightColor ? "0.5rem" : "0",
+                    padding:
+                      groupSelected || groupHighlightColor
+                        ? "0.25rem 0.5rem"
+                        : "0",
+                    border: groupSelected
+                      ? "2px solid var(--text-accent)"
+                      : "none",
+                    opacity: groupSelected ? 0.8 : 1,
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  {paragraphText}
+                </p>
+              );
+            })}
+          </div>
+        )}
+
+        {/* ── Chapter End Reflection (standard mode only) ── */}
         {!chapterlessMode && (
           <div className="mt-16 mb-24 text-center opacity-70">
             <div className="mx-auto mb-4 h-px w-24 bg-[var(--text-accent)] opacity-20" />
@@ -559,7 +718,7 @@ export default function SwipeReading({
         )}
       </main>
 
-      {/* YouVersion-Style Highlight Panel */}
+      {/* Highlight Panel */}
       {highlightPanelOpen && (
         <HighlightPanel
           theme={theme}

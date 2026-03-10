@@ -1,0 +1,31 @@
+{
+  "book": "malachi",
+  "note": "Paragraph break verse numbers. Derived from KJV USFM structure. Translation-agnostic.",
+  "chapters": {
+    "1": [
+      1,
+      6,
+      12
+    ],
+    "2": [
+      1,
+      10,
+      11,
+      14,
+      17
+    ],
+    "3": [
+      1,
+      7,
+      8,
+      13,
+      16
+    ],
+    "4": [
+      1,
+      2,
+      4,
+      5
+    ]
+  }
+}

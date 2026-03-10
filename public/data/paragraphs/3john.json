@@ -1,0 +1,13 @@
+{
+  "book": "3john",
+  "note": "Paragraph break verse numbers. Derived from KJV USFM structure. Translation-agnostic.",
+  "chapters": {
+    "1": [
+      1,
+      2,
+      9,
+      11,
+      13
+    ]
+  }
+}

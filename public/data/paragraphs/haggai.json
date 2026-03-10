@@ -1,0 +1,16 @@
+{
+  "book": "haggai",
+  "note": "Paragraph break verse numbers. Derived from KJV USFM structure. Translation-agnostic.",
+  "chapters": {
+    "1": [
+      1,
+      7,
+      12
+    ],
+    "2": [
+      1,
+      10,
+      20
+    ]
+  }
+}

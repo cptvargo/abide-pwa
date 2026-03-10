@@ -1,0 +1,25 @@
+{
+  "book": "colossians",
+  "note": "Paragraph break verse numbers. Derived from KJV USFM structure. Translation-agnostic.",
+  "chapters": {
+    "1": [
+      1
+    ],
+    "2": [
+      1,
+      6,
+      20
+    ],
+    "3": [
+      1,
+      5,
+      18
+    ],
+    "4": [
+      1,
+      2,
+      7,
+      10
+    ]
+  }
+}

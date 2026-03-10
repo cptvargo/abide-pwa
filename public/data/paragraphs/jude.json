@@ -1,0 +1,12 @@
+{
+  "book": "jude",
+  "note": "Paragraph break verse numbers. Derived from KJV USFM structure. Translation-agnostic.",
+  "chapters": {
+    "1": [
+      1,
+      3,
+      17,
+      24
+    ]
+  }
+}
