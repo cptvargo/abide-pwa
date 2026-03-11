@@ -1,7 +1,7 @@
 /**
- * BibleNavigator.jsx — PREMIUM REDESIGN
+ * BibleNavigator.jsx — PREMIUM REDESIGN + SEEK
  * Sacred, luminous, manuscript-inspired navigation
- * All logic preserved — only the design elevated
+ * All logic preserved — Seek added minimally
  */
 
 import { useState, useRef, useEffect } from "react";
@@ -127,8 +127,157 @@ const BIBLE_STRUCTURE = [
   },
 ];
 
-/* ── Section accent colors — subtle gold variants ─────── */
 const SECTION_GLYPHS = ["✦", "◈", "◇", "⊕", "✧", "✦", "◈", "◇", "✧"];
+
+// ── Seek constants ────────────────────────────────────────────────────────────
+const SEEK_SUGGESTIONS = [
+  "Abide",
+  "Grace",
+  "Faith",
+  "Glory",
+  "Redemption",
+  "Covenant",
+  "Mercy",
+  "Shalom",
+];
+const SEEK_CACHE_VERSION = "v5";
+const SEEK_CACHE_PREFIX = `abide_seek_${SEEK_CACHE_VERSION}:`;
+
+// ── Translation lookup helpers ────────────────────────────────────────────────
+const TRANSLATION_PRIORITY = ["vsv", "akt", "asr", "kjv"];
+
+const BOOK_NAME_TO_ID = {
+  genesis: "genesis",
+  exodus: "exodus",
+  leviticus: "leviticus",
+  numbers: "numbers",
+  deuteronomy: "deuteronomy",
+  joshua: "joshua",
+  judges: "judges",
+  ruth: "ruth",
+  "1 samuel": "1samuel",
+  "2 samuel": "2samuel",
+  "1 kings": "1kings",
+  "2 kings": "2kings",
+  "1 chronicles": "1chronicles",
+  "2 chronicles": "2chronicles",
+  ezra: "ezra",
+  nehemiah: "nehemiah",
+  esther: "esther",
+  job: "job",
+  psalm: "psalms",
+  psalms: "psalms",
+  proverbs: "proverbs",
+  ecclesiastes: "ecclesiastes",
+  "song of solomon": "songofsolomon",
+  "song of songs": "songofsolomon",
+  isaiah: "isaiah",
+  jeremiah: "jeremiah",
+  lamentations: "lamentations",
+  ezekiel: "ezekiel",
+  daniel: "daniel",
+  hosea: "hosea",
+  joel: "joel",
+  amos: "amos",
+  obadiah: "obadiah",
+  jonah: "jonah",
+  micah: "micah",
+  nahum: "nahum",
+  habakkuk: "habakkuk",
+  zephaniah: "zephaniah",
+  haggai: "haggai",
+  zechariah: "zechariah",
+  malachi: "malachi",
+  matthew: "matthew",
+  mark: "mark",
+  luke: "luke",
+  john: "john",
+  acts: "acts",
+  romans: "romans",
+  "1 corinthians": "1corinthians",
+  "2 corinthians": "2corinthians",
+  galatians: "galatians",
+  ephesians: "ephesians",
+  philippians: "philippians",
+  colossians: "colossians",
+  "1 thessalonians": "1thessalonians",
+  "2 thessalonians": "2thessalonians",
+  "1 timothy": "1timothy",
+  "2 timothy": "2timothy",
+  titus: "titus",
+  philemon: "philemon",
+  hebrews: "hebrews",
+  james: "james",
+  "1 peter": "1peter",
+  "2 peter": "2peter",
+  "1 john": "1john",
+  "2 john": "2john",
+  "3 john": "3john",
+  jude: "jude",
+  revelation: "revelation",
+};
+
+function parseRef(ref) {
+  const match = ref.match(/^(.+?)\s+(\d+):(\d+)$/);
+  if (!match) return null;
+  const bookName = match[1].toLowerCase().trim();
+  const bookId = BOOK_NAME_TO_ID[bookName];
+  if (!bookId) return null;
+  return { book: bookId, chapter: match[2], verse: match[3] };
+}
+
+async function fetchVerseText(ref) {
+  // Returns { text, translation } or null
+  const parsed = parseRef(ref);
+  if (!parsed) return null;
+  const { book, chapter, verse } = parsed;
+  for (const translation of TRANSLATION_PRIORITY) {
+    try {
+      const url = `/data/translations/${translation}/${book}/${chapter}.json`;
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      const data = await res.json();
+      const text = data.verses?.[verse];
+      if (text) return { text, translation: translation.toUpperCase() };
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
+async function enrichVerses(verses) {
+  return Promise.all(
+    verses.map(async (v) => {
+      const result = await fetchVerseText(v.ref);
+      return result
+        ? { ...v, text: result.text, translation: result.translation }
+        : v;
+    }),
+  );
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+function getCached(query) {
+  try {
+    const raw = localStorage.getItem(
+      SEEK_CACHE_PREFIX + query.toLowerCase().trim(),
+    );
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function setCached(query, data) {
+  try {
+    localStorage.setItem(
+      SEEK_CACHE_PREFIX + query.toLowerCase().trim(),
+      JSON.stringify(data),
+    );
+  } catch {}
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function BibleNavigator({
   open,
@@ -137,7 +286,8 @@ export default function BibleNavigator({
   currentBook,
   currentChapter,
 }) {
-  const [view, setView] = useState("books");
+  // ── Existing state (unchanged) ──────────────────────────────────────────────
+  const [view, setView] = useState("books"); // books | chapters | seek | study
   const [selectedBook, setSelectedBook] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAnimatingOut, setIsAnimatingOut] = useState(false);
@@ -145,6 +295,15 @@ export default function BibleNavigator({
   const [animateIn, setAnimateIn] = useState(false);
   const scrollRef = useRef(null);
 
+  // ── Seek state ──────────────────────────────────────────────────────────────
+  const [seekQuery, setSeekQuery] = useState("");
+  const [seekResult, setSeekResult] = useState(null);
+  const [seekLoading, setSeekLoading] = useState(false);
+  const [seekError, setSeekError] = useState(null);
+  const [seekFromCache, setSeekFromCache] = useState(false);
+  const seekInputRef = useRef(null);
+
+  // ── Existing effect (unchanged) ─────────────────────────────────────────────
   useEffect(() => {
     if (open) {
       setView("books");
@@ -161,6 +320,14 @@ export default function BibleNavigator({
     }
   }, [open]);
 
+  // ── Seek focus effect — no autoFocus used ───────────────────────────────────
+  useEffect(() => {
+    if (view === "seek") {
+      setTimeout(() => seekInputRef.current?.focus(), 120);
+    }
+  }, [view]);
+
+  // ── Existing handlers (unchanged) ───────────────────────────────────────────
   function handleClose() {
     setIsAnimatingOut(true);
     setAnimateIn(false);
@@ -188,6 +355,61 @@ export default function BibleNavigator({
     setSelectedBook(null);
   }
 
+  // ── Seek handler ─────────────────────────────────────────────────────────────
+  async function handleSeek(queryOverride) {
+    const q = (queryOverride || seekQuery).trim();
+    if (!q) return;
+
+    setSeekLoading(true);
+    setSeekError(null);
+    setSeekResult(null);
+    setSeekFromCache(false);
+    setView("study");
+
+    const cached = getCached(q);
+    if (cached) {
+      setSeekResult(cached);
+      setSeekFromCache(true);
+      setSeekLoading(false);
+      return;
+    }
+
+    if (!navigator.onLine) {
+      setSeekError(
+        "You're offline. Connect to search for this word — it'll be saved for next time.",
+      );
+      setSeekLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://abide-seek-proxy.jvargas22.workers.dev",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: q }),
+        },
+      );
+      const data = await response.json();
+      const text = data.content?.[0]?.text || "";
+      const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
+
+      // Replace Claude's preview text with real translation verses
+      if (parsed.verses?.length) {
+        parsed.verses = await enrichVerses(parsed.verses);
+      }
+
+      setCached(q, parsed);
+      setSeekResult(parsed);
+    } catch {
+      setSeekError("Something went wrong. Please try again.");
+    }
+
+    setSeekLoading(false);
+  }
+  // ─────────────────────────────────────────────────────────────────────────────
+
   if (!open && !isVisible) return null;
 
   const filteredStructure = searchQuery
@@ -199,7 +421,7 @@ export default function BibleNavigator({
       })).filter((s) => s.books.length > 0)
     : BIBLE_STRUCTURE;
 
-  /* ── Shared keyframes ───────────────────────────────── */
+  /* ── Shared keyframes ───────────────────────────────────────────── */
   const styles = (
     <style>{`
       @keyframes bn-backdrop-in  { from { opacity:0 } to { opacity:1 } }
@@ -224,6 +446,7 @@ export default function BibleNavigator({
         from { opacity:0; transform:translateY(8px) }
         to   { opacity:1; transform:translateY(0)   }
       }
+      @keyframes bn-shimmer { 0%,100%{opacity:0.3} 50%{opacity:0.65} }
 
       .bn-backdrop {
         animation: ${isAnimatingOut ? "bn-backdrop-out 0.32s ease forwards" : "bn-backdrop-in 0.3s ease forwards"};
@@ -238,7 +461,6 @@ export default function BibleNavigator({
         animation: bn-glow-pulse 4s ease-in-out infinite;
       }
 
-      /* Book row */
       .bn-book {
         transition: background 0.16s ease, transform 0.14s ease, border-color 0.16s ease;
         -webkit-tap-highlight-color: transparent;
@@ -249,7 +471,6 @@ export default function BibleNavigator({
         border-color: rgba(var(--accent-rgb,203,178,124), 0.3) !important;
       }
 
-      /* Chapter button */
       .bn-ch {
         transition: background 0.15s ease, transform 0.13s ease, box-shadow 0.15s ease;
         -webkit-tap-highlight-color: transparent;
@@ -257,15 +478,14 @@ export default function BibleNavigator({
       .bn-ch:hover { transform: scale(1.07) }
       .bn-ch:active { transform: scale(0.93) }
 
-      /* Search input placeholder */
       .bn-search::placeholder { color: rgba(var(--accent-rgb,203,178,124),0.3) }
       .bn-search:focus { outline: none }
+      .bn-seek-input::placeholder { color: rgba(var(--accent-rgb,203,178,124),0.3) }
+      .bn-seek-input:focus { outline: none }
 
-      /* Scrollbar hide */
       .bn-scroll::-webkit-scrollbar { display:none }
       .bn-scroll { -ms-overflow-style:none; scrollbar-width:none }
 
-      /* Section sticky header */
       .bn-sticky {
         position: sticky;
         top: 0;
@@ -273,7 +493,74 @@ export default function BibleNavigator({
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
       }
+
+      .bn-tab-btn {
+        flex: 1; padding: 13px 0;
+        background: transparent; border: none;
+        border-bottom: 2px solid transparent;
+        font-family: var(--font-ui, system-ui);
+        font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+        color: rgba(var(--accent-rgb,203,178,124),0.35);
+        cursor: pointer; transition: color 0.18s ease, border-color 0.18s ease;
+        -webkit-tap-highlight-color: transparent;
+        margin-bottom: -1px;
+      }
+      .bn-tab-btn.active {
+        color: rgba(var(--accent-rgb,203,178,124),0.9);
+        border-bottom-color: rgba(var(--accent-rgb,203,178,124),0.7);
+      }
+
+      .bn-seek-chip {
+        background: rgba(var(--accent-rgb,203,178,124),0.05);
+        border: 1px solid rgba(var(--accent-rgb,203,178,124),0.14);
+        border-radius: 20px; padding: 8px 16px;
+        font-family: var(--font-body, Georgia, serif);
+        font-style: italic; font-size: 14px;
+        color: rgba(var(--accent-rgb,203,178,124),0.65);
+        cursor: pointer;
+        transition: background 0.15s ease, border-color 0.15s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .bn-seek-chip:hover {
+        background: rgba(var(--accent-rgb,203,178,124),0.1) !important;
+        border-color: rgba(var(--accent-rgb,203,178,124),0.25) !important;
+      }
+
+      .bn-verse-card {
+        background: rgba(var(--accent-rgb,203,178,124),0.04);
+        border: 1px solid rgba(var(--accent-rgb,203,178,124),0.1);
+        border-radius: 12px; padding: 12px 14px;
+        transition: background 0.15s ease; cursor: default;
+      }
+
+      .bn-shimmer { animation: bn-shimmer 1.5s ease infinite; }
     `}</style>
+  );
+
+  /* ── Shared tab bar ─────────────────────────────────────────────── */
+  const TabBar = ({ active }) => (
+    <div
+      style={{
+        display: "flex",
+        borderBottom: "1px solid rgba(var(--accent-rgb,203,178,124),0.1)",
+        flexShrink: 0,
+        position: "relative",
+        zIndex: 1,
+      }}
+    >
+      <button
+        className={`bn-tab-btn${active === "books" ? " active" : ""}`}
+        onClick={handleBackToBooks}
+      >
+        Books
+      </button>
+      <button
+        className={`bn-tab-btn${active === "seek" ? " active" : ""}`}
+        onClick={() => setView("seek")}
+      >
+        Seek
+      </button>
+    </div>
   );
 
   /* ══════════════════════════════════════════════════════
@@ -297,7 +584,6 @@ export default function BibleNavigator({
         onClick={handleClose}
       >
         {styles}
-
         <div
           className="bn-modal bn-scroll"
           style={{
@@ -314,8 +600,9 @@ export default function BibleNavigator({
               "0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(var(--accent-rgb,203,178,124),0.08)",
           }}
           onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
         >
-          {/* Top ambient glow */}
           <div
             className="bn-glow"
             style={{
@@ -342,7 +629,6 @@ export default function BibleNavigator({
             }}
           />
 
-          {/* ── Header ──────────────────────────────────────── */}
           <div
             className="bn-header-content"
             style={{
@@ -362,7 +648,6 @@ export default function BibleNavigator({
               }}
             >
               <div>
-                {/* Eyebrow */}
                 <div
                   style={{
                     fontFamily: "var(--font-ui, system-ui)",
@@ -400,8 +685,6 @@ export default function BibleNavigator({
                   66 Books · Old &amp; New Testament
                 </p>
               </div>
-
-              {/* Close */}
               <button
                 onClick={handleClose}
                 style={{
@@ -425,8 +708,6 @@ export default function BibleNavigator({
                 ✕
               </button>
             </div>
-
-            {/* Search */}
             <div style={{ position: "relative" }}>
               <span
                 style={{
@@ -475,7 +756,8 @@ export default function BibleNavigator({
             </div>
           </div>
 
-          {/* ── Book list ───────────────────────────────────── */}
+          <TabBar active="books" />
+
           <div
             ref={scrollRef}
             className="bn-scroll"
@@ -483,7 +765,6 @@ export default function BibleNavigator({
           >
             {filteredStructure.map((section, idx) => (
               <div key={idx}>
-                {/* Sticky section header */}
                 <div
                   className="bn-sticky"
                   style={{
@@ -543,8 +824,6 @@ export default function BibleNavigator({
                     {section.subtitle}
                   </div>
                 </div>
-
-                {/* Books */}
                 <div style={{ padding: "8px 20px 4px" }}>
                   {section.books.map((book) => {
                     const isCurrent = book.id === currentBook?.toLowerCase();
@@ -571,7 +850,6 @@ export default function BibleNavigator({
                           cursor: "pointer",
                         }}
                       >
-                        {/* Chapter count pill */}
                         <span
                           style={{
                             flexShrink: 0,
@@ -591,8 +869,6 @@ export default function BibleNavigator({
                         >
                           {book.chapters}
                         </span>
-
-                        {/* Book name */}
                         <span
                           style={{
                             flex: 1,
@@ -607,8 +883,6 @@ export default function BibleNavigator({
                         >
                           {book.name}
                         </span>
-
-                        {/* Arrow */}
                         <span
                           style={{
                             fontSize: "13px",
@@ -624,8 +898,6 @@ export default function BibleNavigator({
                 </div>
               </div>
             ))}
-
-            {/* Bottom padding */}
             <div style={{ height: "24px" }} />
           </div>
         </div>
@@ -641,7 +913,6 @@ export default function BibleNavigator({
       { length: selectedBook.chapters },
       (_, i) => i + 1,
     );
-
     return (
       <div
         className="bn-backdrop"
@@ -659,7 +930,6 @@ export default function BibleNavigator({
         onClick={handleClose}
       >
         {styles}
-
         <div
           className="bn-modal bn-scroll"
           style={{
@@ -676,8 +946,9 @@ export default function BibleNavigator({
               "0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(var(--accent-rgb,203,178,124),0.08)",
           }}
           onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
         >
-          {/* Ambient top glow */}
           <div
             className="bn-glow"
             style={{
@@ -704,7 +975,6 @@ export default function BibleNavigator({
             }}
           />
 
-          {/* ── Header ──────────────────────────────────────── */}
           <div
             className="bn-header-content"
             style={{
@@ -715,7 +985,6 @@ export default function BibleNavigator({
               flexShrink: 0,
             }}
           >
-            {/* Back button */}
             <button
               onClick={handleBackToBooks}
               style={{
@@ -759,8 +1028,6 @@ export default function BibleNavigator({
                 All Books
               </span>
             </button>
-
-            {/* Title */}
             <div
               style={{
                 fontFamily: "var(--font-ui, system-ui)",
@@ -800,7 +1067,6 @@ export default function BibleNavigator({
             </p>
           </div>
 
-          {/* ── Chapter grid ───────────────────────────────── */}
           <div
             className="bn-scroll"
             style={{ flex: 1, overflowY: "auto", padding: "24px 24px 32px" }}
@@ -816,7 +1082,6 @@ export default function BibleNavigator({
                 const isCurrent =
                   selectedBook.id === currentBook?.toLowerCase() &&
                   chapter === currentChapter;
-
                 return (
                   <button
                     key={chapter}
@@ -857,5 +1122,637 @@ export default function BibleNavigator({
     );
   }
 
+  /* ══════════════════════════════════════════════════════
+     SEEK VIEW
+  ══════════════════════════════════════════════════════ */
+  if (view === "seek") {
+    return (
+      <div
+        className="bn-backdrop"
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 50,
+          background: "rgba(0,0,0,0.88)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        onClick={handleClose}
+      >
+        {styles}
+        <div
+          className="bn-modal bn-scroll"
+          style={{
+            position: "relative",
+            width: "95%",
+            maxWidth: "520px",
+            height: "90vh",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            background: "var(--bg-menu, #141410)",
+            borderRadius: "26px",
+            boxShadow:
+              "0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(var(--accent-rgb,203,178,124),0.08)",
+          }}
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+        >
+          <div
+            className="bn-glow"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: "15%",
+              right: "15%",
+              height: "1px",
+              background:
+                "linear-gradient(90deg, transparent, rgba(var(--accent-rgb,203,178,124),0.8), transparent)",
+              filter: "blur(1px)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: "180px",
+              background:
+                "radial-gradient(ellipse at 50% 0%, rgba(var(--accent-rgb,203,178,124),0.09), transparent 65%)",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Header */}
+          <div
+            style={{
+              padding: "28px 28px 20px",
+              borderBottom: "1px solid rgba(var(--accent-rgb,203,178,124),0.1)",
+              position: "relative",
+              zIndex: 1,
+              flexShrink: 0,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                marginBottom: "20px",
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    fontFamily: "var(--font-ui, system-ui)",
+                    fontSize: "10px",
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "rgba(var(--accent-rgb,203,178,124),0.6)",
+                    marginBottom: "8px",
+                  }}
+                >
+                  ✦ &nbsp;Word Study
+                </div>
+                <h1
+                  style={{
+                    fontFamily: "var(--font-ui, system-ui)",
+                    fontSize: "28px",
+                    fontWeight: "300",
+                    letterSpacing: "0.02em",
+                    color: "var(--text-primary, #f0ebe0)",
+                    lineHeight: 1.15,
+                    marginBottom: "5px",
+                  }}
+                >
+                  Seek
+                </h1>
+                <p
+                  style={{
+                    fontFamily: "var(--font-body, Georgia, serif)",
+                    fontSize: "12px",
+                    fontStyle: "italic",
+                    color: "var(--text-primary, #f0ebe0)",
+                    opacity: 0.38,
+                    letterSpacing: "0.04em",
+                  }}
+                >
+                  Search a word, phrase, or concept
+                </p>
+              </div>
+              <button
+                onClick={handleClose}
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "100px",
+                  background: "rgba(var(--accent-rgb,203,178,124),0.08)",
+                  border: "1px solid rgba(var(--accent-rgb,203,178,124),0.15)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  color: "var(--text-primary, #f0ebe0)",
+                  fontSize: "14px",
+                  opacity: 0.55,
+                  WebkitTapHighlightColor: "transparent",
+                  flexShrink: 0,
+                }}
+              >
+                ✕
+              </button>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                background: "rgba(var(--accent-rgb,203,178,124),0.05)",
+                border: "1px solid rgba(var(--accent-rgb,203,178,124),0.14)",
+                borderRadius: "12px",
+                padding: "0 14px",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "14px",
+                  color: "rgba(var(--accent-rgb,203,178,124),0.4)",
+                  flexShrink: 0,
+                }}
+              >
+                ⌕
+              </span>
+              <input
+                ref={seekInputRef}
+                className="bn-seek-input"
+                type="text"
+                placeholder="e.g. Grace, Abide in Christ, Behold..."
+                value={seekQuery}
+                onChange={(e) => setSeekQuery(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSeek()}
+                style={{
+                  flex: 1,
+                  background: "transparent",
+                  border: "none",
+                  padding: "13px 0",
+                  color: "var(--text-primary, #f0ebe0)",
+                  fontFamily: "var(--font-body, Georgia, serif)",
+                  fontSize: "15px",
+                  boxSizing: "border-box",
+                }}
+              />
+              {seekQuery && (
+                <button
+                  onClick={() => handleSeek()}
+                  style={{
+                    background: "rgba(var(--accent-rgb,203,178,124),0.14)",
+                    border: "1px solid rgba(var(--accent-rgb,203,178,124),0.2)",
+                    borderRadius: "8px",
+                    padding: "6px 12px",
+                    color: "var(--text-accent, #cbb27c)",
+                    fontFamily: "var(--font-ui, system-ui)",
+                    fontSize: "10px",
+                    letterSpacing: "0.1em",
+                    cursor: "pointer",
+                    flexShrink: 0,
+                  }}
+                >
+                  SEEK
+                </button>
+              )}
+            </div>
+          </div>
+
+          <TabBar active="seek" />
+
+          {/* Suggestions */}
+          <div
+            className="bn-scroll"
+            style={{ flex: 1, overflowY: "auto", padding: "20px 24px 32px" }}
+          >
+            <div
+              style={{
+                fontFamily: "var(--font-ui, system-ui)",
+                fontSize: "10px",
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                color: "rgba(var(--accent-rgb,203,178,124),0.35)",
+                marginBottom: "14px",
+              }}
+            >
+              Suggested
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px",
+                marginBottom: "32px",
+              }}
+            >
+              {SEEK_SUGGESTIONS.map((word) => (
+                <button
+                  key={word}
+                  className="bn-seek-chip"
+                  onClick={() => {
+                    setSeekQuery(word);
+                    handleSeek(word);
+                  }}
+                >
+                  {word}
+                </button>
+              ))}
+            </div>
+            <div
+              style={{
+                padding: "16px 18px",
+                background: "rgba(var(--accent-rgb,203,178,124),0.04)",
+                border: "1px solid rgba(var(--accent-rgb,203,178,124),0.08)",
+                borderRadius: "14px",
+              }}
+            >
+              <p
+                style={{
+                  fontFamily: "var(--font-body, Georgia, serif)",
+                  fontStyle: "italic",
+                  fontSize: "13px",
+                  color: "var(--text-primary, #f0ebe0)",
+                  opacity: 0.45,
+                  lineHeight: 1.7,
+                  textAlign: "center",
+                  margin: 0,
+                }}
+              >
+                "Seek and you will find; knock and the door will be opened to
+                you."
+              </p>
+              <div
+                style={{
+                  fontFamily: "var(--font-ui, system-ui)",
+                  fontSize: "9px",
+                  letterSpacing: "0.14em",
+                  color: "rgba(var(--accent-rgb,203,178,124),0.3)",
+                  textAlign: "center",
+                  marginTop: "8px",
+                }}
+              >
+                MATTHEW 7:7
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ══════════════════════════════════════════════════════
+     STUDY VIEW
+  ══════════════════════════════════════════════════════ */
+  if (view === "study") {
+    return (
+      <div
+        className="bn-backdrop"
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 50,
+          background: "rgba(0,0,0,0.88)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        onClick={handleClose}
+      >
+        {styles}
+        <div
+          className="bn-modal bn-scroll"
+          style={{
+            position: "relative",
+            width: "95%",
+            maxWidth: "520px",
+            height: "90vh",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            background: "var(--bg-menu, #141410)",
+            borderRadius: "26px",
+            boxShadow:
+              "0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(var(--accent-rgb,203,178,124),0.08)",
+          }}
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+        >
+          <div
+            className="bn-glow"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: "15%",
+              right: "15%",
+              height: "1px",
+              background:
+                "linear-gradient(90deg, transparent, rgba(var(--accent-rgb,203,178,124),0.8), transparent)",
+              filter: "blur(1px)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: "180px",
+              background:
+                "radial-gradient(ellipse at 50% 0%, rgba(var(--accent-rgb,203,178,124),0.09), transparent 65%)",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Header */}
+          <div
+            style={{
+              padding: "28px 28px 16px",
+              borderBottom:
+                "1px solid rgba(var(--accent-rgb,203,178,124),0.08)",
+              position: "relative",
+              zIndex: 1,
+              flexShrink: 0,
+            }}
+          >
+            <button
+              onClick={() => setView("seek")}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                background: "rgba(var(--accent-rgb,203,178,124),0.07)",
+                border: "1px solid rgba(var(--accent-rgb,203,178,124),0.14)",
+                borderRadius: "100px",
+                padding: "6px 14px 6px 10px",
+                cursor: "pointer",
+                marginBottom: "16px",
+                WebkitTapHighlightColor: "transparent",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "13px",
+                  color: "rgba(var(--accent-rgb,203,178,124),0.7)",
+                }}
+              >
+                ‹
+              </span>
+              <span
+                style={{
+                  fontFamily: "var(--font-ui, system-ui)",
+                  fontSize: "12px",
+                  letterSpacing: "0.04em",
+                  color: "rgba(var(--accent-rgb,203,178,124),0.7)",
+                }}
+              >
+                Seek
+              </span>
+            </button>
+            {seekLoading ? (
+              <div
+                className="bn-shimmer"
+                style={{
+                  fontFamily: "var(--font-ui, system-ui)",
+                  fontSize: "22px",
+                  fontWeight: "300",
+                  color: "rgba(var(--accent-rgb,203,178,124),0.3)",
+                  letterSpacing: "0.04em",
+                }}
+              >
+                {seekQuery}
+              </div>
+            ) : seekResult ? (
+              <div>
+                <div
+                  style={{
+                    fontFamily: "var(--font-ui, system-ui)",
+                    fontSize: "10px",
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "rgba(var(--accent-rgb,203,178,124),0.5)",
+                    marginBottom: "6px",
+                  }}
+                >
+                  ✦ &nbsp;Word Study{" "}
+                  {seekFromCache && (
+                    <span style={{ opacity: 0.5 }}>· saved</span>
+                  )}
+                </div>
+                <h1
+                  style={{
+                    fontFamily: "var(--font-ui, system-ui)",
+                    fontSize: "26px",
+                    fontWeight: "300",
+                    letterSpacing: "0.03em",
+                    color: "var(--text-primary, #f0ebe0)",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {seekResult.word}
+                </h1>
+              </div>
+            ) : null}
+          </div>
+
+          <TabBar active="seek" />
+
+          {/* Content */}
+          <div
+            className="bn-scroll"
+            style={{ flex: 1, overflowY: "auto", padding: "20px 24px 40px" }}
+          >
+            {/* Loading skeleton */}
+            {seekLoading && (
+              <div style={{ paddingTop: "8px" }}>
+                {[75, 55, 85, 50, 65, 40, 80].map((w, i) => (
+                  <div
+                    key={i}
+                    className="bn-shimmer"
+                    style={{
+                      height: "11px",
+                      borderRadius: "6px",
+                      marginBottom: "10px",
+                      width: `${w}%`,
+                      background: "rgba(var(--accent-rgb,203,178,124),0.08)",
+                      animationDelay: `${i * 0.08}s`,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Error */}
+            {seekError && !seekLoading && (
+              <div
+                style={{
+                  fontFamily: "var(--font-body, Georgia, serif)",
+                  fontStyle: "italic",
+                  fontSize: "14px",
+                  color: "var(--text-primary, #f0ebe0)",
+                  opacity: 0.45,
+                  textAlign: "center",
+                  paddingTop: "40px",
+                  lineHeight: 1.7,
+                }}
+              >
+                {seekError}
+              </div>
+            )}
+
+            {/* Result */}
+            {seekResult && !seekLoading && (
+              <div>
+                <SeekSection label="Definition">
+                  <p style={proseStyle}>{seekResult.definition}</p>
+                </SeekSection>
+                <SeekDivider />
+                <SeekSection label="In Scripture">
+                  <p style={proseStyle}>{seekResult.significance}</p>
+                </SeekSection>
+                <SeekDivider />
+                <SeekSection label="Key Verses">
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "8px",
+                    }}
+                  >
+                    {seekResult.verses?.map((v, i) => (
+                      <div key={i} className="bn-verse-card">
+                        {/* Reference */}
+                        <div
+                          style={{
+                            fontFamily: "var(--font-ui, system-ui)",
+                            fontSize: "10px",
+                            letterSpacing: "0.1em",
+                            color: "rgba(var(--accent-rgb,203,178,124),0.55)",
+                            marginBottom: "8px",
+                          }}
+                        >
+                          {v.ref}
+                        </div>
+                        {/* Verse text with left accent rule */}
+                        <div
+                          style={{
+                            borderLeft:
+                              "2px solid rgba(var(--accent-rgb,203,178,124),0.45)",
+                            paddingLeft: "12px",
+                            marginBottom: "4px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontFamily: "var(--font-body, Georgia, serif)",
+                              fontStyle: "italic",
+                              fontSize: "14px",
+                              color: "var(--text-accent, #cbb27c)",
+                              lineHeight: 1.65,
+                            }}
+                          >
+                            "{v.text}"
+                          </div>
+                        </div>
+                        {/* Translation label */}
+                        <div
+                          style={{
+                            fontFamily: "var(--font-ui, system-ui)",
+                            fontSize: "10px",
+                            letterSpacing: "0.08em",
+                            color: "rgba(var(--accent-rgb,203,178,124),0.4)",
+                            opacity: 0.75,
+                            marginTop: "4px",
+                            marginBottom: "8px",
+                          }}
+                        >
+                          — {v.translation || "KJV"}
+                        </div>
+                        {/* Commentary */}
+                        <div
+                          style={{
+                            fontFamily: "var(--font-body, Georgia, serif)",
+                            fontSize: "12px",
+                            color: "var(--text-primary, #f0ebe0)",
+                            opacity: 0.45,
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          {v.note}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </SeekSection>
+                <SeekDivider />
+                <SeekSection label="Reflect">
+                  <p
+                    style={{ ...proseStyle, fontStyle: "italic", opacity: 0.6 }}
+                  >
+                    {seekResult.reflection}
+                  </p>
+                </SeekSection>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return null;
+}
+
+/* ── Seek helper components ──────────────────────────────────────────────── */
+const proseStyle = {
+  fontFamily: "var(--font-body, Georgia, serif)",
+  fontSize: "15px",
+  lineHeight: 1.8,
+  color: "var(--text-primary, #f0ebe0)",
+  opacity: 0.85,
+  margin: 0,
+};
+
+function SeekSection({ label, children }) {
+  return (
+    <section style={{ marginBottom: "20px" }}>
+      <div
+        style={{
+          fontFamily: "var(--font-ui, system-ui)",
+          fontSize: "9px",
+          letterSpacing: "0.2em",
+          textTransform: "uppercase",
+          color: "rgba(var(--accent-rgb,203,178,124),0.4)",
+          marginBottom: "10px",
+        }}
+      >
+        {label}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function SeekDivider() {
+  return (
+    <div
+      style={{
+        height: "1px",
+        background: "rgba(var(--accent-rgb,203,178,124),0.08)",
+        margin: "4px 0 20px",
+      }}
+    />
+  );
 }
