@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       strategies: "generateSW",
-      registerType: "autoUpdate", // ← Back to autoUpdate to match main.jsx registerSW
+      registerType: "autoUpdate",
       
       injectRegister: 'auto',
 
@@ -54,6 +54,9 @@ export default defineConfig({
       },
 
       workbox: {
+        skipWaiting: true,   // ← new worker activates immediately on install
+        clientsClaim: true,  // ← new worker takes control of all open tabs
+
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,txt,woff,woff2,m4a}'],
         maximumFileSizeToCacheInBytes: 20000000, // 20MB
         

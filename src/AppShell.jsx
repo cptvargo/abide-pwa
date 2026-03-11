@@ -5,6 +5,7 @@ import BibleNavigator from "./components/BibleNavigator";
 import PremiumMenu from "./components/PremiumMenu";
 import SettingsModal from "./components/SettingsModal";
 import DialogueSystem from "./DialogueSystem";
+import DevotionalScreen from "./components/DevotionalScreen";
 import { getBookDisplayName } from "./lib/bibleStructure";
 
 const TRANSLATIONS = ["VSV", "AKT", "ASR", "KJV"];
@@ -262,6 +263,14 @@ export default function AppShell() {
           theme={theme}
           translation={translation}
           onBack={() => setActiveScreen("scripture")}
+        />
+      )}
+
+      {/* Devotionals Screen */}
+      {activeScreen === "devotionals" && (
+        <DevotionalScreen
+          onBack={() => setActiveScreen("scripture")}
+          theme={theme}
         />
       )}
 
@@ -561,6 +570,7 @@ export default function AppShell() {
           if (id === "dialogue") setActiveScreen("dialogue");
           else if (id === "grow") navigate("/grow");
           else if (id === "settings") setSettingsOpen(true);
+          else if (id === "devotionals") setActiveScreen("devotionals");
           setMenuOpen(false);
           setMenuVisible(false);
         }}
