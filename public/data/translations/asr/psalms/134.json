@@ -1,0 +1,17 @@
+{
+  "chapter": 134,
+  "book": "Psalms",
+  "translation": "ASR",
+  "verses": {
+    "1": "A song of ascents.\n Come, bless the LORD,\n all you servants of the LORD\n who serve by night\n in the house of the LORD!",
+    "2": "Lift up your hands to the sanctuary\n and bless the LORD!",
+    "3": "May the LORD, the Maker of heaven and earth,\n bless you from Zion."
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "ABIDE Source Reading",
+    "abbreviation": "ASR",
+    "source": "Derived from the Berean Standard Bible (BSB). Missing verses restored from the Textus Receptus tradition for completeness.",
+    "createdAt": "2026-03-12T19:26:15Z"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "chapter": 1,
+  "book": "Psalms",
+  "translation": "ASR",
+  "verses": {
+    "1": "Blessed is the man\n who does not walk in the counsel of the wicked,\n or set foot on the path of sinners,\n or sit in the seat of mockers.",
+    "2": "But his delight is in the Law of the LORD,\n and on His law he meditates day and night.",
+    "3": "He is like a tree planted by streams of water,\n yielding its fruit in season,\n whose leaf does not wither,\n and who prospers in all he does.",
+    "4": "Not so the wicked!\n For they are like chaff driven off by the wind.",
+    "5": "Therefore the wicked will not stand in the judgment,\n nor sinners in the assembly of the righteous.",
+    "6": "For the LORD guards the path of the righteous,\n but the way of the wicked will perish."
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "ABIDE Source Reading",
+    "abbreviation": "ASR",
+    "source": "Derived from the Berean Standard Bible (BSB). Missing verses restored from the Textus Receptus tradition for completeness.",
+    "createdAt": "2026-03-12T19:26:15Z"
+  }
+}

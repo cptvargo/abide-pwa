@@ -8,12 +8,13 @@ import DialogueSystem from "./DialogueSystem";
 import DevotionalScreen from "./components/DevotionalScreen";
 import { getBookDisplayName } from "./lib/bibleStructure";
 
-const TRANSLATIONS = ["VSV", "AKT", "ASR", "KJV"];
+const TRANSLATIONS = ["ASB", "AKT", "KJV", "WBT", "ASR"];
 const TRANSLATION_FULL = {
-  VSV: "Vine Standard Version",
+  ASB: "ABIDE Standard Bible",
   AKT: "ABIDE Kids Translation",
-  ASR: "ABIDE Source Reading",
   KJV: "King James Version",
+  WBT: "Webster's Bible",
+  ASR: "ABIDE Source Reading",
 };
 
 /* ===============================

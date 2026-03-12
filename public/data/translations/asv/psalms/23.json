@@ -1,0 +1,20 @@
+{
+  "chapter": 23,
+  "book": "Psalms",
+  "translation": "ASB",
+  "verses": {
+    "1": "Jehovah|strong=\"H3068\" is|strong=\"H3068\" my|strong=\"H3068\" shepherd|strong=\"H7462\" ; I|strong=\"H3808\" shall|strong=\"H3068\" not|strong=\"H3808\" want|strong=\"H2637\" .",
+    "2": "He|strong=\"H5921\" maketh me|strong=\"H5921\" to|strong=\"H5921\" lie|strong=\"H7257\" down|strong=\"H7257\" in|strong=\"H5921\" green|strong=\"H1877\" pastures|strong=\"H4999\" ; \n He|strong=\"H5921\" leadeth|strong=\"H5095\" me|strong=\"H5921\" beside|strong=\"H5921\" still|strong=\"H4496\" waters|strong=\"H4325\" .",
+    "3": "He|strong=\"H5315\" restoreth|strong=\"H7725\" my|strong=\"H7725\" soul|strong=\"H5315\" : \n He|strong=\"H5315\" guideth me|strong=\"H5315\" in|strong=\"H5315\" the|strong=\"H7725\" paths|strong=\"H4570\" of|strong=\"H8034\" righteousness|strong=\"H6664\" for|strong=\"H4616\" his|strong=\"H7725\" name|strong=\"H8034\" ’s sake|strong=\"H4616\" .",
+    "4": "Yea|strong=\"H3588\" , though|strong=\"H3588\" I|strong=\"H3588\" walk|strong=\"H3212\" through|strong=\"H3212\" the|strong=\"H3588\" valley|strong=\"H1516\" of|strong=\"H7626\" the|strong=\"H3588\" shadow|strong=\"H6757\" of|strong=\"H7626\" death|strong=\"H6757\" , \n I|strong=\"H3588\" will|strong=\"H1571\" fear|strong=\"H3372\" no|strong=\"H3808\" evil|strong=\"H7451\" ; for|strong=\"H3588\" thou|strong=\"H3588\" art with|strong=\"H3212\" me|strong=\"H5978\" ; \n Thy|strong=\"H3372\" rod|strong=\"H7626\" and|strong=\"H3212\" thy|strong=\"H3372\" staff|strong=\"H4938\" , they|strong=\"H1992\" comfort|strong=\"H5162\" me|strong=\"H5978\" .",
+    "5": "Thou|strong=\"H6440\" preparest|strong=\"H6186\" a|strong=\"H3068\" table|strong=\"H7979\" before|strong=\"H6440\" me|strong=\"H6440\" in|strong=\"H6440\" the|strong=\"H6440\" presence|strong=\"H6440\" of|strong=\"H7218\" mine|strong=\"H5048\" enemies|strong=\"H6887\" : \n Thou|strong=\"H6440\" hast anointed|strong=\"H1878\" my|strong=\"H6440\" head|strong=\"H7218\" with|strong=\"H6440\" oil|strong=\"H8081\" ; \n My|strong=\"H6440\" cup|strong=\"H3563\" runneth|strong=\"H3563\" over|strong=\"H6440\" .",
+    "6": "Surely goodness|strong=\"H2896\" and|strong=\"H3068\" lovingkindness|strong=\"H2617\" shall|strong=\"H3068\" follow|strong=\"H7291\" me|strong=\"H7291\" all|strong=\"H3605\" the|strong=\"H3605\" days|strong=\"H3117\" of|strong=\"H1004\" my|strong=\"H3605\" life|strong=\"H2416\" ; \n And|strong=\"H3068\" I|strong=\"H3117\" shall|strong=\"H3068\" dwell|strong=\"H3427\" in|strong=\"H3427\" the|strong=\"H3605\" house|strong=\"H1004\" of|strong=\"H1004\" Jehovah|strong=\"H3068\" for|strong=\"H3068\" ever|strong=\"H3117\" ."
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "ABIDE Standard Bible",
+    "abbreviation": "ASB",
+    "source": "Derived from the American Standard Version (1901), revised for the ABIDE Bible App.",
+    "createdAt": "2026-03-12T15:55:47Z"
+  }
+}

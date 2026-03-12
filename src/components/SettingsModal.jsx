@@ -61,24 +61,49 @@ const THEMES = [
 
 const TRANSLATIONS = [
   {
-    id: "VSV",
-    label: "Vine Standard Version",
-    why: "Faithful, readable — ABIDE's core translation",
+    id: "ASB",
+    label: "ABIDE Standard Bible",
+    tagline: "Clear modern English for everyday reading",
+    description:
+      "A readable, faithful rendering based on the World English Bible — updated for natural modern language while staying true to the original Hebrew and Greek. As a derived translation, minor edits may be present for clarity and consistency.",
+    badge: "Modern",
+    source: "Derived from the World English Bible (WEB)",
   },
   {
     id: "AKT",
-    label: "Abide Kids Translation",
-    why: "Clear, accessible language for young readers",
+    label: "ABIDE Kids Translation",
+    tagline: "Accessible language for young readers",
+    description:
+      "Scripture made approachable for children and new readers without losing meaning. Every word kept as close to the original as possible — simplified so kids aged 8–12 can read and understand on their own. As a derived translation, language has been adapted for accessibility and minor edits may be present.",
+    badge: "For Families",
+    source: "Derived from the Webster Bible",
   },
   {
     id: "KJV",
     label: "King James Version",
-    why: "Historic English translation (1769)",
+    tagline: "The historic 1769 English translation",
+    description:
+      "The most widely read English Bible in history. Majestic, poetic language that has shaped the Church for centuries. Ideal for devotional reading, memorization, and those who grew up with its beloved cadence.",
+    badge: "Classic",
+    source: "Authorized Version (1769)",
+  },
+  {
+    id: "WBT",
+    label: "Webster's Bible",
+    tagline: "Noah Webster's 1833 revision of the KJV",
+    description:
+      "Noah Webster — of dictionary fame — lightly modernized the King James Bible in 1833, replacing archaic words while preserving its reverent tone. Archived here as-is for historical and devotional use.",
+    badge: "Archival",
+    source: "Noah Webster, 1833",
   },
   {
     id: "ASR",
-    label: "Abide Source Reading",
-    why: "Source-oriented reading for deeper study",
+    label: "ABIDE Source Reading",
+    tagline: "A study-oriented rendering close to the source",
+    description:
+      "Based on the Berean Standard Bible, the ASR is designed for readers who want to stay close to the original language structure — ideal for word studies, cross-referencing, and deeper theological reading. As a derived translation, minor edits may be present for study clarity and consistency.",
+    badge: "For Study",
+    source: "Derived from the Berean Standard Bible (BSB)",
   },
 ];
 
@@ -251,6 +276,189 @@ function Divider() {
         margin: "20px 0",
       }}
     />
+  );
+}
+
+/* ── Translation Card ───────────────────────────────────── */
+
+function TranslationCard({ t }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div
+      style={{
+        borderRadius: "16px",
+        background: "rgba(var(--accent-rgb,203,178,124),0.04)",
+        border: "1px solid rgba(var(--accent-rgb,203,178,124),0.09)",
+        marginBottom: "10px",
+        overflow: "hidden",
+      }}
+    >
+      {/* Main row — display only */}
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          gap: "14px",
+          padding: "14px 16px",
+        }}
+      >
+        {/* Abbreviation badge */}
+        <div
+          style={{
+            width: "40px",
+            height: "40px",
+            borderRadius: "11px",
+            background: "rgba(var(--accent-rgb,203,178,124),0.08)",
+            border: "1px solid rgba(var(--accent-rgb,203,178,124),0.15)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--font-ui, system-ui)",
+              fontSize: t.id.length > 3 ? "7px" : "9px",
+              fontWeight: "700",
+              letterSpacing: "0.04em",
+              color: "rgba(var(--accent-rgb,203,178,124),0.85)",
+            }}
+          >
+            {t.id}
+          </span>
+        </div>
+
+        {/* Text */}
+        <div style={{ flex: 1, textAlign: "left" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              marginBottom: "2px",
+              flexWrap: "wrap",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-ui, system-ui)",
+                fontSize: "14px",
+                fontWeight: "400",
+                color: "var(--text-primary, #f0ebe0)",
+              }}
+            >
+              {t.label}
+            </span>
+            {/* Badge */}
+            <span
+              style={{
+                fontFamily: "var(--font-ui, system-ui)",
+                fontSize: "9px",
+                fontWeight: "600",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: "rgba(var(--accent-rgb,203,178,124),0.7)",
+                background: "rgba(var(--accent-rgb,203,178,124),0.1)",
+                border: "1px solid rgba(var(--accent-rgb,203,178,124),0.18)",
+                borderRadius: "4px",
+                padding: "2px 6px",
+              }}
+            >
+              {t.badge}
+            </span>
+          </div>
+          <div
+            style={{
+              fontFamily: "var(--font-body, Georgia, serif)",
+              fontSize: "11px",
+              fontStyle: "italic",
+              color: "var(--text-primary, #f0ebe0)",
+              opacity: 0.42,
+            }}
+          >
+            {t.tagline}
+          </div>
+        </div>
+      </div>
+
+      {/* Expandable description */}
+      <div style={{ padding: "0 16px" }}>
+        {/* "About this translation" toggle */}
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          style={{
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            padding: "0 0 12px 54px",
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            WebkitTapHighlightColor: "transparent",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--font-ui, system-ui)",
+              fontSize: "10px",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: "rgba(var(--accent-rgb,203,178,124),0.5)",
+            }}
+          >
+            About this translation
+          </span>
+          <span
+            style={{
+              fontSize: "10px",
+              color: "rgba(var(--accent-rgb,203,178,124),0.4)",
+              transform: expanded ? "rotate(90deg)" : "rotate(0deg)",
+              transition: "transform 0.2s ease",
+              display: "inline-block",
+            }}
+          >
+            ›
+          </span>
+        </button>
+
+        {expanded && (
+          <div
+            style={{
+              paddingLeft: "54px",
+              paddingBottom: "16px",
+              animation: "sm-view-in 0.22s ease forwards",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "var(--font-body, Georgia, serif)",
+                fontSize: "13px",
+                lineHeight: "1.7",
+                color: "var(--text-primary, #f0ebe0)",
+                opacity: 0.65,
+                margin: "0 0 10px 0",
+              }}
+            >
+              {t.description}
+            </p>
+            <div
+              style={{
+                fontFamily: "var(--font-ui, system-ui)",
+                fontSize: "10px",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: "rgba(var(--accent-rgb,203,178,124),0.4)",
+              }}
+            >
+              {t.source}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -448,8 +656,7 @@ export default function SettingsModal({
                 {/* Rows */}
                 <SectionRow
                   icon={<BibleIcon />}
-                  label="Translation"
-                  value={translation}
+                  label="Translations"
                   onClick={() => setView("translation")}
                 />
                 <SectionRow
@@ -838,105 +1045,101 @@ export default function SettingsModal({
                     letterSpacing: "0.12em",
                     textTransform: "uppercase",
                     color: "rgba(var(--accent-rgb,203,178,124),0.45)",
-                    marginBottom: "12px",
+                    marginBottom: "14px",
                   }}
                 >
                   Choose Translation
                 </div>
 
                 {TRANSLATIONS.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setTranslation(t.id)}
-                    className="sm-row"
+                  <TranslationCard key={t.id} t={t} />
+                ))}
+
+                {/* Coming soon — VSV */}
+                <div
+                  style={{
+                    borderRadius: "16px",
+                    background: "rgba(var(--accent-rgb,203,178,124),0.03)",
+                    border:
+                      "1px dashed rgba(var(--accent-rgb,203,178,124),0.12)",
+                    padding: "14px 16px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "14px",
+                    marginTop: "4px",
+                    opacity: 0.6,
+                  }}
+                >
+                  <div
                     style={{
-                      width: "100%",
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "11px",
+                      background: "rgba(var(--accent-rgb,203,178,124),0.05)",
+                      border:
+                        "1px solid rgba(var(--accent-rgb,203,178,124),0.1)",
                       display: "flex",
                       alignItems: "center",
-                      gap: "14px",
-                      padding: "14px 16px",
-                      borderRadius: "14px",
-                      background:
-                        translation === t.id
-                          ? "rgba(var(--accent-rgb,203,178,124),0.12)"
-                          : "rgba(var(--accent-rgb,203,178,124),0.05)",
-                      border:
-                        translation === t.id
-                          ? "1px solid rgba(var(--accent-rgb,203,178,124),0.4)"
-                          : "1px solid rgba(var(--accent-rgb,203,178,124),0.09)",
-                      cursor: "pointer",
-                      marginBottom: "8px",
-                      WebkitTapHighlightColor: "transparent",
+                      justifyContent: "center",
+                      flexShrink: 0,
                     }}
                   >
-                    <div
+                    <span
                       style={{
-                        width: "36px",
-                        height: "36px",
-                        borderRadius: "10px",
-                        background:
-                          translation === t.id
-                            ? "rgba(var(--accent-rgb,203,178,124),0.2)"
-                            : "rgba(var(--accent-rgb,203,178,124),0.08)",
-                        border:
-                          "1px solid rgba(var(--accent-rgb,203,178,124),0.15)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexShrink: 0,
+                        fontFamily: "var(--font-ui, system-ui)",
+                        fontSize: "9px",
+                        fontWeight: "700",
+                        letterSpacing: "0.04em",
+                        color: "rgba(var(--accent-rgb,203,178,124),0.5)",
                       }}
                     >
-                      <span
-                        style={{
-                          fontFamily: "var(--font-ui, system-ui)",
-                          fontSize: "9px",
-                          fontWeight: "700",
-                          letterSpacing: "0.04em",
-                          color: "rgba(var(--accent-rgb,203,178,124),0.85)",
-                        }}
-                      >
-                        {t.id}
-                      </span>
+                      VSV
+                    </span>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-ui, system-ui)",
+                        fontSize: "14px",
+                        fontWeight: "400",
+                        color: "var(--text-primary, #f0ebe0)",
+                        marginBottom: "2px",
+                        opacity: 0.7,
+                      }}
+                    >
+                      Vine Standard Version
                     </div>
-                    <div style={{ flex: 1, textAlign: "left" }}>
-                      <div
-                        style={{
-                          fontFamily: "var(--font-ui, system-ui)",
-                          fontSize: "14px",
-                          fontWeight: translation === t.id ? "500" : "400",
-                          color:
-                            translation === t.id
-                              ? "var(--text-accent, #cbb27c)"
-                              : "var(--text-primary, #f0ebe0)",
-                          marginBottom: "2px",
-                        }}
-                      >
-                        {t.label}
-                      </div>
-                      <div
-                        style={{
-                          fontFamily: "var(--font-body, Georgia, serif)",
-                          fontSize: "11px",
-                          fontStyle: "italic",
-                          color: "var(--text-primary, #f0ebe0)",
-                          opacity: 0.38,
-                        }}
-                      >
-                        {t.why}
-                      </div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-body, Georgia, serif)",
+                        fontSize: "11px",
+                        fontStyle: "italic",
+                        color: "var(--text-primary, #f0ebe0)",
+                        opacity: 0.38,
+                      }}
+                    >
+                      ABIDE's original translation — coming soon
                     </div>
-                    {translation === t.id && (
-                      <span
-                        style={{
-                          fontSize: "14px",
-                          color: "rgba(var(--accent-rgb,203,178,124),0.8)",
-                        }}
-                      >
-                        ✦
-                      </span>
-                    )}
-                  </button>
-                ))}
+                  </div>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-ui, system-ui)",
+                      fontSize: "9px",
+                      fontWeight: "600",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      color: "rgba(var(--accent-rgb,203,178,124),0.45)",
+                      background: "rgba(var(--accent-rgb,203,178,124),0.06)",
+                      border:
+                        "1px solid rgba(var(--accent-rgb,203,178,124),0.1)",
+                      borderRadius: "4px",
+                      padding: "2px 6px",
+                      flexShrink: 0,
+                    }}
+                  >
+                    In Progress
+                  </span>
+                </div>
               </div>
             )}
 

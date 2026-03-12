@@ -1,0 +1,19 @@
+{
+  "chapter": 127,
+  "book": "Psalms",
+  "translation": "ASR",
+  "verses": {
+    "1": "A song of ascents. Of Solomon.\n Unless the LORD builds the house,\n its builders labor in vain;\n unless the LORD protects the city,\n its watchmen stand guard in vain.",
+    "2": "In vain you rise early\n and stay up late,\n toiling for bread to eat —\n for He gives sleep to His beloved.",
+    "3": "Children are indeed a heritage from the LORD,\n and the fruit of the womb is His reward.",
+    "4": "Like arrows in the hand of a warrior,\n so are children born in one’s youth.",
+    "5": "Blessed is the man\n whose quiver is full of them.\n He will not be put to shame\n when he confronts the enemies at the gate."
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "ABIDE Source Reading",
+    "abbreviation": "ASR",
+    "source": "Derived from the Berean Standard Bible (BSB). Missing verses restored from the Textus Receptus tradition for completeness.",
+    "createdAt": "2026-03-12T19:26:15Z"
+  }
+}

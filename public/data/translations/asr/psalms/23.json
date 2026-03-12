@@ -1,0 +1,20 @@
+{
+  "chapter": 23,
+  "book": "Psalms",
+  "translation": "ASR",
+  "verses": {
+    "1": "A Psalm of David.\n The LORD is my shepherd; + 23:1 See Revelation 7:17|REV 7:17 . \n I shall not want.",
+    "2": "He makes me lie down in green pastures;\n He leads me beside quiet waters.",
+    "3": "He restores my soul;\n He guides me in the paths of righteousness\n for the sake of His name.",
+    "4": "Even though I walk through the valley of the shadow of death, + 23:4 Or the valley of deep darkness \n I will fear no evil,\n for You are with me;\n Your rod and Your staff, they comfort me.",
+    "5": "You prepare a table before me\n in the presence of my enemies.\n You anoint my head with oil;\n my cup overflows.",
+    "6": "Surely goodness and mercy will follow me\n all the days of my life,\n and I will dwell in the house of the LORD\n forever. + 23:6 Literally for a length of days"
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "ABIDE Source Reading",
+    "abbreviation": "ASR",
+    "source": "Derived from the Berean Standard Bible (BSB). Missing verses restored from the Textus Receptus tradition for completeness.",
+    "createdAt": "2026-03-12T19:26:15Z"
+  }
+}

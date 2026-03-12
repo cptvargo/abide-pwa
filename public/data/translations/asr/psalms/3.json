@@ -1,0 +1,22 @@
+{
+  "chapter": 3,
+  "book": "Psalms",
+  "translation": "ASR",
+  "verses": {
+    "1": "A Psalm of David, when he fled from his son Absalom.\n O LORD, how my foes have increased!\n How many rise up against me!",
+    "2": "Many say of me,\n “God will not deliver him.”\n Selah + 3:2 Selah or Interlude is probably a musical or literary term; here and throughout the Psalms.",
+    "3": "But You, O LORD, are a shield around me,\n my glory, and the One who lifts my head.",
+    "4": "To the LORD I cry aloud,\n and He answers me from His holy mountain.\n Selah",
+    "5": "I lie down and sleep;\n I wake again, for the LORD sustains me.",
+    "6": "I will not fear the myriads\n set against me on every side.",
+    "7": "Arise, O LORD!\n Save me, O my God!\n Strike all my enemies on the jaw;\n break the teeth of the wicked.",
+    "8": "Salvation belongs to the LORD;\n may Your blessing be on Your people.\n Selah"
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "ABIDE Source Reading",
+    "abbreviation": "ASR",
+    "source": "Derived from the Berean Standard Bible (BSB). Missing verses restored from the Textus Receptus tradition for completeness.",
+    "createdAt": "2026-03-12T19:26:15Z"
+  }
+}

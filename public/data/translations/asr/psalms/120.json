@@ -1,0 +1,21 @@
+{
+  "chapter": 120,
+  "book": "Psalms",
+  "translation": "ASR",
+  "verses": {
+    "1": "A song of ascents.\n In my distress I cried to the LORD,\n and He answered me.",
+    "2": "Deliver my soul, O LORD,\n from lying lips and a deceitful tongue.",
+    "3": "What will He do to you,\n and what will be added to you,\n O deceitful tongue?",
+    "4": "Sharp arrows will come from the warrior,\n with burning coals of the broom tree!",
+    "5": "Woe to me that I dwell in Meshech,\n that I live among the tents of Kedar!",
+    "6": "Too long have I dwelt\n among those who hate peace.",
+    "7": "I am in favor of peace;\n but when I speak, they want war."
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "ABIDE Source Reading",
+    "abbreviation": "ASR",
+    "source": "Derived from the Berean Standard Bible (BSB). Missing verses restored from the Textus Receptus tradition for completeness.",
+    "createdAt": "2026-03-12T19:26:15Z"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "chapter": 125,
+  "book": "Psalms",
+  "translation": "ASR",
+  "verses": {
+    "1": "A song of ascents.\n Those who trust in the LORD are like Mount Zion.\n It cannot be moved; it abides forever.",
+    "2": "As the mountains surround Jerusalem,\n so the LORD surrounds His people,\n both now and forevermore.",
+    "3": "For the scepter of the wicked will not rest\n upon the land allotted to the righteous,\n so that the righteous will not put forth\n their hands to injustice.",
+    "4": "Do good, O LORD, to those who are good,\n and to the upright in heart.",
+    "5": "But those who turn to crooked ways\n the LORD will banish with the evildoers.\n Peace be upon Israel."
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "ABIDE Source Reading",
+    "abbreviation": "ASR",
+    "source": "Derived from the Berean Standard Bible (BSB). Missing verses restored from the Textus Receptus tradition for completeness.",
+    "createdAt": "2026-03-12T19:26:15Z"
+  }
+}

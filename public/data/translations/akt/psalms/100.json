@@ -1,0 +1,20 @@
+{
+  "chapter": 100,
+  "book": "Psalms",
+  "translation": "AKT",
+  "verses": {
+    "1": "A Psalm of praise. Make a joyful noise to the LORD, all ye lands.",
+    "2": "Serve the LORD with gladness: come before his presence with singing.",
+    "3": "Know ye that the LORD he is God: it is he that hath made us, and not we ourselves; we are his people, and the sheep of his pasture.",
+    "4": "Enter into his gates with thanksgiving, and into his courts with praise: be thankful to him, and bless his name.",
+    "5": "For the LORD is good; his mercy is everlasting; and his truth endureth to all generations."
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "ABIDE Kids Translation",
+    "abbreviation": "AKT",
+    "source": "Derived from Webster's Bible (1833), simplified for children aged 8-12. Faithful to the KJV tradition.",
+    "createdAt": "2026-03-12T19:26:38Z",
+    "note": "Base text — awaiting Claude API simplification pass."
+  }
+}
