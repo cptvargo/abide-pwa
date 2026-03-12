@@ -1,7 +1,7 @@
 {
   "chapter": 31,
   "book": "1 Samuel",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now the Philistines fought against Israel: and the men of Israel fled from before the Philistines, and fell down slain in mount Gilboa.",
     "2": "And the Philistines followed hard upon Saul and upon his sons; and the Philistines slew Jonathan, and Abinadab, and Malchi-shua, Saul's sons.",
@@ -20,7 +20,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

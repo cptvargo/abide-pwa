@@ -1,7 +1,7 @@
 {
   "chapter": 17,
   "book": "Proverbs",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Better is a dry morsel, and quietness with it, than a house full of sacrifices with strife.",
     "2": "A wise servant shall have rule over a son that causeth shame, and shall have part of the inheritance among the brethren.",
@@ -35,7 +35,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

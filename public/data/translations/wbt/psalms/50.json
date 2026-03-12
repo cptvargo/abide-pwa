@@ -1,7 +1,7 @@
 {
   "chapter": 50,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "A Psalm of Asaph. The mighty God, even the LORD, hath spoken, and called the earth from the rising to the setting of the sun.",
     "2": "Out of Zion, the perfection of beauty, God hath shined.",
@@ -30,7 +30,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

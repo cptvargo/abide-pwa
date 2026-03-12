@@ -1,7 +1,7 @@
 {
   "chapter": 9,
   "book": "Ecclesiastes",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "For all this I considered in my heart even to declare all this, that the righteous, and the wise, and their works, are in the hand of God: no man knoweth either love or hatred by all that is before them.",
     "2": "All things come alike to all: there is one event to the righteous, and to the wicked; to the good and to the clean, and to the unclean; to him that sacrificeth, and to him that sacrificeth not: as is the good, so is the sinner; and he that sweareth, as he that feareth an oath.",
@@ -25,7 +25,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

@@ -1,7 +1,7 @@
 {
   "chapter": 5,
   "book": "Ecclesiastes",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Keep thy foot when thou goest to the house of God, and be more ready to hear, than to give the sacrifice of fools: for they consider not that they do evil.",
     "2": "Be not rash with thy mouth, and let not thy heart be hasty to utter any thing before God: for God is in heaven, and thou upon earth: therefore let thy words be few.",
@@ -27,7 +27,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

@@ -1,7 +1,7 @@
 {
   "chapter": 25,
   "book": "2 Chronicles",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Amaziah was twenty and five years old when he began to reign, and he reigned twenty and nine years in Jerusalem. And his mother's name was Jehoaddan of Jerusalem.",
     "2": "And he did that which was right in the sight of the LORD, but not with a perfect heart.",
@@ -35,7 +35,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

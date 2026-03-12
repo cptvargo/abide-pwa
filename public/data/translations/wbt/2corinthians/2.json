@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "2 Corinthians",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "But I determined this with myself, that I would not come again to you in heaviness.",
     "2": "For if I make you sorry, who is he then that maketh me glad, but the same who is made sorry by me?",
@@ -24,7 +24,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

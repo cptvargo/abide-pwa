@@ -1,7 +1,7 @@
 {
   "chapter": 4,
   "book": "Song of Solomon",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Behold, thou art fair, my love; behold, thou art fair; thou hast doves' eyes within thy locks: thy hair is as a flock of goats, that appear from mount Gilead.",
     "2": "Thy teeth are like a flock of sheep that are even shorn, which came up from the washing; all of which bear twins, and none is barren among them.",
@@ -23,7 +23,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

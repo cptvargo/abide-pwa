@@ -1,7 +1,7 @@
 {
   "chapter": 12,
   "book": "Jeremiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Righteous art thou, O LORD, when I plead with thee: yet let me speak with thee of thy judgments: Why doth the way of the wicked prosper? why are they all happy that deal very treacherously?",
     "2": "Thou hast planted them, yes, they have taken root: they grow, yes, they bring forth fruit: thou art near in their mouth, and far from their reins.",
@@ -24,7 +24,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

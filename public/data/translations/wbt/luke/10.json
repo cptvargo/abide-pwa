@@ -1,7 +1,7 @@
 {
   "chapter": 10,
   "book": "Luke",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "After these things, the Lord appointed other seventy also, and sent them two and two before his face into every city, and place, whither he himself would come.",
     "2": "Therefore said he to them, The harvest truly is great, but the laborers are few: pray ye therefore the Lord of the harvest, that he would send forth laborers into his harvest.",
@@ -49,7 +49,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

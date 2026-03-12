@@ -1,7 +1,7 @@
 {
   "chapter": 54,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "To the chief Musician on Neginoth, Maschil, A Psalm of David, when the Ziphims came and said to Saul, Doth not David hide himself with us? Save me, O God, by thy name, and judge me by thy strength.",
     "2": "Hear my prayer, O God; give ear to the words of my mouth.",
@@ -14,7 +14,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

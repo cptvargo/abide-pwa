@@ -1,7 +1,7 @@
 {
   "chapter": 7,
   "book": "1 Corinthians",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now concerning the things of which ye wrote to me: It is good for a man not to touch a woman.",
     "2": "Nevertheless, to avoid lewdness, let every man have his own wife, and let every woman have her own husband.",
@@ -47,7 +47,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

@@ -1,7 +1,7 @@
 {
   "chapter": 3,
   "book": "Ruth",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Then Naomi her mother-in-law said to her, My daughter, shall I not seek rest for thee, that it may be well with thee?",
     "2": "And now is not Boaz of our kindred, with whose maidens thou wast? Behold, he winnoweth barley to-night in the threshing-floor.",
@@ -25,7 +25,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

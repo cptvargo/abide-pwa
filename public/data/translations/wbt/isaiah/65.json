@@ -1,7 +1,7 @@
 {
   "chapter": 65,
   "book": "Isaiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "I am sought by them that asked not for me ; I am found by them that sought me not: I said, Behold me, behold me, to a nation that was not called by my name.",
     "2": "I have spread out my hands all the day to a rebellious people, which walketh in a way that is not good, after their own thoughts;",
@@ -32,7 +32,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

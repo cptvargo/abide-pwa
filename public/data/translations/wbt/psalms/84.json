@@ -1,7 +1,7 @@
 {
   "chapter": 84,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "To the chief Musician upon Gittith, A Psalm for the sons of Korah. How amiable are thy tabernacles, O LORD of hosts!",
     "2": "My soul longeth, and even fainteth for the courts of the LORD: my heart and my flesh crieth out for the living God.",
@@ -19,7 +19,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

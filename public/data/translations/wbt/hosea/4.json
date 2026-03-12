@@ -1,7 +1,7 @@
 {
   "chapter": 4,
   "book": "Hosea",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Hear the word of the LORD, ye children of Israel: for the LORD hath a controversy with the inhabitants of the land, because there is no truth, nor mercy, nor knowledge of God in the land.",
     "2": "By swearing, and lying, and killing, and stealing, and committing adultery, they break out, and blood toucheth blood.",
@@ -26,7 +26,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

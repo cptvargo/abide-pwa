@@ -1,7 +1,7 @@
 {
   "chapter": 11,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "To the chief Musician, A Psalm of David. In the LORD I put my trust: how say ye to my soul, Flee as a bird to your mountain?",
     "2": "For lo, the wicked bend their bow, they make ready their arrow upon the string, that they may privily shoot at the upright in heart.",
@@ -14,7 +14,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

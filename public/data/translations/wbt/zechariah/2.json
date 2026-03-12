@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "Zechariah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "I lifted up my eyes again, and looked, and behold a man with a measuring line in his hand.",
     "2": "Then said I, Whither goest thou? And he said to me, To measure Jerusalem, to see what is its breadth, and what is its length.",
@@ -20,7 +20,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

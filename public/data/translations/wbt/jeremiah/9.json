@@ -1,7 +1,7 @@
 {
   "chapter": 9,
   "book": "Jeremiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Oh that my head were waters, and my eyes a fountain of tears, that I might weep day and night for the slain of the daughter of my people!",
     "2": "Oh that I had in the wilderness a lodging-place of way-faring men; that I might leave my people, and go from them! for they are all adulterers, an assembly of treacherous men.",
@@ -33,7 +33,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

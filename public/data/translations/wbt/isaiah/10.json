@@ -1,7 +1,7 @@
 {
   "chapter": 10,
   "book": "Isaiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Woe to them that decree unrighteous decrees, and that write grievousness which they have prescribed;",
     "2": "To turn aside the needy from judgment, and to take away the right from the poor of my people, that widows may be their prey, and that they may rob the fatherless!",
@@ -41,7 +41,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

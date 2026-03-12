@@ -1,7 +1,7 @@
 {
   "chapter": 42,
   "book": "Job",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Then Job answered the LORD, and said,",
     "2": "I know that thou canst do every thing , and that no thought can be withheld from thee.",
@@ -24,7 +24,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

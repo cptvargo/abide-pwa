@@ -1,7 +1,7 @@
 {
   "chapter": 13,
   "book": "Luke",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "There were present at that season some that told him of the Galileans, whose blood Pilate had mingled with their sacrifices.",
     "2": "And Jesus answering, said to them, Suppose ye that these Galileans were sinners above all the Galileans, because they suffered such things?",
@@ -42,7 +42,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

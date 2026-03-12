@@ -1,7 +1,7 @@
 {
   "chapter": 16,
   "book": "John",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "These things have I spoken to you, that ye should not be offended.",
     "2": "They shall put you out of the synagogues: yes, the time cometh, that whoever killeth you, will think that he doeth God service.",
@@ -40,7 +40,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

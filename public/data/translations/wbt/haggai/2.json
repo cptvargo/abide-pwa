@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "Haggai",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "In the seventh month , in the one and twentieth day of the month, came the word of the LORD by the prophet Haggai, saying,",
     "2": "Speak now to Zerubbabel the son of Shealtiel, governor of Judah, and to Joshua the son of Josedech the high priest, and to the residue of the people, saying,",
@@ -30,7 +30,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

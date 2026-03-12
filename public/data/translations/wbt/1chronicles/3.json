@@ -1,7 +1,7 @@
 {
   "chapter": 3,
   "book": "1 Chronicles",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now these were the sons of David, who were born to him in Hebron; the first-born Amnon, of Ahinoam the Jezreelitess; the second Daniel, of Abigail the Carmelitess:",
     "2": "The third, Absalom the son of Maachah the daughter of Talmai king of Geshur: the fourth, Adonijah the son of Haggith:",
@@ -31,7 +31,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

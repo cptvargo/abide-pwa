@@ -1,7 +1,7 @@
 {
   "chapter": 121,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "A Song of degrees. I will lift up my eyes to the hills, from whence cometh my help.",
     "2": "My help cometh from the LORD, who made heaven and earth.",
@@ -15,7 +15,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

@@ -1,7 +1,7 @@
 {
   "chapter": 11,
   "book": "Ecclesiastes",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Cast thy bread upon the waters: for thou shalt find it after many days.",
     "2": "Give a portion to seven, and also to eight; for thou knowest not what evil shall be upon the earth.",
@@ -17,7 +17,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

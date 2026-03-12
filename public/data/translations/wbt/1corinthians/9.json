@@ -1,7 +1,7 @@
 {
   "chapter": 9,
   "book": "1 Corinthians",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Am I not an apostle? am I not free? have I not seen Jesus Christ our Lord? are ye not my work in the Lord?",
     "2": "If I am not an apostle to others, yet doubtless I am to you: for ye are the seal of my apostleship in the Lord.",
@@ -34,7 +34,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

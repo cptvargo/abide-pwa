@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "Jonah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Then Jonah prayed to the LORD his God out of the fish's belly,",
     "2": "And said, I cried by reason of my affliction to the LORD, and he heard me; out of the belly of hell cried I, and thou heardst my voice.",
@@ -17,7 +17,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

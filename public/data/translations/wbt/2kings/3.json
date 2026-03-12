@@ -1,7 +1,7 @@
 {
   "chapter": 3,
   "book": "2 Kings",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now Jehoram the son of Ahab began to reign over Israel in Samaria in the eighteenth year of Jehoshaphat king of Judah, and reigned twelve years.",
     "2": "And he wrought evil in the sight of the LORD; but not like his father, and like his mother: for he put away the image of Baal that his father had made.",
@@ -34,7 +34,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

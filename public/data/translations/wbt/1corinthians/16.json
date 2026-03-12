@@ -1,7 +1,7 @@
 {
   "chapter": 16,
   "book": "1 Corinthians",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now concerning the collection for the saints, as I have given order to the churches of Galatia, even so do ye.",
     "2": "Upon the first day of the week, let every one of you lay by him in store, as God hath prospered him, that there be no collections when I come.",
@@ -31,7 +31,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

@@ -1,7 +1,7 @@
 {
   "chapter": 119,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "ALEPH. Blessed are the undefiled in the way, who walk in the law of the LORD.",
     "2": "Blessed are they that keep his testimonies, and that seek him with the whole heart.",
@@ -183,7 +183,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

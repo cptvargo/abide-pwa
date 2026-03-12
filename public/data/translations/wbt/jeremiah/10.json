@@ -1,7 +1,7 @@
 {
   "chapter": 10,
   "book": "Jeremiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Hear ye the word which the LORD speaketh to you, O house of Israel:",
     "2": "Thus saith the LORD, Learn not the way of the heathen, and be not dismayed at the signs of heaven; for the heathen are dismayed at them.",
@@ -32,7 +32,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

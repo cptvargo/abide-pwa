@@ -1,7 +1,7 @@
 {
   "chapter": 22,
   "book": "Isaiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The burden of the valley of vision. What aileth thee now, that thou hast wholly gone up to the house-tops?",
     "2": "Thou that art full of stirs, a tumultuous city, a joyous city: thy slain men are not slain with the sword, nor dead in battle.",
@@ -32,7 +32,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

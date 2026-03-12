@@ -1,7 +1,7 @@
 {
   "chapter": 15,
   "book": "1 Corinthians",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Moreover, brethren, I declare to you the gospel which I preached to you, which also ye have received, and in which ye stand;",
     "2": "By which also ye are saved, if ye keep in memory what I preached to you, unless ye have believed in vain.",
@@ -65,7 +65,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

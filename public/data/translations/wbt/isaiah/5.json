@@ -1,7 +1,7 @@
 {
   "chapter": 5,
   "book": "Isaiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now will I sing to my well-beloved a song of my beloved concerning his vineyard. My well-beloved hath a vineyard in a very fruitful hill:",
     "2": "And he fenced it, and gathered out the stones of it, and planted it with the choicest vine, and built a tower in the midst of it, and also made a wine-press therein: and he expected that it would bring forth grapes, and it brought forth wild grapes.",
@@ -37,7 +37,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

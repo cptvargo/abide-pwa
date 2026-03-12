@@ -1,7 +1,7 @@
 {
   "chapter": 4,
   "book": "John",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "When therefore the Lord knew that the Pharisees had heard that Jesus made and baptized more disciples than John,",
     "2": "(Though Jesus himself baptized not, but his disciples,)",
@@ -61,7 +61,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

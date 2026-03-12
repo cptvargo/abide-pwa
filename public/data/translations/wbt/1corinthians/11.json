@@ -1,7 +1,7 @@
 {
   "chapter": 11,
   "book": "1 Corinthians",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Be ye followers of me, even as I also am of Christ.",
     "2": "Now I praise you, brethren, that ye remember me in all things, and keep the ordinances, as I delivered them to you.",
@@ -41,7 +41,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

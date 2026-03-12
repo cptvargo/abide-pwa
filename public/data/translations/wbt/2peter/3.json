@@ -1,7 +1,7 @@
 {
   "chapter": 3,
   "book": "2 Peter",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "This second epistle, beloved, I now write to you; in both which I stir up your pure minds by way of remembrance:",
     "2": "That ye may be mindful of the words which were spoken before by the holy prophets, and of the commandment of us the apostles of the Lord and Savior:",
@@ -25,7 +25,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

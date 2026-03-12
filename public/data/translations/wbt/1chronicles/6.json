@@ -1,7 +1,7 @@
 {
   "chapter": 6,
   "book": "1 Chronicles",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The sons of Levi; Gershon, Kohath, and Merari.",
     "2": "And the sons of Kohath; Amram, Izhar, and Hebron, and Uzziel.",
@@ -88,7 +88,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

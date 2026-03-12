@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "2 Peter",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Simon Peter, a servant and an apostle of Jesus Christ, to them that have obtained like precious faith with us through the righteousness of God and our Savior Jesus Christ:",
     "2": "Grace and peace be multiplied to you through the knowledge of God, and of Jesus our Lord,",
@@ -28,7 +28,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "Philippians",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Paul and Timothy, the servants of Jesus Christ, to all the saints in Christ Jesus who are at Philippi, with the bishops and deacons:",
     "2": "Grace be to you, and peace, from God our Father and from the Lord Jesus Christ.",
@@ -37,7 +37,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

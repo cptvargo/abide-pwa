@@ -1,7 +1,7 @@
 {
   "chapter": 5,
   "book": "1 Peter",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The elders who are among you I exhort, who am also an elder, and a witness of the sufferings of Christ, and also a partaker of the glory that shall be revealed:",
     "2": "Feed the flock of God which is among you, taking the oversight of it , not by constraint, but willingly; not for filthy lucre, but from a ready mind;",
@@ -21,7 +21,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

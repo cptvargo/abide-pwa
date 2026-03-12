@@ -1,7 +1,7 @@
 {
   "chapter": 17,
   "book": "John",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "These words spoke Jesus, and lifted up his eyes to heaven, and said, Father, the hour is come; glorify thy Son, that thy Son also may glorify thee:",
     "2": "As thou hast given him power over all flesh, that he should give eternal life to as many as thou hast given him.",
@@ -33,7 +33,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

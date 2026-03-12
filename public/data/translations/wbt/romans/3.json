@@ -1,7 +1,7 @@
 {
   "chapter": 3,
   "book": "Romans",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "What advantage then hath the Jew? or what profit is there of circumcision?",
     "2": "Much every way: chiefly, because that to them were committed the oracles of God.",
@@ -38,7 +38,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

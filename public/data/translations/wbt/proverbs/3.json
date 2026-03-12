@@ -1,7 +1,7 @@
 {
   "chapter": 3,
   "book": "Proverbs",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "My son, forget not my law; but let thy heart keep my commandments;",
     "2": "For length of days, and long life, and peace, shall they add to thee.",
@@ -42,7 +42,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

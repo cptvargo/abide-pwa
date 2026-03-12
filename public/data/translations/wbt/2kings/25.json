@@ -1,7 +1,7 @@
 {
   "chapter": 25,
   "book": "2 Kings",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "And it came to pass in the ninth year of his reign, in the tenth month, in the tenth day of the month, that Nebuchadnezzar king of Babylon came, he, and all his army, against Jerusalem, and encamped against it; and they built forts against it on all sides.",
     "2": "And the city was besieged to the eleventh year of king Zedekiah.",
@@ -37,7 +37,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

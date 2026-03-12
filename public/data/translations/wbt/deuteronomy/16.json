@@ -1,7 +1,7 @@
 {
   "chapter": 16,
   "book": "Deuteronomy",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Observe the month Abib, and keep the passover to the LORD thy God: for in the month of Abib the LORD thy God brought thee forth from Egypt by night.",
     "2": "Thou shalt therefore sacrifice the passover to the LORD thy God, of the flock and the herd, in the place which the LORD shall choose to place his name there.",
@@ -29,7 +29,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

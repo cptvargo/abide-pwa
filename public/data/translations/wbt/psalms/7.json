@@ -1,7 +1,7 @@
 {
   "chapter": 7,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Shiggaion of David, which he sang to the LORD, concerning the words of Cush the Benjaminite. O LORD my God, in thee do I put my trust: save me from all them that persecute me, and deliver me:",
     "2": "Lest he tear my soul like a lion, rending it in pieces, while there is none to deliver.",
@@ -24,7 +24,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

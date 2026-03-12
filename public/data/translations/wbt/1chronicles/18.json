@@ -1,7 +1,7 @@
 {
   "chapter": 18,
   "book": "1 Chronicles",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now after this it came to pass that David smote the Philistines, and subdued them, and took Gath and its towns out of the hand of the Philistines.",
     "2": "And he smote Moab; and the Moabites became David's servants, and brought gifts.",
@@ -24,7 +24,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

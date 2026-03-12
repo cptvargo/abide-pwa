@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "2 Timothy",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Paul, an apostle of Jesus Christ by the will of God, according to the promise of life which is in Christ Jesus,",
     "2": "To Timothy, my dearly beloved son: Grace, mercy, and peace, from God the Father and Christ Jesus our Lord.",
@@ -25,7 +25,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

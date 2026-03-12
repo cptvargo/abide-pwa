@@ -1,7 +1,7 @@
 {
   "chapter": 3,
   "book": "Acts",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now Peter and John went up together into the temple, at the hour of prayer, being the ninth hour .",
     "2": "And a certain man lame from his mother's womb was carried, whom they laid daily at the gate of the temple which is called Beautiful, to ask alms of them that entered into the temple.",
@@ -33,7 +33,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

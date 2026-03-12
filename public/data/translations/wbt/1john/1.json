@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "1 John",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "That which was from the beginning, which we have heard, which we have seen with our eyes, which we have looked upon, and our hands have handled, of the word of life;",
     "2": "(For the life was manifested, and we have seen it , and testify, and show to you that eternal life which was with the Father, and was manifested to us;)",
@@ -17,7 +17,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

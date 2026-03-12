@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "1 John",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "My little children, these things I write to you, that ye sin not. And if any man sinneth, we have an advocate with the Father, Jesus Christ the righteous:",
     "2": "And he is the propitiation for our sins: and not for ours only, but also for the sins of the whole world.",
@@ -36,7 +36,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

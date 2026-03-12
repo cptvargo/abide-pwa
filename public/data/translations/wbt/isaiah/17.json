@@ -1,7 +1,7 @@
 {
   "chapter": 17,
   "book": "Isaiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The burden of Damascus. Behold, Damascus is taken away from being a city, and it shall be a ruinous heap.",
     "2": "The cities of Aroer are forsaken: they shall be for flocks, which shall lie down, and none shall make them afraid.",
@@ -21,7 +21,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

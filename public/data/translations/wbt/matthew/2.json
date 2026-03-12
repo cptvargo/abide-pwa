@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "Matthew",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now, after Jesus was born in Bethlehem of Judea in the days of Herod the king, behold, there came wise men from the east to Jerusalem,",
     "2": "Saying, Where is he that is born king of the Jews? for we have seen his star in the east, and have come to worship him.",
@@ -30,7 +30,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

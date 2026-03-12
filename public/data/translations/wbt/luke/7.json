@@ -1,7 +1,7 @@
 {
   "chapter": 7,
   "book": "Luke",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now when he had ended all his sayings in the audience of the people, he entered into Capernaum.",
     "2": "And a certain centurion's servant, who was dear to him, was sick, and ready to die.",
@@ -57,7 +57,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

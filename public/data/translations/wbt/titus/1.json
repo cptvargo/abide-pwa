@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "Titus",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Paul, a servant of God, and an apostle of Jesus Christ, according to the faith of God's elect, and the acknowledging of the truth which is according to godliness;",
     "2": "In hope of eternal life, which God, who cannot lie, promised before the world began;",
@@ -23,7 +23,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

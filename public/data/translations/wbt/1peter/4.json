@@ -1,7 +1,7 @@
 {
   "chapter": 4,
   "book": "1 Peter",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Forasmuch then as Christ hath suffered for us in the flesh, arm yourselves likewise with the same mind: for he that hath suffered in the flesh hath ceased from sin;",
     "2": "That he no longer should live the rest of his time in the flesh to the lusts of men, but to the will of God.",
@@ -26,7 +26,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

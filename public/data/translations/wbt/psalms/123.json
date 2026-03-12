@@ -1,7 +1,7 @@
 {
   "chapter": 123,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "A Song of degrees. To thee I raise my eyes, O thou that dwellest in the heavens.",
     "2": "Behold, as the eyes of servants look to the hand of their masters, and as the eyes of a maiden to the hand of her mistress; so our eyes wait upon the LORD our God, until he shall have mercy upon us.",
@@ -11,7 +11,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

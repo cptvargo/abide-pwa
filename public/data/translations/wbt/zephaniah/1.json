@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "Zephaniah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The word of the LORD which came to Zephaniah the son of Cushi, the son of Gedaliah, the son of Amariah, the son of Hizkiah, in the days of Josiah the son of Amon, king of Judah.",
     "2": "I will utterly consume all things from off the land, saith the LORD.",
@@ -25,7 +25,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

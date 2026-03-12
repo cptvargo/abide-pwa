@@ -1,7 +1,7 @@
 {
   "chapter": 125,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "A Song of degrees. They that trust in the LORD, shall be as mount Zion, which cannot be removed, but abideth for ever.",
     "2": "As the mountains are round Jerusalem, so the LORD is around his people from henceforth even for ever.",
@@ -12,7 +12,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

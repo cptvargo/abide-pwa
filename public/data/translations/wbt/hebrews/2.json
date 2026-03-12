@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "Hebrews",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Therefore we ought to give the more earnest heed to the things which we have heard, lest at any time we should let them slip.",
     "2": "For if the word spoken by angels was steadfast, and every transgression and disobedience received a just recompense of reward;",
@@ -25,7 +25,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

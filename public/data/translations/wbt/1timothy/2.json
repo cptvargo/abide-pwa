@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "1 Timothy",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "I exhort therefore, that first of all supplications, prayers, intercessions, and giving of thanks be made for all men;",
     "2": "For kings, and for all that are in authority; that we may lead a quiet and peaceable life in all godliness and honesty.",
@@ -22,7 +22,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

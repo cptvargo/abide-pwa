@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "Romans",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Therefore thou art inexcusable, O man, whoever thou art, that judgest: for wherein thou judgest another, thou condemnest thyself; for thou that judgest, doest the same things.",
     "2": "But we are sure that the judgment of God is according to truth, against them who commit such things.",
@@ -36,7 +36,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

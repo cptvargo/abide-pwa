@@ -1,7 +1,7 @@
 {
   "chapter": 25,
   "book": "Acts",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now when Festus had come into the province, after three days he ascended from Cesarea to Jerusalem.",
     "2": "Then the high priest and the chief of the Jews informed him against Paul, and besought him,",
@@ -34,7 +34,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

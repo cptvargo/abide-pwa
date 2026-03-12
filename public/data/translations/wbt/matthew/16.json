@@ -1,7 +1,7 @@
 {
   "chapter": 16,
   "book": "Matthew",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The Pharisees also and the Sadducees came, and, tempting, desired him that he would show them a sign from heaven.",
     "2": "He answered and said to them, When it is evening, ye say, It will be fair weather: for the sky is red.",
@@ -35,7 +35,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

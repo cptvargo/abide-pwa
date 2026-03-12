@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "Hebrews",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "God, who at sundry times and in divers manners spoke in time past to the fathers by the prophets,",
     "2": "Hath in these last days spoken to us by his Son, whom he hath appointed heir of all things, by whom also he made the worlds;",
@@ -21,7 +21,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

@@ -1,7 +1,7 @@
 {
   "chapter": 55,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "To the chief Musician on Neginoth, Maschil, A Psalm of David. Give ear to my prayer, O God; and hide not thyself from my supplication.",
     "2": "Attend to me, and hear me: I mourn in my complaint, and make a noise;",
@@ -30,7 +30,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

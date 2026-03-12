@@ -1,7 +1,7 @@
 {
   "chapter": 3,
   "book": "Ephesians",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "For this cause, I Paul, the prisoner of Jesus Christ for you Gentiles,",
     "2": "If ye have heard of the dispensation of the grace of God which is given me on your account.",
@@ -28,7 +28,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

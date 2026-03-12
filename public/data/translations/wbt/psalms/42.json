@@ -1,7 +1,7 @@
 {
   "chapter": 42,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "To the chief Musician, Maschil, for the sons of Korah. As the hart panteth after the water brooks, so my soul panteth after thee, O God.",
     "2": "My soul thirsteth for God, for the living God: when shall I come and appear before God?",
@@ -18,7 +18,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

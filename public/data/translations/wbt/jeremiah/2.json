@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "Jeremiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Moreover the word of the LORD came to me, saying,",
     "2": "Go, and cry in the ears of Jerusalem, saying, Thus saith the LORD; I remember thee, the kindness of thy youth, the love of thy espousals, when thou wentest after me in the wilderness, in a land that was not sown.",
@@ -44,7 +44,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

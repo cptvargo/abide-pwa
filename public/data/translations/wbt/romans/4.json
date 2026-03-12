@@ -1,7 +1,7 @@
 {
   "chapter": 4,
   "book": "Romans",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "What shall we then say that Abraham our father, as pertaining to the flesh, hath found?",
     "2": "For if Abraham were justified by works, he hath whereof to glory, but not before God.",
@@ -32,7 +32,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

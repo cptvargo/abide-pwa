@@ -1,7 +1,7 @@
 {
   "chapter": 8,
   "book": "Romans",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "There is therefore now no condemnation to them who are in Christ Jesus, who walk not according to the flesh, but according to the Spirit.",
     "2": "For the law of the Spirit of life, in Christ Jesus, hath made me free from the law of sin and death.",
@@ -46,7 +46,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

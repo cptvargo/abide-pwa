@@ -1,7 +1,7 @@
 {
   "chapter": 36,
   "book": "2 Chronicles",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Then the people of the land took Jehoahaz the son of Josiah, and made him king in his father's stead in Jerusalem.",
     "2": "Jehoahaz was twenty and three years old when he began to reign, and he reigned three months in Jerusalem.",
@@ -30,7 +30,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

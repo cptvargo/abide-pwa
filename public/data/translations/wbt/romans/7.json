@@ -1,7 +1,7 @@
 {
   "chapter": 7,
   "book": "Romans",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Know ye not, brethren, (for I speak to them that know the law) that the law hath dominion over a man as long as he liveth?",
     "2": "For the woman who hath a husband, is bound by the law to her husband so long as he liveth; but if the husband is dead, she is loosed from the law of her husband.",
@@ -32,7 +32,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

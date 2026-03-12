@@ -1,7 +1,7 @@
 {
   "chapter": 10,
   "book": "Proverbs",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The proverbs of Solomon. A wise son maketh a glad father: but a foolish son is the heaviness of his mother.",
     "2": "Treasures of wickedness profit nothing: but righteousness delivereth from death.",
@@ -39,7 +39,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

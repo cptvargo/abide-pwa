@@ -1,7 +1,7 @@
 {
   "chapter": 13,
   "book": "1 Samuel",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Saul reigned one year; and when he had reigned two years over Israel,",
     "2": "Saul chose him three thousand men of Israel; of which two thousand were with Saul in Michmash and in mount Beth-el, and a thousand were with Jonathan in Gibeah of Benjamin: and the rest of the people he sent every man to his tent.",
@@ -30,7 +30,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

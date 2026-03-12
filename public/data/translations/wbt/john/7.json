@@ -1,7 +1,7 @@
 {
   "chapter": 7,
   "book": "John",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "After these things Jesus walked in Galilee: for he would not walk in Judea, because the Jews sought to kill him.",
     "2": "Now the Jews' feast of tabernacles was at hand.",
@@ -60,7 +60,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

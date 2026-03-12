@@ -1,7 +1,7 @@
 {
   "chapter": 5,
   "book": "1 John",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Whoever believeth that Jesus is the Christ, is born of God: and every one that loveth him that begat, loveth him also that is begotten by him.",
     "2": "By this we know that we love the children of God, when we love God, and keep his commandments.",
@@ -28,7 +28,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

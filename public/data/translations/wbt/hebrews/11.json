@@ -1,7 +1,7 @@
 {
   "chapter": 11,
   "book": "Hebrews",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now faith is the substance of things hoped for, the evidence of things not seen.",
     "2": "For by it the elders obtained a good report.",
@@ -47,7 +47,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

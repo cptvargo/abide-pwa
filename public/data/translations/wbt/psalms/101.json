@@ -1,7 +1,7 @@
 {
   "chapter": 101,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "A Psalm of David. I will sing of mercy and judgment: to thee, O LORD, will I sing.",
     "2": "I will behave myself wisely in a perfect way. O when wilt thou come to me? I will walk within my house with a perfect heart.",
@@ -15,7 +15,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

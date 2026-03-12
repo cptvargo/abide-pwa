@@ -1,7 +1,7 @@
 {
   "chapter": 15,
   "book": "John",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "I am the true vine, and my Father is the husbandman.",
     "2": "Every branch in me that beareth not fruit, he taketh away; and every branch that beareth fruit, he cleaneth it, that it my bring forth more fruit.",
@@ -34,7 +34,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

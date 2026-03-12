@@ -1,7 +1,7 @@
 {
   "chapter": 69,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "To the chief Musician upon Shoshannim, A Psalm of David. Save me, O God; for the waters are come in to my soul.",
     "2": "I sink in deep mire, where there is no standing: I am come into deep waters, where the floods overflow me.",
@@ -43,7 +43,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

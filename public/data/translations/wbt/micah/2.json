@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "Micah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Woe to them that devise iniquity, and work evil upon their beds! when the morning is light, they practice it, because it is in the power of their hand.",
     "2": "And they covet fields, and take them by violence; and houses, and take them away: so they oppress a man and his house, even a man and his heritage.",
@@ -20,7 +20,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

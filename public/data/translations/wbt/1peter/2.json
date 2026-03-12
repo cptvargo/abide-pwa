@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "1 Peter",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Wherefore, laying aside all malice, and all guile, and hypocrisies, and envies, and all evil-speakings,",
     "2": "As new-born babes, desire the pure milk of the word, that ye may grow thereby:",
@@ -32,7 +32,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

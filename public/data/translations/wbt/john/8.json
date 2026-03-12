@@ -1,7 +1,7 @@
 {
   "chapter": 8,
   "book": "John",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Jesus went to the mount of Olives:",
     "2": "And early in the morning he came again into the temple, and all the people came to him; and he sat down and taught them.",
@@ -66,7 +66,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

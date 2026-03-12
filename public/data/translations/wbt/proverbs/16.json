@@ -1,7 +1,7 @@
 {
   "chapter": 16,
   "book": "Proverbs",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The preparations of the heart in man, and the answer of the tongue, are from the LORD.",
     "2": "All the ways of a man are clean in his own eyes; but the LORD weigheth the spirits.",
@@ -40,7 +40,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

@@ -1,7 +1,7 @@
 {
   "chapter": 25,
   "book": "Isaiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "O LORD, thou art my God; I will exalt thee, I will praise thy name; for thou hast done wonderful things ; thy counsels of old are faithfulness and truth.",
     "2": "For thou hast made of a city a heap; of a fortified city a ruin: a palace of strangers to be no city; it shall never be built.",
@@ -19,7 +19,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

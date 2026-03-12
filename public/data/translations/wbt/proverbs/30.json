@@ -1,7 +1,7 @@
 {
   "chapter": 30,
   "book": "Proverbs",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The words of Agur the son of Jakeh, even the prophecy: the man spoke to Ithiel, even to Ithiel and Ucal,",
     "2": "Surely I am more brutish than any man, and have not the understanding of a man.",
@@ -40,7 +40,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

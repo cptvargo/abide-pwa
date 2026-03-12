@@ -1,7 +1,7 @@
 {
   "chapter": 20,
   "book": "Acts",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "And after the uproar had ceased, Paul called to him the disciples, and embraced them , and departed to go into Macedonia.",
     "2": "And when he had gone over those parts, and had given them much exhortation, he came into Greece,",
@@ -45,7 +45,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

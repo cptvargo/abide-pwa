@@ -1,7 +1,7 @@
 {
   "chapter": 8,
   "book": "Deuteronomy",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "All the commandments which I command thee this day shall ye observe to do, that ye may live, and multiply, and go in and possess the land which the LORD swore to your fathers.",
     "2": "And thou shalt remember all the way which the LORD thy God hath led thee these forty years in the wilderness, to humble thee, and to prove thee, to know what was in thy heart, whether thou wouldst keep his commandments, or not.",
@@ -27,7 +27,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

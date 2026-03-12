@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "Philemon",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Paul, a prisoner of Jesus Christ, and Timothy our brother, to Philemon our dearly beloved, and fellow-laborer,",
     "2": "And to our beloved Apphia, and Archippus our fellow-soldier, and to the church in thy house:",
@@ -32,7 +32,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

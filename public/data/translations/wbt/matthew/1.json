@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "Matthew",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The book of the generation of Jesus Christ, the son of David, the son of Abraham.",
     "2": "Abraham begat Isaac; and Isaac begat Jacob; and Jacob begat Judah and his brethren;",
@@ -32,7 +32,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

@@ -1,7 +1,7 @@
 {
   "chapter": 77,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "To the chief Musician, to Jeduthun, A Psalm of Asaph. I cried to God with my voice, even to God with my voice; and he gave ear to me.",
     "2": "In the day of my trouble I sought the LORD: my sore ran in the night, and ceased not: my soul refused to be comforted.",
@@ -27,7 +27,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

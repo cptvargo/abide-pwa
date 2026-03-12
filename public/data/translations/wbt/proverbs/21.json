@@ -1,7 +1,7 @@
 {
   "chapter": 21,
   "book": "Proverbs",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The king's heart is in the hand of the LORD, as the rivers of water: he turneth it whithersoever he will.",
     "2": "Every way of a man is right in his own eyes: but the LORD pondereth the hearts.",
@@ -38,7 +38,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

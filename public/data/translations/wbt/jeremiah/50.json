@@ -1,7 +1,7 @@
 {
   "chapter": 50,
   "book": "Jeremiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The word that the LORD spoke against Babylon and against the land of the Chaldeans by Jeremiah the prophet.",
     "2": "Declare ye among the nations, and publish, and set up a standard; publish, and conceal not: say, Babylon is taken, Bel is confounded, Merodach is broken in pieces; her idols are confounded, her images are broken in pieces.",
@@ -53,7 +53,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

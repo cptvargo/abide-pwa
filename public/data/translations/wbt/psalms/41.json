@@ -1,7 +1,7 @@
 {
   "chapter": 41,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "To the chief Musician, A Psalm of David. Blessed is he that considereth the poor: the LORD will deliver him in the time of trouble.",
     "2": "The LORD will preserve him, and keep him alive; and he shall be blessed upon the earth: and thou wilt not deliver him to the will of his enemies.",
@@ -20,7 +20,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

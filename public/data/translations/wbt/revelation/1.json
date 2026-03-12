@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "Revelation",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The Revelation of Jesus Christ, which God gave to him, to show to his servants things which must shortly come to pass; and he sent and signified it by his angel to his servant John:",
     "2": "Who bore testimony of the word of God, and of the testimony of Jesus Christ, and of all things that he saw.",
@@ -27,7 +27,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

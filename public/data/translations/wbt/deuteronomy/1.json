@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "Deuteronomy",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "These are the words which Moses spoke to all Israel on the east side of Jordan in the wilderness, in the plain over against Suf, between Paran, and Tophel, and Laban, and Hazeroth, and Dizahab.",
     "2": "( There are eleven days journey from Horeb by the way of mount Seir to Kadesh-barnea.)",
@@ -53,7 +53,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

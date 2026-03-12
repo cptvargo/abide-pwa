@@ -1,7 +1,7 @@
 {
   "chapter": 23,
   "book": "Deuteronomy",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "He that is wounded or mutilated in his secrets, shall not enter into the congregation of the LORD.",
     "2": "A bastard shall not enter into the congregation of the LORD; even to his tenth generation shall he not enter into the congregation of the LORD.",
@@ -32,7 +32,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

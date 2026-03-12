@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "2 Kings",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Then Moab rebelled against Israel after the death of Ahab.",
     "2": "And Ahaziah fell down through a lattice in his upper chamber that was in Samaria, and was sick: and he sent messengers, and said to them, Go, inquire of Baal-zebub the god of Ekron, whether I shall recover from this disease.",
@@ -25,7 +25,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

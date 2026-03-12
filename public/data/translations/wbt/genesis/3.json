@@ -1,7 +1,7 @@
 {
   "chapter": 3,
   "book": "Genesis",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now the serpent was more subtil than any beast of the field which the LORD God had made: and he said to the woman, Yea, hath God said, Ye shall not eat of every tree of the garden?",
     "2": "And the woman said to the serpent, We may eat of the fruit of the trees of the garden:",
@@ -31,7 +31,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

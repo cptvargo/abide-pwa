@@ -1,7 +1,7 @@
 {
   "chapter": 81,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "To the chief Musician upon Gittith, A Psalm of Asaph. Sing aloud to God our strength: make a joyful noise to the God of Jacob.",
     "2": "Take a psalm, and bring hither the timbrel, the pleasant harp with the psaltery.",
@@ -23,7 +23,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

@@ -1,7 +1,7 @@
 {
   "chapter": 4,
   "book": "Hebrews",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Let us therefore fear, lest a promise being left us of entering into his rest, any of you should seem to come short of it.",
     "2": "For to us was the gospel preached, as well as to them: but the word which they heard did not profit them, not being mixed with faith in them that heard it .",
@@ -23,7 +23,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

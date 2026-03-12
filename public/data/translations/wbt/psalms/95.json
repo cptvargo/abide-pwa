@@ -1,7 +1,7 @@
 {
   "chapter": 95,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "O come, let us sing to the LORD: let us make a joyful noise to the rock of our salvation.",
     "2": "Let us come before his presence with thanksgiving, and make a joyful noise to him with psalms.",
@@ -18,7 +18,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

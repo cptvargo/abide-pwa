@@ -1,7 +1,7 @@
 {
   "chapter": 32,
   "book": "Isaiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Behold, a king shall reign in righteousness, and princes shall rule in judgment.",
     "2": "And a man shall be as a hiding-place from the wind, and a covert from the tempest; as streams of water in a dry place, as the shade of a great rock in a weary land.",
@@ -27,7 +27,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

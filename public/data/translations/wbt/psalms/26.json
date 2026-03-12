@@ -1,7 +1,7 @@
 {
   "chapter": 26,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "A Psalm of David. Judge me, O LORD; for I have walked in my integrity: I have trusted also in the LORD; therefore I shall not slide.",
     "2": "Examine me, O LORD, and prove me; try my reins and my heart.",
@@ -19,7 +19,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

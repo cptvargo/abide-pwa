@@ -1,7 +1,7 @@
 {
   "chapter": 23,
   "book": "Exodus",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Thou shalt not raise a false report: put not thy hand with the wicked to be an unrighteous witness.",
     "2": "Thou shalt not follow a multitude to do evil; neither shalt thou speak in a cause to decline after many to wrest judgment :",
@@ -40,7 +40,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

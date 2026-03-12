@@ -1,7 +1,7 @@
 {
   "chapter": 4,
   "book": "Proverbs",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Hear, ye children, the instruction of a father, and attend to know understanding.",
     "2": "For I give you good doctrine, forsake ye not my law.",
@@ -34,7 +34,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

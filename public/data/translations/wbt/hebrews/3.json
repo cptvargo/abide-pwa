@@ -1,7 +1,7 @@
 {
   "chapter": 3,
   "book": "Hebrews",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Wherefore, holy brethren, partakers of the heavenly calling, consider the Apostle and High Priest of our profession, Christ Jesus;",
     "2": "Who was faithful to him that appointed him, as also Moses was faithful in all his house.",
@@ -26,7 +26,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

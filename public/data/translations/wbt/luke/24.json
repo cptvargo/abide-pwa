@@ -1,7 +1,7 @@
 {
   "chapter": 24,
   "book": "Luke",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now upon the first day of the week, very early in the morning, they came to the sepulcher, bringing the spices which they had prepared, and certain others with them.",
     "2": "And they found the stone rolled away from the sepulcher.",
@@ -60,7 +60,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

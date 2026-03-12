@@ -1,7 +1,7 @@
 {
   "chapter": 102,
   "book": "Psalms",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "A Prayer of the afflicted, when he is overwhelmed, and poureth out his complaint before the LORD. Hear my prayer, O LORD, and let my cry come to thee.",
     "2": "Hide not thy face from me in the day when I am in trouble; incline thy ear to me: in the day when I call, answer me speedily.",
@@ -35,7 +35,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

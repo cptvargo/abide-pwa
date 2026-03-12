@@ -1,7 +1,7 @@
 {
   "chapter": 15,
   "book": "1 Samuel",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Samuel also said to Saul, the LORD sent me to anoint thee to be king over his people, over Israel: now therefore hearken thou to the voice of the words of the LORD.",
     "2": "Thus saith the LORD of hosts, I remember that which Amalek did to Israel, how he laid wait for him in the way, when he came up from Egypt.",
@@ -42,7 +42,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

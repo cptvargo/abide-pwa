@@ -1,7 +1,7 @@
 {
   "chapter": 4,
   "book": "1 John",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Beloved, believe not every spirit, but try the spirits whether they are of God: because many false prophets have gone out into the world.",
     "2": "By this ye know the Spirit of God: Every spirit that confesseth that Jesus Christ hath come in the flesh, is from God:",
@@ -28,7 +28,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

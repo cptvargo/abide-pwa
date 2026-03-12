@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "Nehemiah",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "The words of Nehemiah the son of Hachaliah. And it came to pass in the month Chisleu, in the twentieth year, as I was in Shushan the palace,",
     "2": "That Hanani, one of my brethren, came, he and certain men of Judah; and I asked them concerning the Jews that had escaped, who were left of the captivity, and concerning Jerusalem.",
@@ -18,7 +18,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

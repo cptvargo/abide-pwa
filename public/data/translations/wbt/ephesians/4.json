@@ -1,7 +1,7 @@
 {
   "chapter": 4,
   "book": "Ephesians",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "I therefore, the prisoner of the Lord, beseech you that ye walk worthy of the vocation by which ye are called,",
     "2": "With all lowliness and meekness, with long-suffering, forbearing one another in love;",
@@ -39,7 +39,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

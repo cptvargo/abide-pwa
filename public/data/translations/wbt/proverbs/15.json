@@ -1,7 +1,7 @@
 {
   "chapter": 15,
   "book": "Proverbs",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "A soft answer turneth away wrath: but grievous words stir up anger.",
     "2": "The tongue of the wise useth knowledge aright: but the mouth of fools poureth out foolishness.",
@@ -40,7 +40,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

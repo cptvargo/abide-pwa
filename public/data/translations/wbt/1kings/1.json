@@ -1,7 +1,7 @@
 {
   "chapter": 1,
   "book": "1 Kings",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now king David was old and advanced in years; and they covered him with clothes, but he got no heat.",
     "2": "Wherefore his servants said to him, Let there be sought for my lord the king a young virgin: and let her stand before the king, and let her cherish him, and let her lie in thy bosom, that my lord the king may get heat.",
@@ -60,7 +60,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

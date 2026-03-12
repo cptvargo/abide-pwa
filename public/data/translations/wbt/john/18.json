@@ -1,7 +1,7 @@
 {
   "chapter": 18,
   "book": "John",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "When Jesus had spoken these words, he went forth with his disciples over the brook Kedron, where was a garden, into which he entered, and his disciples.",
     "2": "And Judas also, who betrayed him, knew the place: for Jesus often resorted thither with his disciples.",
@@ -47,7 +47,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

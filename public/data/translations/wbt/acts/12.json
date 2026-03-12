@@ -1,7 +1,7 @@
 {
   "chapter": 12,
   "book": "Acts",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "Now about that time, Herod the king stretched forth his hands to afflict certain of the church.",
     "2": "And he killed James the brother of John with the sword.",
@@ -32,7 +32,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

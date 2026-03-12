@@ -1,7 +1,7 @@
 {
   "chapter": 5,
   "book": "2 Corinthians",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "For we know that if our earthly house of this tabernacle were dissolved, we have a building of God, a house not made with hands, eternal in the heavens.",
     "2": "For in this we groan, earnestly desiring to be clothed with our house which is from heaven:",
@@ -28,7 +28,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

@@ -1,7 +1,7 @@
 {
   "chapter": 12,
   "book": "Deuteronomy",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "These are the statutes and judgments which ye shall observe to do in the land which the LORD God of thy fathers giveth thee to possess it, all the days that ye live upon the earth.",
     "2": "Ye shall utterly destroy all the places in which the nations which ye shall possess served their gods, upon the high mountains, and upon the hills, and under every green tree:",
@@ -39,7 +39,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }

@@ -1,7 +1,7 @@
 {
   "chapter": 2,
   "book": "Habakkuk",
-  "translation": "VSV",
+  "translation": "WBT",
   "verses": {
     "1": "I will stand upon my watch, and seat myself upon the tower, and will watch to see what he will say to me, and what I shall answer when I am reproved.",
     "2": "And the LORD answered me, and said, Write the vision, and make it plain upon tables, that he may run that readeth it.",
@@ -27,7 +27,7 @@
   "metadata": {
     "translator": "Jesus Vargas",
     "version": "Vine Standard Version",
-    "abbreviation": "VSV",
+    "abbreviation": "WBT",
     "source": "Derived from Webster's Bible (1833), revised as a poetic KJV-tradition translation filtered through the theology of abiding in Christ.",
     "createdAt": "2026-03-12T19:27:01Z"
   }
