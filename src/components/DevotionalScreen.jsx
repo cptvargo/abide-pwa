@@ -33,7 +33,8 @@ function markComplete(seriesId, day) {
 }
 
 // ── Translation priority (mirrors Seek) ──────────────────────────────────────
-const TRANSLATION_PRIORITY = ["vsv", "akt", "asr", "kjv"];
+const TRANSLATION_PRIORITY_ADULT = ["asb", "asr", "wbt", "kjv"];
+const TRANSLATION_PRIORITY_KIDS = ["akt", "kjv"];
 
 const BOOK_NAME_TO_ID = {
   genesis: "genesis",
@@ -135,12 +136,12 @@ function parseRef(ref) {
 }
 
 // ── Fetch a passage from translation files ────────────────────────────────────
-async function fetchPassage(ref) {
+async function fetchPassage(ref, priority = TRANSLATION_PRIORITY_ADULT) {
   const parsed = parseRef(ref);
   if (!parsed) return null;
   const { book, chapter, startVerse, endVerse } = parsed;
 
-  for (const translation of TRANSLATION_PRIORITY) {
+  for (const translation of priority) {
     try {
       const url = `/abide-pwa/data/translations/${translation}/${book}/${chapter}.json`;
       const res = await fetch(url);
@@ -1394,7 +1395,11 @@ export default function DevotionalScreen({ onBack, theme }) {
   useEffect(() => {
     if (section === "scripture" && activeDay?.scripture && !scriptureResult) {
       setLoadingScripture(true);
-      fetchPassage(activeDay.scripture).then((result) => {
+      const priority =
+        activeSeries?.id === "from-the-inside-out"
+          ? TRANSLATION_PRIORITY_KIDS
+          : TRANSLATION_PRIORITY_ADULT;
+      fetchPassage(activeDay.scripture, priority).then((result) => {
         setScriptureResult(result);
         setLoadingScripture(false);
       });
@@ -1786,8 +1791,8 @@ export default function DevotionalScreen({ onBack, theme }) {
       { id: "abiding", label: "Abide" },
     ];
 
-    // ── Listen / Read choice screen ──
-    if (showChoice && activeSeries.hasAudio)
+    // ── Listen / Read choice screen — disabled until audio hosting is ready ──
+    if (false && showChoice && activeSeries.hasAudio)
       return (
         <div style={s.screen}>
           <style>{dynamicCSS}</style>
@@ -2101,7 +2106,7 @@ export default function DevotionalScreen({ onBack, theme }) {
                   your heart.
                 </p>
               )}
-              {day.reading.split("\n\n").map((para, i) => (
+              {(day.intro || day.reading).split("\n\n").map((para, i) => (
                 <p key={i} style={s.prose}>
                   {para}
                 </p>
@@ -2156,12 +2161,12 @@ export default function DevotionalScreen({ onBack, theme }) {
                         key={i}
                         style={{
                           fontFamily: "var(--font-body)",
-                          fontSize: i === 0 ? 17 : 15,
-                          fontWeight: i === 0 ? 600 : 400,
+                          fontSize: 15,
+                          fontWeight: 400,
                           lineHeight: 1.95,
                           color: "var(--text-primary)",
-                          opacity: i === 0 ? 0.95 : 0.82,
-                          marginBottom: i === 0 ? 28 : 18,
+                          opacity: 0.88,
+                          marginBottom: 18,
                         }}
                       >
                         {para}
