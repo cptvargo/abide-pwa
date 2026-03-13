@@ -1,0 +1,32 @@
+{
+  "day": 4,
+  "title": "Jesus Shows Us True Humility",
+  "scripture": "Luke 22:42",
+  "reading": "Before Jesus went to the cross, He prayed to His Father and said, \"Not my will, but Yours be done.\"\n\nJesus trusted His Father completely. Even when the path was hard, He chose obedience.\n\nAndrew Murray wrote that humility is the heart of Jesus. Jesus did not come to do His own will — He came to follow His Father's will in everything.\n\nWhen we choose to trust and obey God, we are walking the same path Jesus walked.\n\nHumility means saying, \"God, I trust You more than my own way.\"",
+  "reflection": "Why do you think Jesus trusted His Father even when it was difficult? Is there something in your life where you want your own way instead of God's way? What might it look like to pray, \"Not my will, but Yours\"?",
+  "abide": "When we trust God's will above our own, we begin to grow in the same humility Jesus showed.",
+  "murrayReading": "What is the incarnation but His heavenly humility, His emptying Himself and becoming man? What is His life on earth but humility; His taking the form of a servant?\n\nIn heaven, where He was with the Father, in His birth, in His life, in His death, in His sitting on the throne, it is all, it is nothing but humility.\n\nChrist is the humility of God embodied in human nature; the Eternal Love humbling itself, clothing itself in the garb of meekness and gentleness, to win and serve and save us.\n\nIf humility be the first, the all-including grace of the life of Jesus, then the health and strength of our spiritual life will entirely depend upon our putting this grace first too.",
+  "reflectionPrompt": "Which one feels closest to where you are right now?",
+  "reflectionChoices": [
+    {
+      "icon": "own_way",
+      "label": "I wanted things to go my way — even when I knew better",
+      "context": "The child pushed for their own preference even when they knew it wasn't the right or best choice."
+    },
+    {
+      "icon": "hard_path",
+      "label": "I had to do something hard and didn't want to",
+      "context": "The child faced a difficult task, responsibility, or situation they were reluctant to accept."
+    },
+    {
+      "icon": "trust",
+      "label": "I trusted someone — even though it was scary",
+      "context": "The child chose to trust a parent, teacher, or God even though they were uncertain or afraid."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "I'm still working on trusting",
+      "context": "The child finds it hard to trust, especially when they can't see what will happen next."
+    }
+  ]
+}

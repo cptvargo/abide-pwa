@@ -1,0 +1,32 @@
+{
+  "day": 6,
+  "title": "Choosing What Is Right",
+  "scripture": "Daniel 1:8",
+  "reading": "Daniel was taken far away from his home and brought to Babylon. Everything around him was different — the people, the food, and the customs.\n\nEven though Daniel was young, he made an important decision. The Bible says he \"resolved in his heart\" that he would obey God.\n\nDaniel decided what was right before the hard moment came.\n\nAndrew Murray wrote that humility means giving our will to God. When we trust Him more than our own desires, He gives us strength to do what is right.\n\nDaniel's strength did not come from being brave all the time. It came from trusting God and choosing obedience in his heart.",
+  "reflection": "Can you think of something you know is right but sometimes avoid doing? Why do you think Daniel decided ahead of time to obey God? What would it look like for you to choose what is right before the difficult moment comes?",
+  "abide": "When we choose to trust God, He gives us strength to do what is right.",
+  "murrayReading": "The humble man seeks at all times to act up to the rule: 'In honour preferring one another; Servants one of another; Each counting others better than himself.'\n\nThe humble man feels no jealousy or envy. He can praise God when others are preferred and blessed before him. He can bear to hear others praised and himself forgotten, because in God's presence he has learnt to say with Paul, 'I am nothing.'\n\nLet us put on a heart of compassion, kindness, humility, meekness, long-suffering; and let us prove our Christlikeness, not only in our zeal for saving the lost, but before all in our intercourse with the brethren, forbearing and forgiving one another, even as the Lord forgave us.",
+  "reflectionPrompt": "Which one is hardest for you to do?",
+  "reflectionChoices": [
+    {
+      "icon": "decide_early",
+      "label": "Deciding to do the right thing before the hard moment comes",
+      "context": "The child struggles to make a commitment ahead of time and tends to make decisions in the moment instead."
+    },
+    {
+      "icon": "peer",
+      "label": "Doing the right thing when my friends aren't",
+      "context": "The child finds it hard to make good choices when peers around them are doing something different."
+    },
+    {
+      "icon": "alone",
+      "label": "Obeying when nobody is watching",
+      "context": "The child behaves well when adults are present but makes different choices when unsupervised."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "All of them honestly",
+      "context": "The child finds all of these genuinely difficult and doesn't know which is hardest."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "day": 10,
+  "title": "The Quiet Work of God",
+  "scripture": "James 4:10",
+  "reading": "Humility often grows in quiet places.\n\nAndrew Murray wrote that when we come before God with a humble heart, He begins to change us slowly from the inside.\n\nThis change does not always happen in big or exciting ways. Sometimes it happens quietly — when we listen to God, when we admit we were wrong, or when we choose kindness instead of anger.\n\nGod is always working in the hearts of those who come to Him humbly.\n\nAnd the more we trust Him, the more our hearts begin to look like the heart of Jesus.",
+  "reflection": "Can you think of a time when God helped you change something in your heart? Why do you think humility helps us grow closer to God? What is one small way you can come to God humbly today?",
+  "abide": "When we humble ourselves before God, He gently lifts us up and changes us from the inside.",
+  "murrayReading": "God is the ever-living, ever-present, ever-acting One, who upholdeth all things by the word of His power, and in whom all things exist.\n\nThe relation of the creature to God could only be one of unceasing, absolute, universal dependence. As truly as God by His power once created, so truly by that same power must God every moment maintain.\n\nThe life God bestows is imparted not once for all, but each moment continuously, by the unceasing operation of His mighty power.\n\nWhen God can again have His rightful place in us, He will lift us up. Make His glory thy care in humbling thyself; He will make thy glory His care in perfecting thy humility.",
+  "reflectionPrompt": "Which one sounds like something you've experienced?",
+  "reflectionChoices": [
+    {
+      "icon": "quiet_moment",
+      "label": "I felt God doing something in me quietly — even if I can't explain it",
+      "context": "The child has had a moment where they sensed something shifting inside them, even if they couldn't put it into words."
+    },
+    {
+      "icon": "admit_wrong",
+      "label": "I admitted I was wrong about something — and it actually helped",
+      "context": "The child confessed a mistake or wrong attitude to someone and found that it made things better, not worse."
+    },
+    {
+      "icon": "chose_kind",
+      "label": "I chose to be kind instead of angry — and it surprised me",
+      "context": "The child had a moment where they responded with patience or kindness when they expected themselves to react badly."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "I'm not sure God has been working in me",
+      "context": "The child hasn't noticed much change and wonders if any of this is really happening in their life."
+    }
+  ]
+}

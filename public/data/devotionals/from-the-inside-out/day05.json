@@ -1,0 +1,32 @@
+{
+  "day": 5,
+  "title": "The Grumbling Heart",
+  "scripture": "Philippians 2:14-15",
+  "reading": "When God rescued the Israelites from Egypt, He did amazing things for them. He opened the Red Sea so they could walk through safely. He gave them bread from heaven every morning. He led them with a cloud by day and fire by night.\n\nYet even after seeing all of this, many of them complained.\n\nTheir feet were following God, but their hearts were full of grumbling.\n\nAndrew Murray teaches that humility is not only doing what God asks — it is trusting Him with a thankful heart. Pride complains. Humility trusts.\n\nWhen we grumble, we are really saying we do not believe God is taking care of us. But when we obey with a peaceful heart, we show that we trust Him.\n\nGod is not only watching what we do. He cares about what is happening inside our hearts.",
+  "reflection": "Have you ever obeyed but felt upset on the inside? Why do you think God cares about our hearts, not just our actions? What would it look like to trust God instead of complaining when something is hard?",
+  "abide": "A humble heart trusts God — even when things are difficult.",
+  "murrayReading": "The disciples had been disputing who would be the greatest in the kingdom. He set a child in their midst and said: 'Whosoever shall humble himself as this little child, shall be exalted.'\n\nWho the greatest in the kingdom of heaven? The answer, none but Jesus would have given. The chief glory of heaven, the true heavenly-mindedness, the chief of the graces, is humility.\n\nHow little this is preached. How little it is practised. How little the lack of it is felt or confessed.\n\nJesus, the meek and lowly One, calls us to learn of Him the path to God. Let us believe that what He shows, He gives; what He is, He imparts.",
+  "reflectionPrompt": "Which one sounds like something that happened recently?",
+  "reflectionChoices": [
+    {
+      "icon": "grumble",
+      "label": "I obeyed — but I complained the whole time",
+      "context": "The child did what was asked but grumbled, sighed heavily, or made sure everyone knew they weren't happy about it."
+    },
+    {
+      "icon": "quiet_rebel",
+      "label": "I was quiet on the outside but upset on the inside",
+      "context": "The child looked compliant but was silently frustrated, resentful, or bitter about having to obey."
+    },
+    {
+      "icon": "grateful",
+      "label": "I actually did it without complaining — and it felt okay",
+      "context": "The child obeyed with a genuinely good attitude, even if it wasn't easy, and felt at peace about it."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "I'm not sure what my heart was doing",
+      "context": "The child is unsure whether their attitude was right or wrong, or hasn't thought about it much before."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "day": 14,
+  "title": "A Heart That Abides",
+  "scripture": "John 15:5",
+  "reading": "Jesus said that He is the vine and we are the branches. A branch cannot grow fruit by itself — it must stay connected to the vine.\n\nAndrew Murray taught that humility keeps us connected to Jesus. When we depend on Him instead of ourselves, His life begins to grow in us.\n\nThis is what it means to abide.\n\nA humble heart stays close to Jesus, listens to Him, and trusts Him day by day.\n\nAnd when we stay close to Him, our lives begin to show His love, His patience, and His humility to others.",
+  "reflection": "What do you think it means to stay connected to Jesus? Why do you think humility helps us remain close to Him? What is one way you can spend time with Jesus today?",
+  "abide": "Stay close to Jesus. Everything good grows from there.",
+  "murrayReading": "Humble yourselves in the sight of the Lord, and He will exalt you. And wherein does the exaltation consist? The highest glory of the creature is in being only a vessel, to receive and enjoy and show forth the glory of God.\n\nIt can do this only as it is willing to be nothing in itself, that God may be all. Water always fills first the lowest places. The lower, the emptier a man lies before God, the speedier and the fuller will be the inflow of the divine glory.\n\nLet us take His yoke upon us and learn of Him, for He is meek and lowly of heart. As we enter deeper into the fellowship of His humiliation, we can count upon it that the Spirit of His exaltation will rest upon us. The presence and the power of the glorified Christ will come to them that are of an humble spirit.",
+  "reflectionPrompt": "Which one describes where you are right now?",
+  "reflectionChoices": [
+    {
+      "icon": "connected",
+      "label": "I feel close to Jesus right now",
+      "context": "The child feels a genuine sense of connection with God — through prayer, reading, or just a quiet awareness of His presence."
+    },
+    {
+      "icon": "drifted",
+      "label": "I've drifted — and I want to come back",
+      "context": "The child knows they've pulled away from God over time and feels a pull to reconnect but isn't sure how."
+    },
+    {
+      "icon": "not_sure",
+      "label": "I'm not sure what my connection with Jesus looks like",
+      "context": "The child isn't certain they have a real relationship with Jesus and has questions about what that even means."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "I want to grow — I'm just not sure where to start",
+      "context": "The child is motivated but feels uncertain about next steps in their faith."
+    }
+  ]
+}

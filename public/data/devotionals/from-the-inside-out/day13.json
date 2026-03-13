@@ -1,0 +1,32 @@
+{
+  "day": 13,
+  "title": "Walking Like Jesus",
+  "scripture": "1 Peter 5:5",
+  "reading": "The Bible tells us that God gives grace to the humble.\n\nAndrew Murray said that the more we grow in humility, the more room there is in our hearts for God's grace to work.\n\nJesus lived with perfect humility. He trusted His Father, served others, and never tried to lift Himself up.\n\nWhen we walk with Jesus each day — listening to Him, learning from Him, and following Him — our hearts begin to change.\n\nLittle by little, we begin to walk the same humble path Jesus walked.",
+  "reflection": "What do you think it means to walk like Jesus? Why does God promise grace to the humble? What is one step you can take today to follow Jesus more closely?",
+  "abide": "God gladly gives His grace to humble hearts that trust Him.",
+  "murrayReading": "Paul said: 'I laboured more abundantly than they all; yet not I, but the grace of God which was with me.'\n\nGod gives grace to the humble. The more abundant the experience of grace, the more intense the consciousness of being a sinner saved by grace. It is not sin, but grace, that will make me indeed know myself a sinner, and make the sinner's place of deepest self-abasement the place I never leave.\n\nLet us humble ourselves under the mighty hand of God. He who cares for His people will care for us too. In trial and weakness and trouble He seeks to bring us low, until we learn that His grace is all.",
+  "reflectionPrompt": "Which one sounds most like something you struggle with?",
+  "reflectionChoices": [
+    {
+      "icon": "copy_jesus",
+      "label": "Acting like Jesus when things are unfair",
+      "context": "The child finds it hard to respond the way Jesus would when they feel something is unjust, especially at school or home."
+    },
+    {
+      "icon": "follow_close",
+      "label": "Staying close to Jesus when life gets busy",
+      "context": "The child gets caught up in school, activities, or screens and drifts away from prayer or reading the Bible."
+    },
+    {
+      "icon": "keep_going",
+      "label": "Not giving up when being good feels pointless",
+      "context": "The child sometimes wonders if trying to be obedient or humble matters, especially when it doesn't seem to make a difference."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "All of the above, honestly",
+      "context": "The child struggles with all of these and doesn't know which is hardest."
+    }
+  ]
+}

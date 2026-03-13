@@ -1,0 +1,32 @@
+{
+  "day": 7,
+  "title": "A New Heart",
+  "scripture": "Ezekiel 36:26-27",
+  "reading": "Sometimes we think we just need to try harder to obey God. But the Bible tells us something even better.\n\nGod promises to give us a new heart.\n\nAndrew Murray wrote that true humility begins when we realize we cannot change ourselves. Instead, we come to God and depend on Him to change us from the inside.\n\nWhen God's Spirit lives in us, He begins to shape our hearts. We start to want what He wants. Obedience grows naturally, like fruit growing on a healthy tree.\n\nJesus said that apart from Him we can do nothing. But when we stay close to Him, our lives begin to change from the inside out.",
+  "reflection": "Have you ever tried very hard to change something about yourself? Why do you think God promises to give us a new heart instead of asking us to fix ourselves? What is one thing you want God to work on in your heart?",
+  "abide": "God does not ask you to change your heart alone. He promises to help you and to make you new.",
+  "murrayReading": "God has so constituted us as reasonable beings, that the truer the insight into the real nature or the absolute need of a command, the readier and fuller will be our obedience to it.\n\nHumility is not a something which we bring to God, or He bestows; it is simply the sense of entire nothingness, which comes when we see how truly God is all, and in which we make way for God to be all.\n\nWhen the creature realises that this is the true nobility, and consents to be with his will, his mind, and his affections, the form, the vessel in which the life and glory of God are to work and manifest themselves, he sees that humility is simply acknowledging the truth of his position as creature, and yielding to God His place.",
+  "reflectionPrompt": "Which one is something you've noticed in yourself?",
+  "reflectionChoices": [
+    {
+      "icon": "try_harder",
+      "label": "I keep trying harder — but things don't really change",
+      "context": "The child makes repeated efforts to be better but feels like they keep ending up in the same place."
+    },
+    {
+      "icon": "ask_help",
+      "label": "I don't like asking for help — even from God",
+      "context": "The child tends to try to fix things on their own and finds it hard to admit they need help."
+    },
+    {
+      "icon": "small_change",
+      "label": "I've noticed something in me starting to change",
+      "context": "The child has seen a small but real shift in their attitude or behavior and wonders if God is doing something."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "I haven't really thought about it before",
+      "context": "The child is new to thinking about their heart and isn't sure what they've noticed yet."
+    }
+  ]
+}

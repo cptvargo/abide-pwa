@@ -1,0 +1,32 @@
+{
+  "day": 3,
+  "title": "Learning Through Obedience",
+  "scripture": "Ephesians 6:1-3",
+  "reading": "When someone asks you to do something you didn't choose, it can feel frustrating.\n\nBut God places parents, teachers, and leaders in our lives for a reason. They help guide us while we are still learning and growing.\n\nAndrew Murray explained that humility means trusting the places God has put us. When we learn to listen and obey, we grow in wisdom and character.\n\nSometimes pride says, \"I know better.\" But humility says, \"I can learn.\" And God loves a teachable heart.\n\nEvery time you choose to obey with the right heart, God is shaping you to become more like Jesus.",
+  "reflection": "Who are some people God has placed in your life to guide you? Can you remember a time when they were trying to help you — even if you didn't like it at first? What might humility look like the next time someone asks you to do something?",
+  "abide": "A humble heart listens, learns, and trusts that God is working through the people He has placed in our lives.",
+  "murrayReading": "Jesus speaks frequently of His relation to the Father, of the motives by which He is guided, of His consciousness of the power and spirit in which He acts.\n\nListen to the words in which our Lord speaks of His relation to the Father: 'The Son can do nothing of Himself.' 'I seek not Mine own will.' 'I seek not Mine own glory.'\n\nThese words open to us the deepest roots of Christ's life and work. They tell us how it was that the Almighty God was able to work His mighty redemptive work through Him.\n\nHe was nothing, that God might be all. He resigned Himself with His will and His powers entirely for the Father to work in Him.",
+  "reflectionPrompt": "Which one feels most true for you right now?",
+  "reflectionChoices": [
+    {
+      "icon": "ear_closed",
+      "label": "I stopped listening halfway through",
+      "context": "The child was asked to do something by a parent or teacher but tuned out, got distracted, or stopped paying attention."
+    },
+    {
+      "icon": "argue",
+      "label": "I argued instead of just doing it",
+      "context": "The child pushed back, made excuses, or argued when given instructions instead of obeying."
+    },
+    {
+      "icon": "slow",
+      "label": "I obeyed — but slowly, on purpose",
+      "context": "The child technically did what they were told but dragged their feet or delayed as long as possible."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "Honestly, all of the above",
+      "context": "The child recognizes themselves in more than one of these patterns."
+    }
+  ]
+}

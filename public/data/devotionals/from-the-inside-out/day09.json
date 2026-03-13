@@ -1,0 +1,32 @@
+{
+  "day": 9,
+  "title": "Learning to Be Last",
+  "scripture": "Matthew 23:12",
+  "reading": "The world teaches us to try to be first — first in line, first to win, first to be noticed.\n\nBut Jesus taught something very different. He said that whoever humbles himself will be lifted up.\n\nAndrew Murray explained that humility means we stop trying to make ourselves important. Instead, we trust God to lift us up in His time.\n\nWhen we always try to be first, pride is usually leading us. But when we are willing to step back and let others go ahead, we are learning the way of Jesus.\n\nGod sees a humble heart, and it is beautiful to Him.",
+  "reflection": "Have you ever wanted to be first or noticed more than others? Why do you think Jesus says humility is better than trying to be important? What is one way you could show humility today?",
+  "abide": "A humble heart does not need to prove its importance. God already sees and cares.",
+  "murrayReading": "Jesus said: 'Whosoever will be chief among you, let him be your servant. Even as the Son of Man came to serve.'\n\nHumility, as it is the mark of Christ the heavenly, will be the one standard of glory in heaven: the lowliest is the nearest to God.\n\nWould God that it might be given us to believe that Jesus means this! We all know what the character of a faithful servant or slave implies. Devotion to the master's interests, thoughtful study and care to please him, delight in his prosperity and honour and happiness.\n\nWhen our own heart is set upon this, the true sanctification, no place will be too low, and no stooping too deep, if we may but share and prove the fellowship with Him who spake, 'I am among you as he that serveth.'",
+  "reflectionPrompt": "Which one sounds most like something you've felt?",
+  "reflectionChoices": [
+    {
+      "icon": "want_noticed",
+      "label": "I wanted to be noticed — and it bothered me when I wasn't",
+      "context": "The child felt hurt, left out, or overlooked when they didn't get the attention or recognition they expected."
+    },
+    {
+      "icon": "compare",
+      "label": "I compared myself to someone who got more than me",
+      "context": "The child noticed someone else getting a better grade, more praise, more playing time, or more attention and felt it was unfair."
+    },
+    {
+      "icon": "stepped_back",
+      "label": "I let someone else go first — and it was actually okay",
+      "context": "The child chose to step back or give way to someone else and was surprised to find it didn't feel as bad as they expected."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "I don't really think about this stuff much",
+      "context": "The child hasn't noticed these feelings strongly or isn't sure if this applies to them."
+    }
+  ]
+}

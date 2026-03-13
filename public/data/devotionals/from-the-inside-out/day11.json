@@ -1,0 +1,32 @@
+{
+  "day": 11,
+  "title": "Letting Go of Pride",
+  "scripture": "Proverbs 16:18",
+  "reading": "Pride makes us think we are always right. It makes us unwilling to listen, unwilling to learn, and unwilling to admit when we are wrong.\n\nAndrew Murray said pride is the root of many problems in the human heart.\n\nBut humility opens the door for God to work in us.\n\nWhen we are willing to say \"I was wrong\" or \"I need help,\" we are not becoming weaker. We are becoming wiser.\n\nGod gives grace to the humble — which means He gladly helps those who are willing to depend on Him.",
+  "reflection": "Why do you think it can be hard to admit when we are wrong? What happens when pride controls our hearts? What might humility look like the next time you make a mistake?",
+  "abide": "God gives grace to those who are humble enough to ask for His help.",
+  "murrayReading": "The chief mark of counterfeit holiness is its lack of humility. Every seeker after holiness needs to be on his guard, lest unconsciously what was begun in the spirit be perfected in the flesh, and pride creep in where its presence is least expected.\n\nGod resists the proud, but gives grace to the humble. All the evils of fallen angels and men have their birth in the pride of self. On the other hand, all the virtues of the heavenly life are the virtues of humility.\n\nThere is no pride so dangerous, because none so subtle and insidious, as the pride of holiness. Let us beware. Unless we make, with each advance in what we think holiness, the increase of humility our study, we may find that we have been delighting in beautiful thoughts and feelings, while the only sure mark of the presence of God — the disappearance of self — was all the time wanting.",
+  "reflectionPrompt": "Which one is hardest for you to say?",
+  "reflectionChoices": [
+    {
+      "icon": "was_wrong",
+      "label": "\"I was wrong.\"",
+      "context": "The child finds it very hard to admit fault or say they were wrong, especially to a parent, teacher, or friend."
+    },
+    {
+      "icon": "need_help",
+      "label": "\"I need help.\"",
+      "context": "The child tends to keep struggling alone rather than ask for help, either out of pride or fear of looking weak."
+    },
+    {
+      "icon": "sorry",
+      "label": "\"I'm sorry\" — and actually mean it",
+      "context": "The child can say sorry when pressured to, but finds it hard to apologize with genuine humility and ownership."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "All of them — I don't like any of those",
+      "context": "The child finds all of these expressions of humility genuinely difficult."
+    }
+  ]
+}

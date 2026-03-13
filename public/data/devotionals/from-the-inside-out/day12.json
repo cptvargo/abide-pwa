@@ -1,0 +1,32 @@
+{
+  "day": 12,
+  "title": "The Beauty of Holiness",
+  "scripture": "Psalm 29:2",
+  "reading": "Andrew Murray wrote that humility is the beauty of holiness.\n\nThat means humility is what makes a life with God truly beautiful.\n\nWhen pride rules our hearts, we focus on ourselves. But when humility fills our hearts, we begin to reflect the character of Jesus.\n\nHoliness is not just about following rules. It is about having a heart that belongs to God.\n\nAnd a humble heart is a heart where God loves to live and work.",
+  "reflection": "What do you think it means that humility is the beauty of holiness? How does humility help us become more like Jesus? What is one way you can show humility in your life today?",
+  "abide": "A humble heart reflects the beauty of God's holiness.",
+  "murrayReading": "The humble man has learnt the secret of abiding gladness. The weaker he feels, the lower he sinks; the greater his humiliations appear, the more the power and the presence of Christ are his portion.\n\nJesus, the Holy One of God who makes us holy, is the Humility of God clothed in human nature. The one infallible test of our holiness will be the humility before God and men which marks us. Humility is the bloom and the beauty of holiness.\n\nIn God's temple, in the presence of His holiness, let us beware of pride. And let us welcome with our whole heart the humility which makes itself of no reputation, which empties out itself, and takes the form of a servant.",
+  "reflectionPrompt": "Which one is something you'd like to be true about you?",
+  "reflectionChoices": [
+    {
+      "icon": "gentle",
+      "label": "Being gentle — even when I feel like pushing back",
+      "context": "The child wants to respond with gentleness in difficult moments but finds it hard when they feel defensive or frustrated."
+    },
+    {
+      "icon": "forgive",
+      "label": "Forgiving someone who hasn't apologized",
+      "context": "The child is holding onto hurt or anger toward someone who hasn't made it right yet."
+    },
+    {
+      "icon": "servant",
+      "label": "Being the kind of person who just quietly helps",
+      "context": "The child admires people who serve without drawing attention to themselves and wants to be more like that."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "I'm not sure what I want yet",
+      "context": "The child is still working out what kind of person they want to become."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "day": 8,
+  "title": "Jesus Came to Serve",
+  "scripture": "Mark 10:45",
+  "reading": "Jesus is the greatest King who has ever lived. Yet when He came to earth, He did not come to be served by others. He came to serve.\n\nAndrew Murray wrote that humility was the very heart of Jesus. Everything Jesus did showed that He trusted His Father completely and cared for others more than Himself.\n\nThink about that. The One who made the world chose to wash feet, help the weak, and give His life for others.\n\nThat is what humility looks like.\n\nWhen we follow Jesus, we are learning to do the same thing — not trying to be the most important person in the room, but looking for ways to love and help others.",
+  "reflection": "Why do you think Jesus chose to serve others even though He was the Son of God? Can you think of a small way you could help someone today? What might it look like to follow Jesus by serving someone instead of thinking only about yourself?",
+  "abide": "The more we follow Jesus, the more we learn that true greatness is found in serving others.",
+  "murrayReading": "Jesus came to bring humility back to earth, to make us partakers of it, and by it to save us.\n\nHe humbled Himself, and became obedient unto death; His humility gave His death its value, and so became our redemption.\n\nAnd now the salvation He imparts is nothing less and nothing else than a communication of His own life and death, His own disposition and spirit, His own humility, as the ground and root of His relation to God and His redeeming work.\n\nHis humility is our salvation. His salvation is our humility.",
+  "reflectionPrompt": "Which one is hardest for you to do at home or school?",
+  "reflectionChoices": [
+    {
+      "icon": "help_others",
+      "label": "Helping someone — without being asked",
+      "context": "The child finds it hard to notice when others need help and offer it without being told to."
+    },
+    {
+      "icon": "let_go",
+      "label": "Letting someone else go first or get the credit",
+      "context": "The child struggles with stepping back and letting others have the spotlight, win, or be recognized."
+    },
+    {
+      "icon": "serve_quietly",
+      "label": "Doing something kind when no one will notice",
+      "context": "The child finds it difficult to do good things that no one will see or praise them for."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "Serving is just hard for me right now",
+      "context": "The child finds the whole idea of putting others first genuinely difficult and isn't sure why."
+    }
+  ]
+}

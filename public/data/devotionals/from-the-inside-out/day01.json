@@ -1,0 +1,32 @@
+{
+  "day": 1,
+  "title": "The Two Sons",
+  "scripture": "Matthew 21:28-31",
+  "reading": "Jesus told a story about two sons. Their father asked them to go work in the vineyard.\n\nThe first son said, \"No, I won't.\" But later he thought about it, changed his mind, and went.\n\nThe second son said, \"Yes, sir!\" But he never went.\n\nWhich son really obeyed?\n\nThe one who went.\n\nGod cares about more than the words we say. He sees our hearts and our actions. Sometimes pride makes us want to look good with our words. Humility means being honest and doing what is right — even if we first made a mistake.\n\nThe first son showed humility. He realized he was wrong and chose to obey.",
+  "reflection": "Think about a time when you were asked to do something — maybe by your parents, a teacher, or someone in charge. Did you ever say \"okay\" but then not do it? Or maybe you said \"no\" but later decided to obey? Why do you think God cares about what we really do, not just what we say?",
+  "abide": "God loves a humble heart. Even if you were wrong at first, you can choose to obey now.",
+  "murrayReading": "God wished to reveal Himself in and through created beings by communicating to them as much of His own goodness and glory as they were capable of receiving.\n\nHumility, the place of entire dependence on God, is, from the very nature of things, the first duty and the highest virtue of the creature, and the root of every virtue.\n\nAnd so pride, or the loss of this humility, is the root of every sin and evil.\n\nHumility is not so much a grace or virtue along with others; it is the root of all, because it alone takes the right attitude before God, and allows Him as God to do all.",
+  "reflectionPrompt": "Which one of these sounds most like you?",
+  "reflectionChoices": [
+    {
+      "icon": "broken_promise",
+      "label": "I said I would do it — but then I didn't",
+      "context": "The child agreed to do something at home or school but didn't follow through, even though they said they would."
+    },
+    {
+      "icon": "changed_mind",
+      "label": "I said no at first — but later I did the right thing",
+      "context": "The child pushed back or refused at first, but then changed their mind and did what was asked."
+    },
+    {
+      "icon": "found_out",
+      "label": "I got found out — and I didn't think I would",
+      "context": "The child did something they shouldn't have, away from their parents or teacher, and got caught anyway."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "Honestly... I'm still figuring it out",
+      "context": "The child is not sure which pattern fits them, or feels like they do all of these sometimes."
+    }
+  ]
+}

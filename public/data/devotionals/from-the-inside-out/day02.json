@@ -1,0 +1,32 @@
+{
+  "day": 2,
+  "title": "What God Sees in the Heart",
+  "scripture": "1 Samuel 16:7",
+  "reading": "People see what is on the outside. God sees the heart.\n\nSometimes we try to look good on the outside. We say the right words. We act polite. But inside we may be annoyed, proud, or pretending.\n\nAndrew Murray wrote that humility begins when we stop trying to appear good and allow God to show us what is really inside our hearts.\n\nThe wonderful thing is this: God already sees everything in you — every thought, every feeling, every struggle. And He still loves you. He isn't asking you to pretend. He is inviting you to be honest with Him.\n\nA humble heart is not a perfect heart. It is a heart that is willing to be seen by God and changed by Him.",
+  "reflection": "Have you ever acted one way on the outside but felt something different inside? Why do you think God cares about our hearts, not just our actions? If God sees your heart right now, what do you think He might want to help you change?",
+  "abide": "God sees your heart completely — and He loves you enough to help you grow.",
+  "murrayReading": "What a solemn thought, that our love to God will be measured by our everyday intercourse with men and the love it displays.\n\nIt is even so with our humility. It is easy to think we humble ourselves before God: humility towards men will be the only sufficient proof that our humility before God is real.\n\nTo know the humble man, to know how the humble man behaves, you must follow him in the common course of daily life.\n\nOur humility before God has no value, but as it prepares us to reveal the humility of Jesus to our fellow-men.",
+  "reflectionPrompt": "Which one sounds most like something you've done?",
+  "reflectionChoices": [
+    {
+      "icon": "mask",
+      "label": "I acted nice on the outside but felt annoyed inside",
+      "context": "The child was polite or obedient in front of others but was frustrated, angry, or resentful on the inside."
+    },
+    {
+      "icon": "hide",
+      "label": "I did something I hoped nobody would notice",
+      "context": "The child made a choice they knew wasn't right and hoped it would go unnoticed by parents, teachers, or others."
+    },
+    {
+      "icon": "heart_search",
+      "label": "I knew what was wrong but did it anyway",
+      "context": "The child knew the right thing to do but chose differently, even though their conscience told them otherwise."
+    },
+    {
+      "icon": "still_figuring",
+      "label": "I'm not sure — it's complicated",
+      "context": "The child isn't sure which fits, or feels like their situation is more complex than any single option."
+    }
+  ]
+}
