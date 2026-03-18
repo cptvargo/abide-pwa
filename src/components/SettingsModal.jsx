@@ -59,25 +59,9 @@ const THEMES = [
   },
 ];
 
+// ── Active translations: KJV, ASR, AKT
+// ── ASB and WBT removed
 const TRANSLATIONS = [
-  {
-    id: "ASB",
-    label: "ABIDE Standard Bible",
-    tagline: "Clear modern English for everyday reading",
-    description:
-      "A readable, faithful rendering based on the World English Bible — updated for natural modern language while staying true to the original Hebrew and Greek. As a derived translation, minor edits may be present for clarity and consistency.",
-    badge: "Modern",
-    source: "Derived from the World English Bible (WEB)",
-  },
-  {
-    id: "AKT",
-    label: "ABIDE Kids Translation",
-    tagline: "Accessible language for young readers",
-    description:
-      "Scripture made approachable for children and new readers without losing meaning. Every word kept as close to the original as possible — simplified so kids aged 8–12 can read and understand on their own. As a derived translation, language has been adapted for accessibility and minor edits may be present.",
-    badge: "For Families",
-    source: "Derived from the Webster Bible",
-  },
   {
     id: "KJV",
     label: "King James Version",
@@ -88,15 +72,6 @@ const TRANSLATIONS = [
     source: "Authorized Version (1769)",
   },
   {
-    id: "WBT",
-    label: "Webster's Bible",
-    tagline: "Noah Webster's 1833 revision of the KJV",
-    description:
-      "Noah Webster — of dictionary fame — lightly modernized the King James Bible in 1833, replacing archaic words while preserving its reverent tone. Archived here as-is for historical and devotional use.",
-    badge: "Archival",
-    source: "Noah Webster, 1833",
-  },
-  {
     id: "ASR",
     label: "ABIDE Source Reading",
     tagline: "A study-oriented rendering close to the source",
@@ -104,6 +79,15 @@ const TRANSLATIONS = [
       "Based on the Berean Standard Bible, the ASR is designed for readers who want to stay close to the original language structure — ideal for word studies, cross-referencing, and deeper theological reading. As a derived translation, minor edits may be present for study clarity and consistency.",
     badge: "For Study",
     source: "Derived from the Berean Standard Bible (BSB)",
+  },
+  {
+    id: "WAE",
+    label: "Webster ABIDE Edition",
+    tagline: "Noah Webster's classic revision, refined for ABIDE",
+    description:
+      "Webster's 1833 revision of the King James Bible — updated spelling, clarified archaic language, and refined for modern devotional use. Reverent in tone, accessible in language. Ideal for those who love the cadence of the KJV but want clearer expression.",
+    badge: "Revised Classic",
+    source: "Derived from Noah Webster's Bible, 1833",
   },
 ];
 
@@ -294,7 +278,6 @@ function TranslationCard({ t }) {
         overflow: "hidden",
       }}
     >
-      {/* Main row — display only */}
       <div
         style={{
           width: "100%",
@@ -304,7 +287,6 @@ function TranslationCard({ t }) {
           padding: "14px 16px",
         }}
       >
-        {/* Abbreviation badge */}
         <div
           style={{
             width: "40px",
@@ -331,7 +313,6 @@ function TranslationCard({ t }) {
           </span>
         </div>
 
-        {/* Text */}
         <div style={{ flex: 1, textAlign: "left" }}>
           <div
             style={{
@@ -352,7 +333,6 @@ function TranslationCard({ t }) {
             >
               {t.label}
             </span>
-            {/* Badge */}
             <span
               style={{
                 fontFamily: "var(--font-ui, system-ui)",
@@ -384,9 +364,7 @@ function TranslationCard({ t }) {
         </div>
       </div>
 
-      {/* Expandable description */}
       <div style={{ padding: "0 16px" }}>
-        {/* "About this translation" toggle */}
         <button
           onClick={() => setExpanded((v) => !v)}
           style={{
@@ -592,7 +570,6 @@ export default function SettingsModal({
             {/* ── MAIN VIEW ─────────────────────────────────── */}
             {view === "main" && (
               <div className="sm-view">
-                {/* Header */}
                 <div
                   style={{
                     display: "flex",
@@ -653,7 +630,6 @@ export default function SettingsModal({
 
                 <Divider />
 
-                {/* Rows */}
                 <SectionRow
                   icon={<BibleIcon />}
                   label="Translations"
@@ -776,7 +752,6 @@ export default function SettingsModal({
             {view === "appearance" && (
               <div className="sm-view">
                 <BackHeader label="Appearance" onBack={() => setView("main")} />
-
                 <div
                   style={{
                     fontFamily: "var(--font-ui, system-ui)",
@@ -789,7 +764,6 @@ export default function SettingsModal({
                 >
                   Choose Theme
                 </div>
-
                 {THEMES.map((t) => (
                   <button
                     key={t.id}
@@ -885,8 +859,6 @@ export default function SettingsModal({
                   label="Bible Text Size"
                   onBack={() => setView("main")}
                 />
-
-                {/* Size control */}
                 <div
                   style={{
                     display: "flex",
@@ -923,7 +895,6 @@ export default function SettingsModal({
                   >
                     −
                   </button>
-
                   <div style={{ textAlign: "center" }}>
                     <div
                       style={{
@@ -951,7 +922,6 @@ export default function SettingsModal({
                       scale
                     </div>
                   </div>
-
                   <button
                     onClick={() => setTextSize(Math.min(2.0, textSize + 0.1))}
                     disabled={textSize >= 2.0}
@@ -978,7 +948,6 @@ export default function SettingsModal({
                   </button>
                 </div>
 
-                {/* Preview */}
                 <div
                   style={{
                     fontFamily: "var(--font-ui, system-ui)",
@@ -991,7 +960,6 @@ export default function SettingsModal({
                 >
                   Preview
                 </div>
-
                 <div
                   style={{
                     padding: "20px",
@@ -1037,7 +1005,6 @@ export default function SettingsModal({
                   label="Translations"
                   onBack={() => setView("main")}
                 />
-
                 <div
                   style={{
                     fontFamily: "var(--font-ui, system-ui)",
@@ -1055,7 +1022,7 @@ export default function SettingsModal({
                   <TranslationCard key={t.id} t={t} />
                 ))}
 
-                {/* Coming soon — VSV */}
+                {/* VSV — Coming Soon */}
                 <div
                   style={{
                     borderRadius: "16px",

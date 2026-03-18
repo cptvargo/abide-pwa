@@ -82,13 +82,6 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
           description: "Highlights, reflections & prayers",
           available: true,
         },
-        {
-          id: "grow",
-          icon: "◈",
-          title: "ABIDE — Grow",
-          description: "Deepen your faith",
-          available: true,
-        },
       ],
     },
     {
@@ -111,7 +104,7 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
           icon: "✧",
           title: "Christ Revealed",
           description: "Jesus from Genesis to Revelation",
-          available: false,
+          available: true,
           featured: true,
         },
       ],

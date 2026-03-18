@@ -1,20 +1,19 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import CoreReading from "./SwipeReading";
 import BibleNavigator from "./components/BibleNavigator";
 import PremiumMenu from "./components/PremiumMenu";
 import SettingsModal from "./components/SettingsModal";
 import DialogueSystem from "./DialogueSystem";
 import DevotionalScreen from "./components/DevotionalScreen";
+import ChristRevealedIntro from "./components/ChristRevealedIntro";
+import ChristRevealedJourney from "./components/ChristRevealedJourney";
 import { getBookDisplayName } from "./lib/bibleStructure";
 
-const TRANSLATIONS = ["ASB", "AKT", "KJV", "WBT", "ASR"];
+const TRANSLATIONS = ["KJV", "ASR", "WAE"];
 const TRANSLATION_FULL = {
-  ASB: "ABIDE Standard Bible",
-  AKT: "ABIDE Kids Translation",
   KJV: "King James Version",
-  WBT: "Webster's Bible",
   ASR: "ABIDE Source Reading",
+  WAE: "Webster ABIDE Edition",
 };
 
 /* ===============================
@@ -53,8 +52,6 @@ function BibleIcon({ className }) {
 }
 
 export default function AppShell() {
-  const navigate = useNavigate();
-
   /* ===============================
      App State
   ================================ */
@@ -67,7 +64,6 @@ export default function AppShell() {
   const [navigatorOpen, setNavigatorOpen] = useState(false);
   const [translationPickerOpen, setTranslationPickerOpen] = useState(false);
 
-  // Scroll-hide: true = visible, false = hidden
   const [navVisible, setNavVisible] = useState(true);
   const lastScrollY = useRef(0);
   const scrollElRef = useRef(null);
@@ -92,7 +88,7 @@ export default function AppShell() {
   );
 
   const [translation, setTranslation] = useState(
-    () => localStorage.getItem("translation") || "VSV",
+    () => localStorage.getItem("translation") || "KJV",
   );
 
   const [readingContext, setReadingContext] = useState(() => {
@@ -100,11 +96,17 @@ export default function AppShell() {
     return saved ? JSON.parse(saved) : { book: "Genesis", chapter: 1 };
   });
 
+  const [currentBookId, setCurrentBookId] = useState(
+    () => localStorage.getItem("lastBookId") || "genesis",
+  );
+
   const [navigationTarget, setNavigationTarget] = useState(null);
 
+  // Christ Revealed intro overlay
+  const [showChristRevealedIntro, setShowChristRevealedIntro] = useState(false);
+
   /* ===============================
-     Scroll-hide — attached directly to
-     SwipeReading's scroll element via ref
+     Scroll-hide
   ================================ */
   function handleScroll() {
     const el = scrollElRef.current;
@@ -125,7 +127,6 @@ export default function AppShell() {
   }
 
   const handleScrollRef = useCallback((el) => {
-    // Detach from old element
     if (scrollElRef.current) {
       scrollElRef.current.removeEventListener("scroll", handleScroll);
     }
@@ -136,7 +137,6 @@ export default function AppShell() {
     }
   }, []);
 
-  // Always show nav when chapter changes (scroll resets to top in SwipeReading)
   const handleReadingContext = useCallback((ctx) => {
     setReadingContext(ctx);
     setNavVisible(true);
@@ -188,7 +188,6 @@ export default function AppShell() {
     localStorage.setItem("translation", translation);
   }, [translation]);
 
-  // Cleanup scroll listener on unmount
   useEffect(() => {
     return () => {
       if (scrollElRef.current) {
@@ -202,6 +201,7 @@ export default function AppShell() {
   ================================ */
   function handleNavigate(bookId, chapter) {
     const displayName = getBookDisplayName(bookId);
+    setCurrentBookId(bookId);
     setNavigationTarget({ book: bookId, chapter });
     setReadingContext({ book: displayName, chapter });
     setNavigatorOpen(false);
@@ -213,6 +213,40 @@ export default function AppShell() {
   function handleSelectTranslation(t) {
     setTranslation(t);
     setTranslationPickerOpen(false);
+  }
+
+  /* ===============================
+     Christ Revealed Entry
+  ================================ */
+  function handleChristRevealedEntry() {
+    const seen = localStorage.getItem("cr_intro_seen") === "true";
+    if (!seen) {
+      setShowChristRevealedIntro(true);
+    } else {
+      setActiveScreen("christ-revealed");
+    }
+  }
+
+  function handleIntroComplete() {
+    setShowChristRevealedIntro(false);
+    setActiveScreen("christ-revealed");
+  }
+
+  /* ── CR cross-ref navigation: jump to Bible reader at a reference ── */
+  function handleCRNavigateToBible(reference) {
+    // reference is a string like "John 3:16" — navigate back to scripture
+    // For now we just leave the journey and go to scripture
+    // A future enhancement could parse the reference and navigate directly
+    setActiveScreen("scripture");
+  }
+
+  /* ── CR back: restore last Bible position ── */
+  function handleCRBack() {
+    setNavigationTarget({
+      book: currentBookId,
+      chapter: readingContext.chapter,
+    });
+    setActiveScreen("scripture");
   }
 
   /* ===============================
@@ -242,7 +276,7 @@ export default function AppShell() {
           translation={translation}
           theme={theme}
           onReadingContext={handleReadingContext}
-          onScrollProgress={() => {}} // kept for API compat, no longer drives nav
+          onScrollProgress={() => {}}
           onScrollRef={handleScrollRef}
           navigationTarget={navigationTarget}
           onNavigationComplete={() => setNavigationTarget(null)}
@@ -263,7 +297,13 @@ export default function AppShell() {
         <DialogueSystem
           theme={theme}
           translation={translation}
-          onBack={() => setActiveScreen("scripture")}
+          onBack={() => {
+            setNavigationTarget({
+              book: currentBookId,
+              chapter: readingContext.chapter,
+            });
+            setActiveScreen("scripture");
+          }}
         />
       )}
 
@@ -271,6 +311,17 @@ export default function AppShell() {
       {activeScreen === "devotionals" && (
         <DevotionalScreen
           onBack={() => setActiveScreen("scripture")}
+          theme={theme}
+        />
+      )}
+
+      {/* Christ Revealed Journey */}
+      {activeScreen === "christ-revealed" && (
+        <ChristRevealedJourney
+          onBack={handleCRBack}
+          onNavigateToBible={handleCRNavigateToBible}
+          readingContext={readingContext}
+          translation={translation}
           theme={theme}
         />
       )}
@@ -306,7 +357,6 @@ export default function AppShell() {
                 whiteSpace: "nowrap",
               }}
             >
-              {/* Hamburger */}
               <button
                 onClick={() => {
                   setMenuVisible(true);
@@ -327,7 +377,6 @@ export default function AppShell() {
                 ☰
               </button>
 
-              {/* Divider */}
               <div
                 style={{
                   width: "1px",
@@ -340,7 +389,6 @@ export default function AppShell() {
                 }}
               />
 
-              {/* Book + Chapter */}
               <button
                 onClick={() => setNavigatorOpen(true)}
                 style={{
@@ -353,10 +401,7 @@ export default function AppShell() {
                   gap: 8,
                 }}
               >
-                <BibleIcon
-                  className="w-5 h-5 text-[var(--text-inverse)]"
-                  style={{ strokeWidth: 2.5 }}
-                />
+                <BibleIcon className="w-5 h-5 text-[var(--text-inverse)]" />
                 <span
                   style={{
                     color: "var(--text-inverse)",
@@ -370,7 +415,6 @@ export default function AppShell() {
                 </span>
               </button>
 
-              {/* Divider */}
               <div
                 style={{
                   width: "1px",
@@ -383,7 +427,6 @@ export default function AppShell() {
                 }}
               />
 
-              {/* Translation Badge */}
               <button
                 onClick={() => setTranslationPickerOpen(true)}
                 style={{
@@ -415,10 +458,9 @@ export default function AppShell() {
           </>
         )}
 
-      {/* ── Translation Picker Bottom Sheet ── */}
+      {/* ── Translation Picker ── */}
       {translationPickerOpen && (
         <>
-          {/* Backdrop */}
           <div
             onClick={() => setTranslationPickerOpen(false)}
             style={{
@@ -429,8 +471,6 @@ export default function AppShell() {
               animation: "fadeIn 0.2s ease",
             }}
           />
-
-          {/* Sheet */}
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
@@ -447,7 +487,6 @@ export default function AppShell() {
               animation: "sheetUp 0.32s cubic-bezier(0.4,0,0.2,1)",
             }}
           >
-            {/* Drag handle */}
             <div
               style={{
                 display: "flex",
@@ -465,8 +504,6 @@ export default function AppShell() {
                 }}
               />
             </div>
-
-            {/* Header */}
             <div
               style={{
                 padding: "8px 24px 14px",
@@ -482,8 +519,6 @@ export default function AppShell() {
             >
               Translation
             </div>
-
-            {/* Options */}
             {TRANSLATIONS.map((t) => (
               <button
                 key={t}
@@ -528,8 +563,6 @@ export default function AppShell() {
                     {TRANSLATION_FULL[t]}
                   </div>
                 </div>
-
-                {/* Selected indicator */}
                 <div
                   style={{
                     width: 18,
@@ -569,9 +602,9 @@ export default function AppShell() {
         }}
         onNavigate={(id) => {
           if (id === "dialogue") setActiveScreen("dialogue");
-          else if (id === "grow") navigate("/grow");
           else if (id === "settings") setSettingsOpen(true);
           else if (id === "devotionals") setActiveScreen("devotionals");
+          else if (id === "christ-revealed") handleChristRevealedEntry();
           setMenuOpen(false);
           setMenuVisible(false);
         }}
@@ -600,6 +633,15 @@ export default function AppShell() {
         chapterlessMode={chapterlessMode}
         setChapterlessMode={setChapterlessMode}
       />
+
+      {/* Christ Revealed Intro overlay */}
+      {showChristRevealedIntro && (
+        <ChristRevealedIntro
+          theme={theme}
+          translation={translation}
+          onComplete={handleIntroComplete}
+        />
+      )}
     </div>
   );
 }

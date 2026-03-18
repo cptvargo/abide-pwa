@@ -503,8 +503,10 @@ function DialogueDetail({ entry, theme, onBack, onEdit, onDelete, onShare }) {
     <div className="flex-1 overflow-y-auto">
       {/* Header */}
       <div
-        className="sticky top-0 z-10 px-6 py-4 border-b flex items-center justify-between"
+        className="sticky top-0 z-10 px-6 border-b flex items-center justify-between"
         style={{
+          paddingTop: "calc(env(safe-area-inset-top) + 16px)",
+          paddingBottom: "16px",
           background: "var(--bg-app)",
           borderColor: "rgba(var(--accent-rgb), 0.15)",
         }}
