@@ -2,6 +2,11 @@
   "chapter": 3,
   "book": "Revelation",
   "translation": "ASR",
+  "sections": [
+    { "title": "To the Church in Sardis", "startVerse": 1 },
+    { "title": "To the Church in Philadelphia", "startVerse": 7 },
+    { "title": "To the Church in Laodicea", "startVerse": 14 }
+  ],
   "verses": {
     "1": { "text": "\"To the angel of the church in Sardis write: These are the words of the One who holds the seven spirits of God and the seven stars. I know your deeds; you have a reputation for being alive, but you are dead.", "speaker": "Jesus" },
     "2": { "text": "Be watchful, and strengthen what remains, which is about to die; for I have found your deeds incomplete in the sight of My God.", "speaker": "Jesus" },

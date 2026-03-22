@@ -22,9 +22,10 @@ export default function CoreReading({
      Scripture State
   ================================ */
   const [verses, setVerses] = useState([]);
-  const [book, setBook] = useState("genesis"); // FIXED: mutable so navigation can change it
+  const [book, setBook] = useState("genesis");
   const [currentChapter, setCurrentChapter] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [sections, setSections] = useState([]);
 
   const loadedChaptersRef = useRef(new Set());
 
@@ -50,8 +51,22 @@ export default function CoreReading({
   const navOffsetRef = useRef(0);
 
   /* ===============================
+     Section title renderer
+  ================================ */
+  function SectionTitle({ title }) {
+    return (
+      <div className="my-8 flex flex-col items-center">
+        <div className="w-24 h-px mb-4 bg-[var(--text-accent)] opacity-20" />
+        <div className="text-center font-[var(--font-ui)] text-[13px] font-semibold tracking-widest uppercase text-[var(--text-secondary)] opacity-70">
+          {title}
+        </div>
+        <div className="w-24 h-px mt-4 bg-[var(--text-accent)] opacity-20" />
+      </div>
+    );
+  }
+
+  /* ===============================
      Load & Append Chapter
-     FIXED: accepts bookId param to avoid stale closure on navigation
   ================================ */
   async function appendChapter(chapterNumber, bookId = book) {
     if (loadedChaptersRef.current.has(chapterNumber)) return;
@@ -70,6 +85,7 @@ export default function CoreReading({
       : rawData;
 
     const title = chapterData?.title ?? null;
+    const chapterSections = chapterData?.sections ?? [];
     const versesData = chapterData?.verses ?? chapterData;
 
     let verseItems = [];
@@ -85,27 +101,30 @@ export default function CoreReading({
         verse: Number(verse),
         text: typeof val === "object" ? val.text : val,
         speaker: typeof val === "object" ? (val.speaker ?? null) : null,
+        chapter: chapterNumber,
       }));
     }
 
-    // Conditionally build the array based on chapterlessMode
+    // Tag each verse with its sections
+    verseItems = verseItems.map((v) => ({
+      ...v,
+      sectionTitle:
+        chapterSections.find((s) => s.startVerse === v.verse)?.title ?? null,
+    }));
+
     const newVerses = [];
 
-    // Only add divider if NOT in chapterless mode
     if (!chapterlessMode) {
       newVerses.push({ type: "divider", chapter: chapterNumber });
     }
 
-    // Only add title if NOT in chapterless mode and title exists
     if (!chapterlessMode && title) {
       newVerses.push({ type: "title", text: title, chapter: chapterNumber });
     }
 
-    // Always add verse items
     newVerses.push(...verseItems);
 
     setVerses((prev) => [...prev, ...newVerses]);
-
     setLoading(false);
   }
 
@@ -132,11 +151,9 @@ export default function CoreReading({
      Initial Load
   ================================ */
   useEffect(() => {
-    // Clear and reload when translation changes
     setVerses([]);
     loadedChaptersRef.current.clear();
     setCurrentChapter(1);
-
     appendChapter(1);
     onReadingContext?.({ book: getBookDisplayName(book), chapter: 1 });
   }, [translation]);
@@ -145,7 +162,6 @@ export default function CoreReading({
      Reload when chapterlessMode changes
   ================================ */
   useEffect(() => {
-    // Force a complete reload when chapterless mode toggles
     setVerses([]);
     loadedChaptersRef.current.clear();
     setCurrentChapter(1);
@@ -158,13 +174,13 @@ export default function CoreReading({
   useEffect(() => {
     if (!navigationTarget) return;
 
-    const newBook = navigationTarget.book; // FIXED: read book from navigationTarget
+    const newBook = navigationTarget.book;
 
-    setBook(newBook); // FIXED: update book state
+    setBook(newBook);
     setVerses([]);
     loadedChaptersRef.current.clear();
     setCurrentChapter(navigationTarget.chapter);
-    appendChapter(navigationTarget.chapter, newBook); // FIXED: pass book explicitly to avoid stale closure
+    appendChapter(navigationTarget.chapter, newBook);
 
     onNavigationComplete?.();
   }, [navigationTarget]);
@@ -181,7 +197,6 @@ export default function CoreReading({
       const delta = scrollTop - lastScrollTop.current;
       lastScrollTop.current = scrollTop;
 
-      // Nav offset calculation
       const DAMPING = 0.35;
       let next = navOffsetRef.current + delta * DAMPING;
       next = Math.max(0, Math.min(60, next));
@@ -196,14 +211,12 @@ export default function CoreReading({
 
       onScrollProgress?.(navOffsetRef.current / 60);
 
-      // Load next chapter when near bottom
       const nearBottom = scrollTop + clientHeight >= scrollHeight - 120;
       if (nearBottom && !loading) {
         appendChapter(currentChapter + 1);
         setCurrentChapter((c) => c + 1);
       }
 
-      // Update reading context based on visible verse
       const verseNodes = el.querySelectorAll("[data-chapter]");
       for (const node of verseNodes) {
         const rect = node.getBoundingClientRect();
@@ -236,16 +249,7 @@ export default function CoreReading({
             return (
               <div
                 key={`divider-${v.chapter}`}
-                className="
-                  my-16
-                  text-center
-                  tracking-wide
-                  opacity-85
-                  text-[var(--text-accent)]
-                  font-[var(--font-ui)]
-                  font-semibold
-                  !text-[26px]
-                "
+                className="my-16 text-center tracking-wide opacity-85 text-[var(--text-accent)] font-[var(--font-ui)] font-semibold !text-[26px]"
               >
                 {getBookDisplayName(book)} {v.chapter}
               </div>
@@ -259,17 +263,7 @@ export default function CoreReading({
                 className="my-12 flex flex-col items-center"
               >
                 <div className="w-24 h-px mb-4 bg-[var(--text-accent)] opacity-20" />
-                <div
-                  className="
-                    text-center
-                    font-[var(--font-ui)]
-                    text-[15px]
-                    font-semibold
-                    tracking-wide
-                    text-[var(--text-secondary)]
-                    opacity-80
-                  "
-                >
+                <div className="text-center font-[var(--font-ui)] text-[15px] font-semibold tracking-wide text-[var(--text-secondary)] opacity-80">
                   {v.text}
                 </div>
                 <div className="w-24 h-px mt-4 bg-[var(--text-accent)] opacity-20" />
@@ -279,21 +273,15 @@ export default function CoreReading({
 
           return (
             <div key={`${v.chapter}-${v.verse}-${idx}`}>
+              {v.sectionTitle && <SectionTitle title={v.sectionTitle} />}
               <p
                 data-chapter={v.chapter}
                 className={`mb-6 leading-[var(--line-height)] font-[var(--font-body)] ${v.speaker === "Jesus" ? "jesus" : "text-[var(--text-primary)]"}`}
                 style={{ fontSize: `${textSize}rem` }}
               >
-                {/* Hide verse numbers in chapterless mode */}
                 {!chapterlessMode && (
                   <sup
-                    className="
-                      mr-2
-                      select-none
-                      text-[var(--text-accent)]
-                      opacity-[var(--verse-opacity)]
-                      font-[var(--font-verse)]
-                    "
+                    className="mr-2 select-none text-[var(--text-accent)] opacity-[var(--verse-opacity)] font-[var(--font-verse)]"
                     style={{ fontSize: `${textSize * 0.75}rem` }}
                   >
                     {v.verse}
@@ -311,17 +299,7 @@ export default function CoreReading({
                       loadChapterSummary(v.chapter);
                       setReflectionOpen(true);
                     }}
-                    className="
-                      inline-flex
-                      items-center
-                      gap-2
-                      text-sm
-                      font-[var(--font-ui)]
-                      tracking-wide
-                      text-[var(--text-secondary)]
-                      hover:opacity-100
-                      transition-opacity
-                    "
+                    className="inline-flex items-center gap-2 text-sm font-[var(--font-ui)] tracking-wide text-[var(--text-secondary)] hover:opacity-100 transition-opacity"
                     aria-label="Open chapter reflection"
                   >
                     Reflect on this chapter

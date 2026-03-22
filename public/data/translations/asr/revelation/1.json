@@ -2,6 +2,11 @@
   "chapter": 1,
   "book": "Revelation",
   "translation": "ASR",
+  "sections": [
+    { "title": "Prologue", "startVerse": 1 },
+    { "title": "John's Vision of Christ", "startVerse": 9 },
+    { "title": "The Risen Christ Speaks", "startVerse": 18 }
+  ],
   "verses": {
     "1": "This is the revelation of Jesus Christ, which God gave Him to show His servants what must soon take place. He made it known by sending His angel to His servant John,",
     "2": "who testifies to everything he saw. This is the word of God and the testimony of Jesus Christ.",

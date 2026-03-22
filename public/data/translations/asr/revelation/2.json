@@ -2,6 +2,12 @@
   "chapter": 2,
   "book": "Revelation",
   "translation": "ASR",
+  "sections": [
+    { "title": "To the Church in Ephesus", "startVerse": 1 },
+    { "title": "To the Church in Smyrna", "startVerse": 8 },
+    { "title": "To the Church in Pergamum", "startVerse": 12 },
+    { "title": "To the Church in Thyatira", "startVerse": 18 }
+  ],
   "verses": {
     "1": { "text": "\"To the angel of the church in Ephesus write: These are the words of Him who holds the seven stars in His right hand and walks among the seven golden lampstands.", "speaker": "Jesus" },
     "2": { "text": "I know your deeds, your labor, and your perseverance. I know that you cannot tolerate those who are evil, and you have tested and exposed as liars those who falsely claim to be apostles.", "speaker": "Jesus" },

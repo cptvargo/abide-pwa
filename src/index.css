@@ -113,7 +113,7 @@ body {
   --paragraph-spacing: 1.5rem;
   --verse-opacity: 0.85;
   --verse-size: 0.75em;
-  --christ-accent: #b8924a;
+  --christ-accent: #e8c97a;
 }
 
 [data-theme="stone-fire"] {
@@ -157,7 +157,7 @@ body {
   --verse-opacity: 0.75;
   --verse-size: 0.75em;
   --highlight-bg: rgba(126, 208, 216, 0.18);
-  --christ-accent: #4a7fa5;
+  --christ-accent: #a8d4e0;
 }
 
 [data-theme="olive-parchment"] {
@@ -179,7 +179,7 @@ body {
   --verse-opacity: 0.7;
   --verse-size: 0.7em;
   --highlight-bg: rgba(214, 200, 159, 0.18);
-  --christ-accent: #7a5c2e;
+  --christ-accent: #c49a3c;
 }
 
 /* ========================================
@@ -224,7 +224,7 @@ body {
   --accent-rgb: 139,107,70;
 
   /* Voice of Christ */
-  --christ-accent: #8b3a2f;
+  --christ-accent: #7a2318;
 }
 
 /* Extra specificity for parchment theme footer */
@@ -570,7 +570,10 @@ body {
    ============================================================ */
 
 .jesus {
-  color: var(--christ-accent);
-  line-height: calc(var(--line-height) + 0.05);
-  letter-spacing: 0.01em;
+  color: var(--christ-accent) !important;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.08em;
+  font-weight: 500;
+  line-height: calc(var(--line-height) + 0.15);
+  letter-spacing: 0.02em;
 }
