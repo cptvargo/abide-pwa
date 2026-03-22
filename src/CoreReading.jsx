@@ -28,6 +28,13 @@ export default function CoreReading({
 
   const loadedChaptersRef = useRef(new Set());
 
+  // ── Safe text extractor ──
+  const safeText = (val) => {
+    if (typeof val === "string") return val;
+    if (val && typeof val === "object") return val.text ?? "";
+    return "";
+  };
+
   /* ===============================
      Chapter Reflection State
   ================================ */
@@ -74,10 +81,10 @@ export default function CoreReading({
         chapter: chapterNumber,
       }));
     } else if (typeof versesData === "object" && versesData !== null) {
-      verseItems = Object.entries(versesData).map(([verse, text]) => ({
+      verseItems = Object.entries(versesData).map(([verse, val]) => ({
         verse: Number(verse),
-        text,
-        chapter: chapterNumber,
+        text: typeof val === "object" ? val.text : val,
+        speaker: typeof val === "object" ? (val.speaker ?? null) : null,
       }));
     }
 
@@ -274,12 +281,7 @@ export default function CoreReading({
             <div key={`${v.chapter}-${v.verse}-${idx}`}>
               <p
                 data-chapter={v.chapter}
-                className="
-                  mb-6
-                  leading-[var(--line-height)]
-                  text-[var(--text-primary)]
-                  font-[var(--font-body)]
-                "
+                className={`mb-6 leading-[var(--line-height)] font-[var(--font-body)] ${v.speaker === "Jesus" ? "jesus" : "text-[var(--text-primary)]"}`}
                 style={{ fontSize: `${textSize}rem` }}
               >
                 {/* Hide verse numbers in chapterless mode */}

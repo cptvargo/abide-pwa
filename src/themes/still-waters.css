@@ -35,4 +35,7 @@
 
   /* Highlight */
   --highlight-bg: rgba(126, 208, 216, 0.18);
+
+  /* Voice of Christ */
+  --christ-accent: #4a7fa5;
 }

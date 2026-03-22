@@ -63,6 +63,13 @@ export default function SwipeReading({
   const [currentChapter, setCurrentChapter] = useState(1);
   const [loading, setLoading] = useState(true);
 
+  // ── Safe text extractor ──
+  const safeText = (val) => {
+    if (typeof val === "string") return val;
+    if (val && typeof val === "object") return val.text ?? "";
+    return "";
+  };
+
   const [reflectionSummary, setReflectionSummary] = useState("");
 
   // Paragraph break data for chapterless mode
@@ -139,9 +146,10 @@ export default function SwipeReading({
         if (Array.isArray(versesData)) {
           verseItems = versesData;
         } else if (typeof versesData === "object" && versesData !== null) {
-          verseItems = Object.entries(versesData).map(([verse, text]) => ({
+          verseItems = Object.entries(versesData).map(([verse, val]) => ({
             verse: Number(verse),
-            text,
+            text: typeof val === "object" ? val.text : val,
+            speaker: typeof val === "object" ? (val.speaker ?? null) : null,
           }));
         }
 
@@ -616,7 +624,7 @@ export default function SwipeReading({
                   key={v.verse}
                   data-chapter={currentChapter}
                   onClick={() => handleVerseClick(v)}
-                  className="leading-[var(--line-height)] text-[var(--text-primary)] font-[var(--font-body)] cursor-pointer transition-all"
+                  className={`leading-[var(--line-height)] font-[var(--font-body)] cursor-pointer transition-all ${v.speaker === "Jesus" ? "jesus" : "text-[var(--text-primary)]"}`}
                   style={{
                     fontSize: `${textSize * 16}px`,
                     background: highlightColor || "transparent",
@@ -627,7 +635,6 @@ export default function SwipeReading({
                     padding:
                       isSelected || highlightColor ? "0.25rem 0.5rem" : "0",
                     margin: isSelected || highlightColor ? "0.25rem 0" : "0",
-                    color: "var(--text-primary)",
                     opacity: isSelected ? 0.8 : 1,
                   }}
                 >
@@ -639,7 +646,7 @@ export default function SwipeReading({
                       {v.verse}
                     </sup>
                   )}
-                  {v.text}
+                  {typeof v.text === "string" ? v.text : (v.text?.text ?? "")}
                 </p>
               );
             })}
@@ -650,7 +657,11 @@ export default function SwipeReading({
         {chapterlessMode && (
           <div style={{ marginTop: "48px" }}>
             {paragraphGroups.map((group, groupIdx) => {
-              const paragraphText = group.map((v) => v.text).join(" ");
+              const paragraphText = group
+                .map((v) =>
+                  typeof v.text === "string" ? v.text : (v.text?.text ?? ""),
+                )
+                .join(" ");
               const groupSelected = group.some((v) =>
                 selectedVerses.some((sv) => sv.verse === v.verse),
               );

@@ -29,4 +29,7 @@
   /* Verse styling */
   --verse-opacity: 0.85;
   --verse-size: 0.75em;
+
+  /* Voice of Christ */
+  --christ-accent: #b8924a;
 }
