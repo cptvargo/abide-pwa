@@ -4,6 +4,12 @@
  * Flow: Reading → Scripture (live from translation) → Reflection → Quiet Abiding
  * Fully theme-aware — zero hardcoded colors.
  * Data fetched from /data/devotionals/{series}/{dayXX}.json
+ *
+ * Strongholds series additions:
+ * - No abide tab (series has no abide field)
+ * - Reflection write box → saves to Dialoguing with God
+ * - keypoints rendering in teaching section
+ * - sectionTitle shown in eyebrow
  */
 
 import { useState, useEffect, useRef } from "react";
@@ -32,7 +38,30 @@ function markComplete(seriesId, day) {
   saveProgress(p);
 }
 
-// ── Translation priority (mirrors Seek) ──────────────────────────────────────
+// ── Dialoguing with God — save a devotional reflection entry ─────────────────
+function saveReflectionToDialogue({ seriesTitle, dayTitle, dayNum, text }) {
+  try {
+    const saved = localStorage.getItem("dialogues");
+    const dialogues = saved ? JSON.parse(saved) : [];
+    const newEntry = {
+      id: Date.now().toString(),
+      type: "devotional",
+      seriesTitle,
+      dayTitle,
+      dayNum,
+      reflection: `<p>${text.replace(/\n/g, "</p><p>")}</p>`,
+      text,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    localStorage.setItem("dialogues", JSON.stringify([newEntry, ...dialogues]));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// ── Translation priority ──────────────────────────────────────────────────────
 const TRANSLATION_PRIORITY_ADULT = ["asb", "asr", "wbt", "kjv"];
 const TRANSLATION_PRIORITY_KIDS = ["akt", "kjv"];
 
@@ -107,7 +136,6 @@ const BOOK_NAME_TO_ID = {
   revelation: "revelation",
 };
 
-// ── Parse a ref like "Philippians 2:5–8" or "John 5:19" ─────────────────────
 function parseRef(ref) {
   const normalized = ref.replace(/[–—]/g, "-").trim();
   const rangeMatch = normalized.match(/^(.+?)\s+(\d+):(\d+)-(\d+)$/);
@@ -135,12 +163,10 @@ function parseRef(ref) {
   return null;
 }
 
-// ── Fetch a passage from translation files ────────────────────────────────────
 async function fetchPassage(ref, priority = TRANSLATION_PRIORITY_ADULT) {
   const parsed = parseRef(ref);
   if (!parsed) return null;
   const { book, chapter, startVerse, endVerse } = parsed;
-
   for (const translation of priority) {
     try {
       const url = `/abide-pwa/data/translations/${translation}/${book}/${chapter}.json`;
@@ -148,19 +174,19 @@ async function fetchPassage(ref, priority = TRANSLATION_PRIORITY_ADULT) {
       if (!res.ok) continue;
       const data = await res.json();
       if (!data.verses) continue;
-
       const lines = [];
       for (let v = startVerse; v <= endVerse; v++) {
-        const text = data.verses?.[String(v)];
+        const verse = data.verses?.[String(v)];
+        if (!verse) break;
+        const text = typeof verse === "object" ? verse.text : verse;
         if (!text) break;
         lines.push(startVerse === endVerse ? text : `${v} ${text}`);
       }
-      if (lines.length > 0) {
+      if (lines.length > 0)
         return {
           text: lines.join(" "),
           translation: translation.toUpperCase(),
         };
-      }
     } catch {
       continue;
     }
@@ -168,11 +194,10 @@ async function fetchPassage(ref, priority = TRANSLATION_PRIORITY_ADULT) {
   return null;
 }
 
-// ── ScrollReader URL ──────────────────────────────────────────────────────────
 const SCROLLREADER_URL =
   "https://scrollreader.com/audiobook/humility-the-beauty-of-holiness/";
 
-// ── Series metadata (no day content — that lives in JSON files) ───────────────
+// ── Series metadata ───────────────────────────────────────────────────────────
 const SERIES_LIST = [
   {
     id: "beauty-of-holiness",
@@ -181,6 +206,7 @@ const SERIES_LIST = [
     author: "Andrew Murray",
     totalDays: 12,
     hasAudio: true,
+    hasAbide: true,
     description:
       "Humility is not weakness — it is the glory of the creature restored. Walk through twelve days with Andrew Murray as your guide, allowing Scripture and the Spirit to form in you the mind that was in Christ.",
   },
@@ -192,12 +218,93 @@ const SERIES_LIST = [
     authorNote: "Based on the writings of Andrew Murray",
     totalDays: 14,
     hasAudio: false,
+    hasAbide: true,
     description:
       "Based on Andrew Murray's classic work, these fourteen days invite kids into the simple, beautiful truth that humility is the heart of following Jesus.",
   },
+  {
+    id: "strongholds",
+    title: "Strongholds",
+    subtitle: "A 25-Day Devotional on Walking in Freedom",
+    author: "ABIDE",
+    totalDays: 25,
+    hasAudio: false,
+    hasAbide: false,
+    description:
+      "Strongholds are not permanent — they are built on lies, and lies cannot stand in the presence of truth. Walk through six sections of biblical teaching on what strongholds are, how open doors make way for them, the types you may be facing, how to identify them, how to tear them down, and how to walk in lasting freedom.",
+  },
 ];
 
-// ── Fetch a single day JSON file ──────────────────────────────────────────────
+// ── Day titles by series ──────────────────────────────────────────────────────
+const DAY_TITLES = {
+  "beauty-of-holiness": [
+    "The Glory of the Creature",
+    "The Secret of Redemption",
+    "Humility in the Life of Jesus",
+    "Humility in the Teaching of Jesus",
+    "Humility in the Disciples",
+    "Humility in Daily Life",
+    "Humility and Holiness",
+    "Humility and Sin",
+    "Humility and Faith",
+    "Humility and Death to Self",
+    "Humility and Happiness",
+    "The Beauty of Holiness",
+  ],
+  "from-the-inside-out": [
+    "The Two Sons",
+    "What God Sees in the Heart",
+    "Learning Through Obedience",
+    "Jesus Shows Us True Humility",
+    "The Grumbling Heart",
+    "Choosing What Is Right",
+    "A New Heart",
+    "Jesus Came to Serve",
+    "Learning to Be Last",
+    "The Quiet Work of God",
+    "Letting Go of Pride",
+    "The Beauty of Holiness",
+    "Walking Like Jesus",
+    "A Heart That Abides",
+  ],
+  strongholds: [
+    "If You Are Spiritually Bound, You're Not Living the Christian Life",
+    "Realize the Power Within You",
+    "You Are Created to Live in Freedom",
+    "Know Your Weapons",
+    "Don't Be Deceived",
+    "Uncover the Lie, Illuminate the Darkness",
+    "How Open Doors Make Way for Strongholds",
+    "Understand How Open Doors Work",
+    "Beware of These Two Extremes",
+    "Know the Open Doors — Your Connections and What You Let In",
+    "Your State of Being and What You Consume",
+    "Walking in Victory",
+    "Understanding the Three Major Types of Strongholds",
+    "Type One — Accusation",
+    "Type Two — Fear",
+    "Type Three — Depression",
+    "Identifying Strongholds Is a Major Step Toward Freedom",
+    "Identify the Lie, Walk in the Truth",
+    "You Have the Authority to Tear Down Every Stronghold",
+    "Rebuke the Enemy",
+    "Resist the Enemy — Put On the Full Armor of God",
+    "The Battle Plan",
+    "Freedom Is the Right of Every Believer",
+    "How to Stay Free in God's Light",
+    "Embrace It, Live It, Walk Boldly",
+  ],
+};
+
+const SERIES_END_MESSAGES = {
+  "beauty-of-holiness":
+    "You have walked through all twelve days. This is not an ending — it is a beginning. Keep beholding Him.",
+  "from-the-inside-out":
+    "You have walked through all fourteen days. This is not an ending — it is a beginning. Keep staying close to Jesus.",
+  strongholds:
+    "You have walked through all twenty-five days. The strongholds have been named, the doors identified, the weapons placed in your hands. Now walk in it — boldly, as a child of the light.",
+};
+
 async function fetchDay(seriesId, dayNum) {
   const padded = String(dayNum).padStart(2, "0");
   const res = await fetch(
@@ -207,13 +314,10 @@ async function fetchDay(seriesId, dayNum) {
   return res.json();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-
-// ── ReflectionIcon — sacred SVG icons for kids reflection choices ─────────────
+// ── ReflectionIcon ────────────────────────────────────────────────────────────
 function ReflectionIcon({ icon, active }) {
   const color = active ? "var(--text-accent)" : "var(--text-secondary)";
   const icons = {
-    // Day 1
     broken_promise: (
       <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
         <path
@@ -286,18 +390,6 @@ function ReflectionIcon({ icon, active }) {
           strokeLinecap="round"
         />
         <path
-          d="M5.5 7.5 L4 6"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M20.5 18.5 L22 20"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
           d="M3 13 L5 13"
           stroke={color}
           strokeWidth="1.5"
@@ -311,834 +403,6 @@ function ReflectionIcon({ icon, active }) {
         />
       </svg>
     ),
-    // Day 2
-    mask: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M4 10 Q4 6 13 6 Q22 6 22 10 L22 14 Q22 20 13 20 Q4 20 4 14 Z"
-          stroke={color}
-          strokeWidth="1.5"
-        />
-        <path
-          d="M9 12 Q10 11 11 12"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M15 12 Q16 11 17 12"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M9 16 Q13 19 17 16"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    hide: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle cx="13" cy="10" r="4" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M5 20 Q5 15 13 15 Q21 15 21 20"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M18 5 L22 3 M18 7 L23 7"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    heart_search: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M13 20 L5 13 Q2 9 6 6 Q9 4 13 8 Q17 4 20 6 Q24 9 21 13 Z"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <circle cx="13" cy="13" r="2.5" stroke={color} strokeWidth="1.2" />
-      </svg>
-    ),
-    // Day 3
-    ear_closed: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M8 10 Q8 5 13 5 Q18 5 18 10 Q18 14 15 16 L15 19 Q15 21 13 21 Q11 21 11 19 L11 16"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M11 13 Q12 14 13 13"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M3 3 L23 23"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    argue: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M3 6 Q3 4 5 4 L14 4 Q16 4 16 6 L16 11 Q16 13 14 13 L10 13 L7 16 L7 13 L5 13 Q3 13 3 11 Z"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M10 19 Q10 17 12 17 L21 17 Q23 17 23 19 L23 22 Q23 24 21 24 L19 24 L19 26 L16 24 L12 24 Q10 24 10 22 Z"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    slow: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle cx="13" cy="13" r="9" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M13 7 L13 13 L17 16"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M18 5 L22 3"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    // Day 4
-    own_way: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M13 3 L13 17"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M10 6 L13 3 L16 6"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M6 21 Q6 18 9 17 L13 17 L17 17 Q20 18 20 21"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    hard_path: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M4 20 L8 14 L12 17 L16 10 L20 13 L24 7"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <circle cx="24" cy="7" r="2" fill={color} />
-      </svg>
-    ),
-    trust: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M13 3 L15 8 L21 8 L16 12 L18 18 L13 14 L8 18 L10 12 L5 8 L11 8 Z"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    // Day 5
-    grumble: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle cx="13" cy="11" r="7" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M10 13 Q13 11 16 13"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M10 9 L10 9"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M16 9 L16 9"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M13 18 L11 23 M13 18 L15 23"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M3 6 L5 4 M23 6 L21 4"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    quiet_rebel: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle cx="13" cy="11" r="7" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M10 13 Q13 15 16 13"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M10 9 L10 9"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M16 9 L16 9"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M8 3 Q13 0 18 3"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeDasharray="2 2"
-        />
-      </svg>
-    ),
-    grateful: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle cx="13" cy="11" r="7" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M9 11 L12 14 L17 8"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M13 18 L13 22"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M9 22 L17 22"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    // Day 6
-    decide_early: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle cx="13" cy="13" r="9" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M13 7 L13 13 L16 10"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M8 20 L10 17"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    peer: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle cx="8" cy="8" r="3" stroke={color} strokeWidth="1.5" />
-        <circle cx="18" cy="8" r="3" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M3 19 Q3 15 8 15 Q13 15 13 19"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M13 19 Q13 15 18 15 Q23 15 23 19"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M11 12 L15 12"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeDasharray="2 2"
-        />
-      </svg>
-    ),
-    alone: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle cx="13" cy="8" r="4" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M6 22 Q6 17 13 17 Q20 17 20 22"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M20 4 L22 3 M20 7 L23 7 M20 10 L22 11"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    // Day 7
-    try_harder: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M13 4 Q19 4 21 9 Q23 14 19 18 Q15 22 9 20 Q4 18 4 13 Q4 8 8 6"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M10 3 L13 4 L10 7"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M13 10 L13 14 L16 14"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    ask_help: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M5 13 L13 5 L21 13 L18 13 L18 21 L8 21 L8 13 Z"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M10 17 L10 13 L13 13 L13 17"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M21 3 L25 3 M23 1 L23 5"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    small_change: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M4 18 Q7 10 13 8 Q19 6 22 10"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M19 7 L22 10 L19 13"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <circle cx="13" cy="8" r="2" fill={color} />
-      </svg>
-    ),
-    // Day 8
-    help_others: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M13 4 Q17 4 19 7 L22 12 L19 12 Q19 17 13 19 Q7 17 7 12 L4 12 L7 7 Q9 4 13 4 Z"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M10 12 L12 14 L16 10"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    let_go: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M13 5 L16 8 L13 11 M16 8 L8 8 Q5 8 5 12 L5 16 Q5 20 9 20 L17 20 Q21 20 21 16 L21 12"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    serve_quietly: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M5 15 Q5 11 9 11 L17 11 Q21 11 21 15"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M3 15 L23 15"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M13 5 Q16 5 17 8 Q18 11 13 11 Q8 11 9 8 Q10 5 13 5 Z"
-          stroke={color}
-          strokeWidth="1.5"
-        />
-        <path
-          d="M8 19 L8 22 M18 19 L18 22"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    // Day 9
-    want_noticed: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle cx="13" cy="10" r="5" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M13 3 L13 1 M13 19 L13 21 M5 10 L3 10 M21 10 L23 10 M7 4 L5.5 2.5 M19 4 L20.5 2.5"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    compare: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <rect
-          x="3"
-          y="14"
-          width="8"
-          height="9"
-          rx="1"
-          stroke={color}
-          strokeWidth="1.5"
-        />
-        <rect
-          x="15"
-          y="8"
-          width="8"
-          height="15"
-          rx="1"
-          stroke={color}
-          strokeWidth="1.5"
-        />
-        <path
-          d="M7 14 L7 10 M19 8 L19 4"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeDasharray="2 2"
-        />
-        <path
-          d="M7 10 L19 4"
-          stroke={color}
-          strokeWidth="1.2"
-          strokeLinecap="round"
-          strokeDasharray="2 2"
-        />
-      </svg>
-    ),
-    stepped_back: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M16 5 L10 13 L16 21"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M22 13 L10 13"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M4 7 L4 19"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    // Day 10
-    quiet_moment: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M13 3 Q19 3 22 8 Q25 13 22 18 Q19 23 13 23 Q7 23 4 18 Q1 13 4 8 Q7 3 13 3 Z"
-          stroke={color}
-          strokeWidth="1.5"
-        />
-        <path
-          d="M13 8 L13 13"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <circle cx="13" cy="16" r="1" fill={color} />
-      </svg>
-    ),
-    admit_wrong: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M6 13 Q6 7 13 7 Q20 7 20 13 Q20 19 13 19 Q10 19 8 17"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M5 10 L6 13 L9 12"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M10 13 L12 15 L16 10"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    chose_kind: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M13 20 L5 12 Q2 8 6 5 Q9 3 13 7 Q17 3 20 5 Q24 8 21 12 Z"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M10 12 L12 14 L16 10"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    // Day 11
-    was_wrong: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M4 6 Q4 4 6 4 L20 4 Q22 4 22 6 L22 14 Q22 16 20 16 L15 16 L13 20 L11 16 L6 16 Q4 16 4 14 Z"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M9 10 L17 10"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M9 13 L14 13"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    need_help: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M13 4 L13 16 M8 21 L13 16 L18 21"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M5 21 L21 21"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    sorry: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle cx="13" cy="10" r="6" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M10 9 Q10 7.5 12 7.5 Q14 7.5 14 9 Q14 10.5 13 11"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <circle cx="13" cy="13" r="1" fill={color} />
-        <path
-          d="M10 17 Q10 15 13 15 Q16 15 16 17 L16 22 L10 22 Z"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    // Day 12
-    gentle: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M8 16 Q6 12 8 9 Q10 6 13 6 Q16 6 18 9 Q20 12 18 16 Q16 19 13 20 Q10 19 8 16 Z"
-          stroke={color}
-          strokeWidth="1.5"
-        />
-        <path
-          d="M13 6 L13 3"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M9 8 L7 6 M17 8 L19 6"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M10 13 Q13 16 16 13"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    forgive: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M13 19 L5 12 Q2 8 6 5 Q9 3 13 7 Q17 3 20 5 Q24 8 21 12 Z"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M9 13 L13 10 M17 13 L13 10"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    servant: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M5 15 Q5 11 9 11 L17 11 Q21 11 21 15"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M3 15 L23 15"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <circle cx="13" cy="7" r="3" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M8 19 L8 22 M18 19 L18 22"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    // Day 13
-    copy_jesus: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle cx="13" cy="7" r="3" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M13 10 L13 18"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M9 13 L17 13"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M10 18 L13 22 L16 18"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    follow_close: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle cx="8" cy="10" r="3" stroke={color} strokeWidth="1.5" />
-        <circle cx="18" cy="10" r="3" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M5 20 Q5 16 8 16"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M15 16 Q18 16 21 20"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M8 16 Q13 14 18 16"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeDasharray="2 2"
-        />
-      </svg>
-    ),
-    keep_going: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M4 20 L10 12 L14 16 L18 9 L22 12"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M19 6 L22 12"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M22 6 L22 12 L16 12"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    // Day 14
-    connected: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M13 3 L13 23"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M13 7 Q17 7 19 10 Q21 13 19 16 Q17 19 13 19"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M13 9 Q16 9 17 12 Q18 14 16 16 Q15 17 13 17"
-          stroke={color}
-          strokeWidth="1"
-          strokeLinecap="round"
-          opacity="0.6"
-        />
-      </svg>
-    ),
-    drifted: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <path
-          d="M4 18 Q8 8 13 8"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeDasharray="2 3"
-        />
-        <path
-          d="M13 8 Q18 8 22 18"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <circle cx="13" cy="8" r="2.5" stroke={color} strokeWidth="1.5" />
-        <path
-          d="M9 22 L17 22"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-    not_sure: (
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <circle
-          cx="13"
-          cy="13"
-          r="9"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeDasharray="3 2"
-        />
-        <path
-          d="M10 10 Q10 7.5 13 7.5 Q16 7.5 16 10 Q16 12.5 13 13.5 L13 15"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <circle cx="13" cy="17.5" r="1" fill={color} />
-      </svg>
-    ),
-    // Shared fallback
     still_figuring: (
       <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
         <circle cx="13" cy="13" r="9" stroke={color} strokeWidth="1.5" />
@@ -1155,7 +419,218 @@ function ReflectionIcon({ icon, active }) {
   return icons[icon] || null;
 }
 
-// ── KidsReflection — interactive scenario-based reflection with AI follow-up ──
+// ── StrongholdsReflection — write box + Dialoguing with God bridge ────────────
+function StrongholdsReflection({ day, seriesTitle, alreadyDone, onComplete }) {
+  const [text, setText] = useState("");
+  const [saved, setSaved] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSave() {
+    if (!text.trim()) return;
+    const success = saveReflectionToDialogue({
+      seriesTitle,
+      dayTitle: day.title,
+      dayNum: day.day,
+      text: text.trim(),
+    });
+    if (success) {
+      setSaved(true);
+      setSubmitted(true);
+    }
+  }
+
+  function handleContinue() {
+    setSubmitted(true);
+    if (!alreadyDone) onComplete();
+  }
+
+  return (
+    <div>
+      <div
+        style={{
+          padding: "18px 20px",
+          marginBottom: 20,
+          background: "var(--accent-subtle)",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: 12,
+        }}
+      >
+        <p
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: 15,
+            lineHeight: 1.75,
+            color: "var(--text-primary)",
+            opacity: 0.88,
+            margin: 0,
+            fontStyle: "italic",
+          }}
+        >
+          {day.reflection}
+        </p>
+      </div>
+
+      {!submitted && (
+        <>
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 10,
+              letterSpacing: "0.1em",
+              color: "var(--text-accent)",
+              opacity: 0.5,
+              margin: "0 0 8px",
+            }}
+          >
+            WRITE YOUR REFLECTION (OPTIONAL)
+          </p>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Take a moment to respond..."
+            style={{
+              width: "100%",
+              minHeight: 120,
+              fontFamily: "var(--font-body)",
+              fontSize: 15,
+              lineHeight: 1.7,
+              color: "var(--text-primary)",
+              background: "var(--accent-subtle)",
+              border: "1px solid var(--border-subtle)",
+              borderRadius: 12,
+              padding: "14px 16px",
+              resize: "none",
+              boxSizing: "border-box",
+              outline: "none",
+              WebkitTapHighlightColor: "transparent",
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = "var(--text-accent)";
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = "var(--border-subtle)";
+            }}
+          />
+          <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+            <button
+              onClick={handleSave}
+              disabled={!text.trim()}
+              style={{
+                flex: 1,
+                padding: "13px 0",
+                textAlign: "center",
+                background: text.trim()
+                  ? "var(--accent-subtle-strong)"
+                  : "var(--accent-subtle)",
+                border: `1px solid ${text.trim() ? "var(--accent-border-strong)" : "var(--border-subtle)"}`,
+                borderRadius: 12,
+                fontFamily: "var(--font-ui)",
+                fontSize: 11,
+                letterSpacing: "0.06em",
+                color: "var(--text-accent)",
+                opacity: text.trim() ? 1 : 0.4,
+                cursor: text.trim() ? "pointer" : "default",
+                transition: "all 0.18s ease",
+                WebkitTapHighlightColor: "transparent",
+              }}
+            >
+              Save to Dialoguing with God
+            </button>
+            <button
+              onClick={handleContinue}
+              style={{
+                flex: 1,
+                padding: "13px 0",
+                textAlign: "center",
+                background: "var(--accent-subtle)",
+                border: "1px solid var(--border-subtle)",
+                borderRadius: 12,
+                fontFamily: "var(--font-ui)",
+                fontSize: 11,
+                letterSpacing: "0.06em",
+                color: "var(--text-accent)",
+                opacity: 0.7,
+                cursor: "pointer",
+                WebkitTapHighlightColor: "transparent",
+              }}
+            >
+              Continue
+            </button>
+          </div>
+        </>
+      )}
+
+      {saved && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: 10,
+            padding: "14px 16px",
+            marginTop: 12,
+            background: "var(--accent-subtle)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: 12,
+          }}
+        >
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              background: "var(--text-accent)",
+              marginTop: 5,
+              flexShrink: 0,
+              opacity: 0.7,
+            }}
+          />
+          <p
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 13,
+              color: "var(--text-secondary)",
+              lineHeight: 1.6,
+              margin: 0,
+            }}
+          >
+            Saved to{" "}
+            <span style={{ color: "var(--text-accent)", opacity: 0.9 }}>
+              Dialoguing with God
+            </span>{" "}
+            under <span style={{ fontStyle: "italic" }}>"{day.title}"</span> —
+            you can revisit it anytime.
+          </p>
+        </div>
+      )}
+
+      {submitted && !alreadyDone && (
+        <div style={{ marginTop: 20 }}>
+          <button
+            onClick={onComplete}
+            style={{
+              width: "100%",
+              padding: "14px 20px",
+              textAlign: "center",
+              background: "var(--accent-subtle-strong)",
+              border: "1px solid var(--accent-border-strong)",
+              borderRadius: 12,
+              fontFamily: "var(--font-ui)",
+              fontSize: 12,
+              letterSpacing: "0.06em",
+              color: "var(--text-accent)",
+              cursor: "pointer",
+              WebkitTapHighlightColor: "transparent",
+            }}
+          >
+            I have reflected — Mark Day {day.day} Complete
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── KidsReflection ────────────────────────────────────────────────────────────
 function KidsReflection({ day, alreadyDone, onComplete, onContinue }) {
   const [picked, setPicked] = useState(null);
   const [aiResponse, setAiResponse] = useState("");
@@ -1391,7 +866,6 @@ export default function DevotionalScreen({ onBack, theme }) {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [view, section]);
 
-  // Fetch scripture when entering scripture section
   useEffect(() => {
     if (section === "scripture" && activeDay?.scripture && !scriptureResult) {
       setLoadingScripture(true);
@@ -1432,7 +906,8 @@ export default function DevotionalScreen({ onBack, theme }) {
     markComplete(activeSeries.id, activeDay.day);
     setCompletedDays(getCompletedDays(activeSeries.id));
     setJustCompleted(true);
-    setSection("abiding");
+    // Only navigate to abiding for series that have it
+    if (activeSeries.hasAbide) setSection("abiding");
   }
 
   function isDayLocked(dayNum) {
@@ -1440,9 +915,7 @@ export default function DevotionalScreen({ onBack, theme }) {
     return !completedDays.includes(dayNum - 1);
   }
 
-  /* ══════════════════════════════════════════════════
-     LIBRARY
-  ══════════════════════════════════════════════════ */
+  /* ── LIBRARY ── */
   if (view === "library")
     return (
       <div style={s.screen}>
@@ -1476,7 +949,6 @@ export default function DevotionalScreen({ onBack, theme }) {
             <p style={s.pageSub}>Not completion — transformation.</p>
           </div>
         </div>
-
         <div
           ref={scrollRef}
           className="dv-scroll"
@@ -1589,14 +1061,13 @@ export default function DevotionalScreen({ onBack, theme }) {
       </div>
     );
 
-  /* ══════════════════════════════════════════════════
-     SERIES — Day list
-  ══════════════════════════════════════════════════ */
+  /* ── SERIES ── */
   if (view === "series") {
     const dayNums = Array.from(
       { length: activeSeries.totalDays },
       (_, i) => i + 1,
     );
+    const titles = DAY_TITLES[activeSeries.id] || [];
     return (
       <div style={s.screen}>
         <style>{dynamicCSS}</style>
@@ -1629,7 +1100,6 @@ export default function DevotionalScreen({ onBack, theme }) {
             <p style={s.pageSub}>{activeSeries.subtitle}</p>
           </div>
         </div>
-
         <div
           ref={scrollRef}
           className="dv-scroll"
@@ -1723,37 +1193,7 @@ export default function DevotionalScreen({ onBack, theme }) {
                       letterSpacing: "0.01em",
                     }}
                   >
-                    {activeSeries.id === "beauty-of-holiness"
-                      ? [
-                          "The Glory of the Creature",
-                          "The Secret of Redemption",
-                          "Humility in the Life of Jesus",
-                          "Humility in the Teaching of Jesus",
-                          "Humility in the Disciples",
-                          "Humility in Daily Life",
-                          "Humility and Holiness",
-                          "Humility and Sin",
-                          "Humility and Faith",
-                          "Humility and Death to Self",
-                          "Humility and Happiness",
-                          "The Beauty of Holiness",
-                        ][dayNum - 1]
-                      : [
-                          "The Two Sons",
-                          "What God Sees in the Heart",
-                          "Learning Through Obedience",
-                          "Jesus Shows Us True Humility",
-                          "The Grumbling Heart",
-                          "Choosing What Is Right",
-                          "A New Heart",
-                          "Jesus Came to Serve",
-                          "Learning to Be Last",
-                          "The Quiet Work of God",
-                          "Letting Go of Pride",
-                          "The Beauty of Holiness",
-                          "Walking Like Jesus",
-                          "A Heart That Abides",
-                        ][dayNum - 1]}
+                    {titles[dayNum - 1] || `Day ${dayNum}`}
                   </div>
                 </div>
                 {!locked && (
@@ -1775,236 +1215,31 @@ export default function DevotionalScreen({ onBack, theme }) {
     );
   }
 
-  /* ══════════════════════════════════════════════════
-     DAY VIEW
-  ══════════════════════════════════════════════════ */
+  /* ── DAY VIEW ── */
   if (view === "day" && activeDay) {
     const day = activeDay;
     const isLastDay = day.day === activeSeries.totalDays;
     const alreadyDone = completedDays.includes(day.day);
+    const isStrongholds = activeSeries.id === "strongholds";
 
-    const tabs = [
-      { id: "intro", label: "Intro" },
-      { id: "reading", label: "Reading" },
-      { id: "scripture", label: "Scripture" },
-      { id: "reflection", label: "Reflection" },
-      { id: "abiding", label: "Abide" },
-    ];
-
-    // ── Listen / Read choice screen — disabled until audio hosting is ready ──
-    if (false && showChoice && activeSeries.hasAudio)
-      return (
-        <div style={s.screen}>
-          <style>{dynamicCSS}</style>
-          <div style={s.header}>
-            <button onClick={() => setView("series")} style={s.backBtn}>
-              <span
-                style={{
-                  fontSize: 13,
-                  color: "var(--text-accent)",
-                  opacity: 0.7,
-                }}
-              >
-                ‹
-              </span>
-              <span
-                style={{
-                  fontSize: 12,
-                  letterSpacing: "0.04em",
-                  color: "var(--text-accent)",
-                  opacity: 0.7,
-                  fontFamily: "var(--font-ui)",
-                }}
-              >
-                {activeSeries.title}
-              </span>
-            </button>
-            <div style={{ marginTop: 16 }}>
-              <div style={s.eyebrow}>
-                Day {day.day} · {activeSeries.author}
-              </div>
-              <h1 style={{ ...s.pageTitle, fontSize: 22 }}>{day.title}</h1>
-            </div>
-          </div>
-
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "32px 28px",
-            }}
-          >
-            <div
-              style={{
-                fontFamily: "var(--font-ui)",
-                fontSize: 10,
-                letterSpacing: "0.2em",
-                color: "var(--text-accent)",
-                opacity: 0.35,
-                marginBottom: 28,
-              }}
-            >
-              ✦ &nbsp; HOW WOULD YOU LIKE TO ENGAGE TODAY? &nbsp; ✦
-            </div>
-
-            <button
-              onClick={() => {
-                window.open(SCROLLREADER_URL, "_blank");
-                setShowChoice(false);
-              }}
-              className="dv-card"
-              style={{
-                width: "100%",
-                textAlign: "left",
-                padding: "22px",
-                marginBottom: 14,
-                borderRadius: 16,
-                background: "var(--accent-subtle)",
-                border: "1px solid var(--border-subtle)",
-                cursor: "pointer",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <div
-                  style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 12,
-                    flexShrink: 0,
-                    background: "var(--accent-subtle-strong)",
-                    border: "1px solid var(--accent-border-strong)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 20,
-                  }}
-                >
-                  🎧
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-ui)",
-                      fontSize: 15,
-                      fontWeight: 500,
-                      color: "var(--text-primary)",
-                      marginBottom: 4,
-                    }}
-                  >
-                    Listen
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontStyle: "italic",
-                      fontSize: 13,
-                      color: "var(--text-secondary)",
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    Hear Murray read aloud on ScrollReader — then return here
-                    for reflection
-                  </div>
-                </div>
-              </div>
-              <div
-                style={{
-                  marginTop: 14,
-                  fontFamily: "var(--font-ui)",
-                  fontSize: 10,
-                  letterSpacing: "0.1em",
-                  color: "var(--text-accent)",
-                  opacity: 0.55,
-                }}
-              >
-                Opens scrollreader.com · Chapter {day.day} →
-              </div>
-            </button>
-
-            <button
-              onClick={() => setShowChoice(false)}
-              className="dv-card"
-              style={{
-                width: "100%",
-                textAlign: "left",
-                padding: "22px",
-                borderRadius: 16,
-                background: "var(--accent-subtle)",
-                border: "1px solid var(--border-subtle)",
-                cursor: "pointer",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <div
-                  style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 12,
-                    flexShrink: 0,
-                    background: "var(--accent-subtle-strong)",
-                    border: "1px solid var(--accent-border-strong)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 20,
-                  }}
-                >
-                  📖
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-ui)",
-                      fontSize: 15,
-                      fontWeight: 500,
-                      color: "var(--text-primary)",
-                      marginBottom: 4,
-                    }}
-                  >
-                    Read
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontStyle: "italic",
-                      fontSize: 13,
-                      color: "var(--text-secondary)",
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    Read Murray's chapter inside ABIDE at your own pace
-                  </div>
-                </div>
-              </div>
-            </button>
-
-            <p
-              style={{
-                fontFamily: "var(--font-body)",
-                fontStyle: "italic",
-                fontSize: 12,
-                color: "var(--text-secondary)",
-                opacity: 0.5,
-                textAlign: "center",
-                marginTop: 32,
-                lineHeight: 1.7,
-              }}
-            >
-              Either way, the reflection, Scripture, and prayer await you here
-              when you're ready.
-            </p>
-          </div>
-        </div>
-      );
+    const tabs = isStrongholds
+      ? [
+          { id: "intro", label: "Intro" },
+          { id: "reading", label: "Teaching" },
+          { id: "scripture", label: "Scripture" },
+          { id: "reflection", label: "Reflection" },
+        ]
+      : [
+          { id: "intro", label: "Intro" },
+          { id: "reading", label: "Reading" },
+          { id: "scripture", label: "Scripture" },
+          { id: "reflection", label: "Reflection" },
+          { id: "abiding", label: "Abide" },
+        ];
 
     return (
       <div style={s.screen}>
         <style>{dynamicCSS}</style>
-
-        {/* Sticky header + tabs */}
         <div style={{ ...s.header, paddingBottom: 0 }}>
           <button onClick={() => setView("series")} style={s.backBtn}>
             <span
@@ -2033,6 +1268,9 @@ export default function DevotionalScreen({ onBack, theme }) {
               Day {day.day}
               {activeSeries.author !== "ABIDE"
                 ? ` · ${activeSeries.author}`
+                : ""}
+              {isStrongholds && day.sectionTitle
+                ? ` · ${day.sectionTitle}`
                 : ""}
             </div>
             <h1 style={{ ...s.pageTitle, fontSize: 22 }}>{day.title}</h1>
@@ -2079,19 +1317,22 @@ export default function DevotionalScreen({ onBack, theme }) {
           </div>
         </div>
 
-        {/* Section content */}
         <div
           ref={scrollRef}
           className="dv-scroll"
           style={{ flex: 1, overflowY: "auto", padding: "28px 24px 60px" }}
         >
-          {/* ── INTRO ── */}
+          {/* INTRO */}
           {section === "intro" && (
             <div>
               <div style={s.sectionLabel}>
-                {activeSeries.hasAudio ? "Before You Read" : "Today's Word"}
+                {isStrongholds
+                  ? "Today's Word"
+                  : activeSeries.hasAudio
+                    ? "Before You Read"
+                    : "Today's Word"}
               </div>
-              {activeSeries.hasAudio && (
+              {activeSeries.hasAudio && !isStrongholds && (
                 <p
                   style={{
                     fontFamily: "var(--font-body)",
@@ -2106,7 +1347,7 @@ export default function DevotionalScreen({ onBack, theme }) {
                   your heart.
                 </p>
               )}
-              {(day.intro || day.reading).split("\n\n").map((para, i) => (
+              {(day.intro || "").split("\n\n").map((para, i) => (
                 <p key={i} style={s.prose}>
                   {para}
                 </p>
@@ -2116,18 +1357,73 @@ export default function DevotionalScreen({ onBack, theme }) {
                   onClick={() => setSection("reading")}
                   style={s.continueBtn}
                 >
-                  {activeSeries.hasAudio
-                    ? "Open Murray's Chapter →"
-                    : "Continue to Reading →"}
+                  {isStrongholds
+                    ? "Continue to Teaching →"
+                    : activeSeries.hasAudio
+                      ? "Open Murray's Chapter →"
+                      : "Continue to Reading →"}
                 </button>
               </div>
             </div>
           )}
 
-          {/* ── READING ── */}
+          {/* READING / TEACHING */}
           {section === "reading" && (
             <div>
-              {activeSeries.hasAudio || day.murrayReading ? (
+              {isStrongholds ? (
+                <>
+                  <div style={s.sectionLabel}>Teaching</div>
+                  {day.reading.split("\n\n").map((para, i) => (
+                    <p key={i} style={s.prose}>
+                      {para}
+                    </p>
+                  ))}
+                  {day.keypoints?.length > 0 && (
+                    <div style={{ marginTop: 8 }}>
+                      <div style={{ ...s.sectionLabel, marginBottom: 12 }}>
+                        Key Points
+                      </div>
+                      {day.keypoints.map((kp, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            padding: "14px 16px",
+                            marginBottom: 10,
+                            background: "var(--accent-subtle)",
+                            border: "1px solid var(--border-subtle)",
+                            borderRadius: 12,
+                          }}
+                        >
+                          <p
+                            style={{
+                              fontFamily: "var(--font-ui)",
+                              fontSize: 12,
+                              fontWeight: 500,
+                              color: "var(--text-accent)",
+                              opacity: 0.9,
+                              margin: "0 0 6px",
+                              letterSpacing: "0.01em",
+                            }}
+                          >
+                            {kp.heading}
+                          </p>
+                          <p
+                            style={{
+                              fontFamily: "var(--font-body)",
+                              fontSize: 14,
+                              lineHeight: 1.65,
+                              color: "var(--text-secondary)",
+                              margin: 0,
+                            }}
+                          >
+                            {kp.text}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : activeSeries.hasAudio || day.murrayReading ? (
                 <>
                   <div style={s.sectionLabel}>From Andrew Murray</div>
                   <div
@@ -2162,7 +1458,6 @@ export default function DevotionalScreen({ onBack, theme }) {
                         style={{
                           fontFamily: "var(--font-body)",
                           fontSize: 15,
-                          fontWeight: 400,
                           lineHeight: 1.95,
                           color: "var(--text-primary)",
                           opacity: 0.88,
@@ -2219,7 +1514,7 @@ export default function DevotionalScreen({ onBack, theme }) {
             </div>
           )}
 
-          {/* ── SCRIPTURE ── */}
+          {/* SCRIPTURE */}
           {section === "scripture" && (
             <div>
               <div style={s.sectionLabel}>Scripture Meditation</div>
@@ -2233,11 +1528,12 @@ export default function DevotionalScreen({ onBack, theme }) {
                   marginBottom: 24,
                 }}
               >
-                {activeSeries.hasAudio
-                  ? "Let this passage anchor what Murray has opened. Read slowly. More than once if needed."
-                  : "This is where it gets real. Read it slowly. Don't move on until it lands."}
+                {isStrongholds
+                  ? "Let this passage anchor what you have read. Sit with it before moving on."
+                  : activeSeries.hasAudio
+                    ? "Let this passage anchor what Murray has opened. Read slowly. More than once if needed."
+                    : "This is where it gets real. Read it slowly. Don't move on until it lands."}
               </p>
-
               {loadingScripture ? (
                 <div
                   style={{
@@ -2351,7 +1647,6 @@ export default function DevotionalScreen({ onBack, theme }) {
                   )}
                 </div>
               )}
-
               <div style={{ marginTop: 32 }}>
                 <button
                   onClick={() => setSection("reflection")}
@@ -2363,13 +1658,18 @@ export default function DevotionalScreen({ onBack, theme }) {
             </div>
           )}
 
-          {/* ── REFLECTION ── */}
+          {/* REFLECTION */}
           {section === "reflection" && (
             <div>
               <div style={s.sectionLabel}>Heart Reflection</div>
-
-              {day.reflectionChoices ? (
-                /* ── KIDS: interactive scenario reflection ── */
+              {isStrongholds ? (
+                <StrongholdsReflection
+                  day={day}
+                  seriesTitle={activeSeries.title}
+                  alreadyDone={alreadyDone}
+                  onComplete={handleComplete}
+                />
+              ) : day.reflectionChoices ? (
                 <KidsReflection
                   day={day}
                   alreadyDone={alreadyDone}
@@ -2377,7 +1677,6 @@ export default function DevotionalScreen({ onBack, theme }) {
                   onContinue={() => setSection("abiding")}
                 />
               ) : (
-                /* ── ADULT: static question list ── */
                 <>
                   <p
                     style={{
@@ -2455,11 +1754,47 @@ export default function DevotionalScreen({ onBack, theme }) {
                   </div>
                 </>
               )}
+
+              {/* Strongholds post-complete navigation */}
+              {isStrongholds && justCompleted && !isLastDay && (
+                <div style={{ marginTop: 24 }}>
+                  <button
+                    onClick={() => openDay(day.day + 1, activeSeries)}
+                    style={s.continueBtn}
+                  >
+                    Continue to Day {day.day + 1} →
+                  </button>
+                </div>
+              )}
+              {isStrongholds && justCompleted && isLastDay && (
+                <div style={{ marginTop: 24 }}>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontStyle: "italic",
+                      fontSize: 14,
+                      color: "var(--text-secondary)",
+                      opacity: 0.6,
+                      lineHeight: 1.7,
+                      marginBottom: 16,
+                      textAlign: "center",
+                    }}
+                  >
+                    {SERIES_END_MESSAGES["strongholds"]}
+                  </p>
+                  <button
+                    onClick={() => setView("series")}
+                    style={s.continueBtn}
+                  >
+                    Return to Series
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
-          {/* ── QUIET ABIDING ── */}
-          {section === "abiding" && (
+          {/* QUIET ABIDING — Murray and Kids only */}
+          {section === "abiding" && !isStrongholds && (
             <div style={{ textAlign: "center", paddingTop: 20 }}>
               <div style={s.sectionLabel}>Quiet Abiding</div>
               {justCompleted && (
@@ -2532,7 +1867,6 @@ export default function DevotionalScreen({ onBack, theme }) {
               >
                 BE STILL AND KNOW
               </div>
-
               {!isLastDay && completedDays.includes(day.day) && (
                 <button
                   onClick={() => openDay(day.day + 1, activeSeries)}
@@ -2554,9 +1888,8 @@ export default function DevotionalScreen({ onBack, theme }) {
                       marginBottom: 24,
                     }}
                   >
-                    {activeSeries.id === "beauty-of-holiness"
-                      ? "You have walked through all twelve days. This is not an ending — it is a beginning. Keep beholding Him."
-                      : "You have walked through all fourteen days. This is not an ending — it is a beginning. Keep staying close to Jesus."}
+                    {SERIES_END_MESSAGES[activeSeries.id] ||
+                      "You have completed this series. Keep walking in what God has shown you."}
                   </p>
                   <button
                     onClick={() => setView("series")}
@@ -2576,7 +1909,6 @@ export default function DevotionalScreen({ onBack, theme }) {
   return null;
 }
 
-/* ── Shared style objects — all CSS variables, zero hardcoded colors ─────── */
 const s = {
   screen: {
     position: "fixed",

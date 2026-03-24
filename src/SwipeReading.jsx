@@ -1,6 +1,8 @@
 /**
  * SwipeReading.jsx — Single Chapter with Swipe Navigation (Kindle-style)
  * WITH Multi-Color Highlighting & Dialogue Bottom Sheet
+ * FIXED: NaN verse numbers — non-numeric keys filtered out
+ * FIXED: Psalm 119 style sectioned verses (sections[].verses) flattened correctly
  */
 
 import { useEffect, useState, useRef } from "react";
@@ -148,16 +150,57 @@ export default function SwipeReading({
         const chapterSections = chapterData?.sections ?? [];
         const versesData = chapterData?.verses ?? chapterData;
 
-        let verseItems = [];
-        if (Array.isArray(versesData)) {
-          verseItems = versesData;
-        } else if (typeof versesData === "object" && versesData !== null) {
-          verseItems = Object.entries(versesData).map(([verse, val]) => ({
-            verse: Number(verse),
-            text: typeof val === "object" ? val.text : val,
-            speaker: typeof val === "object" ? (val.speaker ?? null) : null,
-          }));
+        // ── Flatten Psalm 119-style sectioned verses ──
+        // Some chapters (e.g. Psalm 119 ASR) store verses nested inside
+        // sections[].verses rather than a top-level verses object.
+        let flatVersesData = versesData;
+        if (
+          !chapterData?.verses &&
+          chapterSections.length > 0 &&
+          chapterSections[0]?.verses
+        ) {
+          flatVersesData = chapterSections.reduce((acc, section) => {
+            return { ...acc, ...section.verses };
+          }, {});
         }
+
+        let verseItems = [];
+        if (Array.isArray(flatVersesData)) {
+          verseItems = flatVersesData.map((v) => ({
+            verse: v.verse,
+            text: safeText(v.text ?? v),
+            speaker: v.speaker ?? null,
+          }));
+        } else if (
+          typeof flatVersesData === "object" &&
+          flatVersesData !== null
+        ) {
+          verseItems = Object.entries(flatVersesData)
+            .filter(([verse]) => !isNaN(Number(verse)) && verse.trim() !== "")
+            .map(([verse, val]) => ({
+              verse: Number(verse),
+              text: safeText(val),
+              speaker: typeof val === "object" ? (val.speaker ?? null) : null,
+            }));
+        }
+
+        // ── Build section title lookup ──
+        // Works for both standard sections[] and Psalm 119-style sections[].verses
+        const sectionStartVerses = chapterSections.map((s) => {
+          if (s.startVerse != null)
+            return { startVerse: s.startVerse, title: s.title };
+          // Psalm 119 style — first key of section.verses
+          const firstKey = s.verses ? Number(Object.keys(s.verses)[0]) : null;
+          return { startVerse: firstKey, title: s.title };
+        });
+
+        // Tag each verse with its section title
+        verseItems = verseItems.map((v) => ({
+          ...v,
+          sectionTitle:
+            sectionStartVerses.find((s) => s.startVerse === v.verse)?.title ??
+            null,
+        }));
 
         setVerses(verseItems);
         setTitle(chapterTitle);
@@ -644,13 +687,11 @@ export default function SwipeReading({
                 (sv) => sv.verse === v.verse,
               );
               const highlightColor = getVerseHighlightColor(v.verse);
-              const sectionTitle = sections.find(
-                (s) => s.startVerse === v.verse,
-              );
+              const sectionTitle = v.sectionTitle;
 
               return (
                 <div key={v.verse}>
-                  {sectionTitle && <SectionTitle title={sectionTitle.title} />}
+                  {sectionTitle && <SectionTitle title={sectionTitle} />}
                   <p
                     data-chapter={currentChapter}
                     onClick={() => handleVerseClick(v)}
@@ -677,7 +718,7 @@ export default function SwipeReading({
                         {v.verse}
                       </sup>
                     )}
-                    {typeof v.text === "string" ? v.text : (v.text?.text ?? "")}
+                    {v.text}
                   </p>
                 </div>
               );
@@ -691,9 +732,7 @@ export default function SwipeReading({
             {paragraphGroups.map((group, groupIdx) => {
               const isSpeakerJesus = group.some((v) => v.speaker === "Jesus");
               const paragraphText = group
-                .map((v) =>
-                  typeof v.text === "string" ? v.text : (v.text?.text ?? ""),
-                )
+                .map((v) => safeText(v.text))
                 .join(" ");
               const groupSelected = group.some((v) =>
                 selectedVerses.some((sv) => sv.verse === v.verse),
@@ -703,13 +742,11 @@ export default function SwipeReading({
                 null,
               );
               const firstVerse = group[0]?.verse;
-              const sectionTitle = sections.find(
-                (s) => s.startVerse === firstVerse,
-              );
+              const sectionTitle = group[0]?.sectionTitle ?? null;
 
               return (
                 <div key={groupIdx}>
-                  {sectionTitle && <SectionTitle title={sectionTitle.title} />}
+                  {sectionTitle && <SectionTitle title={sectionTitle} />}
                   <p
                     onClick={() => {
                       if (group.length > 0) handleVerseClick(group[0]);

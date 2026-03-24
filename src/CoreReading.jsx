@@ -1,6 +1,8 @@
 /**
  * CoreReading.jsx — Continuous Scripture Scroll
  * FIXED: Chapterless mode now properly hides book titles, chapter titles, and verse numbers
+ * FIXED: NaN verse numbers — non-numeric keys filtered out
+ * FIXED: Psalm 119 style sectioned verses (sections[].verses) flattened correctly
  */
 
 import { useEffect, useState, useRef } from "react";
@@ -88,28 +90,54 @@ export default function CoreReading({
     const chapterSections = chapterData?.sections ?? [];
     const versesData = chapterData?.verses ?? chapterData;
 
-    let verseItems = [];
-
-    if (Array.isArray(versesData)) {
-      verseItems = versesData.map((v) => ({
-        verse: v.verse,
-        text: v.text,
-        chapter: chapterNumber,
-      }));
-    } else if (typeof versesData === "object" && versesData !== null) {
-      verseItems = Object.entries(versesData).map(([verse, val]) => ({
-        verse: Number(verse),
-        text: typeof val === "object" ? val.text : val,
-        speaker: typeof val === "object" ? (val.speaker ?? null) : null,
-        chapter: chapterNumber,
-      }));
+    // ── Flatten Psalm 119-style sectioned verses ──
+    // Some chapters (e.g. Psalm 119 ASR) store verses nested inside
+    // sections[].verses rather than a top-level verses object.
+    let flatVersesData = versesData;
+    if (
+      !chapterData?.verses &&
+      chapterSections.length > 0 &&
+      chapterSections[0]?.verses
+    ) {
+      flatVersesData = chapterSections.reduce((acc, section) => {
+        return { ...acc, ...section.verses };
+      }, {});
     }
 
-    // Tag each verse with its sections
+    let verseItems = [];
+
+    if (Array.isArray(flatVersesData)) {
+      verseItems = flatVersesData.map((v) => ({
+        verse: v.verse,
+        text: safeText(v.text ?? v),
+        chapter: chapterNumber,
+      }));
+    } else if (typeof flatVersesData === "object" && flatVersesData !== null) {
+      verseItems = Object.entries(flatVersesData)
+        .filter(([verse]) => !isNaN(Number(verse)) && verse.trim() !== "")
+        .map(([verse, val]) => ({
+          verse: Number(verse),
+          text: safeText(val),
+          speaker: typeof val === "object" ? (val.speaker ?? null) : null,
+          chapter: chapterNumber,
+        }));
+    }
+
+    // ── Build section title lookup ──
+    // Works for both standard sections[] and Psalm 119-style sections[].verses
+    const sectionStartVerses = chapterSections.map((s) => {
+      if (s.startVerse != null)
+        return { startVerse: s.startVerse, title: s.title };
+      // Psalm 119 style — first key of section.verses
+      const firstKey = s.verses ? Number(Object.keys(s.verses)[0]) : null;
+      return { startVerse: firstKey, title: s.title };
+    });
+
+    // Tag each verse with its section title
     verseItems = verseItems.map((v) => ({
       ...v,
       sectionTitle:
-        chapterSections.find((s) => s.startVerse === v.verse)?.title ?? null,
+        sectionStartVerses.find((s) => s.startVerse === v.verse)?.title ?? null,
     }));
 
     const newVerses = [];
