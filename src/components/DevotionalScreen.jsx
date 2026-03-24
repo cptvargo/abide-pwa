@@ -4,12 +4,6 @@
  * Flow: Reading → Scripture (live from translation) → Reflection → Quiet Abiding
  * Fully theme-aware — zero hardcoded colors.
  * Data fetched from /data/devotionals/{series}/{dayXX}.json
- *
- * Strongholds series additions:
- * - No abide tab (series has no abide field)
- * - Reflection write box → saves to Dialoguing with God
- * - keypoints rendering in teaching section
- * - sectionTitle shown in eyebrow
  */
 
 import { useState, useEffect, useRef } from "react";
@@ -38,30 +32,7 @@ function markComplete(seriesId, day) {
   saveProgress(p);
 }
 
-// ── Dialoguing with God — save a devotional reflection entry ─────────────────
-function saveReflectionToDialogue({ seriesTitle, dayTitle, dayNum, text }) {
-  try {
-    const saved = localStorage.getItem("dialogues");
-    const dialogues = saved ? JSON.parse(saved) : [];
-    const newEntry = {
-      id: Date.now().toString(),
-      type: "devotional",
-      seriesTitle,
-      dayTitle,
-      dayNum,
-      reflection: `<p>${text.replace(/\n/g, "</p><p>")}</p>`,
-      text,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    localStorage.setItem("dialogues", JSON.stringify([newEntry, ...dialogues]));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-// ── Translation priority ──────────────────────────────────────────────────────
+// ── Translation priority (mirrors Seek) ──────────────────────────────────────
 const TRANSLATION_PRIORITY_ADULT = ["asb", "asr", "wbt", "kjv"];
 const TRANSLATION_PRIORITY_KIDS = ["akt", "kjv"];
 
@@ -197,7 +168,7 @@ async function fetchPassage(ref, priority = TRANSLATION_PRIORITY_ADULT) {
 const SCROLLREADER_URL =
   "https://scrollreader.com/audiobook/humility-the-beauty-of-holiness/";
 
-// ── Series metadata ───────────────────────────────────────────────────────────
+// ── Series metadata (no day content — that lives in JSON files) ───────────────
 const SERIES_LIST = [
   {
     id: "beauty-of-holiness",
@@ -206,7 +177,6 @@ const SERIES_LIST = [
     author: "Andrew Murray",
     totalDays: 12,
     hasAudio: true,
-    hasAbide: true,
     description:
       "Humility is not weakness — it is the glory of the creature restored. Walk through twelve days with Andrew Murray as your guide, allowing Scripture and the Spirit to form in you the mind that was in Christ.",
   },
@@ -218,93 +188,12 @@ const SERIES_LIST = [
     authorNote: "Based on the writings of Andrew Murray",
     totalDays: 14,
     hasAudio: false,
-    hasAbide: true,
     description:
       "Based on Andrew Murray's classic work, these fourteen days invite kids into the simple, beautiful truth that humility is the heart of following Jesus.",
   },
-  {
-    id: "strongholds",
-    title: "Strongholds",
-    subtitle: "A 25-Day Devotional on Walking in Freedom",
-    author: "ABIDE",
-    totalDays: 25,
-    hasAudio: false,
-    hasAbide: false,
-    description:
-      "Strongholds are not permanent — they are built on lies, and lies cannot stand in the presence of truth. Walk through six sections of biblical teaching on what strongholds are, how open doors make way for them, the types you may be facing, how to identify them, how to tear them down, and how to walk in lasting freedom.",
-  },
 ];
 
-// ── Day titles by series ──────────────────────────────────────────────────────
-const DAY_TITLES = {
-  "beauty-of-holiness": [
-    "The Glory of the Creature",
-    "The Secret of Redemption",
-    "Humility in the Life of Jesus",
-    "Humility in the Teaching of Jesus",
-    "Humility in the Disciples",
-    "Humility in Daily Life",
-    "Humility and Holiness",
-    "Humility and Sin",
-    "Humility and Faith",
-    "Humility and Death to Self",
-    "Humility and Happiness",
-    "The Beauty of Holiness",
-  ],
-  "from-the-inside-out": [
-    "The Two Sons",
-    "What God Sees in the Heart",
-    "Learning Through Obedience",
-    "Jesus Shows Us True Humility",
-    "The Grumbling Heart",
-    "Choosing What Is Right",
-    "A New Heart",
-    "Jesus Came to Serve",
-    "Learning to Be Last",
-    "The Quiet Work of God",
-    "Letting Go of Pride",
-    "The Beauty of Holiness",
-    "Walking Like Jesus",
-    "A Heart That Abides",
-  ],
-  strongholds: [
-    "If You Are Spiritually Bound, You're Not Living the Christian Life",
-    "Realize the Power Within You",
-    "You Are Created to Live in Freedom",
-    "Know Your Weapons",
-    "Don't Be Deceived",
-    "Uncover the Lie, Illuminate the Darkness",
-    "How Open Doors Make Way for Strongholds",
-    "Understand How Open Doors Work",
-    "Beware of These Two Extremes",
-    "Know the Open Doors — Your Connections and What You Let In",
-    "Your State of Being and What You Consume",
-    "Walking in Victory",
-    "Understanding the Three Major Types of Strongholds",
-    "Type One — Accusation",
-    "Type Two — Fear",
-    "Type Three — Depression",
-    "Identifying Strongholds Is a Major Step Toward Freedom",
-    "Identify the Lie, Walk in the Truth",
-    "You Have the Authority to Tear Down Every Stronghold",
-    "Rebuke the Enemy",
-    "Resist the Enemy — Put On the Full Armor of God",
-    "The Battle Plan",
-    "Freedom Is the Right of Every Believer",
-    "How to Stay Free in God's Light",
-    "Embrace It, Live It, Walk Boldly",
-  ],
-};
-
-const SERIES_END_MESSAGES = {
-  "beauty-of-holiness":
-    "You have walked through all twelve days. This is not an ending — it is a beginning. Keep beholding Him.",
-  "from-the-inside-out":
-    "You have walked through all fourteen days. This is not an ending — it is a beginning. Keep staying close to Jesus.",
-  strongholds:
-    "You have walked through all twenty-five days. The strongholds have been named, the doors identified, the weapons placed in your hands. Now walk in it — boldly, as a child of the light.",
-};
-
+// ── Fetch a single day JSON file ──────────────────────────────────────────────
 async function fetchDay(seriesId, dayNum) {
   const padded = String(dayNum).padStart(2, "0");
   const res = await fetch(
@@ -314,7 +203,9 @@ async function fetchDay(seriesId, dayNum) {
   return res.json();
 }
 
-// ── ReflectionIcon ────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── ReflectionIcon — sacred SVG icons for kids reflection choices ─────────────
 function ReflectionIcon({ icon, active }) {
   const color = active ? "var(--text-accent)" : "var(--text-secondary)";
   const icons = {
@@ -419,218 +310,7 @@ function ReflectionIcon({ icon, active }) {
   return icons[icon] || null;
 }
 
-// ── StrongholdsReflection — write box + Dialoguing with God bridge ────────────
-function StrongholdsReflection({ day, seriesTitle, alreadyDone, onComplete }) {
-  const [text, setText] = useState("");
-  const [saved, setSaved] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-
-  function handleSave() {
-    if (!text.trim()) return;
-    const success = saveReflectionToDialogue({
-      seriesTitle,
-      dayTitle: day.title,
-      dayNum: day.day,
-      text: text.trim(),
-    });
-    if (success) {
-      setSaved(true);
-      setSubmitted(true);
-    }
-  }
-
-  function handleContinue() {
-    setSubmitted(true);
-    if (!alreadyDone) onComplete();
-  }
-
-  return (
-    <div>
-      <div
-        style={{
-          padding: "18px 20px",
-          marginBottom: 20,
-          background: "var(--accent-subtle)",
-          border: "1px solid var(--border-subtle)",
-          borderRadius: 12,
-        }}
-      >
-        <p
-          style={{
-            fontFamily: "var(--font-body)",
-            fontSize: 15,
-            lineHeight: 1.75,
-            color: "var(--text-primary)",
-            opacity: 0.88,
-            margin: 0,
-            fontStyle: "italic",
-          }}
-        >
-          {day.reflection}
-        </p>
-      </div>
-
-      {!submitted && (
-        <>
-          <p
-            style={{
-              fontFamily: "var(--font-ui)",
-              fontSize: 10,
-              letterSpacing: "0.1em",
-              color: "var(--text-accent)",
-              opacity: 0.5,
-              margin: "0 0 8px",
-            }}
-          >
-            WRITE YOUR REFLECTION (OPTIONAL)
-          </p>
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Take a moment to respond..."
-            style={{
-              width: "100%",
-              minHeight: 120,
-              fontFamily: "var(--font-body)",
-              fontSize: 15,
-              lineHeight: 1.7,
-              color: "var(--text-primary)",
-              background: "var(--accent-subtle)",
-              border: "1px solid var(--border-subtle)",
-              borderRadius: 12,
-              padding: "14px 16px",
-              resize: "none",
-              boxSizing: "border-box",
-              outline: "none",
-              WebkitTapHighlightColor: "transparent",
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = "var(--text-accent)";
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = "var(--border-subtle)";
-            }}
-          />
-          <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-            <button
-              onClick={handleSave}
-              disabled={!text.trim()}
-              style={{
-                flex: 1,
-                padding: "13px 0",
-                textAlign: "center",
-                background: text.trim()
-                  ? "var(--accent-subtle-strong)"
-                  : "var(--accent-subtle)",
-                border: `1px solid ${text.trim() ? "var(--accent-border-strong)" : "var(--border-subtle)"}`,
-                borderRadius: 12,
-                fontFamily: "var(--font-ui)",
-                fontSize: 11,
-                letterSpacing: "0.06em",
-                color: "var(--text-accent)",
-                opacity: text.trim() ? 1 : 0.4,
-                cursor: text.trim() ? "pointer" : "default",
-                transition: "all 0.18s ease",
-                WebkitTapHighlightColor: "transparent",
-              }}
-            >
-              Save to Dialoguing with God
-            </button>
-            <button
-              onClick={handleContinue}
-              style={{
-                flex: 1,
-                padding: "13px 0",
-                textAlign: "center",
-                background: "var(--accent-subtle)",
-                border: "1px solid var(--border-subtle)",
-                borderRadius: 12,
-                fontFamily: "var(--font-ui)",
-                fontSize: 11,
-                letterSpacing: "0.06em",
-                color: "var(--text-accent)",
-                opacity: 0.7,
-                cursor: "pointer",
-                WebkitTapHighlightColor: "transparent",
-              }}
-            >
-              Continue
-            </button>
-          </div>
-        </>
-      )}
-
-      {saved && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            gap: 10,
-            padding: "14px 16px",
-            marginTop: 12,
-            background: "var(--accent-subtle)",
-            border: "1px solid var(--border-subtle)",
-            borderRadius: 12,
-          }}
-        >
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: "var(--text-accent)",
-              marginTop: 5,
-              flexShrink: 0,
-              opacity: 0.7,
-            }}
-          />
-          <p
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: 13,
-              color: "var(--text-secondary)",
-              lineHeight: 1.6,
-              margin: 0,
-            }}
-          >
-            Saved to{" "}
-            <span style={{ color: "var(--text-accent)", opacity: 0.9 }}>
-              Dialoguing with God
-            </span>{" "}
-            under <span style={{ fontStyle: "italic" }}>"{day.title}"</span> —
-            you can revisit it anytime.
-          </p>
-        </div>
-      )}
-
-      {submitted && !alreadyDone && (
-        <div style={{ marginTop: 20 }}>
-          <button
-            onClick={onComplete}
-            style={{
-              width: "100%",
-              padding: "14px 20px",
-              textAlign: "center",
-              background: "var(--accent-subtle-strong)",
-              border: "1px solid var(--accent-border-strong)",
-              borderRadius: 12,
-              fontFamily: "var(--font-ui)",
-              fontSize: 12,
-              letterSpacing: "0.06em",
-              color: "var(--text-accent)",
-              cursor: "pointer",
-              WebkitTapHighlightColor: "transparent",
-            }}
-          >
-            I have reflected — Mark Day {day.day} Complete
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── KidsReflection ────────────────────────────────────────────────────────────
+// ── KidsReflection — interactive scenario-based reflection with AI follow-up ──
 function KidsReflection({ day, alreadyDone, onComplete, onContinue }) {
   const [picked, setPicked] = useState(null);
   const [aiResponse, setAiResponse] = useState("");
@@ -866,6 +546,7 @@ export default function DevotionalScreen({ onBack, theme }) {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [view, section]);
 
+  // Fetch scripture when entering scripture section
   useEffect(() => {
     if (section === "scripture" && activeDay?.scripture && !scriptureResult) {
       setLoadingScripture(true);
@@ -906,8 +587,7 @@ export default function DevotionalScreen({ onBack, theme }) {
     markComplete(activeSeries.id, activeDay.day);
     setCompletedDays(getCompletedDays(activeSeries.id));
     setJustCompleted(true);
-    // Only navigate to abiding for series that have it
-    if (activeSeries.hasAbide) setSection("abiding");
+    setSection("abiding");
   }
 
   function isDayLocked(dayNum) {
@@ -915,7 +595,9 @@ export default function DevotionalScreen({ onBack, theme }) {
     return !completedDays.includes(dayNum - 1);
   }
 
-  /* ── LIBRARY ── */
+  /* ══════════════════════════════════════════════════
+     LIBRARY
+  ══════════════════════════════════════════════════ */
   if (view === "library")
     return (
       <div style={s.screen}>
@@ -949,6 +631,7 @@ export default function DevotionalScreen({ onBack, theme }) {
             <p style={s.pageSub}>Not completion — transformation.</p>
           </div>
         </div>
+
         <div
           ref={scrollRef}
           className="dv-scroll"
@@ -1061,13 +744,14 @@ export default function DevotionalScreen({ onBack, theme }) {
       </div>
     );
 
-  /* ── SERIES ── */
+  /* ══════════════════════════════════════════════════
+     SERIES — Day list
+  ══════════════════════════════════════════════════ */
   if (view === "series") {
     const dayNums = Array.from(
       { length: activeSeries.totalDays },
       (_, i) => i + 1,
     );
-    const titles = DAY_TITLES[activeSeries.id] || [];
     return (
       <div style={s.screen}>
         <style>{dynamicCSS}</style>
@@ -1100,6 +784,7 @@ export default function DevotionalScreen({ onBack, theme }) {
             <p style={s.pageSub}>{activeSeries.subtitle}</p>
           </div>
         </div>
+
         <div
           ref={scrollRef}
           className="dv-scroll"
@@ -1193,7 +878,37 @@ export default function DevotionalScreen({ onBack, theme }) {
                       letterSpacing: "0.01em",
                     }}
                   >
-                    {titles[dayNum - 1] || `Day ${dayNum}`}
+                    {activeSeries.id === "beauty-of-holiness"
+                      ? [
+                          "The Glory of the Creature",
+                          "The Secret of Redemption",
+                          "Humility in the Life of Jesus",
+                          "Humility in the Teaching of Jesus",
+                          "Humility in the Disciples",
+                          "Humility in Daily Life",
+                          "Humility and Holiness",
+                          "Humility and Sin",
+                          "Humility and Faith",
+                          "Humility and Death to Self",
+                          "Humility and Happiness",
+                          "The Beauty of Holiness",
+                        ][dayNum - 1]
+                      : [
+                          "The Two Sons",
+                          "What God Sees in the Heart",
+                          "Learning Through Obedience",
+                          "Jesus Shows Us True Humility",
+                          "The Grumbling Heart",
+                          "Choosing What Is Right",
+                          "A New Heart",
+                          "Jesus Came to Serve",
+                          "Learning to Be Last",
+                          "The Quiet Work of God",
+                          "Letting Go of Pride",
+                          "The Beauty of Holiness",
+                          "Walking Like Jesus",
+                          "A Heart That Abides",
+                        ][dayNum - 1]}
                   </div>
                 </div>
                 {!locked && (
@@ -1215,31 +930,27 @@ export default function DevotionalScreen({ onBack, theme }) {
     );
   }
 
-  /* ── DAY VIEW ── */
+  /* ══════════════════════════════════════════════════
+     DAY VIEW
+  ══════════════════════════════════════════════════ */
   if (view === "day" && activeDay) {
     const day = activeDay;
     const isLastDay = day.day === activeSeries.totalDays;
     const alreadyDone = completedDays.includes(day.day);
-    const isStrongholds = activeSeries.id === "strongholds";
 
-    const tabs = isStrongholds
-      ? [
-          { id: "intro", label: "Intro" },
-          { id: "reading", label: "Teaching" },
-          { id: "scripture", label: "Scripture" },
-          { id: "reflection", label: "Reflection" },
-        ]
-      : [
-          { id: "intro", label: "Intro" },
-          { id: "reading", label: "Reading" },
-          { id: "scripture", label: "Scripture" },
-          { id: "reflection", label: "Reflection" },
-          { id: "abiding", label: "Abide" },
-        ];
+    const tabs = [
+      { id: "intro", label: "Intro" },
+      { id: "reading", label: "Reading" },
+      { id: "scripture", label: "Scripture" },
+      { id: "reflection", label: "Reflection" },
+      { id: "abiding", label: "Abide" },
+    ];
 
     return (
       <div style={s.screen}>
         <style>{dynamicCSS}</style>
+
+        {/* Sticky header + tabs */}
         <div style={{ ...s.header, paddingBottom: 0 }}>
           <button onClick={() => setView("series")} style={s.backBtn}>
             <span
@@ -1268,9 +979,6 @@ export default function DevotionalScreen({ onBack, theme }) {
               Day {day.day}
               {activeSeries.author !== "ABIDE"
                 ? ` · ${activeSeries.author}`
-                : ""}
-              {isStrongholds && day.sectionTitle
-                ? ` · ${day.sectionTitle}`
                 : ""}
             </div>
             <h1 style={{ ...s.pageTitle, fontSize: 22 }}>{day.title}</h1>
@@ -1317,22 +1025,19 @@ export default function DevotionalScreen({ onBack, theme }) {
           </div>
         </div>
 
+        {/* Section content */}
         <div
           ref={scrollRef}
           className="dv-scroll"
           style={{ flex: 1, overflowY: "auto", padding: "28px 24px 60px" }}
         >
-          {/* INTRO */}
+          {/* ── INTRO ── */}
           {section === "intro" && (
             <div>
               <div style={s.sectionLabel}>
-                {isStrongholds
-                  ? "Today's Word"
-                  : activeSeries.hasAudio
-                    ? "Before You Read"
-                    : "Today's Word"}
+                {activeSeries.hasAudio ? "Before You Read" : "Today's Word"}
               </div>
-              {activeSeries.hasAudio && !isStrongholds && (
+              {activeSeries.hasAudio && (
                 <p
                   style={{
                     fontFamily: "var(--font-body)",
@@ -1347,7 +1052,7 @@ export default function DevotionalScreen({ onBack, theme }) {
                   your heart.
                 </p>
               )}
-              {(day.intro || "").split("\n\n").map((para, i) => (
+              {(day.intro || day.reading).split("\n\n").map((para, i) => (
                 <p key={i} style={s.prose}>
                   {para}
                 </p>
@@ -1357,73 +1062,18 @@ export default function DevotionalScreen({ onBack, theme }) {
                   onClick={() => setSection("reading")}
                   style={s.continueBtn}
                 >
-                  {isStrongholds
-                    ? "Continue to Teaching →"
-                    : activeSeries.hasAudio
-                      ? "Open Murray's Chapter →"
-                      : "Continue to Reading →"}
+                  {activeSeries.hasAudio
+                    ? "Open Murray's Chapter →"
+                    : "Continue to Reading →"}
                 </button>
               </div>
             </div>
           )}
 
-          {/* READING / TEACHING */}
+          {/* ── READING ── */}
           {section === "reading" && (
             <div>
-              {isStrongholds ? (
-                <>
-                  <div style={s.sectionLabel}>Teaching</div>
-                  {day.reading.split("\n\n").map((para, i) => (
-                    <p key={i} style={s.prose}>
-                      {para}
-                    </p>
-                  ))}
-                  {day.keypoints?.length > 0 && (
-                    <div style={{ marginTop: 8 }}>
-                      <div style={{ ...s.sectionLabel, marginBottom: 12 }}>
-                        Key Points
-                      </div>
-                      {day.keypoints.map((kp, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            padding: "14px 16px",
-                            marginBottom: 10,
-                            background: "var(--accent-subtle)",
-                            border: "1px solid var(--border-subtle)",
-                            borderRadius: 12,
-                          }}
-                        >
-                          <p
-                            style={{
-                              fontFamily: "var(--font-ui)",
-                              fontSize: 12,
-                              fontWeight: 500,
-                              color: "var(--text-accent)",
-                              opacity: 0.9,
-                              margin: "0 0 6px",
-                              letterSpacing: "0.01em",
-                            }}
-                          >
-                            {kp.heading}
-                          </p>
-                          <p
-                            style={{
-                              fontFamily: "var(--font-body)",
-                              fontSize: 14,
-                              lineHeight: 1.65,
-                              color: "var(--text-secondary)",
-                              margin: 0,
-                            }}
-                          >
-                            {kp.text}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : activeSeries.hasAudio || day.murrayReading ? (
+              {activeSeries.hasAudio || day.murrayReading ? (
                 <>
                   <div style={s.sectionLabel}>From Andrew Murray</div>
                   <div
@@ -1458,6 +1108,7 @@ export default function DevotionalScreen({ onBack, theme }) {
                         style={{
                           fontFamily: "var(--font-body)",
                           fontSize: 15,
+                          fontWeight: 400,
                           lineHeight: 1.95,
                           color: "var(--text-primary)",
                           opacity: 0.88,
@@ -1514,7 +1165,7 @@ export default function DevotionalScreen({ onBack, theme }) {
             </div>
           )}
 
-          {/* SCRIPTURE */}
+          {/* ── SCRIPTURE ── */}
           {section === "scripture" && (
             <div>
               <div style={s.sectionLabel}>Scripture Meditation</div>
@@ -1528,12 +1179,11 @@ export default function DevotionalScreen({ onBack, theme }) {
                   marginBottom: 24,
                 }}
               >
-                {isStrongholds
-                  ? "Let this passage anchor what you have read. Sit with it before moving on."
-                  : activeSeries.hasAudio
-                    ? "Let this passage anchor what Murray has opened. Read slowly. More than once if needed."
-                    : "This is where it gets real. Read it slowly. Don't move on until it lands."}
+                {activeSeries.hasAudio
+                  ? "Let this passage anchor what Murray has opened. Read slowly. More than once if needed."
+                  : "This is where it gets real. Read it slowly. Don't move on until it lands."}
               </p>
+
               {loadingScripture ? (
                 <div
                   style={{
@@ -1647,6 +1297,7 @@ export default function DevotionalScreen({ onBack, theme }) {
                   )}
                 </div>
               )}
+
               <div style={{ marginTop: 32 }}>
                 <button
                   onClick={() => setSection("reflection")}
@@ -1658,18 +1309,13 @@ export default function DevotionalScreen({ onBack, theme }) {
             </div>
           )}
 
-          {/* REFLECTION */}
+          {/* ── REFLECTION ── */}
           {section === "reflection" && (
             <div>
               <div style={s.sectionLabel}>Heart Reflection</div>
-              {isStrongholds ? (
-                <StrongholdsReflection
-                  day={day}
-                  seriesTitle={activeSeries.title}
-                  alreadyDone={alreadyDone}
-                  onComplete={handleComplete}
-                />
-              ) : day.reflectionChoices ? (
+
+              {day.reflectionChoices ? (
+                /* ── KIDS: interactive scenario reflection ── */
                 <KidsReflection
                   day={day}
                   alreadyDone={alreadyDone}
@@ -1677,6 +1323,7 @@ export default function DevotionalScreen({ onBack, theme }) {
                   onContinue={() => setSection("abiding")}
                 />
               ) : (
+                /* ── ADULT: static question list ── */
                 <>
                   <p
                     style={{
@@ -1754,47 +1401,11 @@ export default function DevotionalScreen({ onBack, theme }) {
                   </div>
                 </>
               )}
-
-              {/* Strongholds post-complete navigation */}
-              {isStrongholds && justCompleted && !isLastDay && (
-                <div style={{ marginTop: 24 }}>
-                  <button
-                    onClick={() => openDay(day.day + 1, activeSeries)}
-                    style={s.continueBtn}
-                  >
-                    Continue to Day {day.day + 1} →
-                  </button>
-                </div>
-              )}
-              {isStrongholds && justCompleted && isLastDay && (
-                <div style={{ marginTop: 24 }}>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontStyle: "italic",
-                      fontSize: 14,
-                      color: "var(--text-secondary)",
-                      opacity: 0.6,
-                      lineHeight: 1.7,
-                      marginBottom: 16,
-                      textAlign: "center",
-                    }}
-                  >
-                    {SERIES_END_MESSAGES["strongholds"]}
-                  </p>
-                  <button
-                    onClick={() => setView("series")}
-                    style={s.continueBtn}
-                  >
-                    Return to Series
-                  </button>
-                </div>
-              )}
             </div>
           )}
 
-          {/* QUIET ABIDING — Murray and Kids only */}
-          {section === "abiding" && !isStrongholds && (
+          {/* ── QUIET ABIDING ── */}
+          {section === "abiding" && (
             <div style={{ textAlign: "center", paddingTop: 20 }}>
               <div style={s.sectionLabel}>Quiet Abiding</div>
               {justCompleted && (
@@ -1867,6 +1478,7 @@ export default function DevotionalScreen({ onBack, theme }) {
               >
                 BE STILL AND KNOW
               </div>
+
               {!isLastDay && completedDays.includes(day.day) && (
                 <button
                   onClick={() => openDay(day.day + 1, activeSeries)}
@@ -1888,8 +1500,9 @@ export default function DevotionalScreen({ onBack, theme }) {
                       marginBottom: 24,
                     }}
                   >
-                    {SERIES_END_MESSAGES[activeSeries.id] ||
-                      "You have completed this series. Keep walking in what God has shown you."}
+                    {activeSeries.id === "beauty-of-holiness"
+                      ? "You have walked through all twelve days. This is not an ending — it is a beginning. Keep beholding Him."
+                      : "You have walked through all fourteen days. This is not an ending — it is a beginning. Keep staying close to Jesus."}
                   </p>
                   <button
                     onClick={() => setView("series")}
@@ -1909,6 +1522,7 @@ export default function DevotionalScreen({ onBack, theme }) {
   return null;
 }
 
+/* ── Shared style objects — all CSS variables, zero hardcoded colors ─────── */
 const s = {
   screen: {
     position: "fixed",
