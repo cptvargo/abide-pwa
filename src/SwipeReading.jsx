@@ -3,6 +3,7 @@
  * WITH Multi-Color Highlighting & Dialogue Bottom Sheet
  * FIXED: NaN verse numbers — non-numeric keys filtered out
  * FIXED: Psalm 119 style sectioned verses (sections[].verses) flattened correctly
+ * ADDED: isAudioPlaying prop — fades text during audio playback
  */
 
 import { useEffect, useState, useRef } from "react";
@@ -50,6 +51,7 @@ export default function SwipeReading({
   textSize = 1.0,
   translation = "VSV",
   theme = "classic",
+  isAudioPlaying = false, // ← NEW: from AppShell, drives text fade
   onReadingContext,
   onScrollProgress,
   onScrollRef,
@@ -99,6 +101,13 @@ export default function SwipeReading({
     const saved = localStorage.getItem("verseHighlights");
     return saved ? JSON.parse(saved) : {};
   });
+
+  // ── Scroll lock during audio playback ──
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.style.overflow = isAudioPlaying ? "hidden" : "";
+  }, [isAudioPlaying]);
 
   /* ===============================
      Load Paragraph Break Data
@@ -150,9 +159,6 @@ export default function SwipeReading({
         const chapterSections = chapterData?.sections ?? [];
         const versesData = chapterData?.verses ?? chapterData;
 
-        // ── Flatten Psalm 119-style sectioned verses ──
-        // Some chapters (e.g. Psalm 119 ASR) store verses nested inside
-        // sections[].verses rather than a top-level verses object.
         let flatVersesData = versesData;
         if (
           !chapterData?.verses &&
@@ -184,17 +190,13 @@ export default function SwipeReading({
             }));
         }
 
-        // ── Build section title lookup ──
-        // Works for both standard sections[] and Psalm 119-style sections[].verses
         const sectionStartVerses = chapterSections.map((s) => {
           if (s.startVerse != null)
             return { startVerse: s.startVerse, title: s.title };
-          // Psalm 119 style — first key of section.verses
           const firstKey = s.verses ? Number(Object.keys(s.verses)[0]) : null;
           return { startVerse: firstKey, title: s.title };
         });
 
-        // Tag each verse with its section title
         verseItems = verseItems.map((v) => ({
           ...v,
           sectionTitle:
@@ -569,7 +571,6 @@ export default function SwipeReading({
       {/* ── Swipe Chapter Indicators (chapterless only) ── */}
       {showSwipeIndicator && (
         <>
-          {/* Going back → block on LEFT */}
           {swipeOffset > 0 && prevChapter !== null && (
             <div
               style={{
@@ -601,8 +602,6 @@ export default function SwipeReading({
               </span>
             </div>
           )}
-
-          {/* Going forward → block on RIGHT */}
           {swipeOffset < 0 && nextChapter !== null && (
             <div
               style={{
@@ -660,150 +659,161 @@ export default function SwipeReading({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* ── Standard Mode: Chapter Title ── */}
-        {!chapterlessMode && (
-          <>
-            <div className="my-16 text-center tracking-wide opacity-85 text-[var(--text-accent)] font-[var(--font-ui)] font-semibold !text-[26px]">
-              {getBookDisplayName(book)} {currentChapter}
-            </div>
-
-            {title && (
-              <div className="my-12 flex flex-col items-center">
-                <div className="w-24 h-px mb-4 bg-[var(--text-accent)] opacity-20" />
-                <div className="text-center font-[var(--font-ui)] text-[15px] font-semibold tracking-wide text-[var(--text-secondary)] opacity-80">
-                  {title}
-                </div>
-                <div className="w-24 h-px mt-4 bg-[var(--text-accent)] opacity-20" />
+        {/* ── Scripture content — fades during audio playback ── */}
+        <div
+          style={{
+            opacity: isAudioPlaying ? 0.08 : 1,
+            filter: isAudioPlaying ? "blur(2px)" : "none",
+            transition: "opacity 0.6s ease, filter 0.6s ease",
+            pointerEvents: isAudioPlaying ? "none" : "auto",
+          }}
+        >
+          {/* ── Standard Mode: Chapter Title ── */}
+          {!chapterlessMode && (
+            <>
+              <div className="my-16 text-center tracking-wide opacity-85 text-[var(--text-accent)] font-[var(--font-ui)] font-semibold !text-[26px]">
+                {getBookDisplayName(book)} {currentChapter}
               </div>
-            )}
-          </>
-        )}
-
-        {/* ── Standard Mode: Verses ── */}
-        {!chapterlessMode && (
-          <div className="space-y-6">
-            {verses.map((v) => {
-              const isSelected = selectedVerses.some(
-                (sv) => sv.verse === v.verse,
-              );
-              const highlightColor = getVerseHighlightColor(v.verse);
-              const sectionTitle = v.sectionTitle;
-
-              return (
-                <div key={v.verse}>
-                  {sectionTitle && <SectionTitle title={sectionTitle} />}
-                  <p
-                    data-chapter={currentChapter}
-                    onClick={() => handleVerseClick(v)}
-                    className={`leading-[var(--line-height)] font-[var(--font-body)] cursor-pointer transition-all ${v.speaker === "Jesus" ? "jesus" : "text-[var(--text-primary)]"}`}
-                    style={{
-                      fontSize: `${textSize * 16}px`,
-                      background: highlightColor || "transparent",
-                      border: isSelected
-                        ? "2px solid var(--text-accent)"
-                        : "none",
-                      borderRadius:
-                        isSelected || highlightColor ? "0.5rem" : "0",
-                      padding:
-                        isSelected || highlightColor ? "0.25rem 0.5rem" : "0",
-                      margin: isSelected || highlightColor ? "0.25rem 0" : "0",
-                      opacity: isSelected ? 0.8 : 1,
-                    }}
-                  >
-                    {!hideVerseNumbers && (
-                      <sup
-                        className="mr-2 select-none text-[var(--text-accent)] opacity-[var(--verse-opacity)] font-[var(--font-verse)]"
-                        style={{ fontSize: `${textSize * 0.75}rem` }}
-                      >
-                        {v.verse}
-                      </sup>
-                    )}
-                    {v.text}
-                  </p>
+              {title && (
+                <div className="my-12 flex flex-col items-center">
+                  <div className="w-24 h-px mb-4 bg-[var(--text-accent)] opacity-20" />
+                  <div className="text-center font-[var(--font-ui)] text-[15px] font-semibold tracking-wide text-[var(--text-secondary)] opacity-80">
+                    {title}
+                  </div>
+                  <div className="w-24 h-px mt-4 bg-[var(--text-accent)] opacity-20" />
                 </div>
-              );
-            })}
-          </div>
-        )}
+              )}
+            </>
+          )}
 
-        {/* ── Chapterless Mode: Prose Paragraphs ── */}
-        {chapterlessMode && (
-          <div style={{ marginTop: "48px" }}>
-            {paragraphGroups.map((group, groupIdx) => {
-              const isSpeakerJesus = group.some((v) => v.speaker === "Jesus");
-              const paragraphText = group
-                .map((v) => safeText(v.text))
-                .join(" ");
-              const groupSelected = group.some((v) =>
-                selectedVerses.some((sv) => sv.verse === v.verse),
-              );
-              const groupHighlightColor = group.reduce(
-                (color, v) => color || getVerseHighlightColor(v.verse),
-                null,
-              );
-              const firstVerse = group[0]?.verse;
-              const sectionTitle = group[0]?.sectionTitle ?? null;
+          {/* ── Standard Mode: Verses ── */}
+          {!chapterlessMode && (
+            <div className="space-y-6">
+              {verses.map((v) => {
+                const isSelected = selectedVerses.some(
+                  (sv) => sv.verse === v.verse,
+                );
+                const highlightColor = getVerseHighlightColor(v.verse);
+                const sectionTitle = v.sectionTitle;
+                return (
+                  <div key={v.verse}>
+                    {sectionTitle && <SectionTitle title={sectionTitle} />}
+                    <p
+                      data-chapter={currentChapter}
+                      onClick={() => handleVerseClick(v)}
+                      className={`leading-[var(--line-height)] font-[var(--font-body)] cursor-pointer transition-all ${v.speaker === "Jesus" ? "jesus" : "text-[var(--text-primary)]"}`}
+                      style={{
+                        fontSize: `${textSize * 16}px`,
+                        background: highlightColor || "transparent",
+                        border: isSelected
+                          ? "2px solid var(--text-accent)"
+                          : "none",
+                        borderRadius:
+                          isSelected || highlightColor ? "0.5rem" : "0",
+                        padding:
+                          isSelected || highlightColor ? "0.25rem 0.5rem" : "0",
+                        margin:
+                          isSelected || highlightColor ? "0.25rem 0" : "0",
+                        opacity: isSelected ? 0.8 : 1,
+                      }}
+                    >
+                      {!hideVerseNumbers && (
+                        <sup
+                          className="mr-2 select-none text-[var(--text-accent)] opacity-[var(--verse-opacity)] font-[var(--font-verse)]"
+                          style={{ fontSize: `${textSize * 0.75}rem` }}
+                        >
+                          {v.verse}
+                        </sup>
+                      )}
+                      {v.text}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
-              return (
-                <div key={groupIdx}>
-                  {sectionTitle && <SectionTitle title={sectionTitle} />}
-                  <p
-                    onClick={() => {
-                      if (group.length > 0) handleVerseClick(group[0]);
-                    }}
-                    className={isSpeakerJesus ? "jesus" : ""}
-                    style={{
-                      fontSize: `${textSize * 16.5}px`,
-                      lineHeight: 2,
-                      fontFamily: "var(--font-chapterless)",
-                      color: isSpeakerJesus ? undefined : "var(--text-primary)",
-                      marginBottom: "1.6em",
-                      textIndent: "1.5em",
-                      cursor: "pointer",
-                      background: groupHighlightColor || "transparent",
-                      borderRadius:
-                        groupSelected || groupHighlightColor ? "0.5rem" : "0",
-                      padding:
-                        groupSelected || groupHighlightColor
-                          ? "0.25rem 0.5rem"
-                          : "0",
-                      border: groupSelected
-                        ? "2px solid var(--text-accent)"
-                        : "none",
-                      opacity: groupSelected ? 0.8 : 1,
-                      transition: "all 0.15s ease",
-                    }}
-                  >
-                    {paragraphText}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        )}
+          {/* ── Chapterless Mode: Prose Paragraphs ── */}
+          {chapterlessMode && (
+            <div style={{ marginTop: "48px" }}>
+              {paragraphGroups.map((group, groupIdx) => {
+                const isSpeakerJesus = group.some((v) => v.speaker === "Jesus");
+                const paragraphText = group
+                  .map((v) => safeText(v.text))
+                  .join(" ");
+                const groupSelected = group.some((v) =>
+                  selectedVerses.some((sv) => sv.verse === v.verse),
+                );
+                const groupHighlightColor = group.reduce(
+                  (color, v) => color || getVerseHighlightColor(v.verse),
+                  null,
+                );
+                const firstVerse = group[0]?.verse;
+                const sectionTitle = group[0]?.sectionTitle ?? null;
+                return (
+                  <div key={groupIdx}>
+                    {sectionTitle && <SectionTitle title={sectionTitle} />}
+                    <p
+                      onClick={() => {
+                        if (group.length > 0) handleVerseClick(group[0]);
+                      }}
+                      className={isSpeakerJesus ? "jesus" : ""}
+                      style={{
+                        fontSize: `${textSize * 16.5}px`,
+                        lineHeight: 2,
+                        fontFamily: "var(--font-chapterless)",
+                        color: isSpeakerJesus
+                          ? undefined
+                          : "var(--text-primary)",
+                        marginBottom: "1.6em",
+                        textIndent: "1.5em",
+                        cursor: "pointer",
+                        background: groupHighlightColor || "transparent",
+                        borderRadius:
+                          groupSelected || groupHighlightColor ? "0.5rem" : "0",
+                        padding:
+                          groupSelected || groupHighlightColor
+                            ? "0.25rem 0.5rem"
+                            : "0",
+                        border: groupSelected
+                          ? "2px solid var(--text-accent)"
+                          : "none",
+                        opacity: groupSelected ? 0.8 : 1,
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      {paragraphText}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
-        {/* ── Chapter End Reflection (standard mode only) ── */}
-        {!chapterlessMode && (
-          <div className="mt-16 mb-24 text-center opacity-70">
-            <div className="mx-auto mb-4 h-px w-24 bg-[var(--text-accent)] opacity-20" />
-            <button
-              onClick={handleReflection}
-              className="inline-flex items-center gap-2 text-sm font-[var(--font-ui)] tracking-wide text-[var(--text-secondary)] hover:opacity-100 transition-opacity"
-            >
-              Reflect on this chapter
-              <svg
-                viewBox="0 0 24 24"
-                className="w-5 h-5 text-[var(--text-accent)]"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
+          {/* ── Chapter End Reflection (standard mode only) ── */}
+          {!chapterlessMode && (
+            <div className="mt-16 mb-24 text-center opacity-70">
+              <div className="mx-auto mb-4 h-px w-24 bg-[var(--text-accent)] opacity-20" />
+              <button
+                onClick={handleReflection}
+                className="inline-flex items-center gap-2 text-sm font-[var(--font-ui)] tracking-wide text-[var(--text-secondary)] hover:opacity-100 transition-opacity"
               >
-                <path d="M12 2a7 7 0 0 0-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5a7 7 0 0 0-4-12z" />
-                <path d="M9 21h6" />
-              </svg>
-            </button>
-          </div>
-        )}
+                Reflect on this chapter
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-5 h-5 text-[var(--text-accent)]"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
+                  <path d="M12 2a7 7 0 0 0-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5a7 7 0 0 0-4-12z" />
+                  <path d="M9 21h6" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+        {/* end scripture fade wrapper */}
       </main>
 
       {/* Highlight Panel */}

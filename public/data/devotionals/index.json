@@ -5,7 +5,7 @@
     "subtitle": "A 12-Day Devotional on Humility",
     "author": "Andrew Murray",
     "days": 12,
-    "description": "Humility is not weakness — it is the glory of the creature restored. Walk through twelve days with Andrew Murray as your guide, allowing Scripture and the Spirit to form in you the mind that was in Christ."
+    "description": "Humility is not weakness \u2014 it is the glory of the creature restored. Walk through twelve days with Andrew Murray as your guide, allowing Scripture and the Spirit to form in you the mind that was in Christ."
   },
   {
     "id": "beauty-of-holiness-kids",
@@ -15,5 +15,13 @@
     "authorNote": "Based on the writings of Andrew Murray",
     "days": 14,
     "description": "Based on Andrew Murray's classic work, these fourteen days invite kids into the simple, beautiful truth that humility is the heart of following Jesus."
+  },
+  {
+    "id": "discipleship-guide",
+    "title": "Discipleship Guide",
+    "subtitle": "A 22-Day Foundational Devotional",
+    "author": "Gavin Todd",
+    "days": 22,
+    "description": "A foundational journey through who God is as Father, Son, and Holy Spirit \u2014 and who you are in Christ. Walk through twenty-two days of Scripture-anchored teaching on the Trinity, the person and work of Jesus, the Holy Spirit, and your identity as a child of God."
   }
 ]

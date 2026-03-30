@@ -3,6 +3,7 @@
  * FIXED: Chapterless mode now properly hides book titles, chapter titles, and verse numbers
  * FIXED: NaN verse numbers — non-numeric keys filtered out
  * FIXED: Psalm 119 style sectioned verses (sections[].verses) flattened correctly
+ * ADDED: isAudioPlaying prop — fades text during audio playback
  */
 
 import { useEffect, useState, useRef } from "react";
@@ -15,6 +16,7 @@ export default function CoreReading({
   chapterlessMode = false,
   textSize = 1.0,
   translation = "VSV",
+  isAudioPlaying = false, // ← NEW: from AppShell, drives text fade
   onReadingContext,
   onScrollProgress,
   navigationTarget,
@@ -51,6 +53,13 @@ export default function CoreReading({
   const scrollRef = useRef(null);
   const lastScrollTop = useRef(0);
   const navOffsetRef = useRef(0);
+
+  // ── Scroll lock during audio playback ──
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.style.overflow = isAudioPlaying ? "hidden" : "";
+  }, [isAudioPlaying]);
 
   /* ===============================
      Section title renderer
@@ -90,9 +99,6 @@ export default function CoreReading({
     const chapterSections = chapterData?.sections ?? [];
     const versesData = chapterData?.verses ?? chapterData;
 
-    // ── Flatten Psalm 119-style sectioned verses ──
-    // Some chapters (e.g. Psalm 119 ASR) store verses nested inside
-    // sections[].verses rather than a top-level verses object.
     let flatVersesData = versesData;
     if (
       !chapterData?.verses &&
@@ -123,17 +129,13 @@ export default function CoreReading({
         }));
     }
 
-    // ── Build section title lookup ──
-    // Works for both standard sections[] and Psalm 119-style sections[].verses
     const sectionStartVerses = chapterSections.map((s) => {
       if (s.startVerse != null)
         return { startVerse: s.startVerse, title: s.title };
-      // Psalm 119 style — first key of section.verses
       const firstKey = s.verses ? Number(Object.keys(s.verses)[0]) : null;
       return { startVerse: firstKey, title: s.title };
     });
 
-    // Tag each verse with its section title
     verseItems = verseItems.map((v) => ({
       ...v,
       sectionTitle:
@@ -269,88 +271,99 @@ export default function CoreReading({
         ref={scrollRef}
         className="reader flex-1 overflow-y-auto px-6 pt-6 pb-32"
       >
-        {verses.map((v, idx) => {
-          const isLastVerseOfChapter =
-            !v.type && verses[idx + 1]?.chapter !== v.chapter;
+        {/* ── Scripture content — fades during audio playback ── */}
+        <div
+          style={{
+            opacity: isAudioPlaying ? 0.08 : 1,
+            filter: isAudioPlaying ? "blur(2px)" : "none",
+            transition: "opacity 0.6s ease, filter 0.6s ease",
+            pointerEvents: isAudioPlaying ? "none" : "auto",
+          }}
+        >
+          {verses.map((v, idx) => {
+            const isLastVerseOfChapter =
+              !v.type && verses[idx + 1]?.chapter !== v.chapter;
 
-          if (v.type === "divider") {
-            return (
-              <div
-                key={`divider-${v.chapter}`}
-                className="my-16 text-center tracking-wide opacity-85 text-[var(--text-accent)] font-[var(--font-ui)] font-semibold !text-[26px]"
-              >
-                {getBookDisplayName(book)} {v.chapter}
-              </div>
-            );
-          }
-
-          if (v.type === "title") {
-            return (
-              <div
-                key={`title-${v.chapter}`}
-                className="my-12 flex flex-col items-center"
-              >
-                <div className="w-24 h-px mb-4 bg-[var(--text-accent)] opacity-20" />
-                <div className="text-center font-[var(--font-ui)] text-[15px] font-semibold tracking-wide text-[var(--text-secondary)] opacity-80">
-                  {v.text}
+            if (v.type === "divider") {
+              return (
+                <div
+                  key={`divider-${v.chapter}`}
+                  className="my-16 text-center tracking-wide opacity-85 text-[var(--text-accent)] font-[var(--font-ui)] font-semibold !text-[26px]"
+                >
+                  {getBookDisplayName(book)} {v.chapter}
                 </div>
-                <div className="w-24 h-px mt-4 bg-[var(--text-accent)] opacity-20" />
-              </div>
-            );
-          }
+              );
+            }
 
-          return (
-            <div key={`${v.chapter}-${v.verse}-${idx}`}>
-              {v.sectionTitle && <SectionTitle title={v.sectionTitle} />}
-              <p
-                data-chapter={v.chapter}
-                className={`mb-6 leading-[var(--line-height)] font-[var(--font-body)] ${v.speaker === "Jesus" ? "jesus" : "text-[var(--text-primary)]"}`}
-                style={{ fontSize: `${textSize}rem` }}
-              >
-                {!chapterlessMode && (
-                  <sup
-                    className="mr-2 select-none text-[var(--text-accent)] opacity-[var(--verse-opacity)] font-[var(--font-verse)]"
-                    style={{ fontSize: `${textSize * 0.75}rem` }}
-                  >
-                    {v.verse}
-                  </sup>
-                )}
-                {v.text}
-              </p>
+            if (v.type === "title") {
+              return (
+                <div
+                  key={`title-${v.chapter}`}
+                  className="my-12 flex flex-col items-center"
+                >
+                  <div className="w-24 h-px mb-4 bg-[var(--text-accent)] opacity-20" />
+                  <div className="text-center font-[var(--font-ui)] text-[15px] font-semibold tracking-wide text-[var(--text-secondary)] opacity-80">
+                    {v.text}
+                  </div>
+                  <div className="w-24 h-px mt-4 bg-[var(--text-accent)] opacity-20" />
+                </div>
+              );
+            }
 
-              {isLastVerseOfChapter && !chapterlessMode && (
-                <div className="mt-16 mb-24 text-center opacity-70">
-                  <div className="mx-auto mb-4 h-px w-24 bg-[var(--text-accent)] opacity-20" />
-                  <button
-                    onClick={() => {
-                      setReflectionChapter(v.chapter);
-                      loadChapterSummary(v.chapter);
-                      setReflectionOpen(true);
-                    }}
-                    className="inline-flex items-center gap-2 text-sm font-[var(--font-ui)] tracking-wide text-[var(--text-secondary)] hover:opacity-100 transition-opacity"
-                    aria-label="Open chapter reflection"
-                  >
-                    Reflect on this chapter
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="w-5 h-5 text-[var(--text-accent)]"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
+            return (
+              <div key={`${v.chapter}-${v.verse}-${idx}`}>
+                {v.sectionTitle && <SectionTitle title={v.sectionTitle} />}
+                <p
+                  data-chapter={v.chapter}
+                  className={`mb-6 leading-[var(--line-height)] font-[var(--font-body)] ${v.speaker === "Jesus" ? "jesus" : "text-[var(--text-primary)]"}`}
+                  style={{ fontSize: `${textSize}rem` }}
+                >
+                  {!chapterlessMode && (
+                    <sup
+                      className="mr-2 select-none text-[var(--text-accent)] opacity-[var(--verse-opacity)] font-[var(--font-verse)]"
+                      style={{ fontSize: `${textSize * 0.75}rem` }}
                     >
-                      <path d="M12 2a7 7 0 0 0-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5a7 7 0 0 0-4-12z" />
-                      <path d="M9 21h6" />
-                    </svg>
-                  </button>
-                </div>
-              )}
-            </div>
-          );
-        })}
+                      {v.verse}
+                    </sup>
+                  )}
+                  {v.text}
+                </p>
 
-        {loading && (
-          <div className="text-center text-sm opacity-50 mt-12">Loading…</div>
-        )}
+                {isLastVerseOfChapter && !chapterlessMode && (
+                  <div className="mt-16 mb-24 text-center opacity-70">
+                    <div className="mx-auto mb-4 h-px w-24 bg-[var(--text-accent)] opacity-20" />
+                    <button
+                      onClick={() => {
+                        setReflectionChapter(v.chapter);
+                        loadChapterSummary(v.chapter);
+                        setReflectionOpen(true);
+                      }}
+                      className="inline-flex items-center gap-2 text-sm font-[var(--font-ui)] tracking-wide text-[var(--text-secondary)] hover:opacity-100 transition-opacity"
+                      aria-label="Open chapter reflection"
+                    >
+                      Reflect on this chapter
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="w-5 h-5 text-[var(--text-accent)]"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      >
+                        <path d="M12 2a7 7 0 0 0-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5a7 7 0 0 0-4-12z" />
+                        <path d="M9 21h6" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {loading && (
+            <div className="text-center text-sm opacity-50 mt-12">Loading…</div>
+          )}
+        </div>
+        {/* end scripture fade wrapper */}
       </main>
 
       <ChapterReflectionPanel

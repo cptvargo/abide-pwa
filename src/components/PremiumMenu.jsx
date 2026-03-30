@@ -2,6 +2,7 @@
  * PremiumMenu.jsx
  * Full-screen slide-in menu — sacred, refined, luminous
  * Swipe-to-close, staggered entrance, ambient gold atmosphere
+ * UPDATED: Settings removed — moved to bottom nav
  */
 
 import { useState, useRef, useEffect } from "react";
@@ -14,7 +15,6 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
   const touchStartX = useRef(null);
   const touchStartY = useRef(null);
 
-  /* ── Orchestrated entrance / exit ─────────────────────── */
   useEffect(() => {
     if (open) {
       setVisible(true);
@@ -30,7 +30,6 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
 
   if (!visible) return null;
 
-  /* ── Greeting ──────────────────────────────────────────── */
   function getGreeting() {
     const hour = new Date().getHours();
     const name = localStorage.getItem("abide_name") || "";
@@ -43,7 +42,6 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
     return name ? `${g}, ${name}` : g;
   }
 
-  /* ── Touch handlers ────────────────────────────────────── */
   function handleTouchStart(e) {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
@@ -70,7 +68,6 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
     touchStartX.current = null;
   }
 
-  /* ── Menu data ─────────────────────────────────────────── */
   const menuItems = [
     {
       section: "Tools",
@@ -116,9 +113,7 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
     : animateIn
       ? "translateX(0)"
       : "translateX(100%)";
-
   const opacity = isSwiping ? Math.max(0.4, 1 - swipeOffset / 320) : 1;
-
   const transition = isSwiping
     ? "none"
     : `transform 0.48s cubic-bezier(0.22,1,0.36,1), opacity 0.48s ease`;
@@ -126,49 +121,23 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
   return (
     <>
       <style>{`
-        @keyframes pm-fade-in  { from { opacity:0 } to { opacity:1 } }
         @keyframes pm-fade-up  { from { opacity:0; transform:translateY(14px) } to { opacity:1; transform:translateY(0) } }
-        @keyframes pm-slide-in { from { transform:translateX(100%) } to { transform:translateX(0) } }
-        @keyframes pm-rule-expand {
-          from { transform:scaleX(0); opacity:0 }
-          to   { transform:scaleX(1); opacity:1 }
-        }
-        @keyframes pm-glow-pulse {
-          0%,100% { opacity:0.35 }
-          50%      { opacity:0.65 }
-        }
-
-        .pm-greeting   { animation: pm-fade-up 0.5s ease 0.12s both }
-        .pm-rule       { animation: pm-rule-expand 0.6s cubic-bezier(0.22,1,0.36,1) 0.28s both; transform-origin:left }
-        .pm-section-0  { animation: pm-fade-up 0.45s ease 0.22s both }
-        .pm-section-1  { animation: pm-fade-up 0.45s ease 0.32s both }
-        .pm-section-2  { animation: pm-fade-up 0.45s ease 0.40s both }
-        .pm-footer     { animation: pm-fade-up 0.4s ease 0.48s both }
-        .pm-glow       { animation: pm-glow-pulse 5s ease-in-out infinite }
-
-        .pm-item {
-          transition: background 0.18s ease, transform 0.15s ease, border-color 0.18s ease;
-          -webkit-tap-highlight-color: transparent;
-        }
+        @keyframes pm-rule-expand { from { transform:scaleX(0); opacity:0 } to { transform:scaleX(1); opacity:1 } }
+        @keyframes pm-glow-pulse { 0%,100% { opacity:0.35 } 50% { opacity:0.65 } }
+        .pm-greeting  { animation: pm-fade-up 0.5s ease 0.12s both }
+        .pm-rule      { animation: pm-rule-expand 0.6s cubic-bezier(0.22,1,0.36,1) 0.28s both; transform-origin:left }
+        .pm-section-0 { animation: pm-fade-up 0.45s ease 0.22s both }
+        .pm-section-1 { animation: pm-fade-up 0.45s ease 0.32s both }
+        .pm-section-2 { animation: pm-fade-up 0.45s ease 0.40s both }
+        .pm-footer    { animation: pm-fade-up 0.4s ease 0.48s both }
+        .pm-glow      { animation: pm-glow-pulse 5s ease-in-out infinite }
+        .pm-item { transition: background 0.18s ease, transform 0.15s ease, border-color 0.18s ease; -webkit-tap-highlight-color: transparent; }
         .pm-item:active { transform: scale(0.975) }
-
-        .pm-item-available:hover {
-          background: rgba(var(--accent-rgb,203,178,124), 0.14) !important;
-          border-color: rgba(var(--accent-rgb,203,178,124), 0.35) !important;
-        }
-
-        .pm-settings {
-          transition: background 0.18s ease, transform 0.15s ease;
-          -webkit-tap-highlight-color: transparent;
-        }
-        .pm-settings:active { transform: scale(0.975) }
-        .pm-settings:hover  { background: rgba(var(--accent-rgb,203,178,124), 0.12) !important }
-
+        .pm-item-available:hover { background: rgba(var(--accent-rgb,203,178,124), 0.14) !important; border-color: rgba(var(--accent-rgb,203,178,124), 0.35) !important; }
         .pm-scroll::-webkit-scrollbar { display:none }
         .pm-scroll { -ms-overflow-style:none; scrollbar-width:none }
       `}</style>
 
-      {/* ── Menu panel ──────────────────────────────────────── */}
       <div
         className="pm-scroll"
         style={{
@@ -186,7 +155,7 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* ── Header ──────────────────────────────────────────── */}
+        {/* Header */}
         <div
           style={{
             position: "relative",
@@ -197,7 +166,6 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
             overflow: "hidden",
           }}
         >
-          {/* Ambient radial glow */}
           <div
             style={{
               position: "absolute",
@@ -210,8 +178,6 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
               pointerEvents: "none",
             }}
           />
-
-          {/* Pulsing top edge glow */}
           <div
             className="pm-glow"
             style={{
@@ -226,7 +192,6 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
             }}
           />
 
-          {/* Close button */}
           <button
             onClick={onClose}
             style={{
@@ -236,16 +201,15 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
               background: "rgba(var(--accent-rgb,203,178,124),0.08)",
               border: "1px solid rgba(var(--accent-rgb,203,178,124),0.15)",
               borderRadius: "100px",
-              width: "36px",
-              height: "36px",
+              width: 36,
+              height: 36,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
               color: "var(--text-primary, #f0ebe0)",
-              fontSize: "14px",
+              fontSize: 14,
               opacity: 0.6,
-              transition: "opacity 0.2s, transform 0.15s",
               WebkitTapHighlightColor: "transparent",
             }}
             aria-label="Close menu"
@@ -253,7 +217,6 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
             ✕
           </button>
 
-          {/* Greeting */}
           <div
             className="pm-greeting"
             style={{ position: "relative", zIndex: 1 }}
@@ -262,13 +225,13 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "6px",
-                marginBottom: "12px",
+                gap: 6,
+                marginBottom: 12,
               }}
             >
               <span
                 style={{
-                  fontSize: "10px",
+                  fontSize: 10,
                   color: "rgba(var(--accent-rgb,203,178,124),0.7)",
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
@@ -278,25 +241,23 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
                 ✦ &nbsp;ABIDE
               </span>
             </div>
-
             <h2
               style={{
                 fontFamily: "var(--font-ui, system-ui)",
-                fontSize: "30px",
-                fontWeight: "300",
+                fontSize: 30,
+                fontWeight: 300,
                 letterSpacing: "0.01em",
                 color: "var(--text-primary, #f0ebe0)",
                 lineHeight: 1.2,
-                marginBottom: "8px",
+                marginBottom: 8,
               }}
             >
               {getGreeting()}
             </h2>
-
             <p
               style={{
                 fontFamily: "var(--font-body, Georgia, serif)",
-                fontSize: "14px",
+                fontSize: 14,
                 color: "var(--text-primary, #f0ebe0)",
                 opacity: 0.45,
                 fontStyle: "italic",
@@ -307,11 +268,10 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
             </p>
           </div>
 
-          {/* Ornamental rule */}
           <div
             className="pm-rule"
             style={{
-              marginTop: "24px",
+              marginTop: 24,
               height: "1px",
               background:
                 "linear-gradient(90deg, rgba(var(--accent-rgb,203,178,124),0.5), rgba(var(--accent-rgb,203,178,124),0.05))",
@@ -319,34 +279,29 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
           />
         </div>
 
-        {/* ── Menu sections ───────────────────────────────────── */}
+        {/* Menu sections */}
         <div style={{ padding: "8px 20px 0" }}>
           {menuItems.map((section, sIdx) => (
             <div
               key={sIdx}
               className={`pm-section-${sIdx}`}
-              style={{ marginBottom: "28px" }}
+              style={{ marginBottom: 28 }}
             >
-              {/* Section label */}
               <div
                 style={{
                   fontFamily: "var(--font-ui, system-ui)",
-                  fontSize: "10px",
-                  fontWeight: "600",
+                  fontSize: 10,
+                  fontWeight: 600,
                   textTransform: "uppercase",
                   letterSpacing: "0.14em",
                   color: "rgba(var(--accent-rgb,203,178,124),0.55)",
-                  marginBottom: "10px",
-                  paddingLeft: "4px",
+                  marginBottom: 10,
+                  paddingLeft: 4,
                 }}
               >
                 {section.section}
               </div>
-
-              {/* Items */}
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: "8px" }}
-              >
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {section.items.map((item) => (
                   <button
                     key={item.id}
@@ -357,7 +312,7 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
                       width: "100%",
                       textAlign: "left",
                       padding: "14px 16px",
-                      borderRadius: "14px",
+                      borderRadius: 14,
                       background: item.featured
                         ? "linear-gradient(135deg, rgba(var(--accent-rgb,203,178,124),0.13), rgba(var(--accent-rgb,203,178,124),0.04))"
                         : "rgba(var(--accent-rgb,203,178,124),0.06)",
@@ -368,15 +323,14 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
                       cursor: item.available ? "pointer" : "default",
                       display: "flex",
                       alignItems: "center",
-                      gap: "14px",
+                      gap: 14,
                     }}
                   >
-                    {/* Icon glyph */}
                     <div
                       style={{
-                        width: "38px",
-                        height: "38px",
-                        borderRadius: "10px",
+                        width: 38,
+                        height: 38,
+                        borderRadius: 10,
                         background: item.featured
                           ? "rgba(var(--accent-rgb,203,178,124),0.18)"
                           : "rgba(var(--accent-rgb,203,178,124),0.1)",
@@ -385,24 +339,22 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: "16px",
+                        fontSize: 16,
                         color: "rgba(var(--accent-rgb,203,178,124),0.9)",
                         flexShrink: 0,
                       }}
                     >
                       {item.icon}
                     </div>
-
-                    {/* Text */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div
                         style={{
                           fontFamily: "var(--font-ui, system-ui)",
-                          fontSize: "15px",
-                          fontWeight: "500",
+                          fontSize: 15,
+                          fontWeight: 500,
                           color: "var(--text-primary, #f0ebe0)",
                           lineHeight: 1.3,
-                          marginBottom: "3px",
+                          marginBottom: 3,
                         }}
                       >
                         {item.title}
@@ -410,7 +362,7 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
                       <div
                         style={{
                           fontFamily: "var(--font-ui, system-ui)",
-                          fontSize: "12px",
+                          fontSize: 12,
                           color: "var(--text-primary, #f0ebe0)",
                           opacity: 0.45,
                           lineHeight: 1.3,
@@ -419,12 +371,10 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
                         {item.description}
                       </div>
                     </div>
-
-                    {/* Trailing indicator */}
                     <div
                       style={{
                         fontFamily: "var(--font-ui, system-ui)",
-                        fontSize: item.available ? "16px" : "10px",
+                        fontSize: item.available ? 16 : 10,
                         color: "rgba(var(--accent-rgb,203,178,124),0.5)",
                         letterSpacing: item.available ? 0 : "0.06em",
                         textTransform: "uppercase",
@@ -440,7 +390,7 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
           ))}
         </div>
 
-        {/* ── Footer ──────────────────────────────────────────── */}
+        {/* Footer — Settings removed, now in bottom nav */}
         <div
           className="pm-footer"
           style={{
@@ -448,80 +398,20 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
             paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 32px)",
           }}
         >
-          {/* Divider */}
           <div
             style={{
               height: "1px",
               background:
                 "linear-gradient(90deg, transparent, rgba(var(--accent-rgb,203,178,124),0.15), transparent)",
-              marginBottom: "20px",
+              marginBottom: 20,
             }}
           />
-
-          {/* Settings */}
-          <button
-            onClick={() => onNavigate("settings")}
-            className="pm-settings"
-            style={{
-              width: "100%",
-              padding: "14px 16px",
-              borderRadius: "14px",
-              background: "rgba(var(--accent-rgb,203,178,124),0.06)",
-              border: "1px solid rgba(var(--accent-rgb,203,178,124),0.1)",
-              display: "flex",
-              alignItems: "center",
-              gap: "14px",
-              cursor: "pointer",
-              marginBottom: "24px",
-              WebkitTapHighlightColor: "transparent",
-            }}
-          >
-            <div
-              style={{
-                width: "38px",
-                height: "38px",
-                borderRadius: "10px",
-                background: "rgba(var(--accent-rgb,203,178,124),0.1)",
-                border: "1px solid rgba(var(--accent-rgb,203,178,124),0.15)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "16px",
-                color: "rgba(var(--accent-rgb,203,178,124),0.8)",
-                flexShrink: 0,
-              }}
-            >
-              ⚙
-            </div>
-            <div
-              style={{
-                flex: 1,
-                fontFamily: "var(--font-ui, system-ui)",
-                fontSize: "15px",
-                fontWeight: "500",
-                color: "var(--text-primary, #f0ebe0)",
-                textAlign: "left",
-              }}
-            >
-              Settings
-            </div>
-            <div
-              style={{
-                fontSize: "16px",
-                color: "rgba(var(--accent-rgb,203,178,124),0.4)",
-              }}
-            >
-              →
-            </div>
-          </button>
-
-          {/* Ornamental bottom mark */}
           <div style={{ textAlign: "center" }}>
             <div
               style={{
-                fontSize: "14px",
+                fontSize: 14,
                 color: "rgba(var(--accent-rgb,203,178,124),0.25)",
-                marginBottom: "8px",
+                marginBottom: 8,
                 letterSpacing: "0.2em",
               }}
             >
@@ -530,7 +420,7 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
             <div
               style={{
                 fontFamily: "var(--font-ui, system-ui)",
-                fontSize: "11px",
+                fontSize: 11,
                 color: "var(--text-primary, #f0ebe0)",
                 opacity: 0.3,
                 letterSpacing: "0.02em",
@@ -541,9 +431,9 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
             <div
               style={{
                 fontFamily: "var(--font-ui, system-ui)",
-                fontSize: "11px",
+                fontSize: 11,
                 color: "rgba(var(--accent-rgb,203,178,124),0.35)",
-                marginTop: "3px",
+                marginTop: 3,
                 letterSpacing: "0.04em",
               }}
             >

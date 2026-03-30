@@ -191,6 +191,16 @@ const SERIES_LIST = [
     description:
       "Based on Andrew Murray's classic work, these fourteen days invite kids into the simple, beautiful truth that humility is the heart of following Jesus.",
   },
+  {
+    id: "discipleship-guide",
+    title: "Discipleship Guide",
+    subtitle: "A 22-Day Foundational Devotional",
+    author: "Gavin Todd",
+    totalDays: 22,
+    hasAudio: false,
+    description:
+      "A foundational journey through who God is as Father, Son, and Holy Spirit — and who you are in Christ. Walk through twenty-two days of Scripture-anchored teaching on the Trinity, the person and work of Jesus, the Holy Spirit, and your identity as a child of God.",
+  },
 ];
 
 // ── Fetch a single day JSON file ──────────────────────────────────────────────
@@ -535,6 +545,7 @@ export default function DevotionalScreen({ onBack, theme }) {
   const [completedDays, setCompletedDays] = useState([]);
   const [justCompleted, setJustCompleted] = useState(false);
   const [scriptureResult, setScriptureResult] = useState(null);
+  const [scripturesResults, setScripturesResults] = useState([]);
   const [loadingScripture, setLoadingScripture] = useState(false);
   const scrollRef = useRef(null);
 
@@ -554,10 +565,23 @@ export default function DevotionalScreen({ onBack, theme }) {
         activeSeries?.id === "from-the-inside-out"
           ? TRANSLATION_PRIORITY_KIDS
           : TRANSLATION_PRIORITY_ADULT;
-      fetchPassage(activeDay.scripture, priority).then((result) => {
-        setScriptureResult(result);
-        setLoadingScripture(false);
-      });
+      if (activeDay.scriptures?.length > 0) {
+        // Fetch all scriptures in the array
+        Promise.all(
+          activeDay.scriptures.map((ref) => fetchPassage(ref, priority)),
+        ).then((results) => {
+          setScripturesResults(
+            activeDay.scriptures.map((ref, i) => ({ ref, result: results[i] })),
+          );
+          setScriptureResult(results[0]);
+          setLoadingScripture(false);
+        });
+      } else {
+        fetchPassage(activeDay.scripture, priority).then((result) => {
+          setScriptureResult(result);
+          setLoadingScripture(false);
+        });
+      }
     }
   }, [section, activeDay]);
 
@@ -575,6 +599,7 @@ export default function DevotionalScreen({ onBack, theme }) {
       setShowChoice(true);
       setJustCompleted(false);
       setScriptureResult(null);
+      setScripturesResults([]);
       setView("day");
     } catch (e) {
       console.error(e);
@@ -893,22 +918,47 @@ export default function DevotionalScreen({ onBack, theme }) {
                           "Humility and Happiness",
                           "The Beauty of Holiness",
                         ][dayNum - 1]
-                      : [
-                          "The Two Sons",
-                          "What God Sees in the Heart",
-                          "Learning Through Obedience",
-                          "Jesus Shows Us True Humility",
-                          "The Grumbling Heart",
-                          "Choosing What Is Right",
-                          "A New Heart",
-                          "Jesus Came to Serve",
-                          "Learning to Be Last",
-                          "The Quiet Work of God",
-                          "Letting Go of Pride",
-                          "The Beauty of Holiness",
-                          "Walking Like Jesus",
-                          "A Heart That Abides",
-                        ][dayNum - 1]}
+                      : activeSeries.id === "discipleship-guide"
+                        ? [
+                            "The Trinity — One God, Three Persons",
+                            "God as Creator and Sustainer",
+                            "God as Father",
+                            "God's Love and Authority",
+                            "God's Discipline",
+                            "Jesus as the Son of God",
+                            "Jesus as the Son of Man",
+                            "The Deity of Christ",
+                            "The Humanity of Christ",
+                            "The Finished Work of Christ",
+                            "The Personhood and Deity of the Holy Spirit",
+                            "The Work of the Holy Spirit",
+                            "The Indwelling of the Holy Spirit",
+                            "The Baptism and Filling of the Holy Spirit",
+                            "The Gifts of the Holy Spirit",
+                            "The Seven-Fold Spirit of God",
+                            "Born Again — A New Creation",
+                            "Who You Are in Christ — Part 1",
+                            "Who You Are in Christ — Part 2",
+                            "What You Have in Christ",
+                            "Walking in the Spirit-Filled Life",
+                            "Praying in Tongues",
+                          ][dayNum - 1]
+                        : [
+                            "The Two Sons",
+                            "What God Sees in the Heart",
+                            "Learning Through Obedience",
+                            "Jesus Shows Us True Humility",
+                            "The Grumbling Heart",
+                            "Choosing What Is Right",
+                            "A New Heart",
+                            "Jesus Came to Serve",
+                            "Learning to Be Last",
+                            "The Quiet Work of God",
+                            "Letting Go of Pride",
+                            "The Beauty of Holiness",
+                            "Walking Like Jesus",
+                            "A Heart That Abides",
+                          ][dayNum - 1]}
                   </div>
                 </div>
                 {!locked && (
@@ -1073,9 +1123,15 @@ export default function DevotionalScreen({ onBack, theme }) {
           {/* ── READING ── */}
           {section === "reading" && (
             <div>
-              {activeSeries.hasAudio || day.murrayReading ? (
+              {activeSeries.hasAudio ||
+              day.murrayReading ||
+              day.aiDisclaimer ? (
                 <>
-                  <div style={s.sectionLabel}>From Andrew Murray</div>
+                  <div style={s.sectionLabel}>
+                    {day.aiDisclaimer
+                      ? "Today's Reading"
+                      : "From Andrew Murray"}
+                  </div>
                   <div
                     style={{
                       display: "inline-flex",
@@ -1097,7 +1153,9 @@ export default function DevotionalScreen({ onBack, theme }) {
                         opacity: 0.7,
                       }}
                     >
-                      ANDREW MURRAY · PUBLIC DOMAIN
+                      {day.aiDisclaimer
+                        ? "AI-ASSISTED SUMMARY · FOR PERSONAL REFLECTION"
+                        : "ANDREW MURRAY · PUBLIC DOMAIN"}
                     </span>
                   </div>
                   {(day.murrayReading || day.reading)
@@ -1198,7 +1256,113 @@ export default function DevotionalScreen({ onBack, theme }) {
                 >
                   Loading scripture...
                 </div>
+              ) : day.scriptures?.length > 0 ? (
+                // Multiple scriptures — render a card for each
+                <div
+                  style={{ display: "flex", flexDirection: "column", gap: 12 }}
+                >
+                  {scripturesResults.map(({ ref, result }, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        borderRadius: 14,
+                        background: "var(--accent-subtle)",
+                        border: "1px solid var(--border-subtle)",
+                        borderLeft: "3px solid var(--text-accent)",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "12px 16px 8px",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontFamily: "var(--font-ui)",
+                            fontSize: 10,
+                            letterSpacing: "0.12em",
+                            color: "var(--text-accent)",
+                            opacity: 0.8,
+                          }}
+                        >
+                          {ref}
+                        </span>
+                        {result?.translation && (
+                          <span
+                            style={{
+                              fontFamily: "var(--font-ui)",
+                              fontSize: 9,
+                              letterSpacing: "0.1em",
+                              color: "var(--text-accent)",
+                              opacity: 0.5,
+                              background: "var(--accent-subtle-strong)",
+                              border: "1px solid var(--border-subtle)",
+                              borderRadius: 4,
+                              padding: "2px 6px",
+                            }}
+                          >
+                            {result.translation}
+                          </span>
+                        )}
+                      </div>
+                      {result?.text ? (
+                        <div style={{ padding: "0 16px 16px" }}>
+                          <div
+                            style={{
+                              borderLeft: "2px solid var(--text-accent)",
+                              paddingLeft: 12,
+                              opacity: 0.9,
+                            }}
+                          >
+                            <p
+                              style={{
+                                fontFamily: "var(--font-body)",
+                                fontStyle: "italic",
+                                fontSize: 15,
+                                lineHeight: 1.85,
+                                color: "var(--text-accent)",
+                                margin: 0,
+                              }}
+                            >
+                              "{result.text}"
+                            </p>
+                          </div>
+                          <div
+                            style={{
+                              fontFamily: "var(--font-ui)",
+                              fontSize: 10,
+                              letterSpacing: "0.08em",
+                              color: "var(--text-secondary)",
+                              opacity: 0.5,
+                              marginTop: 8,
+                            }}
+                          >
+                            — {result.translation}
+                          </div>
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            padding: "0 16px 16px",
+                            fontFamily: "var(--font-body)",
+                            fontStyle: "italic",
+                            fontSize: 13,
+                            color: "var(--text-secondary)",
+                            opacity: 0.4,
+                          }}
+                        >
+                          Open in your Bible and read slowly.
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               ) : (
+                // Single scripture — original card
                 <div
                   style={{
                     marginBottom: 16,
@@ -1502,7 +1666,9 @@ export default function DevotionalScreen({ onBack, theme }) {
                   >
                     {activeSeries.id === "beauty-of-holiness"
                       ? "You have walked through all twelve days. This is not an ending — it is a beginning. Keep beholding Him."
-                      : "You have walked through all fourteen days. This is not an ending — it is a beginning. Keep staying close to Jesus."}
+                      : activeSeries.id === "discipleship-guide"
+                        ? "You have walked through all twenty-two days. You now carry a foundation that will hold the weight of a lifetime. Go deeper. Keep knowing Him."
+                        : "You have walked through all fourteen days. This is not an ending — it is a beginning. Keep staying close to Jesus."}
                   </p>
                   <button
                     onClick={() => setView("series")}

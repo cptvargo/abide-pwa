@@ -1,0 +1,181 @@
+{
+  "book": "GEN",
+  "chapter": 2,
+  "verses": [
+    {
+      "verse": 1,
+      "start": 0.0,
+      "end": 6.897,
+      "score": 1.0,
+      "seg_idx": 0
+    },
+    {
+      "verse": 2,
+      "start": 7.738,
+      "end": 15.044,
+      "score": 1.0,
+      "seg_idx": 1
+    },
+    {
+      "verse": 3,
+      "start": 15.484,
+      "end": 24.792,
+      "score": 1.0,
+      "seg_idx": 2
+    },
+    {
+      "verse": 4,
+      "start": 27.145,
+      "end": 40.236,
+      "score": 0.739,
+      "seg_idx": 3
+    },
+    {
+      "verse": 5,
+      "start": 27.145,
+      "end": 48.102,
+      "score": 0.738,
+      "seg_idx": 3
+    },
+    {
+      "verse": 6,
+      "start": 49.623,
+      "end": 54.107,
+      "score": 1.0,
+      "seg_idx": 5
+    },
+    {
+      "verse": 7,
+      "start": 56.025,
+      "end": 69.215,
+      "score": 1.0,
+      "seg_idx": 6
+    },
+    {
+      "verse": 8,
+      "start": 71.617,
+      "end": 77.221,
+      "score": 1.0,
+      "seg_idx": 7
+    },
+    {
+      "verse": 9,
+      "start": 77.721,
+      "end": 89.08,
+      "score": 1.0,
+      "seg_idx": 8
+    },
+    {
+      "verse": 10,
+      "start": 90.681,
+      "end": 97.046,
+      "score": 1.0,
+      "seg_idx": 10
+    },
+    {
+      "verse": 11,
+      "start": 98.207,
+      "end": 107.535,
+      "score": 0.86,
+      "seg_idx": 11
+    },
+    {
+      "verse": 12,
+      "start": 108.416,
+      "end": 110.678,
+      "score": 0.654,
+      "seg_idx": 12
+    },
+    {
+      "verse": 13,
+      "start": 112.117,
+      "end": 117.721,
+      "score": 1.0,
+      "seg_idx": 13
+    },
+    {
+      "verse": 14,
+      "start": 118.842,
+      "end": 127.607,
+      "score": 1.0,
+      "seg_idx": 14
+    },
+    {
+      "verse": 15,
+      "start": 129.849,
+      "end": 134.532,
+      "score": 1.0,
+      "seg_idx": 16
+    },
+    {
+      "verse": 16,
+      "start": 134.972,
+      "end": 140.656,
+      "score": 1.0,
+      "seg_idx": 17
+    },
+    {
+      "verse": 17,
+      "start": 141.453,
+      "end": 150.076,
+      "score": 1.0,
+      "seg_idx": 18
+    },
+    {
+      "verse": 18,
+      "start": 152.616,
+      "end": 160.399,
+      "score": 0.995,
+      "seg_idx": 19
+    },
+    {
+      "verse": 19,
+      "start": 162.079,
+      "end": 175.576,
+      "score": 1.0,
+      "seg_idx": 21
+    },
+    {
+      "verse": 20,
+      "start": 176.476,
+      "end": 186.92,
+      "score": 0.983,
+      "seg_idx": 23
+    },
+    {
+      "verse": 21,
+      "start": 188.841,
+      "end": 200.286,
+      "score": 1.0,
+      "seg_idx": 25
+    },
+    {
+      "verse": 22,
+      "start": 201.362,
+      "end": 208.003,
+      "score": 1.0,
+      "seg_idx": 27
+    },
+    {
+      "verse": 23,
+      "start": 209.643,
+      "end": 221.826,
+      "score": 1.0,
+      "seg_idx": 28
+    },
+    {
+      "verse": 24,
+      "start": 224.386,
+      "end": 230.027,
+      "score": 1.0,
+      "seg_idx": 30
+    },
+    {
+      "verse": 25,
+      "start": 232.285,
+      "end": 237.649,
+      "score": 1.0,
+      "seg_idx": 31
+    }
+  ]
+}

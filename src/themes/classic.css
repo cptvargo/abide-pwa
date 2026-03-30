@@ -7,6 +7,7 @@
   
   /* Nav - Gold/Charcoal gradient (Classic signature) */
   --bg-nav: linear-gradient(135deg, #cbb27c 0%, #8b7355 100%);
+  --bg-nav-solid: #8b7355;
   
   /* Menu */
   --bg-menu: #1c1c1a;

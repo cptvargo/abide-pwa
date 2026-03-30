@@ -1,0 +1,118 @@
+{
+  "book": "GEN",
+  "chapter": 16,
+  "verses": [
+    {
+      "verse": 1,
+      "start": 0.0,
+      "end": 17.048,
+      "score": 0.432,
+      "seg_idx": 0
+    },
+    {
+      "verse": 2,
+      "start": 11.505,
+      "end": 26.332,
+      "score": 1.0,
+      "seg_idx": 0
+    },
+    {
+      "verse": 3,
+      "start": 27.151,
+      "end": 36.775,
+      "score": 1.0,
+      "seg_idx": 4
+    },
+    {
+      "verse": 4,
+      "start": 37.936,
+      "end": 46.66,
+      "score": 1.0,
+      "seg_idx": 5
+    },
+    {
+      "verse": 5,
+      "start": 47.86,
+      "end": 61.877,
+      "score": 0.987,
+      "seg_idx": 7
+    },
+    {
+      "verse": 6,
+      "start": 63.117,
+      "end": 74.142,
+      "score": 1.0,
+      "seg_idx": 10
+    },
+    {
+      "verse": 7,
+      "start": 75.309,
+      "end": 81.354,
+      "score": 1.0,
+      "seg_idx": 12
+    },
+    {
+      "verse": 8,
+      "start": 81.975,
+      "end": 92.404,
+      "score": 1.0,
+      "seg_idx": 13
+    },
+    {
+      "verse": 9,
+      "start": 93.264,
+      "end": 99.67,
+      "score": 0.974,
+      "seg_idx": 15
+    },
+    {
+      "verse": 10,
+      "start": 100.598,
+      "end": 107.763,
+      "score": 1.0,
+      "seg_idx": 16
+    },
+    {
+      "verse": 11,
+      "start": 108.504,
+      "end": 120.333,
+      "score": 1.0,
+      "seg_idx": 17
+    },
+    {
+      "verse": 12,
+      "start": 121.554,
+      "end": 129.96,
+      "score": 1.0,
+      "seg_idx": 18
+    },
+    {
+      "verse": 13,
+      "start": 131.553,
+      "end": 141.635,
+      "score": 1.0,
+      "seg_idx": 19
+    },
+    {
+      "verse": 14,
+      "start": 143.035,
+      "end": 149.736,
+      "score": 0.969,
+      "seg_idx": 21
+    },
+    {
+      "verse": 15,
+      "start": 151.837,
+      "end": 157.838,
+      "score": 1.0,
+      "seg_idx": 23
+    },
+    {
+      "verse": 16,
+      "start": 159.009,
+      "end": 163.723,
+      "score": 0.993,
+      "seg_idx": 24
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "book": "GEN",
+  "chapter": 12,
+  "verses": [
+    {
+      "verse": 1,
+      "start": 0.0,
+      "end": 10.845,
+      "score": 0.993,
+      "seg_idx": 0
+    },
+    {
+      "verse": 2,
+      "start": 11.505,
+      "end": 18.606,
+      "score": 1.0,
+      "seg_idx": 1
+    },
+    {
+      "verse": 3,
+      "start": 19.407,
+      "end": 27.208,
+      "score": 1.0,
+      "seg_idx": 2
+    },
+    {
+      "verse": 4,
+      "start": 28.835,
+      "end": 37.86,
+      "score": 1.0,
+      "seg_idx": 4
+    },
+    {
+      "verse": 5,
+      "start": 39.0,
+      "end": 53.368,
+      "score": 1.0,
+      "seg_idx": 6
+    },
+    {
+      "verse": 6,
+      "start": 55.545,
+      "end": 61.848,
+      "score": 0.971,
+      "seg_idx": 9
+    },
+    {
+      "verse": 7,
+      "start": 62.509,
+      "end": 70.973,
+      "score": 0.986,
+      "seg_idx": 11
+    },
+    {
+      "verse": 8,
+      "start": 71.773,
+      "end": 83.439,
+      "score": 0.991,
+      "seg_idx": 13
+    },
+    {
+      "verse": 9,
+      "start": 84.776,
+      "end": 87.657,
+      "score": 1.0,
+      "seg_idx": 15
+    },
+    {
+      "verse": 10,
+      "start": 88.497,
+      "end": 94.919,
+      "score": 1.0,
+      "seg_idx": 16
+    },
+    {
+      "verse": 11,
+      "start": 95.88,
+      "end": 104.442,
+      "score": 1.0,
+      "seg_idx": 18
+    },
+    {
+      "verse": 12,
+      "start": 104.842,
+      "end": 113.105,
+      "score": 1.0,
+      "seg_idx": 19
+    },
+    {
+      "verse": 13,
+      "start": 114.027,
+      "end": 120.815,
+      "score": 1.0,
+      "seg_idx": 20
+    },
+    {
+      "verse": 14,
+      "start": 122.216,
+      "end": 127.622,
+      "score": 1.0,
+      "seg_idx": 21
+    },
+    {
+      "verse": 15,
+      "start": 128.363,
+      "end": 134.73,
+      "score": 1.0,
+      "seg_idx": 22
+    },
+    {
+      "verse": 16,
+      "start": 135.708,
+      "end": 144.816,
+      "score": 0.993,
+      "seg_idx": 24
+    },
+    {
+      "verse": 17,
+      "start": 146.237,
+      "end": 151.701,
+      "score": 1.0,
+      "seg_idx": 26
+    },
+    {
+      "verse": 18,
+      "start": 152.602,
+      "end": 159.568,
+      "score": 1.0,
+      "seg_idx": 27
+    },
+    {
+      "verse": 19,
+      "start": 160.309,
+      "end": 168.996,
+      "score": 1.0,
+      "seg_idx": 29
+    },
+    {
+      "verse": 20,
+      "start": 169.997,
+      "end": 175.162,
+      "score": 1.0,
+      "seg_idx": 31
+    }
+  ]
+}

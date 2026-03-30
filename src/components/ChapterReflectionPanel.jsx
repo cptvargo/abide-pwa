@@ -3,9 +3,69 @@
  * Premium chapter reflection panel for ABIDE
  * Sacred, contemplative — like opening an illuminated manuscript
  * Tabs: Reflection | Cross References
+ * UPDATED: AI-generated reflections via Cloudflare Worker proxy, cached to localStorage
  */
 
 import { useEffect, useRef, useState } from "react";
+
+/* ── Reflection cache ──────────────────────────────────────────── */
+const REFLECTION_CACHE_VERSION = "v1";
+const REFLECTION_CACHE_PREFIX = `abide_reflection_${REFLECTION_CACHE_VERSION}:`;
+
+function reflectionCacheKey(book, chapter) {
+  return (
+    REFLECTION_CACHE_PREFIX +
+    book.toLowerCase().replace(/\s+/g, "") +
+    ":" +
+    chapter
+  );
+}
+
+function getCachedReflection(book, chapter) {
+  try {
+    const raw = localStorage.getItem(reflectionCacheKey(book, chapter));
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function setCachedReflection(book, chapter, paragraphs) {
+  try {
+    localStorage.setItem(
+      reflectionCacheKey(book, chapter),
+      JSON.stringify(paragraphs),
+    );
+  } catch {}
+}
+
+/* ── AI reflection fetcher ─────────────────────────────────────── */
+async function fetchReflection(book, chapter) {
+  const prompt = `Write a rich, weighty devotional reflection on ${book} Chapter ${chapter}. 
+
+Write 3 paragraphs of flowing prose — no headers, no bullet points, no key verse callouts, no prayer. Just deep, contemplative reflection on what this chapter reveals about God, His character, and His purposes. The tone should be like a thoughtful Reformed evangelical scholar writing for personal devotion — reverent, substantive, and grounded in the text. Do not summarize the chapter. Reflect on its meaning and weight.
+
+Return only the 3 paragraphs separated by a blank line. No preamble, no labels, no JSON.`;
+
+  const response = await fetch(
+    "https://abide-seek-proxy.jvargas22.workers.dev",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: prompt }),
+    },
+  );
+
+  const data = await response.json();
+  const text = data.content?.[0]?.text ?? "";
+  // Split into paragraphs, filter blanks
+  const paragraphs = text
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  if (!paragraphs.length) throw new Error("Empty response");
+  return paragraphs;
+}
 
 /* ── Cross-reference loader ────────────────────────────────────── */
 function toBookSlug(displayName) {
@@ -33,7 +93,6 @@ async function loadVerseText(bookSlug, chapter, verse, translation) {
     const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
-    // Structure: { book, chapter, translation, title, verses: { "1": "text", ... } }
     return data.verses?.[String(verse)] ?? null;
   } catch {
     return null;
@@ -72,7 +131,6 @@ function formatRefDisplay(ref) {
   return `${displayBook} ${location}`;
 }
 
-/* ── Parse ref into parts ──────────────────────────────────────── */
 function parseRef(ref) {
   const spaceIdx = ref.indexOf(" ");
   if (spaceIdx === -1) return null;
@@ -80,7 +138,6 @@ function parseRef(ref) {
   const location = ref.slice(spaceIdx + 1);
   const [chapterStr, verseStr] = location.split(":");
   const chapter = parseInt(chapterStr);
-  // verse may be a range like "1-3" — take the first
   const verse = verseStr ? parseInt(verseStr.split("-")[0]) : 1;
   return { bookSlug, chapter, verse };
 }
@@ -116,39 +173,37 @@ function VersePreview({ ref, translation, onNavigate, onClose }) {
   return (
     <div
       style={{
-        marginTop: "10px",
+        marginTop: 10,
         background: "rgba(var(--accent-rgb,203,178,124),0.06)",
         border: "1px solid rgba(var(--accent-rgb,203,178,124),0.14)",
-        borderRadius: "12px",
+        borderRadius: 12,
         padding: "14px 16px",
         position: "relative",
       }}
     >
-      {/* Close X */}
       <button
         onClick={onClose}
         style={{
           position: "absolute",
-          top: "10px",
-          right: "10px",
+          top: 10,
+          right: 10,
           background: "none",
           border: "none",
           cursor: "pointer",
           color: "rgba(var(--accent-rgb,203,178,124),0.45)",
-          fontSize: "13px",
+          fontSize: 13,
           lineHeight: 1,
-          padding: "2px",
+          padding: 2,
           WebkitTapHighlightColor: "transparent",
         }}
       >
         ✕
       </button>
-
       {loading ? (
         <div
           style={{
             fontFamily: "var(--font-ui, system-ui)",
-            fontSize: "11px",
+            fontSize: 11,
             letterSpacing: "0.08em",
             color: "rgba(var(--accent-rgb,203,178,124),0.4)",
             padding: "4px 0",
@@ -158,50 +213,46 @@ function VersePreview({ ref, translation, onNavigate, onClose }) {
         </div>
       ) : text ? (
         <>
-          {/* Verse text */}
           <p
             style={{
               fontFamily: "var(--font-body, Georgia, serif)",
-              fontSize: "14px",
-              lineHeight: "1.7",
+              fontSize: 14,
+              lineHeight: 1.7,
               color: "var(--text-primary, #f0ebe0)",
               opacity: 0.88,
               margin: "0 0 12px",
-              paddingRight: "16px",
+              paddingRight: 16,
             }}
           >
             {text}
           </p>
-
-          {/* Navigate button */}
           <button
             onClick={() => onNavigate(parsed.bookSlug, parsed.chapter)}
             style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: "6px",
+              gap: 6,
               background: "none",
               border: "none",
               cursor: "pointer",
-              padding: "0",
+              padding: 0,
               fontFamily: "var(--font-ui, system-ui)",
-              fontSize: "11px",
+              fontSize: 11,
               letterSpacing: "0.1em",
               textTransform: "uppercase",
               color: "rgba(var(--accent-rgb,203,178,124),0.7)",
               WebkitTapHighlightColor: "transparent",
-              transition: "opacity 0.15s",
             }}
           >
             Go to {displayBook} {parsed.chapter}
             <svg
               viewBox="0 0 24 24"
               style={{
-                width: "12px",
-                height: "12px",
+                width: 12,
+                height: 12,
                 stroke: "currentColor",
                 fill: "none",
-                strokeWidth: "2.5",
+                strokeWidth: 2.5,
                 strokeLinecap: "round",
                 strokeLinejoin: "round",
               }}
@@ -212,11 +263,10 @@ function VersePreview({ ref, translation, onNavigate, onClose }) {
         </>
       ) : (
         <>
-          {/* Fallback — no text but still allow navigation */}
           <p
             style={{
               fontFamily: "var(--font-ui, system-ui)",
-              fontSize: "11px",
+              fontSize: 11,
               letterSpacing: "0.04em",
               color: "rgba(var(--accent-rgb,203,178,124),0.4)",
               margin: "0 0 12px",
@@ -229,13 +279,13 @@ function VersePreview({ ref, translation, onNavigate, onClose }) {
             style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: "6px",
+              gap: 6,
               background: "none",
               border: "none",
               cursor: "pointer",
-              padding: "0",
+              padding: 0,
               fontFamily: "var(--font-ui, system-ui)",
-              fontSize: "11px",
+              fontSize: 11,
               letterSpacing: "0.1em",
               textTransform: "uppercase",
               color: "rgba(var(--accent-rgb,203,178,124),0.7)",
@@ -246,11 +296,11 @@ function VersePreview({ ref, translation, onNavigate, onClose }) {
             <svg
               viewBox="0 0 24 24"
               style={{
-                width: "12px",
-                height: "12px",
+                width: 12,
+                height: 12,
                 stroke: "currentColor",
                 fill: "none",
-                strokeWidth: "2.5",
+                strokeWidth: 2.5,
                 strokeLinecap: "round",
                 strokeLinejoin: "round",
               }}
@@ -264,6 +314,40 @@ function VersePreview({ ref, translation, onNavigate, onClose }) {
   );
 }
 
+/* ── Loading skeleton ──────────────────────────────────────────── */
+function ReflectionSkeleton() {
+  return (
+    <div style={{ maxWidth: 560, margin: "0 auto" }}>
+      <style>{`
+        @keyframes crp-shimmer { 0%,100%{opacity:0.25} 50%{opacity:0.5} }
+        .crp-skel { background:rgba(var(--accent-rgb,203,178,124),0.08); borderRadius:6;
+          animation:crp-shimmer 1.6s ease-in-out infinite; }
+      `}</style>
+      {/* Three paragraph skeletons */}
+      {[
+        [100, 95, 90, 60],
+        [100, 95, 88, 75, 40],
+        [100, 92, 85, 55],
+      ].map((lines, pi) => (
+        <div key={pi} style={{ marginBottom: pi < 2 ? 20 : 0 }}>
+          {lines.map((w, li) => (
+            <div
+              key={li}
+              className="crp-skel"
+              style={{
+                height: 14,
+                width: `${w}%`,
+                marginBottom: 10,
+                animationDelay: `${(pi * lines.length + li) * 0.07}s`,
+              }}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /* ══════════════════════════════════════════════════════════════════
    Main Component
 ══════════════════════════════════════════════════════════════════ */
@@ -272,7 +356,7 @@ export default function ChapterReflectionPanel({
   onClose,
   book,
   chapter,
-  summary,
+  summary, // legacy prop — ignored, AI takes over
   onNavigate,
   translation = "VSV",
 }) {
@@ -281,8 +365,14 @@ export default function ChapterReflectionPanel({
   const [activeTab, setActiveTab] = useState("reflection");
   const [crossRefs, setCrossRefs] = useState(null);
   const [refsLoading, setRefsLoading] = useState(false);
-  const [expandedRef, setExpandedRef] = useState(null); // "bookslug chapter:verse"
+  const [expandedRef, setExpandedRef] = useState(null);
   const panelRef = useRef(null);
+
+  // ── Reflection state ──
+  const [paragraphs, setParagraphs] = useState(null); // null = not loaded
+  const [reflectionLoading, setReflectionLoading] = useState(false);
+  const [reflectionError, setReflectionError] = useState(null);
+  const [fromCache, setFromCache] = useState(false);
 
   /* ── Orchestrated entrance ─────────────────────────────── */
   useEffect(() => {
@@ -290,9 +380,9 @@ export default function ChapterReflectionPanel({
       setVisible(true);
       setActiveTab("reflection");
       setExpandedRef(null);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setAnimateIn(true));
-      });
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => setAnimateIn(true)),
+      );
       document.body.style.overflow = "hidden";
     } else {
       setAnimateIn(false);
@@ -309,6 +399,42 @@ export default function ChapterReflectionPanel({
     };
   }, [open]);
 
+  /* ── Load reflection when panel opens ─────────────────── */
+  useEffect(() => {
+    if (!open || !book || !chapter) return;
+
+    // Reset
+    setParagraphs(null);
+    setReflectionError(null);
+    setFromCache(false);
+
+    // Check cache first
+    const cached = getCachedReflection(book, chapter);
+    if (cached) {
+      setParagraphs(cached);
+      setFromCache(true);
+      return;
+    }
+
+    // Fetch from AI
+    if (!navigator.onLine) {
+      setReflectionError("You're offline. Connect to load this reflection.");
+      return;
+    }
+
+    setReflectionLoading(true);
+    fetchReflection(book, chapter)
+      .then((paras) => {
+        setCachedReflection(book, chapter, paras);
+        setParagraphs(paras);
+        setFromCache(false);
+      })
+      .catch(() =>
+        setReflectionError("Could not load reflection. Please try again."),
+      )
+      .finally(() => setReflectionLoading(false));
+  }, [open, book, chapter]);
+
   /* ── Load cross-refs when tab is activated ─────────────── */
   useEffect(() => {
     if (activeTab !== "crossrefs" || crossRefs !== null) return;
@@ -323,6 +449,9 @@ export default function ChapterReflectionPanel({
   useEffect(() => {
     setCrossRefs(null);
     setExpandedRef(null);
+    setParagraphs(null);
+    setReflectionError(null);
+    setFromCache(false);
   }, [book, chapter]);
 
   function handleRefClick(ref) {
@@ -331,13 +460,10 @@ export default function ChapterReflectionPanel({
 
   if (!visible) return null;
 
-  const paragraphs =
-    typeof summary === "string"
-      ? summary.split(/\n+/).filter(Boolean)
-      : [summary];
-
   const refEntries = crossRefs ? Object.entries(crossRefs) : [];
   const totalRefs = refEntries.reduce((acc, [, refs]) => acc + refs.length, 0);
+  const isLoading = reflectionLoading || (!paragraphs && !reflectionError);
+  const showSkeleton = isLoading && !paragraphs;
 
   return (
     <>
@@ -366,48 +492,29 @@ export default function ChapterReflectionPanel({
         .crp-close-btn:active { transform: scale(0.93); }
 
         .crp-tab {
-          flex: 1;
-          padding: 8px 0;
-          font-family: var(--font-ui, system-ui);
-          font-size: 11px;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          border: none;
-          background: none;
-          cursor: pointer;
+          flex: 1; padding: 8px 0;
+          font-family: var(--font-ui, system-ui); font-size: 11px;
+          letter-spacing: 0.1em; text-transform: uppercase;
+          border: none; background: none; cursor: pointer;
           transition: color 0.2s, opacity 0.2s;
-          position: relative;
-          -webkit-tap-highlight-color: transparent;
+          position: relative; -webkit-tap-highlight-color: transparent;
         }
-        .crp-tab-active {
-          color: rgba(var(--accent-rgb, 203,178,124), 1) !important;
-          opacity: 1 !important;
-        }
+        .crp-tab-active { color: rgba(var(--accent-rgb, 203,178,124), 1) !important; opacity: 1 !important; }
         .crp-tab-active::after {
-          content: '';
-          position: absolute;
-          bottom: -1px;
-          left: 16%;
-          right: 16%;
-          height: 1px;
-          background: rgba(var(--accent-rgb, 203,178,124), 0.7);
-          border-radius: 100px;
+          content: ''; position: absolute; bottom: -1px; left: 16%; right: 16%;
+          height: 1px; background: rgba(var(--accent-rgb, 203,178,124), 0.7); border-radius: 100px;
         }
         .crp-ref-row {
-          display: flex;
-          align-items: baseline;
-          gap: 10px;
-          padding: 9px 0;
-          border-bottom: 1px solid rgba(var(--accent-rgb, 203,178,124), 0.07);
-          cursor: pointer;
-          transition: opacity 0.15s;
+          display: flex; align-items: baseline; gap: 10px;
+          padding: 9px 0; border-bottom: 1px solid rgba(var(--accent-rgb, 203,178,124), 0.07);
+          cursor: pointer; transition: opacity 0.15s;
         }
         .crp-ref-row:hover { opacity: 0.7; }
         .crp-ref-row:last-child { border-bottom: none; }
         .crp-ref-row-expanded { border-bottom: none; }
       `}</style>
 
-      {/* ── Backdrop ──────────────────────────────────────────── */}
+      {/* Backdrop */}
       <div
         className="crp-backdrop"
         onClick={onClose}
@@ -421,7 +528,7 @@ export default function ChapterReflectionPanel({
         }}
       />
 
-      {/* ── Panel ─────────────────────────────────────────────── */}
+      {/* Panel */}
       <div
         ref={panelRef}
         className="crp-panel crp-scroll"
@@ -434,8 +541,8 @@ export default function ChapterReflectionPanel({
           maxHeight: "88vh",
           overflowY: "auto",
           background: "var(--bg-menu, #141410)",
-          borderTopLeftRadius: "24px",
-          borderTopRightRadius: "24px",
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
           paddingBottom: "env(safe-area-inset-bottom, 24px)",
           boxShadow:
             "0 -8px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(var(--accent-rgb,203,178,124),0.08)",
@@ -465,7 +572,7 @@ export default function ChapterReflectionPanel({
             left: "50%",
             transform: "translateX(-50%)",
             width: "40%",
-            height: "80px",
+            height: 80,
             background:
               "radial-gradient(ellipse at top, rgba(var(--accent-rgb,203,178,124),0.07), transparent 70%)",
             pointerEvents: "none",
@@ -473,22 +580,22 @@ export default function ChapterReflectionPanel({
         />
 
         <div style={{ padding: "0 24px 32px", position: "relative" }}>
-          {/* Grab handle + close */}
+          {/* Handle + close */}
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              paddingTop: "14px",
-              marginBottom: "24px",
+              paddingTop: 14,
+              marginBottom: 24,
               position: "relative",
             }}
           >
             <div
               style={{
-                height: "3px",
-                width: "36px",
-                borderRadius: "100px",
+                height: 3,
+                width: 36,
+                borderRadius: 100,
                 background: "rgba(var(--accent-rgb,203,178,124),0.25)",
               }}
             />
@@ -503,9 +610,9 @@ export default function ChapterReflectionPanel({
                 background: "none",
                 border: "none",
                 cursor: "pointer",
-                padding: "8px",
+                padding: 8,
                 color: "var(--text-primary, #f0ebe0)",
-                fontSize: "18px",
+                fontSize: 18,
                 lineHeight: 1,
                 WebkitTapHighlightColor: "transparent",
               }}
@@ -515,26 +622,26 @@ export default function ChapterReflectionPanel({
             </button>
           </div>
 
-          {/* ── Header ─────────────────────────────────────────── */}
+          {/* Header */}
           <div
             className="crp-header"
-            style={{ textAlign: "center", marginBottom: "24px" }}
+            style={{ textAlign: "center", marginBottom: 24 }}
           >
             <div
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "6px",
+                gap: 6,
                 background: "rgba(var(--accent-rgb,203,178,124),0.08)",
                 border: "1px solid rgba(var(--accent-rgb,203,178,124),0.15)",
-                borderRadius: "100px",
+                borderRadius: 100,
                 padding: "4px 12px 4px 10px",
-                marginBottom: "20px",
+                marginBottom: 20,
               }}
             >
               <span
                 style={{
-                  fontSize: "10px",
+                  fontSize: 10,
                   color: "rgba(var(--accent-rgb,203,178,124),1)",
                 }}
               >
@@ -543,7 +650,7 @@ export default function ChapterReflectionPanel({
               <span
                 style={{
                   fontFamily: "var(--font-ui, system-ui)",
-                  fontSize: "10px",
+                  fontSize: 10,
                   letterSpacing: "0.12em",
                   textTransform: "uppercase",
                   color: "rgba(var(--accent-rgb,203,178,124),0.8)",
@@ -555,12 +662,12 @@ export default function ChapterReflectionPanel({
             <div
               style={{
                 fontFamily: "var(--font-ui, system-ui)",
-                fontSize: "26px",
-                fontWeight: "300",
+                fontSize: 26,
+                fontWeight: 300,
                 letterSpacing: "0.04em",
                 color: "var(--text-primary, #f0ebe0)",
                 lineHeight: 1.2,
-                marginBottom: "4px",
+                marginBottom: 4,
               }}
             >
               {book}
@@ -568,7 +675,7 @@ export default function ChapterReflectionPanel({
             <div
               style={{
                 fontFamily: "var(--font-ui, system-ui)",
-                fontSize: "13px",
+                fontSize: 13,
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
                 color: "rgba(var(--accent-rgb,203,178,124),0.7)",
@@ -578,13 +685,13 @@ export default function ChapterReflectionPanel({
             </div>
           </div>
 
-          {/* ── Tab bar ────────────────────────────────────────── */}
+          {/* Tab bar */}
           <div
             style={{
               display: "flex",
               borderBottom:
                 "1px solid rgba(var(--accent-rgb,203,178,124),0.12)",
-              marginBottom: "28px",
+              marginBottom: 28,
             }}
           >
             <button
@@ -613,29 +720,29 @@ export default function ChapterReflectionPanel({
             </button>
           </div>
 
-          {/* ── Reflection tab ─────────────────────────────────── */}
+          {/* ── Reflection tab ─────────────────────────────── */}
           {activeTab === "reflection" && (
             <>
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "12px",
-                  marginBottom: "28px",
+                  gap: 12,
+                  marginBottom: 28,
                 }}
               >
                 <div
                   className="crp-rule"
                   style={{
                     flex: 1,
-                    height: "1px",
+                    height: 1,
                     background:
                       "linear-gradient(90deg, transparent, rgba(var(--accent-rgb,203,178,124),0.3))",
                   }}
                 />
                 <div
                   style={{
-                    fontSize: "14px",
+                    fontSize: 14,
                     color: "rgba(var(--accent-rgb,203,178,124),0.5)",
                     flexShrink: 0,
                   }}
@@ -646,69 +753,127 @@ export default function ChapterReflectionPanel({
                   className="crp-rule"
                   style={{
                     flex: 1,
-                    height: "1px",
+                    height: 1,
                     background:
                       "linear-gradient(90deg, rgba(var(--accent-rgb,203,178,124),0.3), transparent)",
                   }}
                 />
               </div>
 
-              <div
-                className="crp-body"
-                style={{ maxWidth: "560px", margin: "0 auto" }}
-              >
-                {paragraphs.map((para, i) => (
+              {/* Loading skeleton */}
+              {showSkeleton && <ReflectionSkeleton />}
+
+              {/* Error */}
+              {reflectionError && !showSkeleton && (
+                <div style={{ textAlign: "center", padding: "32px 0" }}>
                   <p
-                    key={i}
                     style={{
                       fontFamily: "var(--font-body, Georgia, serif)",
-                      fontSize: "16px",
-                      lineHeight: "1.85",
+                      fontSize: 14,
                       color: "var(--text-primary, #f0ebe0)",
-                      opacity: 0.88,
-                      margin: i < paragraphs.length - 1 ? "0 0 20px" : 0,
-                      textAlign: "left",
+                      opacity: 0.45,
+                      fontStyle: "italic",
+                      lineHeight: 1.7,
+                      marginBottom: 20,
                     }}
                   >
-                    {para}
+                    {reflectionError}
                   </p>
-                ))}
-              </div>
+                  <button
+                    onClick={() => {
+                      setReflectionError(null);
+                      setReflectionLoading(true);
+                      fetchReflection(book, chapter)
+                        .then((paras) => {
+                          setCachedReflection(book, chapter, paras);
+                          setParagraphs(paras);
+                        })
+                        .catch(() =>
+                          setReflectionError(
+                            "Could not load reflection. Please try again.",
+                          ),
+                        )
+                        .finally(() => setReflectionLoading(false));
+                    }}
+                    style={{
+                      background: "transparent",
+                      border: "1px solid rgba(203,178,124,0.3)",
+                      borderRadius: 8,
+                      padding: "8px 18px",
+                      color: "var(--text-accent)",
+                      fontFamily: "var(--font-ui, system-ui)",
+                      fontSize: 12,
+                      letterSpacing: "0.06em",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Try again
+                  </button>
+                </div>
+              )}
 
-              <div className="crp-footer" style={{ marginTop: "36px" }}>
+              {/* Reflection paragraphs */}
+              {paragraphs && !showSkeleton && (
                 <div
-                  style={{
-                    height: "1px",
-                    background:
-                      "linear-gradient(90deg, transparent, rgba(var(--accent-rgb,203,178,124),0.12), transparent)",
-                    marginBottom: "16px",
-                  }}
-                />
-                <p
-                  style={{
-                    fontFamily: "var(--font-ui, system-ui)",
-                    fontSize: "11px",
-                    lineHeight: "1.6",
-                    letterSpacing: "0.02em",
-                    color: "var(--text-primary, #f0ebe0)",
-                    opacity: 0.3,
-                    textAlign: "center",
-                    maxWidth: "340px",
-                    margin: "0 auto",
-                  }}
+                  className="crp-body"
+                  style={{ maxWidth: 560, margin: "0 auto" }}
                 >
-                  AI-assisted reflection provided as a reading aid. Scripture
-                  itself remains the final authority.
-                </p>
-              </div>
+                  {paragraphs.map((para, i) => (
+                    <p
+                      key={i}
+                      style={{
+                        fontFamily: "var(--font-body, Georgia, serif)",
+                        fontSize: 16,
+                        lineHeight: 1.85,
+                        color: "var(--text-primary, #f0ebe0)",
+                        opacity: 0.88,
+                        margin: i < paragraphs.length - 1 ? "0 0 20px" : 0,
+                        textAlign: "left",
+                      }}
+                    >
+                      {para}
+                    </p>
+                  ))}
+                </div>
+              )}
+
+              {/* Footer */}
+              {!showSkeleton && (
+                <div className="crp-footer" style={{ marginTop: 36 }}>
+                  <div
+                    style={{
+                      height: 1,
+                      background:
+                        "linear-gradient(90deg, transparent, rgba(var(--accent-rgb,203,178,124),0.12), transparent)",
+                      marginBottom: 16,
+                    }}
+                  />
+                  <p
+                    style={{
+                      fontFamily: "var(--font-ui, system-ui)",
+                      fontSize: 11,
+                      lineHeight: 1.6,
+                      letterSpacing: "0.02em",
+                      color: "var(--text-primary, #f0ebe0)",
+                      opacity: 0.3,
+                      textAlign: "center",
+                      maxWidth: 340,
+                      margin: "0 auto",
+                    }}
+                  >
+                    AI-assisted reflection provided as a reading aid. Scripture
+                    itself remains the final authority.
+                  </p>
+                </div>
+              )}
             </>
           )}
 
-          {/* ── Cross References tab ───────────────────────────── */}
+          {/* ── Cross References tab ───────────────────────── */}
           {activeTab === "crossrefs" && (
             <div
               className="crp-body"
-              style={{ maxWidth: "560px", margin: "0 auto" }}
+              style={{ maxWidth: 560, margin: "0 auto" }}
             >
               {refsLoading ? (
                 <div
@@ -717,7 +882,7 @@ export default function ChapterReflectionPanel({
                     padding: "48px 0",
                     color: "rgba(var(--accent-rgb,203,178,124),0.4)",
                     fontFamily: "var(--font-ui, system-ui)",
-                    fontSize: "12px",
+                    fontSize: 12,
                     letterSpacing: "0.1em",
                   }}
                 >
@@ -730,7 +895,7 @@ export default function ChapterReflectionPanel({
                     padding: "48px 0",
                     color: "rgba(var(--accent-rgb,203,178,124),0.35)",
                     fontFamily: "var(--font-ui, system-ui)",
-                    fontSize: "12px",
+                    fontSize: 12,
                     letterSpacing: "0.06em",
                   }}
                 >
@@ -738,18 +903,17 @@ export default function ChapterReflectionPanel({
                 </div>
               ) : (
                 <>
-                  {/* Count pill */}
-                  <div style={{ textAlign: "center", marginBottom: "28px" }}>
+                  <div style={{ textAlign: "center", marginBottom: 28 }}>
                     <span
                       style={{
                         display: "inline-block",
                         background: "rgba(var(--accent-rgb,203,178,124),0.08)",
                         border:
                           "1px solid rgba(var(--accent-rgb,203,178,124),0.15)",
-                        borderRadius: "100px",
+                        borderRadius: 100,
                         padding: "3px 14px",
                         fontFamily: "var(--font-ui, system-ui)",
-                        fontSize: "10px",
+                        fontSize: 10,
                         letterSpacing: "0.1em",
                         textTransform: "uppercase",
                         color: "rgba(var(--accent-rgb,203,178,124),0.6)",
@@ -759,24 +923,22 @@ export default function ChapterReflectionPanel({
                     </span>
                   </div>
 
-                  {/* Verse groups */}
                   {refEntries
                     .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
                     .map(([verseNum, refs]) => (
-                      <div key={verseNum} style={{ marginBottom: "24px" }}>
-                        {/* Verse label */}
+                      <div key={verseNum} style={{ marginBottom: 24 }}>
                         <div
                           style={{
                             display: "flex",
                             alignItems: "center",
-                            gap: "10px",
-                            marginBottom: "6px",
+                            gap: 10,
+                            marginBottom: 6,
                           }}
                         >
                           <span
                             style={{
                               fontFamily: "var(--font-ui, system-ui)",
-                              fontSize: "10px",
+                              fontSize: 10,
                               letterSpacing: "0.12em",
                               textTransform: "uppercase",
                               color: "rgba(var(--accent-rgb,203,178,124),0.5)",
@@ -788,15 +950,13 @@ export default function ChapterReflectionPanel({
                           <div
                             style={{
                               flex: 1,
-                              height: "1px",
+                              height: 1,
                               background:
                                 "rgba(var(--accent-rgb,203,178,124),0.08)",
                             }}
                           />
                         </div>
-
-                        {/* Refs */}
-                        <div style={{ paddingLeft: "4px" }}>
+                        <div style={{ paddingLeft: 4 }}>
                           {refs.map((ref, i) => {
                             const isExpanded = expandedRef === ref;
                             return (
@@ -810,13 +970,13 @@ export default function ChapterReflectionPanel({
                                 >
                                   <span
                                     style={{
-                                      fontSize: "9px",
+                                      fontSize: 9,
+                                      flexShrink: 0,
                                       color: isExpanded
                                         ? "rgba(var(--accent-rgb,203,178,124),0.8)"
                                         : "rgba(var(--accent-rgb,203,178,124),0.35)",
-                                      flexShrink: 0,
                                       fontFamily: "var(--font-ui, system-ui)",
-                                      paddingTop: "2px",
+                                      paddingTop: 2,
                                       transition: "color 0.2s",
                                     }}
                                   >
@@ -826,7 +986,7 @@ export default function ChapterReflectionPanel({
                                     style={{
                                       fontFamily:
                                         "var(--font-body, Georgia, serif)",
-                                      fontSize: "15px",
+                                      fontSize: 15,
                                       color: "var(--text-primary, #f0ebe0)",
                                       opacity: 0.82,
                                       lineHeight: 1.5,
@@ -834,11 +994,10 @@ export default function ChapterReflectionPanel({
                                   >
                                     {formatRefDisplay(ref)}
                                   </span>
-                                  {/* Chevron */}
                                   <span
                                     style={{
                                       marginLeft: "auto",
-                                      fontSize: "10px",
+                                      fontSize: 10,
                                       color:
                                         "rgba(var(--accent-rgb,203,178,124),0.4)",
                                       transition: "transform 0.2s",
@@ -852,8 +1011,6 @@ export default function ChapterReflectionPanel({
                                     ⌄
                                   </span>
                                 </div>
-
-                                {/* Inline verse preview */}
                                 {isExpanded && (
                                   <VersePreview
                                     ref={ref}
@@ -871,26 +1028,25 @@ export default function ChapterReflectionPanel({
                       </div>
                     ))}
 
-                  {/* Footer */}
-                  <div style={{ marginTop: "16px" }}>
+                  <div style={{ marginTop: 16 }}>
                     <div
                       style={{
-                        height: "1px",
+                        height: 1,
                         background:
                           "linear-gradient(90deg, transparent, rgba(var(--accent-rgb,203,178,124),0.12), transparent)",
-                        marginBottom: "16px",
+                        marginBottom: 16,
                       }}
                     />
                     <p
                       style={{
                         fontFamily: "var(--font-ui, system-ui)",
-                        fontSize: "11px",
-                        lineHeight: "1.6",
+                        fontSize: 11,
+                        lineHeight: 1.6,
                         letterSpacing: "0.02em",
                         color: "var(--text-primary, #f0ebe0)",
                         opacity: 0.3,
                         textAlign: "center",
-                        maxWidth: "340px",
+                        maxWidth: 340,
                         margin: "0 auto",
                       }}
                     >

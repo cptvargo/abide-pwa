@@ -100,6 +100,7 @@ body {
 [data-theme="classic"] {
   --bg-app: #1c1c1a;
   --bg-nav: linear-gradient(135deg, #cbb27c 0%, #8b7355 100%);
+   --bg-nav-solid: #8b7355;
   --bg-menu: #1c1c1a;
   --text-primary: #eeece6;
   --text-accent: #cbb27c;
