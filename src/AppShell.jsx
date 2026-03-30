@@ -2134,6 +2134,7 @@ export default function AppShell() {
         onNavigate={handleNavigate}
         currentBookId={currentBookId}
         currentChapter={readingContext.chapter}
+        translation={translation}
       />
 
       {/* ── Search Panel ── */}

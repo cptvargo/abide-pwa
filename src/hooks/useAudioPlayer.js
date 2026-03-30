@@ -206,13 +206,17 @@ export function useAudioPlayer({ book, chapter, verseCount, onAdvanceChapter }) 
 
   // ── Media Session handlers — always reference current posRef ─────────────
   function makeHandlers(slug, ch) {
-    return {
+    const handlers = {
       play: () => {
         if (audio.paused) {
           audio.play().catch(() => {});
           setIsPlaying(true);
           rafRef.current = requestAnimationFrame(tick);
-          if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "playing";
+          if ("mediaSession" in navigator) {
+            navigator.mediaSession.playbackState = "playing";
+            // Re-register all handlers after play so lock screen controls stay active
+            updateMediaSession(slug, ch, handlers);
+          }
         }
       },
       pause: () => {
@@ -220,12 +224,17 @@ export function useAudioPlayer({ book, chapter, verseCount, onAdvanceChapter }) 
           audio.pause();
           setIsPlaying(false);
           cancelAnimationFrame(rafRef.current);
-          if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "paused";
+          if ("mediaSession" in navigator) {
+            navigator.mediaSession.playbackState = "paused";
+            // Re-register all handlers after pause so play button stays active on lock screen
+            updateMediaSession(slug, ch, handlers);
+          }
         }
       },
       next: () => doAdvance(),
       prev: () => { audio.currentTime = 0; verseIndexRef.current = 0; },
     };
+    return handlers;
   }
 
   // ── Load chapter into persistent element ─────────────────────────────────
@@ -328,7 +337,11 @@ export function useAudioPlayer({ book, chapter, verseCount, onAdvanceChapter }) 
       audio.pause();
       setIsPlaying(false);
       cancelAnimationFrame(rafRef.current);
-      if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "paused";
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.playbackState = "paused";
+        // Re-register so lock screen play button stays active
+        updateMediaSession(posRef.current.book, posRef.current.chapter, makeHandlers(posRef.current.book, posRef.current.chapter));
+      }
     }
   }, [tick]);
 
