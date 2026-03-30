@@ -140,7 +140,7 @@ const SEEK_SUGGESTIONS = [
   "Mercy",
   "Shalom",
 ];
-const SEEK_CACHE_VERSION = "v5";
+const SEEK_CACHE_VERSION = "v7"; // v7: includes enriched verse text
 const SEEK_CACHE_PREFIX = `abide_seek_${SEEK_CACHE_VERSION}:`;
 
 const BOOK_NAME_TO_ID = {
@@ -258,23 +258,28 @@ async function enrichVerses(verses, translation = "kjv") {
   );
 }
 
-function getCached(query) {
+function getCached(query, translation) {
   try {
-    const raw = localStorage.getItem(
-      SEEK_CACHE_PREFIX + query.toLowerCase().trim(),
-    );
+    const key =
+      SEEK_CACHE_PREFIX +
+      translation.toLowerCase() +
+      ":" +
+      query.toLowerCase().trim();
+    const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
 }
 
-function setCached(query, data) {
+function setCached(query, translation, data) {
   try {
-    localStorage.setItem(
-      SEEK_CACHE_PREFIX + query.toLowerCase().trim(),
-      JSON.stringify(data),
-    );
+    const key =
+      SEEK_CACHE_PREFIX +
+      translation.toLowerCase() +
+      ":" +
+      query.toLowerCase().trim();
+    localStorage.setItem(key, JSON.stringify(data));
   } catch {}
 }
 
@@ -358,11 +363,8 @@ export default function BibleNavigator({
     setSeekFromCache(false);
     setView("study");
 
-    const cached = getCached(q);
+    const cached = getCached(q, translation);
     if (cached) {
-      // Always re-enrich with current translation so verses match what user sees
-      if (cached.verses?.length)
-        cached.verses = await enrichVerses(cached.verses, translation);
       setSeekResult(cached);
       setSeekFromCache(true);
       setSeekLoading(false);
@@ -394,7 +396,7 @@ export default function BibleNavigator({
       if (parsed.verses?.length)
         parsed.verses = await enrichVerses(parsed.verses, translation);
 
-      setCached(q, parsed);
+      setCached(q, translation, parsed);
       setSeekResult(parsed);
     } catch {
       setSeekError("Something went wrong. Please try again.");

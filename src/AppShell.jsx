@@ -548,20 +548,142 @@ const SEEK_SUGGESTIONS = [
   "Mercy",
   "Shalom",
 ];
-const SEEK_CACHE_PREFIX = "abide_seek_v5:";
+const SEEK_CACHE_PREFIX = "abide_seek_v7:"; // v7: includes enriched verse text
 
-function getCached(q) {
+// ── Verse enrichment — replaces AI-generated text with real local translation ─
+const SEEK_BOOK_NAME_TO_ID = {
+  genesis: "genesis",
+  exodus: "exodus",
+  leviticus: "leviticus",
+  numbers: "numbers",
+  deuteronomy: "deuteronomy",
+  joshua: "joshua",
+  judges: "judges",
+  ruth: "ruth",
+  "1 samuel": "1samuel",
+  "2 samuel": "2samuel",
+  "1 kings": "1kings",
+  "2 kings": "2kings",
+  "1 chronicles": "1chronicles",
+  "2 chronicles": "2chronicles",
+  ezra: "ezra",
+  nehemiah: "nehemiah",
+  esther: "esther",
+  job: "job",
+  psalm: "psalms",
+  psalms: "psalms",
+  proverbs: "proverbs",
+  ecclesiastes: "ecclesiastes",
+  "song of solomon": "songofsolomon",
+  "song of songs": "songofsolomon",
+  isaiah: "isaiah",
+  jeremiah: "jeremiah",
+  lamentations: "lamentations",
+  ezekiel: "ezekiel",
+  daniel: "daniel",
+  hosea: "hosea",
+  joel: "joel",
+  amos: "amos",
+  obadiah: "obadiah",
+  jonah: "jonah",
+  micah: "micah",
+  nahum: "nahum",
+  habakkuk: "habakkuk",
+  zephaniah: "zephaniah",
+  haggai: "haggai",
+  zechariah: "zechariah",
+  malachi: "malachi",
+  matthew: "matthew",
+  mark: "mark",
+  luke: "luke",
+  john: "john",
+  acts: "acts",
+  romans: "romans",
+  "1 corinthians": "1corinthians",
+  "2 corinthians": "2corinthians",
+  galatians: "galatians",
+  ephesians: "ephesians",
+  philippians: "philippians",
+  colossians: "colossians",
+  "1 thessalonians": "1thessalonians",
+  "2 thessalonians": "2thessalonians",
+  "1 timothy": "1timothy",
+  "2 timothy": "2timothy",
+  titus: "titus",
+  philemon: "philemon",
+  hebrews: "hebrews",
+  james: "james",
+  "1 peter": "1peter",
+  "2 peter": "2peter",
+  "1 john": "1john",
+  "2 john": "2john",
+  "3 john": "3john",
+  jude: "jude",
+  revelation: "revelation",
+};
+
+function seekParseRef(ref) {
+  const match = ref.match(/^(.+?)\s+(\d+):(\d+)$/);
+  if (!match) return null;
+  const bookId = SEEK_BOOK_NAME_TO_ID[match[1].toLowerCase().trim()];
+  if (!bookId) return null;
+  return { book: bookId, chapter: match[2], verse: match[3] };
+}
+
+async function seekFetchVerseText(ref, translation) {
+  const parsed = seekParseRef(ref);
+  if (!parsed) return null;
+  const { book, chapter, verse } = parsed;
+  const t = translation.toLowerCase();
+  const priority = t === "kjv" ? ["kjv"] : [t, "kjv"];
+  for (const trans of priority) {
+    try {
+      const base = import.meta.env.BASE_URL;
+      const res = await fetch(
+        `${base}data/translations/${trans}/${book}/${chapter}.json`,
+      );
+      if (!res.ok) continue;
+      const data = await res.json();
+      const text = data.verses?.[verse];
+      if (text) return { text, translation: trans.toUpperCase() };
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
+async function seekEnrichVerses(verses, translation) {
+  return Promise.all(
+    verses.map(async (v) => {
+      const result = await seekFetchVerseText(v.ref, translation);
+      return result
+        ? { ...v, text: result.text, translation: result.translation }
+        : v;
+    }),
+  );
+}
+
+function getCached(q, translation) {
   try {
-    const r = localStorage.getItem(SEEK_CACHE_PREFIX + q.toLowerCase().trim());
+    const r = localStorage.getItem(
+      SEEK_CACHE_PREFIX +
+        translation.toLowerCase() +
+        ":" +
+        q.toLowerCase().trim(),
+    );
     return r ? JSON.parse(r) : null;
   } catch {
     return null;
   }
 }
-function setCached(q, data) {
+function setCached(q, translation, data) {
   try {
     localStorage.setItem(
-      SEEK_CACHE_PREFIX + q.toLowerCase().trim(),
+      SEEK_CACHE_PREFIX +
+        translation.toLowerCase() +
+        ":" +
+        q.toLowerCase().trim(),
       JSON.stringify(data),
     );
   } catch {}
@@ -726,7 +848,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
     setSeekResult(null);
     setFromCache(false);
     setSeekView("result");
-    const cached = getCached(q);
+    const cached = getCached(q, translation);
     if (cached) {
       setSeekResult(cached);
       setFromCache(true);
@@ -744,13 +866,17 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: q }),
+          body: JSON.stringify({ query: q, translation }),
         },
       );
       const data = await response.json();
       const text = data.content?.[0]?.text || "";
       const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
-      setCached(q, parsed);
+      // Enrich verses with actual text from local translation files
+      if (parsed.verses?.length) {
+        parsed.verses = await seekEnrichVerses(parsed.verses, translation);
+      }
+      setCached(q, translation, parsed);
       setSeekResult(parsed);
     } catch {
       setSeekError("Something went wrong. Please try again.");
@@ -1182,6 +1308,32 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                   MATTHEW 7:7
                 </div>
               </div>
+
+              {/* Clear Seek cache */}
+              <button
+                onClick={() => {
+                  Object.keys(localStorage)
+                    .filter((k) => k.startsWith("abide_seek_v"))
+                    .forEach((k) => localStorage.removeItem(k));
+                  alert(
+                    "Seek cache cleared. Results will refresh on next search.",
+                  );
+                }}
+                style={{
+                  display: "block",
+                  margin: "24px auto 0",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 10,
+                  letterSpacing: "0.1em",
+                  color: "rgba(203,178,124,0.25)",
+                  WebkitTapHighlightColor: "transparent",
+                }}
+              >
+                CLEAR SEEK CACHE
+              </button>
             </>
           )}
 
@@ -1480,6 +1632,20 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
    App Shell
 ================================ */
 export default function AppShell() {
+  // One-time migration — clears old translation-unaware Seek cache (v5 and earlier)
+  // Safe: only removes abide_seek_ keys, leaves notes/highlights/settings untouched
+  useEffect(() => {
+    const migrated = localStorage.getItem("abide_seek_cache_migrated_v7");
+    if (!migrated) {
+      Object.keys(localStorage)
+        .filter(
+          (k) => k.startsWith("abide_seek_v") && !k.startsWith("abide_seek_v7"),
+        )
+        .forEach((k) => localStorage.removeItem(k));
+      localStorage.setItem("abide_seek_cache_migrated_v7", "1");
+    }
+  }, []);
+
   const [activeScreen, setActiveScreen] = useState("scripture");
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -2134,7 +2300,6 @@ export default function AppShell() {
         onNavigate={handleNavigate}
         currentBookId={currentBookId}
         currentChapter={readingContext.chapter}
-        translation={translation}
       />
 
       {/* ── Search Panel ── */}

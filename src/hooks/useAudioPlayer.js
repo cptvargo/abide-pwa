@@ -84,14 +84,11 @@ function updateMediaSession(bookSlug, chapter, handlers) {
   if (!("mediaSession" in navigator)) return;
   const bookName = bookSlug.charAt(0).toUpperCase() + bookSlug.slice(1);
   try {
-navigator.mediaSession.metadata = new MediaMetadata({
-  title:  `${bookName} ${chapter}`,
-  artist: "ABIDE Bible",
-  album:  "King James Version",
-  artwork: [
-    { src: `${import.meta.env.BASE_URL}pwa-512x512.png`, sizes: "512x512", type: "image/png" },
-  ],
-});
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title:  `${bookName} ${chapter}`,
+      artist: "ABIDE Bible",
+      album:  "King James Version",
+    });
     navigator.mediaSession.playbackState = "playing";
     navigator.mediaSession.setActionHandler("play",          handlers.play  || null);
     navigator.mediaSession.setActionHandler("pause",         handlers.pause || null);
@@ -101,22 +98,23 @@ navigator.mediaSession.metadata = new MediaMetadata({
 }
 
 export function useAudioPlayer({ book, chapter, verseCount, onAdvanceChapter }) {
-  // Use the single persistent audio element
-  const audio = getPersistentAudio();
-
+  // ALL hooks declared unconditionally at the top — no early returns before this block
   const timingRef     = useRef(null);
   const rafRef        = useRef(null);
   const verseIndexRef = useRef(0);
-
-  // Always-current refs — safe to read inside DOM event handlers
-  const posRef       = useRef({ book: book?.toLowerCase() ?? "genesis", chapter });
-  const onAdvanceRef = useRef(onAdvanceChapter);
-  const advancedRef  = useRef(false); // prevent double-advance
+  const posRef        = useRef({ book: book?.toLowerCase() ?? "genesis", chapter });
+  const onAdvanceRef  = useRef(onAdvanceChapter);
+  const advancedRef   = useRef(false);
+  const audioRef      = useRef(null); // real ref — initialized below
 
   const [isPlaying,    setIsPlaying]    = useState(false);
   const [progress,     setProgress]     = useState(0);
   const [currentVerse, setCurrentVerse] = useState(null);
   const [isLoaded,     setIsLoaded]     = useState(false);
+
+  // Get persistent audio element AFTER all hooks are declared
+  const audio = getPersistentAudio();
+  audioRef.current = audio; // keep ref in sync
 
   useEffect(() => { onAdvanceRef.current = onAdvanceChapter; }, [onAdvanceChapter]);
   useEffect(() => {
@@ -375,7 +373,7 @@ export function useAudioPlayer({ book, chapter, verseCount, onAdvanceChapter }) 
     isLoaded,
     progress,
     currentVerse,
-    audioRef: { current: audio }, // expose as ref shape for AudioMiniPlayer compatibility
+    audioRef,
     toggle,
     reset,
     seekToVerse,
