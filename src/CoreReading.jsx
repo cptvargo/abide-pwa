@@ -4,6 +4,7 @@
  * FIXED: NaN verse numbers — non-numeric keys filtered out
  * FIXED: Psalm 119 style sectioned verses (sections[].verses) flattened correctly
  * ADDED: isAudioPlaying prop — fades text during audio playback
+ * ADDED: segments support for inline speaker rendering
  */
 
 import { useEffect, useState, useRef } from "react";
@@ -16,7 +17,7 @@ export default function CoreReading({
   chapterlessMode = false,
   textSize = 1.0,
   translation = "VSV",
-  isAudioPlaying = false, // ← NEW: from AppShell, drives text fade
+  isAudioPlaying = false,
   onReadingContext,
   onScrollProgress,
   navigationTarget,
@@ -39,6 +40,18 @@ export default function CoreReading({
     if (val && typeof val === "object") return val.text ?? "";
     return "";
   };
+
+  // ── Verse content renderer ──
+  function renderVerseContent(v) {
+    if (v.segments) {
+      return v.segments.map((seg, i) => (
+        <span key={i} className={seg.speaker === "Jesus" ? "jesus" : ""}>
+          {seg.text}
+        </span>
+      ));
+    }
+    return v.text;
+  }
 
   /* ===============================
      Chapter Reflection State
@@ -116,6 +129,8 @@ export default function CoreReading({
       verseItems = flatVersesData.map((v) => ({
         verse: v.verse,
         text: safeText(v.text ?? v),
+        segments: v.segments ?? null,
+        speaker: v.speaker ?? null,
         chapter: chapterNumber,
       }));
     } else if (typeof flatVersesData === "object" && flatVersesData !== null) {
@@ -123,8 +138,16 @@ export default function CoreReading({
         .filter(([verse]) => !isNaN(Number(verse)) && verse.trim() !== "")
         .map(([verse, val]) => ({
           verse: Number(verse),
-          text: safeText(val),
-          speaker: typeof val === "object" ? (val.speaker ?? null) : null,
+          text:
+            typeof val === "object" && val.segments
+              ? val.segments.map((s) => s.text).join("")
+              : safeText(val),
+          segments:
+            typeof val === "object" && val.segments ? val.segments : null,
+          speaker:
+            typeof val === "object" && !val.segments
+              ? (val.speaker ?? null)
+              : null,
           chapter: chapterNumber,
         }));
     }
@@ -315,7 +338,7 @@ export default function CoreReading({
                 {v.sectionTitle && <SectionTitle title={v.sectionTitle} />}
                 <p
                   data-chapter={v.chapter}
-                  className={`mb-6 leading-[var(--line-height)] font-[var(--font-body)] ${v.speaker === "Jesus" ? "jesus" : "text-[var(--text-primary)]"}`}
+                  className={`mb-6 leading-[var(--line-height)] font-[var(--font-body)] ${v.speaker === "Jesus" && !v.segments ? "jesus" : "text-[var(--text-primary)]"}`}
                   style={{ fontSize: `${textSize}rem` }}
                 >
                   {!chapterlessMode && (
@@ -326,7 +349,7 @@ export default function CoreReading({
                       {v.verse}
                     </sup>
                   )}
-                  {v.text}
+                  {renderVerseContent(v)}
                 </p>
 
                 {isLastVerseOfChapter && !chapterlessMode && (

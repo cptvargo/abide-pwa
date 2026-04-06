@@ -4,6 +4,7 @@
  * FIXED: NaN verse numbers — non-numeric keys filtered out
  * FIXED: Psalm 119 style sectioned verses (sections[].verses) flattened correctly
  * ADDED: isAudioPlaying prop — fades text during audio playback
+ * ADDED: segments support for inline speaker rendering
  */
 
 import { useEffect, useState, useRef } from "react";
@@ -51,7 +52,7 @@ export default function SwipeReading({
   textSize = 1.0,
   translation = "VSV",
   theme = "classic",
-  isAudioPlaying = false, // ← NEW: from AppShell, drives text fade
+  isAudioPlaying = false,
   onReadingContext,
   onScrollProgress,
   onScrollRef,
@@ -175,6 +176,7 @@ export default function SwipeReading({
           verseItems = flatVersesData.map((v) => ({
             verse: v.verse,
             text: safeText(v.text ?? v),
+            segments: v.segments ?? null,
             speaker: v.speaker ?? null,
           }));
         } else if (
@@ -185,8 +187,16 @@ export default function SwipeReading({
             .filter(([verse]) => !isNaN(Number(verse)) && verse.trim() !== "")
             .map(([verse, val]) => ({
               verse: Number(verse),
-              text: safeText(val),
-              speaker: typeof val === "object" ? (val.speaker ?? null) : null,
+              text:
+                typeof val === "object" && val.segments
+                  ? val.segments.map((s) => s.text).join("")
+                  : safeText(val),
+              segments:
+                typeof val === "object" && val.segments ? val.segments : null,
+              speaker:
+                typeof val === "object" && !val.segments
+                  ? (val.speaker ?? null)
+                  : null,
             }));
         }
 
@@ -515,6 +525,20 @@ export default function SwipeReading({
   }
 
   /* ===============================
+     Verse content renderer
+  ================================ */
+  function renderVerseContent(v) {
+    if (v.segments) {
+      return v.segments.map((seg, i) => (
+        <span key={i} className={seg.speaker === "Jesus" ? "jesus" : ""}>
+          {seg.text}
+        </span>
+      ));
+    }
+    return v.text;
+  }
+
+  /* ===============================
      Swipe indicator chapter numbers
   ================================ */
   const maxChapters = CHAPTER_COUNT[book] || 1;
@@ -701,7 +725,7 @@ export default function SwipeReading({
                     <p
                       data-chapter={currentChapter}
                       onClick={() => handleVerseClick(v)}
-                      className={`leading-[var(--line-height)] font-[var(--font-body)] cursor-pointer transition-all ${v.speaker === "Jesus" ? "jesus" : "text-[var(--text-primary)]"}`}
+                      className={`leading-[var(--line-height)] font-[var(--font-body)] cursor-pointer transition-all ${v.speaker === "Jesus" && !v.segments ? "jesus" : "text-[var(--text-primary)]"}`}
                       style={{
                         fontSize: `${textSize * 16}px`,
                         background: highlightColor || "transparent",
@@ -725,7 +749,7 @@ export default function SwipeReading({
                           {v.verse}
                         </sup>
                       )}
-                      {v.text}
+                      {renderVerseContent(v)}
                     </p>
                   </div>
                 );
@@ -739,7 +763,11 @@ export default function SwipeReading({
               {paragraphGroups.map((group, groupIdx) => {
                 const isSpeakerJesus = group.some((v) => v.speaker === "Jesus");
                 const paragraphText = group
-                  .map((v) => safeText(v.text))
+                  .map((v) =>
+                    v.segments
+                      ? v.segments.map((s) => s.text).join("")
+                      : safeText(v.text),
+                  )
                   .join(" ");
                 const groupSelected = group.some((v) =>
                   selectedVerses.some((sv) => sv.verse === v.verse),
@@ -748,7 +776,6 @@ export default function SwipeReading({
                   (color, v) => color || getVerseHighlightColor(v.verse),
                   null,
                 );
-                const firstVerse = group[0]?.verse;
                 const sectionTitle = group[0]?.sectionTitle ?? null;
                 return (
                   <div key={groupIdx}>
@@ -782,7 +809,16 @@ export default function SwipeReading({
                         transition: "all 0.15s ease",
                       }}
                     >
-                      {paragraphText}
+                      {group.length === 1 && group[0].segments
+                        ? group[0].segments.map((seg, i) => (
+                            <span
+                              key={i}
+                              className={seg.speaker === "Jesus" ? "jesus" : ""}
+                            >
+                              {seg.text}
+                            </span>
+                          ))
+                        : paragraphText}
                     </p>
                   </div>
                 );
