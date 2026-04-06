@@ -20,6 +20,14 @@ export default function App() {
   } = useRegisterSW({
     onRegistered(r) {
       console.log("[ABIDE] SW Registered:", r);
+      // Check for updates every 60 seconds so users with the app
+      // already open see the banner within a minute of a new deploy
+      if (r) {
+        setInterval(() => {
+          console.log("[ABIDE] Checking for update...");
+          r.update();
+        }, 60 * 1000);
+      }
     },
     onRegisterError(error) {
       console.log("[ABIDE] SW registration error:", error);
