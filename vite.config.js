@@ -1,9 +1,17 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+const pkg = require("./package.json");
 
 export default defineConfig({
   base: "/abide-pwa/",
+
+  define: {
+    "import.meta.env.VITE_APP_VERSION": JSON.stringify(pkg.version),
+  },
 
   plugins: [
     react(),
@@ -54,7 +62,7 @@ export default defineConfig({
       },
 
       workbox: {
-        skipWaiting: true,
+        skipWaiting: false,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
         navigateFallback: null,
