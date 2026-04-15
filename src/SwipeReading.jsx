@@ -98,6 +98,7 @@ export default function SwipeReading({
   const [highlightPanelOpen, setHighlightPanelOpen] = useState(false);
   const [dialogueBottomSheetOpen, setDialogueBottomSheetOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [pendingTags, setPendingTags] = useState([]);
   const [highlights, setHighlights] = useState(() => {
     const saved = localStorage.getItem("verseHighlights");
     return saved ? JSON.parse(saved) : {};
@@ -432,7 +433,7 @@ export default function SwipeReading({
     setHighlightPanelOpen(true);
   }
 
-  function handleColorSelected(colorOption) {
+  function handleColorSelected(colorOption, tags = pendingTags) {
     setSelectedColor(colorOption);
     setHighlightPanelOpen(false);
 
@@ -446,12 +447,14 @@ export default function SwipeReading({
         verse: verse.verse,
         translation,
         text: verse.text,
+        tags: tags,
         createdAt: new Date().toISOString(),
       };
     });
 
     setHighlights(newHighlights);
     localStorage.setItem("verseHighlights", JSON.stringify(newHighlights));
+    setPendingTags([]);
     setDialogueBottomSheetOpen(true);
     onUiModeChange?.("dialogue");
   }
@@ -864,9 +867,14 @@ export default function SwipeReading({
           onSelectColor={handleColorSelected}
           onClear={handleClearHighlights}
           onCancel={handleCancelSelection}
+          existingTags={
+            selectedVerses[0]
+              ? highlights[getVerseKey(selectedVerses[0].verse)]?.tags || []
+              : []
+          }
+          onTagsChange={setPendingTags}
         />
       )}
-
       {/* Dialogue Bottom Sheet */}
       {dialogueBottomSheetOpen && selectedColor && (
         <DialogueBottomSheet

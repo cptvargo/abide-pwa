@@ -693,7 +693,7 @@ function setCached(q, translation, data) {
    Search Panel (Scripture + Seek)
 ================================ */
 function SearchPanel({ open, onClose, onNavigate, translation }) {
-  const [tab, setTab] = useState("scripture"); // "scripture" | "seek"
+  const [tab, setTab] = useState("scripture"); // "scripture" | "seek" | "highlights"
 
   // Scripture search state
   const [query, setQuery] = useState("");
@@ -711,6 +711,15 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
   const [seekView, setSeekView] = useState("input"); // "input" | "result"
   const [fromCache, setFromCache] = useState(false);
 
+  // Highlights tab state
+  const [highlightTag, setHighlightTag] = useState("All");
+  const [highlightSearch, setHighlightSearch] = useState("");
+
+  function getTagColor(tag) {
+    const colors = JSON.parse(localStorage.getItem("customTagColors") || "{}");
+    return colors[tag] || null;
+  }
+
   useEffect(() => {
     if (!open) {
       setQuery("");
@@ -719,6 +728,8 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
       setSeekResult(null);
       setSeekView("input");
       setTab("scripture");
+      setHighlightTag("All");
+      setHighlightSearch("");
     }
   }, [open]);
 
@@ -937,78 +948,80 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
             marginBottom: 12,
           }}
         >
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.07)",
-              borderRadius: 12,
-              padding: "10px 14px",
-            }}
-          >
-            <SearchIcon size={16} />
-            {tab === "scripture" ? (
-              <input
-                ref={inputRef}
-                value={query}
-                onChange={(e) => handleQueryChange(e.target.value)}
-                placeholder={`Search ${translation}…`}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  outline: "none",
-                  color: "var(--text-primary)",
-                  fontSize: 15,
-                  fontFamily: "var(--font-ui)",
-                  width: "100%",
-                  caretColor: "var(--text-accent)",
-                }}
-              />
-            ) : (
-              <input
-                ref={seekInputRef}
-                value={seekQuery}
-                onChange={(e) => setSeekQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSeek()}
-                placeholder="e.g. Grace, Abide in Christ, Behold…"
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  outline: "none",
-                  color: "var(--text-primary)",
-                  fontSize: 15,
-                  fontFamily: "var(--font-ui)",
-                  width: "100%",
-                  caretColor: "var(--text-accent)",
-                }}
-              />
-            )}
-            {(tab === "scripture" ? query : seekQuery) && (
-              <button
-                onClick={() =>
-                  tab === "scripture"
-                    ? (setQuery(""), setResults([]))
-                    : (setSeekQuery(""),
-                      setSeekResult(null),
-                      setSeekView("input"))
-                }
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "var(--text-secondary)",
-                  fontSize: 16,
-                  lineHeight: 1,
-                  padding: 0,
-                }}
-              >
-                ×
-              </button>
-            )}
-          </div>
+          {tab !== "highlights" && (
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.07)",
+                borderRadius: 12,
+                padding: "10px 14px",
+              }}
+            >
+              <SearchIcon size={16} />
+              {tab === "scripture" ? (
+                <input
+                  ref={inputRef}
+                  value={query}
+                  onChange={(e) => handleQueryChange(e.target.value)}
+                  placeholder={`Search ${translation}…`}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    outline: "none",
+                    color: "var(--text-primary)",
+                    fontSize: 15,
+                    fontFamily: "var(--font-ui)",
+                    width: "100%",
+                    caretColor: "var(--text-accent)",
+                  }}
+                />
+              ) : (
+                <input
+                  ref={seekInputRef}
+                  value={seekQuery}
+                  onChange={(e) => setSeekQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSeek()}
+                  placeholder="e.g. Grace, Abide in Christ, Behold…"
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    outline: "none",
+                    color: "var(--text-primary)",
+                    fontSize: 15,
+                    fontFamily: "var(--font-ui)",
+                    width: "100%",
+                    caretColor: "var(--text-accent)",
+                  }}
+                />
+              )}
+              {(tab === "scripture" ? query : seekQuery) && (
+                <button
+                  onClick={() =>
+                    tab === "scripture"
+                      ? (setQuery(""), setResults([]))
+                      : (setSeekQuery(""),
+                        setSeekResult(null),
+                        setSeekView("input"))
+                  }
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "var(--text-secondary)",
+                    fontSize: 16,
+                    lineHeight: 1,
+                    padding: 0,
+                  }}
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          )}
           {tab === "seek" && seekQuery && seekView === "input" && (
             <button
               onClick={() => handleSeek()}
@@ -1062,7 +1075,13 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
             style={tabStyle(tab === "seek")}
             onClick={() => setTab("seek")}
           >
-            Seek · Word Study
+            Seek
+          </button>
+          <button
+            style={tabStyle(tab === "highlights")}
+            onClick={() => setTab("highlights")}
+          >
+            Highlights
           </button>
         </div>
       </div>
@@ -1624,10 +1643,218 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
           )}
         </div>
       )}
+
+      {/* ── HIGHLIGHTS TAB ── */}
+      {tab === "highlights" &&
+        (() => {
+          const saved = JSON.parse(
+            localStorage.getItem("verseHighlights") || "{}",
+          );
+          const allHighlights = Object.values(saved);
+          const userTags = JSON.parse(
+            localStorage.getItem("customTags") || "[]",
+          );
+          const usedTags = userTags.filter((t) =>
+            allHighlights.some((h) => (h.tags || []).includes(t)),
+          );
+          const filtered = allHighlights.filter((h) => {
+            if (!h.tags || h.tags.length === 0) return false;
+            const matchTag =
+              highlightTag === "All" || h.tags.includes(highlightTag);
+            const matchText =
+              !highlightSearch ||
+              h.text?.toLowerCase().includes(highlightSearch.toLowerCase());
+            return matchTag && matchText;
+          });
+
+          return (
+            <div
+              style={{
+                flex: 1,
+                overflowY: "auto",
+                padding: "16px 20px",
+                WebkitOverflowScrolling: "touch",
+              }}
+            >
+              {usedTags.length > 0 && (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 8,
+                    flexWrap: "wrap",
+                    marginBottom: 16,
+                  }}
+                >
+                  {["All", ...usedTags].map((tag) => {
+                    const tagColor = getTagColor(tag);
+                    const isActive = highlightTag === tag;
+                    return (
+                      <button
+                        key={tag}
+                        onClick={() => setHighlightTag(tag)}
+                        style={{
+                          padding: "5px 14px",
+                          borderRadius: 999,
+                          border: "none",
+                          cursor: "pointer",
+                          fontSize: 12,
+                          fontFamily: "var(--font-ui)",
+                          fontWeight: 600,
+                          background: isActive
+                            ? tag === "All"
+                              ? "var(--text-accent)"
+                              : tagColor || "var(--text-accent)"
+                            : "rgba(255,255,255,0.08)",
+                          color: isActive ? "#fff" : "var(--text-secondary)",
+                          boxShadow:
+                            isActive && tag !== "All" && tagColor
+                              ? `0 0 0 1px ${tagColor}`
+                              : "none",
+                          transition: "background 0.15s",
+                        }}
+                      >
+                        {tag}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {allHighlights.length === 0 && (
+                <p
+                  style={{
+                    textAlign: "center",
+                    color: "var(--text-secondary)",
+                    fontSize: 14,
+                    opacity: 0.55,
+                    marginTop: 48,
+                    fontFamily: "var(--font-body)",
+                    fontStyle: "italic",
+                    lineHeight: 1.8,
+                  }}
+                >
+                  No highlights yet.
+                  <br />
+                  Tap a verse while reading to highlight it.
+                </p>
+              )}
+              {allHighlights.length > 0 && filtered.length === 0 && (
+                <p
+                  style={{
+                    textAlign: "center",
+                    color: "var(--text-secondary)",
+                    fontSize: 13,
+                    opacity: 0.5,
+                    marginTop: 48,
+                    fontFamily: "var(--font-ui)",
+                  }}
+                >
+                  No highlights match
+                </p>
+              )}
+
+              {filtered.map((h, i) => {
+                const book = h.book
+                  ? h.book.charAt(0).toUpperCase() + h.book.slice(1)
+                  : "";
+                const ref = `${book} ${h.chapter}:${h.verse}`;
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      borderLeft: "3px solid var(--text-accent)",
+                      borderRadius: 12,
+                      padding: 16,
+                      marginBottom: 12,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        color: "var(--text-accent)",
+                        textTransform: "uppercase",
+                        marginBottom: 6,
+                        fontFamily: "var(--font-ui)",
+                      }}
+                    >
+                      {ref} · {h.translation}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: 15,
+                        lineHeight: 1.65,
+                        color: "var(--text-primary)",
+                        marginBottom: (h.tags || []).length ? 10 : 12,
+                      }}
+                    >
+                      {h.text}
+                    </div>
+                    {(h.tags || []).length > 0 && (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: 6,
+                          marginBottom: 12,
+                        }}
+                      >
+                        {h.tags.map((t) => {
+                          const tc = getTagColor(t);
+                          return (
+                            <span
+                              key={t}
+                              style={{
+                                fontSize: 11,
+                                padding: "3px 10px",
+                                borderRadius: 999,
+                                background: tc
+                                  ? `${tc}22`
+                                  : "rgba(255,255,255,0.08)",
+                                color: tc || "var(--text-secondary)",
+                                border: `1px solid ${tc ? `${tc}55` : "transparent"}`,
+                                fontFamily: "var(--font-ui)",
+                              }}
+                            >
+                              {t}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
+                    <button
+                      onClick={() => {
+                        onNavigate(h.book, h.chapter);
+                        onClose();
+                      }}
+                      style={{
+                        background: "transparent",
+                        border: "1px solid rgba(203,178,124,0.3)",
+                        borderRadius: 8,
+                        padding: "7px 14px",
+                        color: "var(--text-accent)",
+                        fontSize: 12,
+                        fontWeight: 600,
+                        fontFamily: "var(--font-ui)",
+                        letterSpacing: "0.06em",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Read chapter
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
     </div>
   );
 }
-
 /* ===============================
    App Shell
 ================================ */

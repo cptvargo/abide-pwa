@@ -3,7 +3,7 @@
  * Clean bottom panel with theme colors and conditional clear icon
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DialogueBottomSheet from "./DialogueBottomSheet";
 
 /* ===============================
@@ -81,6 +81,15 @@ export function getThemeColors(theme) {
 /* ===============================
    YouVersion-Style Bottom Panel
 ================================ */
+const DEFAULT_TAGS = [
+  "Prayer",
+  "Promise",
+  "Warning",
+  "Prophecy",
+  "Wisdom",
+  "Gospel",
+];
+
 export function HighlightPanel({
   theme,
   book,
@@ -88,9 +97,11 @@ export function HighlightPanel({
   selectedVerses,
   translation,
   existingColorId,
+  existingTags = [],
   onSelectColor,
   onClear,
   onCancel,
+  onTagsChange,
 }) {
   const colors = THEME_COLORS[theme] || THEME_COLORS.classic;
   const reference = formatVerseReference(
@@ -100,6 +111,66 @@ export function HighlightPanel({
     translation,
   );
   const hasExistingHighlight = !!existingColorId;
+
+  const TAG_PALETTE = [
+    "#e07b5b",
+    "#d4a843",
+    "#7db87d",
+    "#5b9bd4",
+    "#9b7dd4",
+    "#d47db8",
+    "#5bbdb8",
+    "#b8845b",
+  ];
+
+  function getTagColor(tag) {
+    const stored = JSON.parse(localStorage.getItem("customTagColors") || "{}");
+    return stored[tag] || null;
+  }
+
+  function assignTagColor(tag, color) {
+    const stored = JSON.parse(localStorage.getItem("customTagColors") || "{}");
+    stored[tag] = color;
+    localStorage.setItem("customTagColors", JSON.stringify(stored));
+    return color;
+  }
+
+  const [activeColor, setActiveColor] = useState(
+    existingColorId
+      ? colors.find((c) => c.id === existingColorId) || null
+      : null,
+  );
+  const [selectedTags, setSelectedTags] = useState(existingTags);
+  const [customInput, setCustomInput] = useState("");
+  const [pickedColor, setPickedColor] = useState(TAG_PALETTE[0]);
+  const [allTags, setAllTags] = useState(() => {
+    const saved = localStorage.getItem("customTags");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const inputRef = useRef(null);
+
+  function toggleTag(tag) {
+    const next = selectedTags.includes(tag)
+      ? selectedTags.filter((t) => t !== tag)
+      : [...selectedTags, tag];
+    setSelectedTags(next);
+    onTagsChange?.(next);
+  }
+
+  function addCustomTag() {
+    const tag = customInput.trim();
+    if (!tag) return;
+    const newAll = allTags.includes(tag) ? allTags : [...allTags, tag];
+    setAllTags(newAll);
+    localStorage.setItem("customTags", JSON.stringify(newAll));
+    assignTagColor(tag, pickedColor);
+    if (!selectedTags.includes(tag)) {
+      const next = [...selectedTags, tag];
+      setSelectedTags(next);
+      onTagsChange?.(next);
+    }
+    setCustomInput("");
+  }
 
   return (
     <div
@@ -126,7 +197,6 @@ export function HighlightPanel({
               {reference}
             </div>
           </div>
-
           <button
             onClick={onCancel}
             className="w-8 h-8 rounded-full flex items-center justify-center"
@@ -141,15 +211,11 @@ export function HighlightPanel({
 
         {/* Color Swatches Row */}
         <div className="flex items-center gap-3 mb-4">
-          {/* Clear Button (only if highlighted) */}
           {hasExistingHighlight && (
             <button
               onClick={onClear}
               className="w-12 h-12 rounded-full flex items-center justify-center border-2 transition-transform active:scale-95"
-              style={{
-                borderColor: "var(--text-primary)",
-                opacity: 0.6,
-              }}
+              style={{ borderColor: "var(--text-primary)", opacity: 0.6 }}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -163,15 +229,12 @@ export function HighlightPanel({
               </svg>
             </button>
           )}
-
-          {/* Color Swatches */}
           {colors.map((colorOption) => {
-            const isActive = existingColorId === colorOption.id;
-
+            const isActive = activeColor?.id === colorOption.id;
             return (
               <button
                 key={colorOption.id}
-                onClick={() => onSelectColor(colorOption)}
+                onClick={() => setActiveColor(colorOption)}
                 className="w-12 h-12 rounded-full border-2 transition-all active:scale-95"
                 style={{
                   background: colorOption.color,
@@ -183,18 +246,107 @@ export function HighlightPanel({
             );
           })}
         </div>
+
+        {/* Tags */}
+        <div className="mt-1">
+          <div
+            className="text-xs font-semibold mb-2 opacity-60"
+            style={{ color: "var(--text-primary)" }}
+          >
+            TAGS
+          </div>
+          {allTags.length === 0 && (
+            <p
+              className="text-xs opacity-40 mb-2"
+              style={{ color: "var(--text-primary)" }}
+            >
+              No tags yet — add one below
+            </p>
+          )}
+          <div className="flex flex-wrap gap-2 mb-3">
+            {allTags.map((tag) => {
+              const active = selectedTags.includes(tag);
+              const tagColor = getTagColor(tag);
+              return (
+                <button
+                  key={tag}
+                  onClick={() => toggleTag(tag)}
+                  className="px-3 py-1 rounded-full text-sm transition-all active:scale-95"
+                  style={{
+                    background: active
+                      ? tagColor || "var(--text-accent)"
+                      : "rgba(0,0,0,0.15)",
+                    color: active ? "#fff" : "var(--text-primary)",
+                    border: `1px solid ${active ? tagColor || "var(--text-accent)" : "transparent"}`,
+                  }}
+                >
+                  {tag}
+                </button>
+              );
+            })}
+          </div>
+          {/* Color dots for new tag */}
+          <div className="flex gap-2 mb-2">
+            {TAG_PALETTE.map((c) => (
+              <button
+                key={c}
+                onClick={() => setPickedColor(c)}
+                className="w-6 h-6 rounded-full transition-all active:scale-95"
+                style={{
+                  background: c,
+                  boxShadow:
+                    pickedColor === c
+                      ? `0 0 0 2px #fff, 0 0 0 3px ${c}`
+                      : "none",
+                }}
+              />
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              ref={inputRef}
+              value={customInput}
+              onChange={(e) => setCustomInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && addCustomTag()}
+              placeholder="Add custom tag…"
+              className="flex-1 rounded-full px-4 py-1.5 text-sm outline-none"
+              style={{
+                background: "rgba(0,0,0,0.15)",
+                color: "var(--text-primary)",
+                border: `1px solid ${pickedColor}`,
+              }}
+            />
+            <button
+              onClick={addCustomTag}
+              className="px-4 py-1.5 rounded-full text-sm font-semibold active:scale-95"
+              style={{ background: pickedColor, color: "#fff" }}
+            >
+              Add
+            </button>
+          </div>
+        </div>
+
+        {/* Save */}
+        <button
+          onClick={() =>
+            activeColor && onSelectColor(activeColor, selectedTags)
+          }
+          disabled={!activeColor}
+          className="w-full mt-4 py-3 rounded-2xl text-sm font-bold transition-all active:scale-95"
+          style={{
+            background: activeColor ? "var(--text-accent)" : "rgba(0,0,0,0.15)",
+            color: activeColor ? "#fff" : "var(--text-secondary)",
+            opacity: activeColor ? 1 : 0.5,
+          }}
+        >
+          {activeColor ? "Save Highlight" : "Select a color to highlight"}
+        </button>
       </div>
 
       <style>{`
         @keyframes slideUp {
-          from {
-            transform: translateY(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
+          from { transform: translateY(100%); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
         }
       `}</style>
     </div>
