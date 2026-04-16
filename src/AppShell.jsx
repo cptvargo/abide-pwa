@@ -548,7 +548,7 @@ const SEEK_SUGGESTIONS = [
   "Mercy",
   "Shalom",
 ];
-const SEEK_CACHE_PREFIX = "abide_seek_v7:"; // v7: includes enriched verse text
+const SEEK_CACHE_PREFIX = "abide_seek_v9:"; // v9: full verse snippet for start-of-verse matches
 
 // ── Verse enrichment — replaces AI-generated text with real local translation ─
 const SEEK_BOOK_NAME_TO_ID = {
@@ -741,6 +741,8 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
   }, [open, tab]);
 
   // ── Scripture search ──────────────────────────────────────────────────────
+  // ── Scripture search ──────────────────────────────────────────────────────
+  // ── Scripture search ──────────────────────────────────────────────────────
   async function doSearch(q) {
     if (!q.trim() || q.trim().length < 2) {
       setResults([]);
@@ -748,16 +750,117 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
     }
     setSearching(true);
     try {
+      const cacheKey = q.trim().toLowerCase();
+      const cached = getCached(cacheKey, translation);
+      if (cached) {
+        setResults(cached);
+        setSearching(false);
+        return;
+      }
+
       const base = import.meta.env.BASE_URL;
       const t = translation.toLowerCase();
-      const found = [];
-      const term = q.trim().toLowerCase();
+      const candidateSeen = new Set(); // deduplicates the scan pass
+      const seenRefs = new Set();      // deduplicates what is pushed to finalResults
+      const finalResults = [];
+      // Strip trailing punctuation/dots so "For God So..." still matches
+      const phrase = q.trim().toLowerCase().replace(/[.\s]+$/, "");
+      const words = phrase.split(/\s+/).filter(Boolean);
+
+      // Accepts if the full phrase is contained, OR every word is present.
+      function matchesQuery(text) {
+        const lower = text.toLowerCase();
+        if (lower.includes(phrase)) return true;
+        return words.every((w) => new RegExp(`\\b${w}\\b`, "i").test(lower));
+      }
+
+      function scoreVerse(text) {
+        const lower = text.toLowerCase();
+
+        // Tier 1 — full phrase present
+        if (lower.includes(phrase)) {
+          // Verse STARTS with the phrase (e.g. "For God so..." → John 3:16): highest priority
+          return lower.trimStart().startsWith(phrase) ? 2000 : 1000;
+        }
+
+        // Tier 2 — all words except the last are present as a phrase, and the last
+        // word is a prefix of the next token in the text (handles partial typing).
+        if (words.length > 1) {
+          const stem = words.slice(0, -1).join(" ");
+          const lastWord = words[words.length - 1];
+          const idx = lower.indexOf(stem);
+          if (idx !== -1) {
+            const after = lower.slice(idx + stem.length).trimStart();
+            if (after.startsWith(lastWord)) return 900;
+            return 500; // phrase stem matches but last word doesn't continue
+          }
+        }
+
+        // Tier 3 — individual word scoring with proximity bonus
+        let score = 0;
+        let allPresent = true;
+        words.forEach((w, i) => {
+          if (new RegExp(`\\b${w}\\b`, "i").test(text)) {
+            score += 10;
+          } else {
+            allPresent = false;
+          }
+          if (i < words.length - 1) {
+            if (new RegExp(`\\b${w}\\b.{0,30}\\b${words[i + 1]}\\b`, "i").test(text))
+              score += 8;
+          }
+        });
+        if (allPresent) score += words.length * 5; // bonus when every word hits
+        return score;
+      }
+
+      function parseCrossRef(ref) {
+        const m = ref
+          .trim()
+          .toLowerCase()
+          .match(/^(.+?)\s+(\d+):(\d+)/);
+        if (!m) return null;
+        const bookId = m[1].replace(/\s+/g, "");
+        for (const section of BIBLE_SECTIONS)
+          for (const book of section.books)
+            if (
+              book.id === bookId ||
+              book.name.toLowerCase().replace(/\s+/g, "") === bookId
+            )
+              return { book, chapter: parseInt(m[2]), verse: parseInt(m[3]) };
+        return null;
+      }
+
+      async function fetchVerseText(bookId, chapter, verseNum) {
+        try {
+          const res = await fetch(
+            `${base}data/translations/${t}/${bookId}/${chapter}.json`,
+          );
+          if (!res.ok) return null;
+          const data = await res.json();
+          const verses = data.verses ?? data;
+          const entries = Array.isArray(verses)
+            ? verses
+            : Object.entries(verses).map(([v, val]) => ({
+                verse: Number(v),
+                text: typeof val === "string" ? val : (val?.text ?? ""),
+              }));
+          const match = entries.find((v) => v.verse === verseNum);
+          if (!match) return null;
+          return typeof match.text === "string"
+            ? match.text
+            : (match.text?.text ?? "");
+        } catch {
+          return null;
+        }
+      }
+
+      // Phase 1: find matching verses, stream high-score ones immediately
+      const candidates = [];
       for (const section of BIBLE_SECTIONS) {
         for (const book of section.books) {
-          if (found.length >= 30) break;
           try {
             for (let ch = 1; ch <= book.chapters; ch++) {
-              if (found.length >= 30) break;
               const res = await fetch(
                 `${base}data/translations/${t}/${book.id}/${ch}.json`,
               );
@@ -773,24 +876,103 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
               for (const v of entries) {
                 const text =
                   typeof v.text === "string" ? v.text : (v.text?.text ?? "");
-                if (text.toLowerCase().includes(term)) {
-                  found.push({
-                    ref: `${book.name} ${ch}:${v.verse}`,
-                    bookId: book.id,
-                    chapter: ch,
-                    snippet: highlightSnippet(text, term),
-                  });
-                  if (found.length >= 30) break;
-                }
+                if (!matchesQuery(text)) continue;
+                const score = scoreVerse(text);
+                if (score === 0) continue;
+                // candidateSeen deduplicates the scan; seenRefs is reserved
+                // for tracking what has actually been pushed to finalResults.
+                const refKey = `${book.id}-${ch}-${v.verse}`;
+                if (candidateSeen.has(refKey)) continue;
+                candidateSeen.add(refKey);
+                candidates.push({ book, ch, verse: v.verse, text, score, refKey });
               }
             }
           } catch {
             continue;
           }
         }
-        if (found.length >= 30) break;
       }
-      setResults(found);
+
+      // Phase 2: sort candidates, push primary + up to 2 related into results.
+      // seenRefs is only touched HERE and in Phase 3, so it correctly guards
+      // against duplicates across all three phases.
+      candidates.sort((a, b) => b.score - a.score);
+      const primary = candidates[0] ?? null;
+      const related = candidates.slice(1, 3);
+
+      if (primary) {
+        seenRefs.add(primary.refKey);
+        finalResults.push({
+          ref: `${primary.book.name} ${primary.ch}:${primary.verse}`,
+          bookId: primary.book.id,
+          chapter: primary.ch,
+          snippet: highlightSnippet(primary.text, words[0]),
+          score: primary.score,
+        });
+        // Stream the primary verse immediately so the UI isn't blank while
+        // cross-refs are loading.
+        setResults([...finalResults]);
+      }
+
+      // Phase 3: cross-refs for the PRIMARY verse only.
+      // We try both key formats ("16" and "3:16") because the JSON files
+      // are inconsistent across books.
+      if (primary) {
+        try {
+          const crRes = await fetch(
+            `${base}data/cross-references/${primary.book.id}/${primary.ch}.json`,
+          );
+          if (crRes.ok) {
+            const crData = await crRes.json();
+            const refs =
+              crData[String(primary.verse)] ||
+              crData[`${primary.ch}:${primary.verse}`] ||
+              [];
+            for (const cr of refs) {
+              if (finalResults.length >= 20) break;
+              const parsed = parseCrossRef(cr);
+              if (!parsed) continue;
+              const crKey = `${parsed.book.id}-${parsed.chapter}-${parsed.verse}`;
+              if (seenRefs.has(crKey)) continue;
+              seenRefs.add(crKey);
+              const crText = await fetchVerseText(
+                parsed.book.id,
+                parsed.chapter,
+                parsed.verse,
+              );
+              if (!crText) continue;
+              finalResults.push({
+                ref: `${parsed.book.name} ${parsed.chapter}:${parsed.verse}`,
+                bookId: parsed.book.id,
+                chapter: parsed.chapter,
+                snippet: highlightSnippet(crText, words[0]),
+                isCrossRef: true,
+                crossRefFrom: `${primary.book.name} ${primary.ch}:${primary.verse}`,
+                score: 0,
+              });
+            }
+          }
+        } catch {
+          // cross-ref file unavailable — continue with what we have
+        }
+      }
+
+      // Phase 4: append related verses that weren't already pulled in as
+      // cross-refs so they don't crowd the primary result.
+      for (const match of related) {
+        if (seenRefs.has(match.refKey)) continue;
+        seenRefs.add(match.refKey);
+        finalResults.push({
+          ref: `${match.book.name} ${match.ch}:${match.verse}`,
+          bookId: match.book.id,
+          chapter: match.ch,
+          snippet: highlightSnippet(match.text, words[0]),
+          score: match.score,
+        });
+      }
+
+      setCached(cacheKey, translation, finalResults);
+      setResults(finalResults);
     } catch {
       setResults([]);
     }
@@ -801,8 +983,10 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
     const idx = text.toLowerCase().indexOf(term);
     if (idx === -1) return { pre: "", match: "", post: text.slice(0, 160) };
     let start = Math.max(0, idx - 60);
-    let end = Math.min(text.length, idx + term.length + 120);
     while (start > 0 && text[start] !== " ") start--;
+    // When the match is near the start, show the full verse rather than
+    // cutting off mid-sentence with a fixed character window.
+    let end = start === 0 ? text.length : Math.min(text.length, idx + term.length + 120);
     while (end < text.length && text[end] !== " ") end++;
     const pre = (start > 0 ? "..." : "") + text.slice(start, idx).trimStart();
     const match = text.slice(idx, idx + term.length);
@@ -1142,58 +1326,45 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
               No results found
             </p>
           )}
-          {!searching &&
-            results.map((r, i) => (
-              <div
-                key={i}
-                style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: 12,
-                  padding: 16,
-                  marginBottom: 12,
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    letterSpacing: "0.1em",
-                    color: "var(--text-accent)",
-                    textTransform: "uppercase",
-                    marginBottom: 6,
-                    fontFamily: "var(--font-ui)",
-                  }}
-                >
-                  {r.ref}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 15,
-                    lineHeight: 1.65,
-                    color: "var(--text-primary)",
-                    marginBottom: 12,
-                  }}
-                >
-                  {typeof r.snippet === "object" ? (
-                    <>
-                      {r.snippet.pre}
-                      <em
-                        style={{
-                          color: "var(--text-accent)",
-                          fontStyle: "normal",
-                          fontWeight: 600,
-                        }}
-                      >
-                        {r.snippet.match}
-                      </em>
-                      {r.snippet.post}
-                    </>
-                  ) : (
-                    r.snippet
-                  )}
-                </div>
+          {!searching && (() => {
+            const primaryResults = results.filter((r) => !r.isCrossRef);
+            const crossRefsBySource = {};
+            results
+              .filter((r) => r.isCrossRef)
+              .forEach((cr) => {
+                if (!crossRefsBySource[cr.crossRefFrom])
+                  crossRefsBySource[cr.crossRefFrom] = [];
+                crossRefsBySource[cr.crossRefFrom].push(cr);
+              });
+            const pairedSources = new Set(Object.keys(crossRefsBySource).filter(
+              (src) => primaryResults.some((p) => p.ref === src),
+            ));
+            const orphanCrossRefs = results.filter(
+              (r) => r.isCrossRef && !pairedSources.has(r.crossRefFrom),
+            );
+
+            function renderSnippet(r) {
+              return typeof r.snippet === "object" ? (
+                <>
+                  {r.snippet.pre}
+                  <em
+                    style={{
+                      color: "var(--text-accent)",
+                      fontStyle: "normal",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {r.snippet.match}
+                  </em>
+                  {r.snippet.post}
+                </>
+              ) : (
+                r.snippet
+              );
+            }
+
+            function renderNavButton(r) {
+              return (
                 <button
                   onClick={() => {
                     onNavigate(r.bookId, r.chapter);
@@ -1214,8 +1385,156 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                 >
                   {r.isBookNav ? "Go to book" : "Read full chapter"}
                 </button>
-              </div>
-            ))}
+              );
+            }
+
+            return (
+              <>
+                {primaryResults.map((r, i) => {
+                  const crossRefs = crossRefsBySource[r.ref] || [];
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid rgba(255,255,255,0.07)",
+                        borderRadius: 12,
+                        padding: 16,
+                        marginBottom: 12,
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 700,
+                          letterSpacing: "0.1em",
+                          color: "var(--text-accent)",
+                          textTransform: "uppercase",
+                          marginBottom: 6,
+                          fontFamily: "var(--font-ui)",
+                        }}
+                      >
+                        {r.ref}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-body)",
+                          fontSize: 15,
+                          lineHeight: 1.65,
+                          color: "var(--text-primary)",
+                          marginBottom: 12,
+                        }}
+                      >
+                        {renderSnippet(r)}
+                      </div>
+                      {renderNavButton(r)}
+
+                      {crossRefs.length > 0 && (
+                        <>
+                          <div
+                            style={{
+                              borderTop: "1px solid rgba(255,255,255,0.07)",
+                              marginTop: 14,
+                              paddingTop: 12,
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: 10,
+                                fontWeight: 700,
+                                letterSpacing: "0.12em",
+                                color: "var(--text-secondary)",
+                                textTransform: "uppercase",
+                                fontFamily: "var(--font-ui)",
+                                marginBottom: 10,
+                                opacity: 0.6,
+                              }}
+                            >
+                              See also
+                            </div>
+                            {crossRefs.map((cr, j) => (
+                              <div
+                                key={j}
+                                style={{
+                                  marginBottom: j < crossRefs.length - 1 ? 14 : 0,
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    letterSpacing: "0.1em",
+                                    color: "var(--text-secondary)",
+                                    textTransform: "uppercase",
+                                    marginBottom: 4,
+                                    fontFamily: "var(--font-ui)",
+                                  }}
+                                >
+                                  {cr.ref}
+                                </div>
+                                <div
+                                  style={{
+                                    fontFamily: "var(--font-body)",
+                                    fontSize: 14,
+                                    lineHeight: 1.6,
+                                    color: "var(--text-primary)",
+                                    opacity: 0.85,
+                                    marginBottom: 8,
+                                  }}
+                                >
+                                  {renderSnippet(cr)}
+                                </div>
+                                {renderNavButton(cr)}
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {orphanCrossRefs.map((r, i) => (
+                  <div
+                    key={`orphan-${i}`}
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      borderRadius: 12,
+                      padding: 16,
+                      marginBottom: 12,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        color: "var(--text-secondary)",
+                        textTransform: "uppercase",
+                        marginBottom: 6,
+                        fontFamily: "var(--font-ui)",
+                      }}
+                    >
+                      {r.ref}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: 15,
+                        lineHeight: 1.65,
+                        color: "var(--text-primary)",
+                        marginBottom: 12,
+                      }}
+                    >
+                      {renderSnippet(r)}
+                    </div>
+                    {renderNavButton(r)}
+                  </div>
+                ))}
+              </>
+            );
+          })()}
           {!searching && results.length === 30 && (
             <p
               style={{
