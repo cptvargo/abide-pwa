@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 64,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "For the choirmaster. A Psalm of David.",
   "verses": {
-    "1": "For the choirmaster. A Psalm of David. Hear, O God, my voice of complaint; preserve my life from dread of the enemy.",
+    "1": "Hear, O God, my voice of complaint; preserve my life from dread of the enemy.",
     "2": "Hide me from the scheming of the wicked, from the mob of workers of iniquity,",
     "3": "who sharpen their tongues like swords and aim their bitter words like arrows,",
     "4": "ambushing the innocent in seclusion, shooting suddenly, without fear.",

@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 41,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "For the choirmaster. A Psalm of David.",
   "verses": {
-    "1": "For the choirmaster. A Psalm of David. Blessed is the one who cares for the poor; the LORD will deliver him in the day of trouble.",
+    "1": "Blessed is the one who cares for the poor; the LORD will deliver him in the day of trouble.",
     "2": "The LORD will protect and preserve him; He will bless him in the land and refuse to give him over to the will of his foes.",
     "3": "The LORD will sustain him on his bed of illness and restore him from his bed of sickness.",
     "4": "I said, “O LORD, be gracious to me; heal me, for I have sinned against You.”",

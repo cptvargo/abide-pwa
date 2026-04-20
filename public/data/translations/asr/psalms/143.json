@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 143,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "A Psalm of David.",
   "verses": {
-    "1": "A Psalm of David. O LORD, hear my prayer. In Your faithfulness, give ear to my plea; in Your righteousness, answer me.",
+    "1": "O LORD, hear my prayer. In Your faithfulness, give ear to my plea; in Your righteousness, answer me.",
     "2": "Do not bring Your servant into judgment, for no one alive is righteous before You.",
     "3": "For the enemy has pursued my soul, crushing my life to the ground, making me dwell in darkness like those long since dead.",
     "4": "My spirit grows faint within me; my heart is dismayed inside me.",

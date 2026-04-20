@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 27,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "Of David.",
   "verses": {
-    "1": "Of David. — whom shall I fear? — whom shall I dread?",
+    "1": "The LORD is my light and my salvation—whom shall I fear? The LORD is the stronghold of my life—whom shall I dread?",
     "2": "When the wicked came upon me to devour my flesh, my enemies and foes stumbled and fell.",
     "3": "Though an army encamps around me, my heart will not fear; though a war breaks out against me, I will keep my trust.",
     "4": "One thing I have asked of the LORD; this is what I desire: to dwell in the house of the LORD all the days of my life, to gaze on the beauty of the LORD and seek Him in His temple.",

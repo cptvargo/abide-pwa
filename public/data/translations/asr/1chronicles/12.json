@@ -1,10 +1,11 @@
 {
-  "chapter": 12,
   "book": "1 Chronicles",
+  "chapter": 12,
   "translation": "ASR",
+  "title": "",
   "verses": {
-    "1": "Now these were the men who came to David at Ziklag, while he was still banished from the presence of Saul son of Kish (they were among the mighty men who helped him in battle);",
-    "2": "they were archers using both the right and left hands to sling stones and shoot arrows; and they were Saul’s kinsmen from Benjamin:",
+    "1": "Now these were the men who came to David at Ziklag, while he was still banished from the presence of Saul son of Kish (they were among the mighty men who helped him in battle;",
+    "2": "they were archers using both the right and left hands to sling stones and shoot arrows; and they were Saul’s kinsmen from Benjamin):",
     "3": "Ahiezer their chief and Joash, who were the sons of Shemaah the Gibeathite; Jeziel and Pelet, the sons of Azmaveth; Beracah; Jehu the Anathothite;",
     "4": "Ishmaiah the Gibeonite, a mighty man among the Thirty and a leader over the Thirty; Jeremiah, Jahaziel, Johanan, and Jozabad the Gederathite;",
     "5": "Eluzai, Jerimoth, Bealiah, Shemariah, and Shephatiah the Haruphite;",
@@ -33,7 +34,7 @@
     "28": "and Zadok, a mighty young man of valor, with 22 commanders from his own family.",
     "29": "From Benjamin, the kinsmen of Saul: 3,000, most of whom had remained loyal to the house of Saul up to that time.",
     "30": "From Ephraim: 20,800 mighty men of valor, famous among their own clans.",
-    "31": "From the half-tribe of Manasseh: 18,000, designated by name to come and make David king.",
+    "31": "From the half-tribe of Manasseh: 18,000 designated by name to come and make David king.",
     "32": "From Issachar, men who understood the times and knew what Israel should do: 200 chiefs with all their kinsmen at their command.",
     "33": "From Zebulun: 50,000 fit for service, trained for battle with all kinds of weapons of war, who with one purpose were devoted to David.",
     "34": "From Naphtali: 1,000 commanders, accompanied by 37,000 men with shield and spear.",
@@ -43,5 +44,12 @@
     "38": "All these men of war, arrayed for battle, came to Hebron fully determined to make David king over all Israel. And all the rest of the Israelites were of one mind to make David king.",
     "39": "They spent three days there eating and drinking with David, for their relatives had provided for them.",
     "40": "And their neighbors from as far away as Issachar, Zebulun, and Naphtali came bringing food on donkeys, camels, mules, and oxen—abundant supplies of flour, fig cakes and raisin cakes, wine and oil, oxen and sheep. Indeed, there was joy in Israel."
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "ABIDE Source Reading",
+    "abbreviation": "ASR",
+    "source": "Derived from the Berean Standard Bible (BSB). Missing verses restored from the Textus Receptus tradition for completeness.",
+    "createdAt": "2026-03-12T19:26:15Z"
   }
 }

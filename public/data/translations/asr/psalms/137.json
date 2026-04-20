@@ -1,10 +1,11 @@
 {
+  "book": "Psalm",
   "chapter": 137,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "",
   "verses": {
     "1": "By the rivers of Babylon we sat and wept when we remembered Zion.",
-    "2": "There on the willows",
+    "2": "There on the willows we hung our harps,",
     "3": "for there our captors requested a song; our tormentors demanded songs of joy: “Sing us a song of Zion.”",
     "4": "How can we sing a song of the LORD in a foreign land?",
     "5": "If I forget you, O Jerusalem, may my right hand cease to function.",

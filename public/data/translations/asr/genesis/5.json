@@ -1,10 +1,11 @@
 {
-  "chapter": 5,
   "book": "Genesis",
+  "chapter": 5,
   "translation": "ASR",
+  "title": "",
   "verses": {
-    "1": "This is the book of the generations of Adam. In the day that God created man, He made him in the likeness of God.",
-    "2": "Male and female He created them, and He blessed them and called their name Adam in the day they were created.",
+    "1": "This is the book of the generations of Adam. In the day that God created man, He made him in His own likeness.",
+    "2": "Male and female He created them, and He blessed them. And in the day they were created, He called them “man.”",
     "3": "When Adam was 130 years old, he had a son in his own likeness, after his own image; and he named him Seth.",
     "4": "And after he had become the father of Seth, Adam lived 800 years and had other sons and daughters.",
     "5": "So Adam lived a total of 930 years, and then he died.",
@@ -31,7 +32,7 @@
     "26": "And after he had become the father of Lamech, Methuselah lived 782 years and had other sons and daughters.",
     "27": "So Methuselah lived a total of 969 years, and then he died.",
     "28": "When Lamech was 182 years old, he had a son.",
-    "29": "And he named him Noah, saying, \"May this one comfort us in the labor and toil of our hands caused by the ground that the LORD has cursed.\"",
+    "29": "And he named him Noah, saying, “May this one comfort us in the labor and toil of our hands caused by the ground that the LORD has cursed.”",
     "30": "And after he had become the father of Noah, Lamech lived 595 years and had other sons and daughters.",
     "31": "So Lamech lived a total of 777 years, and then he died.",
     "32": "After Noah was 500 years old, he became the father of Shem, Ham, and Japheth."

@@ -1,7 +1,8 @@
 {
-  "chapter": 9,
   "book": "1 Chronicles",
+  "chapter": 9,
   "translation": "ASR",
+  "title": "",
   "verses": {
     "1": "So all Israel was recorded in the genealogies written in the Book of the Kings of Israel. But Judah was exiled to Babylon because of their unfaithfulness.",
     "2": "Now the first to resettle their own property in their cities were Israelites, priests, Levites, and temple servants.",
@@ -21,7 +22,7 @@
     "16": "Obadiah son of Shemaiah, the son of Galal, the son of Jeduthun; and Berechiah son of Asa, the son of Elkanah, who lived in the villages of the Netophathites.",
     "17": "These were the gatekeepers: Shallum, Akkub, Talmon, Ahiman, and their relatives. Shallum was their chief;",
     "18": "he was previously stationed at the King’s Gate on the east side. These were the gatekeepers from the camp of the Levites.",
-    "19": "Shallum son of Kore, the son of Ebiasaph, the son of Korah, and his fellow gatekeepers from his family (the Korahites) were responsible for guarding the thresholds of the tent, just as their ancestors had been responsible for guarding the entrance to the dwelling of the LORD.",
+    "19": "Shallum son of Kore, the son of Ebiasaph, the son of Korah, and his relatives from the Korahites were assigned to guard the thresholds of the Tent, just as their fathers had been assigned to guard the entrance to the dwelling of the LORD.",
     "20": "In earlier times Phinehas son of Eleazar had been in charge of the gatekeepers, and the LORD was with him.",
     "21": "Zechariah son of Meshelemiah was the gatekeeper at the entrance to the Tent of Meeting.",
     "22": "The number of those chosen to be gatekeepers at the thresholds was 212. They were registered by genealogy in their villages. David and Samuel the seer had appointed them to their positions of trust.",
@@ -37,15 +38,22 @@
     "32": "Some of their Kohathite relatives were responsible for preparing the rows of the showbread every Sabbath.",
     "33": "Those who were musicians, the heads of Levite families, stayed in the temple chambers and were exempt from other duties because they were on duty day and night.",
     "34": "All these were heads of Levite families, chiefs according to their genealogies, and they lived in Jerusalem.",
-    "35": "Jeiel the father of Gibeon lived in Gibeon. His wife’s name was Maacah,",
-    "36": "and Abdon was his firstborn son, then Zur, Kish, Baal, Ner, Nadab,",
+    "35": "Jeiel the father of Gibeon lived in Gibeon. His wife’s name was Maacah.",
+    "36": "Abdon was his firstborn son, then Zur, Kish, Baal, Ner, Nadab,",
     "37": "Gedor, Ahio, Zechariah, and Mikloth.",
-    "38": "Mikloth was the father of Shimeam. These also lived alongside their relatives in Jerusalem.",
+    "38": "Mikloth was the father of Shimeam. They too lived alongside their relatives in Jerusalem.",
     "39": "Ner was the father of Kish, Kish was the father of Saul, and Saul was the father of Jonathan, Malchishua, Abinadab, and Esh-baal.",
-    "40": "The son of Jonathan: Merib-baal, and Merib-baal was the father of Micah.",
+    "40": "The son of Jonathan: Merib-baal, who was the father of Micah.",
     "41": "The sons of Micah: Pithon, Melech, Tahrea, and Ahaz.",
     "42": "Ahaz was the father of Jarah; Jarah was the father of Alemeth, Azmaveth, and Zimri; and Zimri was the father of Moza.",
-    "43": "Moza was the father of Binea; Rephaiah was his son, Eleasah his son, and Azel his son.",
-    "44": "Azel had six sons, and these were their names: Azrikam, Bocheru, Ishmael, Sheariah, Obadiah, and Hanan. These were the sons of Azel."
+    "43": "Moza was the father of Binea. Rephaiah was his son, Elasah his son, and Azel his son.",
+    "44": "And Azel had six sons, and these were their names: Azrikam, Bocheru, Ishmael, Sheariah, Obadiah, and Hanan. These were the sons of Azel."
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "ABIDE Source Reading",
+    "abbreviation": "ASR",
+    "source": "Derived from the Berean Standard Bible (BSB). Missing verses restored from the Textus Receptus tradition for completeness.",
+    "createdAt": "2026-03-12T19:26:15Z"
   }
 }

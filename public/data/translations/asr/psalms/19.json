@@ -1,12 +1,13 @@
 {
+  "book": "Psalm",
   "chapter": 19,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "For the choirmaster. A Psalm of David.",
   "verses": {
-    "1": "For the choirmaster. A Psalm of David. The heavens declare the glory of God; the skies proclaim the work of His hands.",
+    "1": "The heavens declare the glory of God; the skies proclaim the work of His hands.",
     "2": "Day after day they pour forth speech; night after night they reveal knowledge.",
     "3": "Without speech or language, without a sound to be heard,",
-    "4": "their voice",
+    "4": "their voice has gone out into all the earth, their words to the ends of the world. In the heavens He has pitched a tent for the sun.",
     "5": "Like a bridegroom emerging from his chamber, like a champion rejoicing to run his course,",
     "6": "it rises at one end of the heavens and runs its circuit to the other; nothing is deprived of its warmth.",
     "7": "The Law of the LORD is perfect, reviving the soul; the testimony of the LORD is trustworthy, making wise the simple.",

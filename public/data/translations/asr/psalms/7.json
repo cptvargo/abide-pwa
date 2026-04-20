@@ -1,12 +1,13 @@
 {
+  "book": "Psalm",
   "chapter": 7,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "A Shiggaion of David, which he sang to the LORD concerning the words of Cush, a Benjamite.",
   "verses": {
-    "1": "A Shiggaion",
+    "1": "O LORD my God, I take refuge in You; save me and deliver me from all my pursuers,",
     "2": "or they will shred my soul like a lion and tear me to pieces with no one to rescue me.",
     "3": "O LORD my God, if I have done this, if injustice is on my hands,",
-    "4": "if I have rewarded my ally",
+    "4": "if I have rewarded my ally with evil, if I have plundered my foe without cause,",
     "5": "then may my enemy pursue me and overtake me; may he trample me to the ground and leave my honor in the dust. Selah",
     "6": "Arise, O LORD, in Your anger; rise up against the fury of my enemies. Awake, my God, and ordain judgment.",
     "7": "Let the assembled peoples gather around You; take Your seat over them on high.",

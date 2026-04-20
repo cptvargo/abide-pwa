@@ -1,14 +1,15 @@
 {
-  "chapter": 5,
   "book": "1 Chronicles",
+  "chapter": 5,
   "translation": "ASR",
+  "title": "",
   "verses": {
     "1": "These were the sons of Reuben the firstborn of Israel. Though he was the firstborn, his birthright was given to the sons of Joseph son of Israel, because Reuben defiled his father’s bed. So he is not reckoned according to birthright.",
     "2": "And though Judah prevailed over his brothers and a ruler came from him, the birthright belonged to Joseph.",
     "3": "The sons of Reuben, the firstborn of Israel: Hanoch, Pallu, Hezron, and Carmi.",
     "4": "The descendants of Joel: Shemaiah his son, Gog his son, Shimei his son,",
     "5": "Micah his son, Reaiah his son, Baal his son,",
-    "6": "and Beerah his son, whom Tiglath-pileser king of Assyria carried into exile. He was a leader of the Reubenites.",
+    "6": "and Beerah his son, whom Tiglath-pileser king of Assyria carried into exile. Beerah was a leader of the Reubenites.",
     "7": "His relatives by their clans are recorded in their genealogy: Jeiel the chief, Zechariah,",
     "8": "and Bela son of Azaz, the son of Shema, the son of Joel. They settled in Aroer and as far as Nebo and Baal-meon.",
     "9": "They also settled in the east as far as the edge of the desert that extends to the Euphrates River, because their livestock had increased in the land of Gilead.",
@@ -29,5 +30,12 @@
     "24": "These were the heads of their families: Epher, Ishi, Eliel, Azriel, Jeremiah, Hodaviah, and Jahdiel. They were mighty men of valor, famous men, and heads of their families.",
     "25": "But they were unfaithful to the God of their fathers, and they prostituted themselves with the gods of the peoples of the land, whom God had destroyed before them.",
     "26": "So the God of Israel stirred up the spirit of Pul king of Assyria (that is, Tiglath-pileser king of Assyria) to take the Reubenites, the Gadites, and the half-tribe of Manasseh into exile. And he brought them to Halah, Habor, Hara, and the river of Gozan, where they remain to this day."
+  },
+  "metadata": {
+    "translator": "Jesus Vargas",
+    "version": "ABIDE Source Reading",
+    "abbreviation": "ASR",
+    "source": "Derived from the Berean Standard Bible (BSB). Missing verses restored from the Textus Receptus tradition for completeness.",
+    "createdAt": "2026-03-12T19:26:15Z"
   }
 }

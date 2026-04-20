@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 62,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "For the choirmaster. According to Jeduthun. A Psalm of David.",
   "verses": {
-    "1": "For the choirmaster. According to Jeduthun. A Psalm of David. In God alone my soul finds rest; my salvation comes from Him.",
+    "1": "In God alone my soul finds rest; my salvation comes from Him.",
     "2": "He alone is my rock and my salvation. He is my fortress; I will never be shaken.",
     "3": "How long will you threaten a man? Will all of you throw him down like a leaning wall or a tottering fence?",
     "4": "They fully intend to cast him down from his lofty perch; they delight in lies; with their mouths they bless, but inwardly they curse. Selah",

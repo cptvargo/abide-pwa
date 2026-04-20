@@ -1,10 +1,11 @@
 {
+  "book": "Psalm",
   "chapter": 76,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "For the choirmaster. With stringed instruments. A Psalm of Asaph. A song.",
   "verses": {
-    "1": "For the choirmaster. With stringed instruments. A Psalm of Asaph. A song. God is known in Judah; His name is great in Israel.",
-    "2": "His tent is in Salem,",
+    "1": "God is known in Judah; His name is great in Israel.",
+    "2": "His tent is in Salem, His dwelling place in Zion.",
     "3": "There He shattered the flaming arrows, the shield and sword and weapons of war. Selah",
     "4": "You are resplendent with light, more majestic than mountains filled with game.",
     "5": "The valiant lie plundered; they sleep their last sleep. No men of might could lift a hand.",

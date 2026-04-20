@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 38,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "A Psalm of David, for remembrance.",
   "verses": {
-    "1": "A Psalm of David, for remembrance. O LORD, do not rebuke me in Your anger or discipline me in Your wrath.",
+    "1": "O LORD, do not rebuke me in Your anger or discipline me in Your wrath.",
     "2": "For Your arrows have pierced me deeply, and Your hand has pressed down on me.",
     "3": "There is no soundness in my body because of Your anger; there is no rest in my bones because of my sin.",
     "4": "For my iniquities have overwhelmed me; they are a burden too heavy to bear.",
@@ -18,10 +19,10 @@
     "13": "But like a deaf man, I do not hear; and like a mute man, I do not open my mouth.",
     "14": "I am like a man who cannot hear, whose mouth offers no reply.",
     "15": "I wait for You, O LORD; You will answer, O Lord my God.",
-    "16": "For I said, “Let them not gloat over me — those who taunt me when my foot slips.”",
+    "16": "For I said, “Let them not gloat over me—those who taunt me when my foot slips.”",
     "17": "For I am ready to fall, and my pain is ever with me.",
     "18": "Yes, I confess my iniquity; I am troubled by my sin.",
-    "19": "Many are my enemies without cause,",
+    "19": "Many are my enemies without cause, and many hate me without reason.",
     "20": "Those who repay my good with evil attack me for pursuing the good.",
     "21": "Do not forsake me, O LORD; be not far from me, O my God.",
     "22": "Come quickly to help me, O Lord my Savior."

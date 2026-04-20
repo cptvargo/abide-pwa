@@ -1,10 +1,11 @@
 {
-  "chapter": 1,
   "book": "Ecclesiastes",
+  "chapter": 1,
   "translation": "ASR",
+  "title": "",
   "verses": {
-    "1": "These are the words of the Teacher,",
-    "2": "“Futility ” says the Teacher, “futility of futilities! Everything is futile!”",
+    "1": "These are the words of the Teacher, the son of David, king in Jerusalem:",
+    "2": "“Futility of futilities,” says the Teacher, “futility of futilities! Everything is futile!”",
     "3": "What does a man gain from all his labor, at which he toils under the sun?",
     "4": "Generations come and generations go, but the earth remains forever.",
     "5": "The sun rises and the sun sets; it hurries back to where it rises.",
@@ -13,7 +14,7 @@
     "8": "All things are wearisome, more than one can describe; the eye is not satisfied with seeing, nor the ear content with hearing.",
     "9": "What has been will be again, and what has been done will be done again; there is nothing new under the sun.",
     "10": "Is there a case where one can say, “Look, this is new”? It has already existed in the ages before us.",
-    "11": "There is no remembrance of those who came before, and those yet to come will not be remembered by those who follow after. With Wisdom Comes Sorrow",
+    "11": "There is no remembrance of those who came before, and those yet to come will not be remembered by those who follow after.",
     "12": "I, the Teacher, was king over Israel in Jerusalem.",
     "13": "And I set my mind to seek and explore by wisdom all that is done under heaven. What a miserable task God has laid upon the sons of men to occupy them!",
     "14": "I have seen all the things that are done under the sun, and have found them all to be futile, a pursuit of the wind.",

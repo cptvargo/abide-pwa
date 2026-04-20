@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 77,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "For the choirmaster. According to Jeduthun. A Psalm of Asaph.",
   "verses": {
-    "1": "For the choirmaster. According to Jeduthun. A Psalm of Asaph. I cried out to God; I cried aloud to God to hear me.",
+    "1": "I cried out to God; I cried aloud to God to hear me.",
     "2": "In the day of trouble I sought the Lord; through the night my outstretched hands did not grow weary; my soul refused to be comforted.",
     "3": "I remembered You, O God, and I groaned; I mused and my spirit grew faint. Selah",
     "4": "You have kept my eyes from closing; I am too troubled to speak.",
@@ -12,7 +13,7 @@
     "7": "“Will the Lord spurn us forever and never show His favor again?",
     "8": "Is His loving devotion gone forever? Has His promise failed for all time?",
     "9": "Has God forgotten to be gracious? Has His anger shut off His compassion?” Selah",
-    "10": "So I said, “I am grieved that the right hand of the Most High has changed.” “To this I will appeal: to the years of the right hand of the Most High.”",
+    "10": "So I said, “I am grieved that the right hand of the Most High has changed.”",
     "11": "I will remember the works of the LORD; yes, I will remember Your wonders of old.",
     "12": "I will reflect on all You have done and ponder Your mighty deeds.",
     "13": "Your way, O God, is holy. What god is so great as our God?",

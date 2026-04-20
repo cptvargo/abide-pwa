@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 25,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "Of David.",
   "verses": {
-    "1": "Of David.",
+    "1": "To You, O LORD, I lift up my soul;",
     "2": "in You, my God, I trust. Do not let me be put to shame; do not let my enemies exult over me.",
     "3": "Surely none who wait for You will be put to shame; but those who engage in treachery without cause will be disgraced.",
     "4": "Show me Your ways, O LORD; teach me Your paths.",

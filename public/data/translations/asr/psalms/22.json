@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 22,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "For the choirmaster. To the tune of “The Doe of the Dawn.” A Psalm of David.",
   "verses": {
-    "1": "For the choirmaster. To the tune of “The Doe of the Dawn.” A Psalm of David. My God, my God, why have You forsaken me?",
+    "1": "My God, my God, why have You forsaken me? Why are You so far from saving me, so far from my words of groaning?",
     "2": "I cry out by day, O my God, but You do not answer, and by night, but I have no rest.",
     "3": "Yet You are holy, enthroned on the praises of Israel.",
     "4": "In You our fathers trusted; they trusted and You delivered them.",
@@ -17,7 +18,7 @@
     "12": "Many bulls surround me; strong bulls of Bashan encircle me.",
     "13": "They open their jaws against me like lions that roar and maul.",
     "14": "I am poured out like water, and all my bones are disjointed. My heart is like wax; it melts away within me.",
-    "15": "My strength",
+    "15": "My strength is dried up like a potsherd, and my tongue sticks to the roof of my mouth. You lay me in the dust of death.",
     "16": "For dogs surround me; a band of evil men encircles me; they have pierced my hands and feet.",
     "17": "I can count all my bones; they stare and gloat over me.",
     "18": "They divide my garments among them and cast lots for my clothing.",
@@ -31,9 +32,9 @@
     "26": "The poor will eat and be satisfied; those who seek the LORD will praise Him. May your hearts live forever!",
     "27": "All the ends of the earth will remember and turn to the LORD. All the families of the nations will bow down before Him.",
     "28": "For dominion belongs to the LORD and He rules over the nations.",
-    "29": "All the rich of the earth will feast and worship; all who go down to the dust will kneel before Him— even those unable to preserve their lives.",
+    "29": "All the rich of the earth will feast and worship; all who go down to the dust will kneel before Him—even those unable to preserve their lives.",
     "30": "Posterity will serve Him; they will declare the Lord to a new generation.",
-    "31": "They will come and proclaim His righteousness to a people yet unborn — all that He has done."
+    "31": "They will come and proclaim His righteousness to a people yet unborn—all that He has done."
   },
   "metadata": {
     "translator": "Jesus Vargas",

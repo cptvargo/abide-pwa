@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 83,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "A song. A Psalm of Asaph.",
   "verses": {
-    "1": "A song. A Psalm of Asaph. O God, be not silent; be not speechless;",
+    "1": "O God, be not silent; be not speechless; be not still, O God.",
     "2": "See how Your enemies rage, how Your foes have reared their heads.",
     "3": "With cunning they scheme against Your people and conspire against those You cherish,",
     "4": "saying, “Come, let us erase them as a nation; may the name of Israel be remembered no more.”",

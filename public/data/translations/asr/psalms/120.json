@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 120,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "A song of ascents.",
   "verses": {
-    "1": "A song of ascents. In my distress I cried to the LORD, and He answered me.",
+    "1": "In my distress I cried to the LORD, and He answered me.",
     "2": "Deliver my soul, O LORD, from lying lips and a deceitful tongue.",
     "3": "What will He do to you, and what will be added to you, O deceitful tongue?",
     "4": "Sharp arrows will come from the warrior, with burning coals of the broom tree!",

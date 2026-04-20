@@ -1,7 +1,8 @@
 {
-  "chapter": 33,
   "book": "Ezekiel",
+  "chapter": 33,
   "translation": "ASR",
+  "title": "",
   "verses": {
     "1": "Again the word of the LORD came to me, saying,",
     "2": "“Son of man, speak to your people and tell them: ‘Suppose I bring the sword against a land, and the people of that land choose a man from among them, appointing him as their watchman,",
@@ -17,12 +18,12 @@
     "12": "Therefore, son of man, say to your people: ‘The righteousness of the righteous man will not deliver him in the day of his transgression; neither will the wickedness of the wicked man cause him to stumble on the day he turns from his wickedness. Nor will the righteous man be able to survive by his righteousness on the day he sins.’",
     "13": "If I tell the righteous man that he will surely live, but he then trusts in his righteousness and commits iniquity, then none of his righteous works will be remembered; he will die because of the iniquity he has committed.",
     "14": "But if I tell the wicked man, ‘You will surely die,’ and he turns from his sin and does what is just and right—",
-    "15": "if he restores a pledge, makes restitution for what he has stolen, and walks in the statutes of life without practicing iniquity— then he will surely live; he will not die.",
+    "15": "if he restores a pledge, makes restitution for what he has stolen, and walks in the statutes of life without practicing iniquity—then he will surely live; he will not die.",
     "16": "None of the sins he has committed will be held against him. He has done what is just and right; he will surely live.",
     "17": "Yet your people say, ‘The way of the Lord is not just.’ But it is their way that is not just.",
     "18": "If a righteous man turns from his righteousness and commits iniquity, he will die for it.",
     "19": "But if a wicked man turns from his wickedness and does what is just and right, he will live because of this.",
-    "20": "Yet you say, ‘The way of the Lord is not just.’ But I will judge each of you according to his ways, O house of Israel.” Word of Jerusalem’s Fall",
+    "20": "Yet you say, ‘The way of the Lord is not just.’ But I will judge each of you according to his ways, O house of Israel.”",
     "21": "In the twelfth year of our exile, on the fifth day of the tenth month, a fugitive from Jerusalem came to me and reported, “The city has been taken!”",
     "22": "Now the evening before the fugitive arrived, the hand of the LORD was upon me, and He opened my mouth before the man came to me in the morning. So my mouth was opened and I was no longer mute.",
     "23": "Then the word of the LORD came to me, saying,",
@@ -35,7 +36,7 @@
     "30": "As for you, son of man, your people are talking about you near the city walls and in the doorways of their houses. One speaks to another, each saying to his brother, ‘Come and hear the message that has come from the LORD!’",
     "31": "So My people come to you as usual, sit before you, and hear your words; but they do not put them into practice. Although they express love with their mouths, their hearts pursue dishonest gain.",
     "32": "Indeed, you are to them like a singer of love songs with a beautiful voice, who skillfully plays an instrument. They hear your words but do not put them into practice.",
-    "33": "So when it comes to pass— and surely it will come— then they will know that a prophet has been among them.”"
+    "33": "So when it comes to pass—and surely it will come—then they will know that a prophet has been among them.”"
   },
   "metadata": {
     "translator": "Jesus Vargas",

@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 85,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "For the choirmaster. A Psalm of the sons of Korah.",
   "verses": {
-    "1": "For the choirmaster. A Psalm of the sons of Korah. You showed favor to Your land, O LORD; You restored Jacob from captivity.",
+    "1": "You showed favor to Your land, O LORD; You restored Jacob from captivity.",
     "2": "You forgave the iniquity of Your people; You covered all their sin. Selah",
     "3": "You withheld all Your fury; You turned from Your burning anger.",
     "4": "Restore us, O God of our salvation, and put away Your displeasure toward us.",

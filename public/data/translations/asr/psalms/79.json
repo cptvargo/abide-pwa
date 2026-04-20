@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 79,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "A Psalm of Asaph.",
   "verses": {
-    "1": "A Psalm of Asaph. The nations, O God, have invaded Your inheritance; they have defiled Your holy temple and reduced Jerusalem to rubble.",
+    "1": "The nations, O God, have invaded Your inheritance; they have defiled Your holy temple and reduced Jerusalem to rubble.",
     "2": "They have given the corpses of Your servants as food to the birds of the air, the flesh of Your saints to the beasts of the earth.",
     "3": "They have poured out their blood like water all around Jerusalem, and there is no one to bury the dead.",
     "4": "We have become a reproach to our neighbors, a scorn and derision to those around us.",

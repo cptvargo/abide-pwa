@@ -1,7 +1,8 @@
 {
-  "chapter": 16,
   "book": "Job",
+  "chapter": 16,
   "translation": "ASR",
+  "title": "",
   "verses": {
     "1": "Then Job answered:",
     "2": "“I have heard many things like these; miserable comforters are you all.",
@@ -24,7 +25,7 @@
     "19": "Even now my witness is in heaven, and my advocate is on high.",
     "20": "My friends are my scoffers as my eyes pour out tears to God.",
     "21": "Oh, that a man might plead with God as he pleads with his neighbor!",
-    "22": "For when only a few years are past I will go the way of no return.[’’]"
+    "22": "For when only a few years are past I will go the way of no return."
   },
   "metadata": {
     "translator": "Jesus Vargas",

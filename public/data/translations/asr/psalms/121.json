@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 121,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "A song of ascents.",
   "verses": {
-    "1": "A song of ascents. I lift up my eyes to the hills. From where does my help come?",
+    "1": "I lift up my eyes to the hills. From where does my help come?",
     "2": "My help comes from the LORD, the Maker of heaven and earth.",
     "3": "He will not allow your foot to slip; your Protector will not slumber.",
     "4": "Behold, the Protector of Israel will neither slumber nor sleep.",

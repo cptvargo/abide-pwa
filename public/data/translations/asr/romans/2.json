@@ -1,7 +1,8 @@
 {
-  "chapter": 2,
   "book": "Romans",
+  "chapter": 2,
   "translation": "ASR",
+  "title": "",
   "verses": {
     "1": "You, therefore, have no excuse, you who pass judgment on another. For on whatever grounds you judge the other, you are condemning yourself, because you who pass judgment do the same things.",
     "2": "And we know that God’s judgment against those who do such things is based on truth.",
@@ -18,11 +19,11 @@
     "13": "For it is not the hearers of the law who are righteous before God, but it is the doers of the law who will be declared righteous.",
     "14": "Indeed, when Gentiles, who do not have the law, do by nature what the law requires, they are a law to themselves, even though they do not have the law.",
     "15": "So they show that the work of the law is written on their hearts, their consciences also bearing witness, and their thoughts either accusing or defending them",
-    "16": "on the day when God will judge men’s secrets through Christ Jesus,",
+    "16": "on the day when God will judge men’s secrets through Christ Jesus, as proclaimed by my gospel.",
     "17": "Now you, if you call yourself a Jew; if you rely on the law and boast in God;",
     "18": "if you know His will and approve of what is superior because you are instructed by the law;",
     "19": "if you are convinced that you are a guide for the blind, a light for those in darkness,",
-    "20": "an instructor of the foolish, a teacher of infants, because you have in the law the embodiment of knowledge and truth —",
+    "20": "an instructor of the foolish, a teacher of infants, because you have in the law the embodiment of knowledge and truth—",
     "21": "you, then, who teach others, do you not teach yourself? You who preach against stealing, do you steal?",
     "22": "You who forbid adultery, do you commit adultery? You who abhor idols, do you rob temples?",
     "23": "You who boast in the law, do you dishonor God by breaking the law?",

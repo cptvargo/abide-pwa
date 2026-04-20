@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 108,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "A song. A Psalm of David.",
   "verses": {
-    "1": "A song. A Psalm of David. My heart is steadfast, O God; I will sing and make music with all my being.",
+    "1": "My heart is steadfast, O God; I will sing and make music with all my being.",
     "2": "Awake, O harp and lyre! I will awaken the dawn.",
     "3": "I will praise You, O LORD, among the nations; I will sing Your praises among the peoples.",
     "4": "For Your loving devotion extends beyond the heavens, and Your faithfulness reaches to the clouds.",

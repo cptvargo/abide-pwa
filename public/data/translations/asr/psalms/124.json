@@ -1,9 +1,10 @@
 {
+  "book": "Psalm",
   "chapter": 124,
-  "book": "Psalms",
   "translation": "ASR",
+  "title": "A song of ascents. Of David.",
   "verses": {
-    "1": "A song of ascents. Of David. If the LORD had not been on our side— let Israel now declare—",
+    "1": "If the LORD had not been on our side—let Israel now declare—",
     "2": "if the LORD had not been on our side when men attacked us,",
     "3": "when their anger flared against us, then they would have swallowed us alive,",
     "4": "then the floods would have engulfed us, then the torrent would have overwhelmed us,",

@@ -1,7 +1,8 @@
 {
-  "chapter": 25,
   "book": "Matthew",
+  "chapter": 25,
   "translation": "ASR",
+  "title": "",
   "verses": {
     "1": "“At that time the kingdom of heaven will be like ten virgins who took their lamps and went out to meet the bridegroom.",
     "2": "Five of them were foolish, and five were wise.",
@@ -17,8 +18,8 @@
     "12": "But he replied, ‘Truly I tell you, I do not know you.’",
     "13": "Therefore keep watch, because you do not know the day or the hour.",
     "14": "For it is just like a man going on a journey, who called his servants and entrusted them with his possessions.",
-    "15": "To one he gave five talents,",
-    "16": "The servant who had received the five talents went at once and put them to work",
+    "15": "To one he gave five talents, to another two talents, and to another one talent—each according to his own ability. And he went on his journey.",
+    "16": "The servant who had received the five talents went at once and put them to work and gained five more.",
     "17": "Likewise, the one with the two talents gained two more.",
     "18": "But the servant who had received the one talent went off, dug a hole in the ground, and hid his master’s money.",
     "19": "After a long time the master of those servants returned and settled accounts with them.",
