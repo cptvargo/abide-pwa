@@ -106,6 +106,28 @@ const CR_TRANSLATION_LABELS = {
 /* ─────────────────────────────────────────
    Pure helpers
 ───────────────────────────────────────── */
+function buildParagraphs(verses, breakSet) {
+  if (!verses.length) return [];
+  const paragraphs = [];
+  let current = [];
+  for (const v of verses) {
+    if (breakSet.has(v.verse) && current.length > 0) {
+      paragraphs.push(current);
+      current = [];
+    }
+    current.push(v);
+  }
+  if (current.length > 0) paragraphs.push(current);
+  return paragraphs;
+}
+
+function divinize(text) {
+  if (!text) return text;
+  return text.replace(/\b(he|him|his|himself)\b/gi, (m) =>
+    m.charAt(0).toUpperCase() + m.slice(1),
+  );
+}
+
 function buildTriggerMap(bookData) {
   if (!bookData?.events) return {};
   const map = {};
@@ -757,7 +779,7 @@ function ObservationDrawer({
                           margin: 0,
                         }}
                       >
-                        {currentObs.text}
+                        {divinize(currentObs.text)}
                       </p>
                     </div>
                   )}
@@ -812,7 +834,7 @@ function ObservationDrawer({
                                 margin: 0,
                               }}
                             >
-                              {obs.text}
+                              {divinize(obs.text)}
                             </p>
                           </div>
                         ))}
@@ -925,7 +947,7 @@ function ChapterSummaryCard({
             margin: "0 0 24px",
           }}
         >
-          {summaryText}
+          {divinize(summaryText)}
         </p>
         {isLastChapter ? (
           isComplete ? (
@@ -1045,6 +1067,7 @@ export default function ChristRevealedReader({
   const [showSummaryCard, setShowSummaryCard] = useState(false);
   const [marking, setMarking] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [paragraphBreaks, setParagraphBreaks] = useState({});
 
   const scrollRef = useRef(null);
   const observerRef = useRef(null);
@@ -1062,6 +1085,22 @@ export default function ChristRevealedReader({
   /* ── Restore initialChapter when bookId changes ── */
   useEffect(() => {
     setCurrentChapter(initialChapter);
+    setParagraphBreaks({});
+  }, [bookId]);
+
+  /* ── Load paragraph break data ── */
+  useEffect(() => {
+    if (!bookId) return;
+    async function loadBreaks() {
+      try {
+        const base = import.meta.env.BASE_URL;
+        const res = await fetch(`${base}data/paragraphs/${bookId}.json`);
+        if (!res.ok) return;
+        const data = await res.json();
+        setParagraphBreaks(data.chapters || {});
+      } catch { /* no break data — fall back to verse-by-verse */ }
+    }
+    loadBreaks();
   }, [bookId]);
 
   /* ── Save chapter progress ── */
@@ -1198,7 +1237,7 @@ export default function ChristRevealedReader({
       if (observerRef.current) observerRef.current.disconnect();
       if (autoCloseTimer.current) clearTimeout(autoCloseTimer.current);
     };
-  }, [verses, bookData]);
+  }, [verses, bookData, paragraphBreaks]);
 
   /* ══════════════════════════════════════
      ALL HOOKS DONE
@@ -1222,6 +1261,11 @@ export default function ChristRevealedReader({
     setShowSummaryCard(false);
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
     setCurrentChapter((c) => c + 1);
+  }
+
+  function retreatChapter() {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    setCurrentChapter((c) => c - 1);
   }
 
   function handleMarkCompletePress() {
@@ -1442,55 +1486,130 @@ export default function ChristRevealedReader({
           >
             Loading…
           </div>
-        ) : (
-          <div style={{ padding: "20px 24px 0" }}>
-            {verses.map((v, idx) => {
-              const key = `${currentChapter}:${v.verse}`;
-              const hasTrigger = Boolean(triggerMap[key]);
-              const isChrist =
-                hasTrigger &&
-                triggerMap[key].some((o) => o.type === "christRevealed");
-              const isAdversary =
-                hasTrigger &&
-                triggerMap[key].some((o) => o.type === "adversarysMoves");
+        ) : (() => {
+          const hasBreaks = Object.keys(paragraphBreaks).length > 0;
+          const breakSet = hasBreaks
+            ? new Set((paragraphBreaks[String(currentChapter)] ?? []).map(Number))
+            : new Set();
+          const paragraphGroups = hasBreaks ? buildParagraphs(verses, breakSet) : null;
 
-              return (
+          return paragraphGroups ? (
+            /* ── Chapterless prose mode ── */
+            <div style={{ padding: "20px 28px 0" }}>
+              {paragraphGroups.map((group, groupIdx) => (
                 <p
-                  key={key}
-                  data-verse={v.verse}
-                  data-verse-key={hasTrigger ? key : undefined}
+                  key={groupIdx}
                   style={{
-                    marginBottom: "20px",
-                    lineHeight: 1.9,
+                    marginBottom: "1.6em",
+                    lineHeight: 2.0,
                     color: "rgba(240,235,224,0.85)",
                     fontFamily: "var(--font-body, Georgia, serif)",
-                    fontSize: "16px",
-                    animation: `cr-verse-in 0.25s ease ${Math.min(idx * 0.015, 0.3)}s both`,
+                    fontSize: "17px",
+                    textIndent: "1.5em",
+                    animation: `cr-verse-in 0.25s ease ${Math.min(groupIdx * 0.03, 0.4)}s both`,
                   }}
                 >
-                  <sup
+                  {group.map((v, vIdx) => {
+                    const key = `${currentChapter}:${v.verse}`;
+                    const hasTrigger = Boolean(triggerMap[key]);
+                    const isChrist =
+                      hasTrigger &&
+                      triggerMap[key].some((o) => o.type === "christRevealed");
+                    const isAdversary =
+                      hasTrigger &&
+                      triggerMap[key].some((o) => o.type === "adversarysMoves");
+                    return (
+                      <span key={v.verse}>
+                        {hasTrigger && (
+                          <span
+                            data-verse={v.verse}
+                            data-verse-key={key}
+                            style={{
+                              display: "inline-block",
+                              width: "1px",
+                              height: "1em",
+                              verticalAlign: "middle",
+                              opacity: 0,
+                              overflow: "hidden",
+                            }}
+                          />
+                        )}
+                        <sup
+                          style={{
+                            marginRight: "4px",
+                            fontSize: "10px",
+                            color: isChrist
+                              ? CHRIST_COLOR
+                              : isAdversary
+                                ? ADVERSARY_COLOR
+                                : "rgba(196,169,107,0.3)",
+                            opacity: hasTrigger ? 0.9 : 0.4,
+                            fontFamily: "var(--font-ui, system-ui)",
+                            fontStyle: "normal",
+                            verticalAlign: "super",
+                          }}
+                        >
+                          {v.verse}
+                        </sup>
+                        {v.text}
+                        {vIdx < group.length - 1 ? " " : ""}
+                      </span>
+                    );
+                  })}
+                </p>
+              ))}
+            </div>
+          ) : (
+            /* ── Verse-by-verse fallback ── */
+            <div style={{ padding: "20px 24px 0" }}>
+              {verses.map((v, idx) => {
+                const key = `${currentChapter}:${v.verse}`;
+                const hasTrigger = Boolean(triggerMap[key]);
+                const isChrist =
+                  hasTrigger &&
+                  triggerMap[key].some((o) => o.type === "christRevealed");
+                const isAdversary =
+                  hasTrigger &&
+                  triggerMap[key].some((o) => o.type === "adversarysMoves");
+
+                return (
+                  <p
+                    key={key}
+                    data-verse={v.verse}
+                    data-verse-key={hasTrigger ? key : undefined}
                     style={{
-                      marginRight: "5px",
-                      fontSize: "10px",
-                      color: isChrist
-                        ? CHRIST_COLOR
-                        : isAdversary
-                          ? ADVERSARY_COLOR
-                          : "rgba(196,169,107,0.3)",
-                      opacity: hasTrigger ? 0.9 : 0.4,
-                      fontFamily: "var(--font-ui, system-ui)",
-                      fontStyle: "normal",
-                      verticalAlign: "super",
+                      marginBottom: "20px",
+                      lineHeight: 1.9,
+                      color: "rgba(240,235,224,0.85)",
+                      fontFamily: "var(--font-body, Georgia, serif)",
+                      fontSize: "16px",
+                      animation: `cr-verse-in 0.25s ease ${Math.min(idx * 0.015, 0.3)}s both`,
                     }}
                   >
-                    {v.verse}
-                  </sup>
-                  {v.text}
-                </p>
-              );
-            })}
-          </div>
-        )}
+                    <sup
+                      style={{
+                        marginRight: "5px",
+                        fontSize: "10px",
+                        color: isChrist
+                          ? CHRIST_COLOR
+                          : isAdversary
+                            ? ADVERSARY_COLOR
+                            : "rgba(196,169,107,0.3)",
+                        opacity: hasTrigger ? 0.9 : 0.4,
+                        fontFamily: "var(--font-ui, system-ui)",
+                        fontStyle: "normal",
+                        verticalAlign: "super",
+                      }}
+                    >
+                      {v.verse}
+                    </sup>
+                    {v.text}
+                  </p>
+                );
+              })}
+            </div>
+          );
+        })()}
 
         {/* Bottom action */}
         {!loadingChapter && verses.length > 0 && (
@@ -1531,90 +1650,139 @@ export default function ChristRevealedReader({
               />
             </div>
 
-            {isLastChapter ? (
-              isComplete ? (
-                <div
+            <div style={{ display: "flex", gap: "10px" }}>
+              {/* Previous chapter */}
+              {currentChapter > 1 && (
+                <button
+                  onClick={retreatChapter}
                   style={{
-                    padding: "14px",
-                    borderRadius: "12px",
-                    background: "rgba(196,169,107,0.06)",
+                    flex: isLastChapter ? "0 0 auto" : 1,
+                    padding: "15px 16px",
+                    borderRadius: "14px",
+                    background: "transparent",
                     border: "1px solid rgba(196,169,107,0.15)",
-                    color: "rgba(196,169,107,0.6)",
-                    fontSize: "13px",
+                    cursor: "pointer",
                     fontFamily: "var(--font-ui, system-ui)",
+                    fontSize: "13px",
+                    fontWeight: "500",
+                    letterSpacing: "0.04em",
+                    color: "rgba(196,169,107,0.45)",
+                    WebkitTapHighlightColor: "transparent",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
+                    transition: "background 0.15s ease, color 0.15s ease",
+                  }}
+                  onTouchStart={(e) => {
+                    e.currentTarget.style.background = "rgba(196,169,107,0.06)";
+                    e.currentTarget.style.color = "rgba(196,169,107,0.7)";
+                  }}
+                  onTouchEnd={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = "rgba(196,169,107,0.45)";
                   }}
                 >
-                  ✓ {bookDisplayName} complete
-                </div>
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                  </svg>
+                  {bookDisplayName} {currentChapter - 1}
+                </button>
+              )}
+
+              {/* Next chapter or mark complete */}
+              {isLastChapter ? (
+                isComplete ? (
+                  <div
+                    style={{
+                      flex: 1,
+                      padding: "14px",
+                      borderRadius: "12px",
+                      background: "rgba(196,169,107,0.06)",
+                      border: "1px solid rgba(196,169,107,0.15)",
+                      color: "rgba(196,169,107,0.6)",
+                      fontSize: "13px",
+                      fontFamily: "var(--font-ui, system-ui)",
+                      textAlign: "center",
+                    }}
+                  >
+                    ✓ {bookDisplayName} complete
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleMarkCompletePress}
+                    disabled={marking}
+                    style={{
+                      flex: 1,
+                      padding: "16px",
+                      borderRadius: "14px",
+                      background: marking ? "rgba(196,169,107,0.4)" : CHRIST_COLOR,
+                      border: "none",
+                      cursor: marking ? "default" : "pointer",
+                      fontFamily: "var(--font-ui, system-ui)",
+                      fontSize: "15px",
+                      fontWeight: "600",
+                      letterSpacing: "0.04em",
+                      color: "#1A1510",
+                      WebkitTapHighlightColor: "transparent",
+                      transition: "background 0.2s ease",
+                    }}
+                  >
+                    {marking ? "Saving…" : `Mark ${bookDisplayName} Complete`}
+                  </button>
+                )
               ) : (
                 <button
-                  onClick={handleMarkCompletePress}
-                  disabled={marking}
+                  onClick={handleNextChapterPress}
                   style={{
-                    width: "100%",
-                    padding: "16px",
+                    flex: 1,
+                    padding: "15px",
                     borderRadius: "14px",
-                    background: marking
-                      ? "rgba(196,169,107,0.4)"
-                      : CHRIST_COLOR,
-                    border: "none",
-                    cursor: marking ? "default" : "pointer",
+                    background: "transparent",
+                    border: "1px solid rgba(196,169,107,0.28)",
+                    cursor: "pointer",
                     fontFamily: "var(--font-ui, system-ui)",
-                    fontSize: "15px",
-                    fontWeight: "600",
-                    letterSpacing: "0.04em",
-                    color: "#1A1510",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    letterSpacing: "0.06em",
+                    color: CHRIST_COLOR,
                     WebkitTapHighlightColor: "transparent",
-                    transition: "background 0.2s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                    transition: "background 0.15s ease",
+                  }}
+                  onTouchStart={(e) => {
+                    e.currentTarget.style.background = "rgba(196,169,107,0.08)";
+                    e.currentTarget.style.borderColor = "rgba(196,169,107,0.5)";
+                  }}
+                  onTouchEnd={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.borderColor = "rgba(196,169,107,0.28)";
                   }}
                 >
-                  {marking ? "Saving…" : `Mark ${bookDisplayName} Complete`}
+                  {bookDisplayName} {currentChapter + 1}
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
                 </button>
-              )
-            ) : (
-              <button
-                onClick={handleNextChapterPress}
-                style={{
-                  width: "100%",
-                  padding: "15px",
-                  borderRadius: "14px",
-                  background: "transparent",
-                  border: "1px solid rgba(196,169,107,0.28)",
-                  cursor: "pointer",
-                  fontFamily: "var(--font-ui, system-ui)",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  letterSpacing: "0.06em",
-                  color: CHRIST_COLOR,
-                  WebkitTapHighlightColor: "transparent",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  transition: "background 0.15s ease",
-                }}
-                onTouchStart={(e) => {
-                  e.currentTarget.style.background = "rgba(196,169,107,0.08)";
-                  e.currentTarget.style.borderColor = "rgba(196,169,107,0.5)";
-                }}
-                onTouchEnd={(e) => {
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.borderColor = "rgba(196,169,107,0.28)";
-                }}
-              >
-                {bookDisplayName} {currentChapter + 1}
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </button>
-            )}
+              )}
+            </div>
           </div>
         )}
       </div>

@@ -40,6 +40,7 @@ export default function DialogueSystem({ theme, translation, onBack }) {
   const [viewingEntry, setViewingEntry] = useState(null);
   const [creatingEntry, setCreatingEntry] = useState(false);
   const [editorText, setEditorText] = useState("");
+  const [editingEntry, setEditingEntry] = useState(null);
 
   // Save to localStorage whenever dialogues change
   useEffect(() => {
@@ -50,20 +51,22 @@ export default function DialogueSystem({ theme, translation, onBack }) {
     setDialogues((prev) => prev.filter((d) => d.id !== id));
   }
 
-  function handleSaveEntry({ html, text }) {
+  function handleSaveEntry({ html, text, scripture, verseText, verseTranslation }) {
     if (!text.trim()) return;
 
     const newEntry = {
       id: Date.now().toString(),
-      type: "spontaneous",
+      type: "journal",
       reflection: html,
       text: text,
+      ...(scripture ? { scripture, verseText, verseTranslation } : {}),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
     setDialogues((prev) => [newEntry, ...prev]);
     setEditorText("");
+    setEditingEntry(null);
     setCreatingEntry(false);
   }
 
@@ -83,7 +86,14 @@ export default function DialogueSystem({ theme, translation, onBack }) {
         ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
         : `${entry.book} ${entry.chapter}`;
       shareText += `${ref}${entry.translation ? ` • ${entry.translation}` : ""}\n`;
+      if (entry.verseText) {
+        shareText += `"${entry.verseText}"\n\n`;
+      }
+    }
 
+    // Add scripture for journal entries
+    if ((entry.type === "journal" || entry.type === "spontaneous") && entry.scripture) {
+      shareText += `${entry.scripture}${entry.verseTranslation ? ` • ${entry.verseTranslation}` : ""}\n`;
       if (entry.verseText) {
         shareText += `"${entry.verseText}"\n\n`;
       }
@@ -110,7 +120,7 @@ export default function DialogueSystem({ theme, translation, onBack }) {
           title:
             entry.type === "scripture"
               ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
-              : "My Prayer",
+              : entry.scripture || "My Journal",
           text: shareText,
         })
         .catch(() => {
@@ -134,6 +144,7 @@ export default function DialogueSystem({ theme, translation, onBack }) {
         theme={theme}
         onBack={() => setViewingEntry(null)}
         onEdit={() => {
+          setEditingEntry(viewingEntry);
           setEditorText(viewingEntry.reflection || viewingEntry.text || "");
           setCreatingEntry(true);
           deleteDialogue(viewingEntry.id);
@@ -338,10 +349,15 @@ export default function DialogueSystem({ theme, translation, onBack }) {
       {creatingEntry && (
         <RichTextJournal
           initialText={editorText}
+          initialScriptureRef={editingEntry?.scripture || ""}
+          initialVerseText={editingEntry?.verseText || null}
+          initialVerseTranslation={editingEntry?.verseTranslation || null}
+          translation={translation}
           onSave={handleSaveEntry}
           onClose={() => {
             setCreatingEntry(false);
             setEditorText("");
+            setEditingEntry(null);
           }}
         />
       )}
@@ -401,6 +417,41 @@ function DialogueCard({ entry, theme, onView, onShare }) {
               </div>
             )}
 
+            {/* Journal scripture reference */}
+            {(entry.type === "journal" || entry.type === "spontaneous") && entry.scripture && (
+              <div
+                className="text-xs font-bold mb-2 flex items-center gap-2"
+                style={{ color: "var(--text-accent)" }}
+              >
+                <svg viewBox="0 0 24 24" className="w-3 h-3" fill="currentColor">
+                  <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 3z" />
+                  <path d="M17 4h3v16h-3" />
+                </svg>
+                <span>
+                  {entry.scripture}
+                  {entry.verseTranslation ? ` • ${entry.verseTranslation}` : ""}
+                </span>
+              </div>
+            )}
+
+            {/* Devotional series/day reference */}
+            {entry.type === "devotional" && entry.seriesTitle && (
+              <div
+                className="text-xs font-bold mb-2 flex items-center gap-2"
+                style={{ color: "var(--text-accent)" }}
+              >
+                <svg viewBox="0 0 24 24" className="w-3 h-3" fill="currentColor">
+                  <path d="M2 4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4z" opacity="0.15"/>
+                  <path d="M7 8h10M7 12h7M7 16h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                </svg>
+                <span>
+                  {entry.seriesTitle}
+                  {entry.day ? ` • Day ${entry.day}` : ""}
+                  {entry.dayTitle ? ` — ${entry.dayTitle}` : ""}
+                </span>
+              </div>
+            )}
+
             {/* Date & Time */}
             <div
               className="text-xs opacity-50"
@@ -447,6 +498,19 @@ function DialogueCard({ entry, theme, onView, onShare }) {
             </svg>
           </button>
         </div>
+
+        {/* Verse Text (if journal with scripture) */}
+        {(entry.type === "journal" || entry.type === "spontaneous") && entry.verseText && (
+          <div
+            className="mb-3 p-3 rounded-lg text-sm italic"
+            style={{
+              background: "rgba(var(--accent-rgb), 0.08)",
+              color: "var(--text-primary)",
+            }}
+          >
+            "{entry.verseText}"
+          </div>
+        )}
 
         {/* Verse Text (if Scripture-linked) */}
         {entry.type === "scripture" && entry.verseText && (
@@ -622,8 +686,8 @@ function DialogueDetail({ entry, theme, onBack, onEdit, onDelete, onShare }) {
             )}
           </div>
 
-          {/* Only show Edit/Delete for spontaneous entries, not Scripture */}
-          {entry.type === "spontaneous" && (
+          {/* Only show Edit/Delete for journal/spontaneous and devotional entries, not Scripture */}
+          {(entry.type === "spontaneous" || entry.type === "journal" || entry.type === "devotional") && (
             <>
               <button
                 onClick={onEdit}
@@ -671,7 +735,9 @@ function DialogueDetail({ entry, theme, onBack, onEdit, onDelete, onShare }) {
             >
               {entry.type === "scripture"
                 ? "Scripture Dialogue"
-                : "Spontaneous Prayer"}
+                : entry.type === "devotional"
+                ? "Devotional"
+                : "Journal"}
             </div>
             <div
               className="h-px flex-1"
@@ -739,12 +805,63 @@ function DialogueDetail({ entry, theme, onBack, onEdit, onDelete, onShare }) {
           </div>
         )}
 
+        {/* Journal scripture verse */}
+        {(entry.type === "journal" || entry.type === "spontaneous") && entry.scripture && (
+          <div className="mb-8">
+            <div
+              className="text-sm font-bold mb-3 flex items-center justify-center gap-2"
+              style={{ color: "var(--text-accent)" }}
+            >
+              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+                <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 3z" />
+                <path d="M17 4h3v16h-3" />
+              </svg>
+              <span>
+                {entry.scripture}
+                {entry.verseTranslation ? ` • ${entry.verseTranslation}` : ""}
+              </span>
+            </div>
+            {entry.verseText && (
+              <div
+                className="p-6 rounded-2xl text-center"
+                style={{ background: "rgba(var(--accent-rgb), 0.1)" }}
+              >
+                <p
+                  className="text-lg leading-relaxed italic font-[var(--font-body)]"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  "{entry.verseText}"
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Full reflection with ALL formatting preserved */}
-        <div
-          className="prose prose-lg max-w-none"
-          style={{ color: "var(--text-primary)" }}
-          dangerouslySetInnerHTML={{ __html: entry.reflection || entry.text }}
-        />
+        {entry.type === "devotional" ? (
+          <div
+            style={{
+              borderLeft: "3px solid var(--text-accent)",
+              paddingLeft: "20px",
+              paddingTop: "12px",
+              paddingBottom: "12px",
+              background: "rgba(var(--accent-rgb), 0.04)",
+              borderRadius: "0 8px 8px 0",
+            }}
+          >
+            <div
+              className="prose prose-lg max-w-none"
+              style={{ color: "var(--text-primary)" }}
+              dangerouslySetInnerHTML={{ __html: entry.reflection || entry.text }}
+            />
+          </div>
+        ) : (
+          <div
+            className="prose prose-lg max-w-none"
+            style={{ color: "var(--text-primary)" }}
+            dangerouslySetInnerHTML={{ __html: entry.reflection || entry.text }}
+          />
+        )}
       </div>
 
       {/* Enhanced prose styles for detail view */}

@@ -4,7 +4,10 @@
       "Bash(node -e ' *)",
       "Bash(node scripts/update-psalm-titles.js)",
       "Bash(mv g:/abide/scripts/update-psalm-titles.js g:/abide/scripts/update-psalm-titles.cjs)",
-      "Bash(node scripts/update-psalm-titles.cjs)"
+      "Bash(node scripts/update-psalm-titles.cjs)",
+      "Bash(xargs grep *)",
+      "Bash(npm run *)",
+      "Bash(npx eslint *)"
     ]
   }
 }
