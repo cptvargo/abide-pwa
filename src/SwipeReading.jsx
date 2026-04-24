@@ -68,8 +68,11 @@ export default function SwipeReading({
   const [verses, setVerses] = useState([]);
   const [title, setTitle] = useState("");
   const [sections, setSections] = useState([]);
-  const [book, setBook] = useState("genesis");
-  const [currentChapter, setCurrentChapter] = useState(1);
+  const [book, setBook] = useState(() => localStorage.getItem("lastBookId") || "genesis");
+  const [currentChapter, setCurrentChapter] = useState(() => {
+    const saved = localStorage.getItem("lastReadingPosition");
+    return saved ? (JSON.parse(saved).chapter ?? 1) : 1;
+  });
   const [loading, setLoading] = useState(true);
 
   // ── Safe text extractor ──

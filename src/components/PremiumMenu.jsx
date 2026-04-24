@@ -91,6 +91,13 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
           description: "Daily inspiration & study",
           available: true,
         },
+        {
+          id: "daily-abiding",
+          icon: "◈",
+          title: "Daily Abiding",
+          description: "Video devotional experiences",
+          available: true,
+        },
       ],
     },
     {

@@ -5,7 +5,7 @@
     "subtitle": "A 12-Day Devotional on Humility",
     "author": "Andrew Murray",
     "days": 12,
-    "description": "Humility is not weakness \u2014 it is the glory of the creature restored. Walk through twelve days with Andrew Murray as your guide, allowing Scripture and the Spirit to form in you the mind that was in Christ."
+    "description": "Humility is not weakness — it is the glory of the creature restored. Walk through twelve days with Andrew Murray as your guide, allowing Scripture and the Spirit to form in you the mind that was in Christ."
   },
   {
     "id": "beauty-of-holiness-kids",
@@ -22,6 +22,18 @@
     "subtitle": "A 22-Day Foundational Devotional",
     "author": "Gavin Todd",
     "days": 22,
-    "description": "A foundational journey through who God is as Father, Son, and Holy Spirit \u2014 and who you are in Christ. Walk through twenty-two days of Scripture-anchored teaching on the Trinity, the person and work of Jesus, the Holy Spirit, and your identity as a child of God."
+    "description": "A foundational journey through who God is as Father, Son, and Holy Spirit — and who you are in Christ. Walk through twenty-two days of Scripture-anchored teaching on the Trinity, the person and work of Jesus, the Holy Spirit, and your identity as a child of God."
+  },
+  {
+    "id": "old-testament",
+    "title": "Old Testament",
+    "subtitle": "The Hebrew Scriptures",
+    "author": "The Bible Project",
+    "dayCount": 2,
+    "format": "video-daily",
+    "description": "Walk through the Old Testament one book at a time. Each session is built around a single Bible Project video — watch it, reflect, and pray. Complete each session to unlock the next.",
+    "seriesFile": "series.json",
+    "sourceLink": "https://bibleproject.com/",
+    "coverVideoId": "GQI72THyO5I"
   }
 ]

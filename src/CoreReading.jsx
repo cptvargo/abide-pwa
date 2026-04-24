@@ -27,8 +27,11 @@ export default function CoreReading({
      Scripture State
   ================================ */
   const [verses, setVerses] = useState([]);
-  const [book, setBook] = useState("genesis");
-  const [currentChapter, setCurrentChapter] = useState(1);
+  const [book, setBook] = useState(() => localStorage.getItem("lastBookId") || "genesis");
+  const [currentChapter, setCurrentChapter] = useState(() => {
+    const saved = localStorage.getItem("lastReadingPosition");
+    return saved ? (JSON.parse(saved).chapter ?? 1) : 1;
+  });
   const [loading, setLoading] = useState(false);
   const [sections, setSections] = useState([]);
 

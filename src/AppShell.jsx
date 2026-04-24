@@ -5,6 +5,7 @@ import SettingsModal from "./components/SettingsModal";
 import DialogueSystem from "./DialogueSystem";
 import DevotionalScreen from "./components/DevotionalScreen";
 import ChristRevealedIntro from "./components/ChristRevealedIntro";
+import DailyAbidingScreen from "./components/DailyAbidingScreen";
 import ChristRevealedJourney from "./components/ChristRevealedJourney";
 import { AudioMiniPlayer } from "./components/AudioMiniPlayer";
 import { useAudioPlayer } from "./hooks/useAudioPlayer";
@@ -13,6 +14,7 @@ import {
   BIBLE_ORDER,
   CHAPTER_COUNT,
 } from "./lib/bibleStructure";
+import { search, warmIndex } from "./lib/searchEngine";
 
 const TRANSLATIONS = ["KJV", "ASR", "WAE"];
 const TRANSLATION_FULL = {
@@ -740,8 +742,8 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
       setTimeout(() => seekInputRef.current?.focus(), 100);
   }, [open, tab]);
 
-  // ── Scripture search ──────────────────────────────────────────────────────
-  // ── Scripture search ──────────────────────────────────────────────────────
+  useEffect(() => { warmIndex(translation); }, [translation]);
+
   // ── Scripture search ──────────────────────────────────────────────────────
   async function doSearch(q) {
     if (!q.trim() || q.trim().length < 2) {
@@ -758,183 +760,75 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
         return;
       }
 
-      const base = import.meta.env.BASE_URL;
-      const t = translation.toLowerCase();
-      const candidateSeen = new Set(); // deduplicates the scan pass
-      const seenRefs = new Set();      // deduplicates what is pushed to finalResults
-      const finalResults = [];
-      // Strip trailing punctuation/dots so "For God So..." still matches
-      const phrase = q.trim().toLowerCase().replace(/[.\s]+$/, "");
-      const words = phrase.split(/\s+/).filter(Boolean);
+      // Primary search — Meilisearch → MiniSearch fallback
+      const primary = await search(q, translation);
+      if (primary.length > 0) setResults(primary);
 
-      // Accepts if the full phrase is contained, OR every word is present.
-      function matchesQuery(text) {
-        const lower = text.toLowerCase();
-        if (lower.includes(phrase)) return true;
-        return words.every((w) => new RegExp(`\\b${w}\\b`, "i").test(lower));
-      }
+      const top = primary[0] ?? null;
+      const finalResults = [...primary];
+      const seenRefs = new Set(primary.map((r) => r.ref));
 
-      function scoreVerse(text) {
-        const lower = text.toLowerCase();
+      // Cross-ref enrichment for the top result
+      if (top) {
+        const base = import.meta.env.BASE_URL;
+        const t = translation.toLowerCase();
+        const topVerse = parseInt(top.ref.match(/:(\d+)/)?.[1] ?? "0");
 
-        // Tier 1 — full phrase present
-        if (lower.includes(phrase)) {
-          // Verse STARTS with the phrase (e.g. "For God so..." → John 3:16): highest priority
-          return lower.trimStart().startsWith(phrase) ? 2000 : 1000;
-        }
-
-        // Tier 2 — all words except the last are present as a phrase, and the last
-        // word is a prefix of the next token in the text (handles partial typing).
-        if (words.length > 1) {
-          const stem = words.slice(0, -1).join(" ");
-          const lastWord = words[words.length - 1];
-          const idx = lower.indexOf(stem);
-          if (idx !== -1) {
-            const after = lower.slice(idx + stem.length).trimStart();
-            if (after.startsWith(lastWord)) return 900;
-            return 500; // phrase stem matches but last word doesn't continue
-          }
-        }
-
-        // Tier 3 — individual word scoring with proximity bonus
-        let score = 0;
-        let allPresent = true;
-        words.forEach((w, i) => {
-          if (new RegExp(`\\b${w}\\b`, "i").test(text)) {
-            score += 10;
-          } else {
-            allPresent = false;
-          }
-          if (i < words.length - 1) {
-            if (new RegExp(`\\b${w}\\b.{0,30}\\b${words[i + 1]}\\b`, "i").test(text))
-              score += 8;
-          }
-        });
-        if (allPresent) score += words.length * 5; // bonus when every word hits
-        return score;
-      }
-
-      function parseCrossRef(ref) {
-        const m = ref
-          .trim()
-          .toLowerCase()
-          .match(/^(.+?)\s+(\d+):(\d+)/);
-        if (!m) return null;
-        const bookId = m[1].replace(/\s+/g, "");
-        for (const section of BIBLE_SECTIONS)
-          for (const book of section.books)
-            if (
-              book.id === bookId ||
-              book.name.toLowerCase().replace(/\s+/g, "") === bookId
-            )
-              return { book, chapter: parseInt(m[2]), verse: parseInt(m[3]) };
-        return null;
-      }
-
-      async function fetchVerseText(bookId, chapter, verseNum) {
-        try {
-          const res = await fetch(
-            `${base}data/translations/${t}/${bookId}/${chapter}.json`,
-          );
-          if (!res.ok) return null;
-          const data = await res.json();
-          const verses = data.verses ?? data;
-          const entries = Array.isArray(verses)
-            ? verses
-            : Object.entries(verses).map(([v, val]) => ({
-                verse: Number(v),
-                text: typeof val === "string" ? val : (val?.text ?? ""),
-              }));
-          const match = entries.find((v) => v.verse === verseNum);
-          if (!match) return null;
-          return typeof match.text === "string"
-            ? match.text
-            : (match.text?.text ?? "");
-        } catch {
+        function parseCrossRef(ref) {
+          const m = ref.trim().toLowerCase().match(/^(.+?)\s+(\d+):(\d+)/);
+          if (!m) return null;
+          const bookId = m[1].replace(/\s+/g, "");
+          for (const section of BIBLE_SECTIONS)
+            for (const book of section.books)
+              if (
+                book.id === bookId ||
+                book.name.toLowerCase().replace(/\s+/g, "") === bookId
+              )
+                return { book, chapter: parseInt(m[2]), verse: parseInt(m[3]) };
           return null;
         }
-      }
 
-      // Phase 1: find matching verses, stream high-score ones immediately
-      const candidates = [];
-      for (const section of BIBLE_SECTIONS) {
-        for (const book of section.books) {
+        async function fetchVerseText(bookId, chapter, verseNum) {
           try {
-            for (let ch = 1; ch <= book.chapters; ch++) {
-              const res = await fetch(
-                `${base}data/translations/${t}/${book.id}/${ch}.json`,
-              );
-              if (!res.ok) continue;
-              const data = await res.json();
-              const verses = data.verses ?? data;
-              const entries = Array.isArray(verses)
-                ? verses
-                : Object.entries(verses).map(([v, val]) => ({
-                    verse: Number(v),
-                    text: typeof val === "string" ? val : (val?.text ?? ""),
-                  }));
-              for (const v of entries) {
-                const text =
-                  typeof v.text === "string" ? v.text : (v.text?.text ?? "");
-                if (!matchesQuery(text)) continue;
-                const score = scoreVerse(text);
-                if (score === 0) continue;
-                // candidateSeen deduplicates the scan; seenRefs is reserved
-                // for tracking what has actually been pushed to finalResults.
-                const refKey = `${book.id}-${ch}-${v.verse}`;
-                if (candidateSeen.has(refKey)) continue;
-                candidateSeen.add(refKey);
-                candidates.push({ book, ch, verse: v.verse, text, score, refKey });
-              }
-            }
+            const res = await fetch(
+              `${base}data/translations/${t}/${bookId}/${chapter}.json`,
+            );
+            if (!res.ok) return null;
+            const data = await res.json();
+            const verses = data.verses ?? data;
+            const entries = Array.isArray(verses)
+              ? verses
+              : Object.entries(verses).map(([v, val]) => ({
+                  verse: Number(v),
+                  text: typeof val === "string" ? val : (val?.text ?? ""),
+                }));
+            const match = entries.find((v) => v.verse === verseNum);
+            if (!match) return null;
+            return typeof match.text === "string"
+              ? match.text
+              : (match.text?.text ?? "");
           } catch {
-            continue;
+            return null;
           }
         }
-      }
 
-      // Phase 2: sort candidates, push primary + up to 2 related into results.
-      // seenRefs is only touched HERE and in Phase 3, so it correctly guards
-      // against duplicates across all three phases.
-      candidates.sort((a, b) => b.score - a.score);
-      const primary = candidates[0] ?? null;
-      const related = candidates.slice(1, 3);
-
-      if (primary) {
-        seenRefs.add(primary.refKey);
-        finalResults.push({
-          ref: `${primary.book.name} ${primary.ch}:${primary.verse}`,
-          bookId: primary.book.id,
-          chapter: primary.ch,
-          snippet: highlightSnippet(primary.text, words[0]),
-          score: primary.score,
-        });
-        // Stream the primary verse immediately so the UI isn't blank while
-        // cross-refs are loading.
-        setResults([...finalResults]);
-      }
-
-      // Phase 3: cross-refs for the PRIMARY verse only.
-      // We try both key formats ("16" and "3:16") because the JSON files
-      // are inconsistent across books.
-      if (primary) {
         try {
           const crRes = await fetch(
-            `${base}data/cross-references/${primary.book.id}/${primary.ch}.json`,
+            `${base}data/cross-references/${top.bookId}/${top.chapter}.json`,
           );
           if (crRes.ok) {
             const crData = await crRes.json();
             const refs =
-              crData[String(primary.verse)] ||
-              crData[`${primary.ch}:${primary.verse}`] ||
+              crData[String(topVerse)] ||
+              crData[`${top.chapter}:${topVerse}`] ||
               [];
             for (const cr of refs) {
               if (finalResults.length >= 20) break;
               const parsed = parseCrossRef(cr);
               if (!parsed) continue;
-              const crKey = `${parsed.book.id}-${parsed.chapter}-${parsed.verse}`;
-              if (seenRefs.has(crKey)) continue;
-              seenRefs.add(crKey);
+              const crRef = `${parsed.book.name} ${parsed.chapter}:${parsed.verse}`;
+              if (seenRefs.has(crRef)) continue;
+              seenRefs.add(crRef);
               const crText = await fetchVerseText(
                 parsed.book.id,
                 parsed.chapter,
@@ -942,33 +836,17 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
               );
               if (!crText) continue;
               finalResults.push({
-                ref: `${parsed.book.name} ${parsed.chapter}:${parsed.verse}`,
+                ref: crRef,
                 bookId: parsed.book.id,
                 chapter: parsed.chapter,
-                snippet: highlightSnippet(crText, words[0]),
+                snippet: highlightSnippet(crText, q.trim().split(/\s+/)[0] ?? ""),
                 isCrossRef: true,
-                crossRefFrom: `${primary.book.name} ${primary.ch}:${primary.verse}`,
+                crossRefFrom: top.ref,
                 score: 0,
               });
             }
           }
-        } catch {
-          // cross-ref file unavailable — continue with what we have
-        }
-      }
-
-      // Phase 4: append related verses that weren't already pulled in as
-      // cross-refs so they don't crowd the primary result.
-      for (const match of related) {
-        if (seenRefs.has(match.refKey)) continue;
-        seenRefs.add(match.refKey);
-        finalResults.push({
-          ref: `${match.book.name} ${match.ch}:${match.verse}`,
-          bookId: match.book.id,
-          chapter: match.ch,
-          snippet: highlightSnippet(match.text, words[0]),
-          score: match.score,
-        });
+        } catch { /* cross-ref unavailable */ }
       }
 
       setCached(cacheKey, translation, finalResults);
@@ -2246,6 +2124,7 @@ export default function AppShell() {
     book: audioBook,
     chapter: audioChapter,
     verseCount: 0,
+    enabled: audioEnabled,
     onAdvanceChapter: () => {
       const maxChapters = CHAPTER_COUNT[audioBook];
       const bookIndex = BIBLE_ORDER.indexOf(audioBook);
@@ -2377,6 +2256,8 @@ export default function AppShell() {
     setNavigationTarget({ book: bookId, chapter });
     setReadingContext({ book: displayName, chapter });
     setNavigatorOpen(false);
+    localStorage.setItem("lastBookId", bookId);
+    localStorage.setItem("lastReadingPosition", JSON.stringify({ book: displayName, chapter }));
   }
 
   function handleSelectTranslation(t) {
@@ -2639,6 +2520,9 @@ export default function AppShell() {
           onBack={() => setActiveScreen("scripture")}
           theme={theme}
         />
+      )}
+      {activeScreen === "daily-abiding" && (
+        <DailyAbidingScreen onBack={() => setActiveScreen("scripture")} translation={translation} />
       )}
       {activeScreen === "christ-revealed" && (
         <ChristRevealedJourney
@@ -3046,6 +2930,7 @@ export default function AppShell() {
         onNavigate={(id) => {
           if (id === "dialogue") setActiveScreen("dialogue");
           else if (id === "devotionals") setActiveScreen("devotionals");
+          else if (id === "daily-abiding") setActiveScreen("daily-abiding");
           else if (id === "christ-revealed") handleChristRevealedEntry();
           setMenuOpen(false);
           setMenuVisible(false);

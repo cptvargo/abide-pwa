@@ -21,6 +21,8 @@
     "@tiptap/starter-kit": "^3.19.0",
     "fs": "^0.0.1-security",
     "html2canvas": "^1.4.1",
+    "meilisearch": "^0.57.0",
+    "minisearch": "^7.2.0",
     "openai": "^6.17.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

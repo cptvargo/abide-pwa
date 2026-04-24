@@ -97,7 +97,7 @@ function updateMediaSession(bookSlug, chapter, handlers) {
   } catch {}
 }
 
-export function useAudioPlayer({ book, chapter, verseCount, onAdvanceChapter }) {
+export function useAudioPlayer({ book, chapter, verseCount, onAdvanceChapter, enabled = true }) {
   // ALL hooks declared unconditionally at the top — no early returns before this block
   const timingRef     = useRef(null);
   const rafRef        = useRef(null);
@@ -290,9 +290,11 @@ export function useAudioPlayer({ book, chapter, verseCount, onAdvanceChapter }) 
       doAdvance();
     };
 
-    // Unlock for mobile/PWA on first user gesture
+    // Unlock for mobile/PWA on first user gesture — always silent
     const unlock = () => {
-      audio.play().then(() => { audio.pause(); audio.currentTime = 0; }).catch(() => {});
+      const prev = audio.volume;
+      audio.volume = 0;
+      audio.play().then(() => { audio.pause(); audio.currentTime = 0; audio.volume = prev; }).catch(() => {});
       document.removeEventListener("touchstart", unlock, true);
       document.removeEventListener("click",      unlock, true);
     };
@@ -311,10 +313,18 @@ export function useAudioPlayer({ book, chapter, verseCount, onAdvanceChapter }) 
 
   // ── React to prop changes (user navigates to a new chapter) ──────────────
   useEffect(() => {
+    if (!enabled) {
+      if (!audio.paused) {
+        audio.pause();
+        setIsPlaying(false);
+        cancelAnimationFrame(rafRef.current);
+      }
+      return;
+    }
     // Don't interfere if we're mid-advance
     if (advancedRef.current) return;
     loadChapter(bookSlug, chapter, false);
-  }, [book, chapter]);
+  }, [book, chapter, enabled]);
 
   // ── Toggle ────────────────────────────────────────────────────────────────
   const toggle = useCallback(() => {
