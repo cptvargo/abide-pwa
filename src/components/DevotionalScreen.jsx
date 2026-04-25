@@ -202,6 +202,16 @@ const SERIES_LIST = [
     description:
       "A foundational journey through who God is as Father, Son, and Holy Spirit — and who you are in Christ. Walk through twenty-two days of Scripture-anchored teaching on the Trinity, the person and work of Jesus, the Holy Spirit, and your identity as a child of God.",
   },
+  {
+    id: "living-close-to-jesus",
+    title: "Living Close to Jesus",
+    subtitle: "A 5-Day Devotional",
+    author: "Gavin Todd",
+    totalDays: 5,
+    hasAudio: false,
+    description:
+      "Five daily readings on the posture of abiding — withdrawal, rest, stillness, beholding, and intimacy. What it truly means to live close to Jesus.",
+  },
 ];
 
 // ── Fetch a single day JSON file ──────────────────────────────────────────────
@@ -617,22 +627,30 @@ export default function DevotionalScreen({ onBack, theme }) {
                             "Walking in the Spirit-Filled Life",
                             "Praying in Tongues",
                           ][dayNum - 1]
-                        : [
-                            "The Two Sons",
-                            "What God Sees in the Heart",
-                            "Learning Through Obedience",
-                            "Jesus Shows Us True Humility",
-                            "The Grumbling Heart",
-                            "Choosing What Is Right",
-                            "A New Heart",
-                            "Jesus Came to Serve",
-                            "Learning to Be Last",
-                            "The Quiet Work of God",
-                            "Letting Go of Pride",
-                            "The Beauty of Holiness",
-                            "Walking Like Jesus",
-                            "A Heart That Abides",
-                          ][dayNum - 1]}
+                        : activeSeries.id === "living-close-to-jesus"
+                          ? [
+                              "Withdraw to Walk",
+                              "Snuggle, Don't Struggle",
+                              "Less Thinking, More Drinking",
+                              "Behold Before You Behave",
+                              "Seek Intimacy, Not Power",
+                            ][dayNum - 1]
+                          : [
+                              "The Two Sons",
+                              "What God Sees in the Heart",
+                              "Learning Through Obedience",
+                              "Jesus Shows Us True Humility",
+                              "The Grumbling Heart",
+                              "Choosing What Is Right",
+                              "A New Heart",
+                              "Jesus Came to Serve",
+                              "Learning to Be Last",
+                              "The Quiet Work of God",
+                              "Letting Go of Pride",
+                              "The Beauty of Holiness",
+                              "Walking Like Jesus",
+                              "A Heart That Abides",
+                            ][dayNum - 1]}
                   </div>
                 </div>
                 {!locked && (

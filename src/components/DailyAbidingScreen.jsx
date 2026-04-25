@@ -811,7 +811,7 @@ function SeriesDetail({ series, onStartDay, onBack }) {
             return (
               <button
                 key={day.id}
-                onClick={() => unlocked && onStartDay(day)}
+                onClick={() => unlocked && onStartDay(day, idx)}
                 disabled={!unlocked}
                 style={{
                   width: "100%", textAlign: "left", cursor: unlocked ? "pointer" : "default",
@@ -824,7 +824,7 @@ function SeriesDetail({ series, onStartDay, onBack }) {
                   WebkitTapHighlightColor: "transparent",
                 }}
               >
-                {/* Thumbnail */}
+                {/* Video thumbnail */}
                 <div style={{ position: "relative", width: "100%", aspectRatio: "16/6", overflow: "hidden" }}>
                   <img
                     src={`https://img.youtube.com/vi/${day.videoId}/hqdefault.jpg`}
@@ -839,7 +839,6 @@ function SeriesDetail({ series, onStartDay, onBack }) {
                     position: "absolute", inset: 0,
                     background: "linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(14,14,10,0.75))",
                   }} />
-                  {/* Lock */}
                   {!unlocked && (
                     <div style={{
                       position: "absolute", inset: 0,
@@ -859,7 +858,6 @@ function SeriesDetail({ series, onStartDay, onBack }) {
                       </span>
                     </div>
                   )}
-                  {/* Done badge */}
                   {done && (
                     <div style={{
                       position: "absolute", top: 10, right: 10,
@@ -873,7 +871,6 @@ function SeriesDetail({ series, onStartDay, onBack }) {
                       </svg>
                     </div>
                   )}
-                  {/* Next indicator */}
                   {isNext && (
                     <div style={{
                       position: "absolute", top: 10, left: 10,
@@ -920,13 +917,18 @@ function SeriesDetail({ series, onStartDay, onBack }) {
 
 /* ─── Series list — cover cards ─────────────────────────────────────────── */
 function SeriesList({ index, onSelectSeries, onBack }) {
-  const videoSeries = index.filter((s) => s.format === "video-daily" || s.format === "scripture-guided");
+  const displaySeries = index.filter((s) =>
+    s.format === "video-daily" || s.format === "scripture-guided"
+  );
 
-  function progress(s) {
-    const completed = getCompleted();
-    const done = (s._days ?? []).filter(d => completed.has(d.id)).length;
-    return { done, total: s.dayCount ?? s.days ?? 0 };
-  }
+  // Group by author preserving index order
+  const groups = [];
+  const seen = new Map();
+  displaySeries.forEach((s) => {
+    const a = s.author || "Other";
+    if (!seen.has(a)) { seen.set(a, []); groups.push({ author: a, items: seen.get(a) }); }
+    seen.get(a).push(s);
+  });
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "var(--bg-app)" }}>
@@ -963,98 +965,111 @@ function SeriesList({ index, onSelectSeries, onBack }) {
             lineHeight: 1.7, color: "var(--text-primary)", opacity: 0.4,
             fontStyle: "italic",
           }}>
-            Watch once. Reflect for days. Complete each session to unlock the next.
+            Read. Reflect. Complete each session to unlock the next.
           </p>
         </div>
 
-        <div style={{ padding: "8px 16px", display: "flex", flexDirection: "column", gap: 16 }}>
-          {videoSeries.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => onSelectSeries(s)}
-              style={{
-                width: "100%", textAlign: "left", cursor: "pointer",
-                borderRadius: 16, overflow: "hidden",
-                border: "1px solid rgba(203,178,124,0.2)",
-                WebkitTapHighlightColor: "transparent",
-              }}
-            >
-              {/* Cover image */}
+        <div style={{ padding: "4px 16px" }}>
+          {groups.map(({ author, items }) => (
+            <div key={author}>
+              {/* Author section header */}
               <div style={{
-                position: "relative", width: "100%", aspectRatio: "16/7", overflow: "hidden",
+                display: "flex", alignItems: "center", gap: 12,
+                padding: "20px 4px 12px",
               }}>
-                <img
-                  src={`https://img.youtube.com/vi/${s.coverVideoId}/hqdefault.jpg`}
-                  alt={s.title}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.72 }}
-                />
-                <div style={{
-                  position: "absolute", inset: 0,
-                  background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(14,14,10,0.85) 100%)",
-                }} />
-                <div style={{
-                  position: "absolute", bottom: 0, left: 0, right: 0,
-                  padding: "12px 18px 0",
+                <div style={{ flex: 1, height: 1, background: "rgba(203,178,124,0.12)" }} />
+                <span style={{
+                  fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase",
+                  color: "rgba(203,178,124,0.4)", fontFamily: "var(--font-ui, system-ui)",
+                  whiteSpace: "nowrap",
                 }}>
-                  <div style={{
-                    fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase",
-                    color: "rgba(203,178,124,0.6)", fontFamily: "var(--font-ui, system-ui)",
-                    marginBottom: 4,
-                  }}>
-                    {s.author}
-                  </div>
-                  <div style={{
-                    fontFamily: "var(--font-ui, system-ui)", fontSize: 22, fontWeight: 300,
-                    color: "var(--text-primary)", lineHeight: 1.2,
-                  }}>
-                    {s.title}
-                  </div>
-                  <div style={{
-                    fontFamily: "var(--font-ui, system-ui)", fontSize: 12,
-                    color: "rgba(203,178,124,0.5)", marginTop: 2,
-                  }}>
-                    {s.subtitle}
-                  </div>
-                </div>
+                  {author}
+                </span>
+                <div style={{ flex: 1, height: 1, background: "rgba(203,178,124,0.12)" }} />
               </div>
 
-              {/* Card footer */}
-              <div style={{
-                padding: "14px 18px",
-                background: "rgba(203,178,124,0.04)",
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-              }}>
-                <div style={{
-                  fontFamily: "var(--font-body, Georgia, serif)", fontSize: 13,
-                  color: "var(--text-primary)", opacity: 0.42, lineHeight: 1.5,
-                  flex: 1, marginRight: 12,
-                }}>
-                  {s.description.slice(0, 80)}…
-                </div>
-                <div style={{
-                  fontFamily: "var(--font-ui, system-ui)", fontSize: 11,
-                  color: "rgba(203,178,124,0.65)", whiteSpace: "nowrap",
-                  display: "flex", alignItems: "center", gap: 4,
-                }}>
-                  Begin →
-                </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 4 }}>
+                {items.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => onSelectSeries(s)}
+                    style={{
+                      width: "100%", textAlign: "left", cursor: "pointer",
+                      borderRadius: 16, overflow: "hidden",
+                      border: "1px solid rgba(203,178,124,0.2)",
+                      WebkitTapHighlightColor: "transparent",
+                    }}
+                  >
+                    {/* Cover */}
+                    <div style={{ position: "relative", width: "100%", aspectRatio: "16/7", overflow: "hidden" }}>
+                      {s.coverVideoId ? (
+                        <img
+                          src={`https://img.youtube.com/vi/${s.coverVideoId}/hqdefault.jpg`}
+                          alt={s.title}
+                          style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.72 }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: "100%", height: "100%",
+                          background: "linear-gradient(135deg, rgba(203,178,124,0.1) 0%, rgba(10,10,8,0.95) 100%)",
+                        }} />
+                      )}
+                      <div style={{
+                        position: "absolute", inset: 0,
+                        background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(14,14,10,0.85) 100%)",
+                      }} />
+                      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px 0" }}>
+                        <div style={{
+                          fontSize: 22, fontWeight: 300, fontFamily: "var(--font-ui, system-ui)",
+                          color: "var(--text-primary)", lineHeight: 1.2,
+                        }}>
+                          {s.title}
+                        </div>
+                        <div style={{
+                          fontSize: 12, fontFamily: "var(--font-ui, system-ui)",
+                          color: "rgba(203,178,124,0.5)", marginTop: 2,
+                        }}>
+                          {s.subtitle}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div style={{
+                      padding: "14px 18px", background: "rgba(203,178,124,0.04)",
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                    }}>
+                      <div style={{
+                        fontFamily: "var(--font-body, Georgia, serif)", fontSize: 13,
+                        color: "var(--text-primary)", opacity: 0.42, lineHeight: 1.5,
+                        flex: 1, marginRight: 12,
+                      }}>
+                        {s.description.slice(0, 80)}…
+                      </div>
+                      <div style={{
+                        fontFamily: "var(--font-ui, system-ui)", fontSize: 11,
+                        color: "rgba(203,178,124,0.65)", whiteSpace: "nowrap",
+                      }}>
+                        Begin →
+                      </div>
+                    </div>
+                  </button>
+                ))}
               </div>
-            </button>
+            </div>
           ))}
         </div>
 
         {/* Bible Project credit */}
-        <div style={{ padding: "16px 20px 0", textAlign: "center" }}>
+        <div style={{ padding: "20px 20px 0", textAlign: "center" }}>
           <a
             href="https://bibleproject.com/"
             target="_blank"
             rel="noopener noreferrer"
             style={{
               display: "inline-flex", alignItems: "center", gap: 6,
-              textDecoration: "none",
-              fontSize: 11, color: "rgba(203,178,124,0.4)",
-              fontFamily: "var(--font-ui, system-ui)",
-              letterSpacing: "0.04em",
+              textDecoration: "none", fontSize: 11, color: "rgba(203,178,124,0.4)",
+              fontFamily: "var(--font-ui, system-ui)", letterSpacing: "0.04em",
             }}
           >
             Video content by The Bible Project
@@ -1105,12 +1120,12 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
       const res = await fetch(`${base}data/devotionals/${meta.id}/${file}`);
       if (!res.ok) throw new Error();
       const data = await res.json();
-      setSelectedSeries(data);
+      setSelectedSeries({ ...data, format: meta.format });
       setView("series");
     } catch { /* silent */ }
   }
 
-  function handleStartDay(day) {
+  function handleStartDay(day, idx) {
     setActiveDay(day);
     setView("day");
   }
