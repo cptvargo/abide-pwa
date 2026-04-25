@@ -45,5 +45,41 @@
     "seriesFile": "series.json",
     "sourceLink": "https://bibleproject.com/",
     "coverVideoId": "GQI72THyO5I"
+  },
+  {
+    "id": "genesis-overview",
+    "title": "In the Beginning",
+    "subtitle": "A 7-Day Journey Through Genesis",
+    "author": "The Bible Project",
+    "dayCount": 7,
+    "format": "video-daily",
+    "description": "Genesis isn't just the story of how the world began — it's the story of why everything feels broken and how God is working to restore it. Over seven days, you'll sit with the foundational questions of existence, identity, failure, and redemption.",
+    "seriesFile": "series.json",
+    "sourceLink": "https://bibleproject.com/",
+    "coverVideoId": "GQI72THyO5I"
+  },
+  {
+    "id": "genesis-part-1",
+    "title": "Genesis: The Story Begins",
+    "subtitle": "Creation, Humanity, and the First Fracture",
+    "author": "The Bible Project",
+    "dayCount": 3,
+    "format": "video-daily",
+    "description": "Genesis 1–11 lays the foundation for everything. Watch the Bible Project's animated overview, then spend three days sitting with what it means — for creation, for the human condition, and for you.",
+    "seriesFile": "series.json",
+    "sourceLink": "https://bibleproject.com/",
+    "coverVideoId": "GQI72THyO5I"
+  },
+  {
+    "id": "genesis-part-2",
+    "title": "Genesis: The Patriarchs",
+    "subtitle": "Abraham, Jacob, Joseph, and the Promise That Holds",
+    "author": "The Bible Project",
+    "dayCount": 4,
+    "format": "video-daily",
+    "description": "Genesis 12–50 traces a single thread: God's covenant promise moving through broken, ordinary people. Watch the Bible Project's animated overview, then spend four days sitting with what it means to be chosen, to wrestle, to suffer, and to forgive.",
+    "seriesFile": "series.json",
+    "sourceLink": "https://bibleproject.com/",
+    "coverVideoId": "F4isSyennFo"
   }
 ]

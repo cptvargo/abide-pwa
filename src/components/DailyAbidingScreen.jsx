@@ -1120,6 +1120,9 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
       const res = await fetch(`${base}data/devotionals/${meta.id}/${file}`);
       if (!res.ok) throw new Error();
       const data = await res.json();
+      if (data.videoId && Array.isArray(data.days)) {
+        data.days = data.days.map(d => d.videoId ? d : { ...d, videoId: data.videoId });
+      }
       setSelectedSeries({ ...data, format: meta.format });
       setView("series");
     } catch { /* silent */ }
