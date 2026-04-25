@@ -70,6 +70,161 @@
         ]
       },
       "abide": "God, you chose ordinary, broken people — and through them you kept every promise. We don't have to be impressive or clean to be part of your story. Like Abraham, we want to go when you say go. Like Jacob, we're not walking away without a blessing. Like Joseph, help us trust that you are the author of what we cannot yet read."
+    },
+    {
+      "id": "exodus-1",
+      "title": "Exodus, Part 1",
+      "subtitle": "Rescue from Slavery",
+      "videoId": "jH_aojNJM3E",
+      "unlockAfter": "genesis-2",
+      "crossRefPills": [
+        "Exodus 3:14",
+        "Exodus 6:6-7",
+        "Exodus 14:13-14",
+        "Romans 8:15"
+      ],
+      "reflection": {
+        "prompt": "From everything in this video — what stayed with you most?",
+        "choices": [
+          {
+            "label": "The God who sees and comes down",
+            "deepQuestion": "Where in your life right now do you most need God to come down into your situation? What would it mean to believe that he already has?"
+          },
+          {
+            "label": "Crossing through impossible water",
+            "deepQuestion": "Is there a Red Sea moment in your life — something you can't go around and don't know how to cross? What would it look like to stop, stand still, and let God fight for you?"
+          },
+          {
+            "label": "A name that means I Am",
+            "deepQuestion": "God didn't give Moses a plan — he gave him a presence. Where are you most tempted to need a clear plan from God before you trust him? What would it look like to trust the person instead of the roadmap?"
+          }
+        ]
+      },
+      "abide": "God, you heard their cries and you came down. You are the I Am — not I Was, not I Will Be — present tense, here. You didn't give Moses a strategy; you gave him yourself. Today we bring you the places where we feel stuck, overwhelmed, or enslaved. You are the God who rescues. Move in what feels impossible."
+    },
+    {
+      "id": "exodus-2",
+      "title": "Exodus, Part 2",
+      "subtitle": "Covenant, Law & the Tabernacle",
+      "videoId": "oNpTha80yyE",
+      "unlockAfter": "exodus-1",
+      "crossRefPills": [
+        "Exodus 19:5-6",
+        "Exodus 20:2-3",
+        "Exodus 32:14",
+        "Exodus 40:34"
+      ],
+      "reflection": {
+        "prompt": "Which part of this story is speaking to something real in your life right now?",
+        "choices": [
+          {
+            "label": "A people set apart for something larger",
+            "deepQuestion": "God called Israel a kingdom of priests — people whose purpose was to represent him to the watching world. In what area of your life are you most aware of a gap between who you're called to be and how you're actually living?"
+          },
+          {
+            "label": "Breaking the covenant before the ink dries",
+            "deepQuestion": "Israel made a golden calf while Moses was still on the mountain. Is there a pattern of going back to what's familiar and controllable when God feels distant? What are you still returning to instead of waiting on him?"
+          },
+          {
+            "label": "God choosing to dwell with us anyway",
+            "deepQuestion": "After the golden calf, God still filled the tabernacle with his glory. Where do you most need to believe that God has not withdrawn his presence from your story — even after failure?"
+          }
+        ]
+      },
+      "abide": "God, you chose to live among a people who broke your covenant almost immediately — and you came anyway. The glory that filled the tabernacle was not earned; it was given. We bring you our failures and our returns and our attempts to build what we can control. Come and dwell. Not because we've been faithful, but because you are."
+    },
+    {
+      "id": "leviticus",
+      "title": "Leviticus",
+      "subtitle": "Holiness and the Way to God",
+      "videoId": "IJ-FekWUZzE",
+      "unlockAfter": "exodus-2",
+      "crossRefPills": [
+        "Leviticus 11:44",
+        "Leviticus 16:30",
+        "Leviticus 19:18",
+        "Hebrews 10:10"
+      ],
+      "reflection": {
+        "prompt": "From everything in this video — what moment stayed with you most?",
+        "choices": [
+          {
+            "label": "Be holy as I am holy",
+            "deepQuestion": "Holiness in Leviticus isn't about being perfect — it's about being set apart for God's purposes. What is one area of your life where you sense God is asking you to be distinct from the world around you? What makes that hard?"
+          },
+          {
+            "label": "The weight of what sin costs",
+            "deepQuestion": "The sacrificial system made the cost of sin visible and tangible — an animal died in your place. How seriously do you actually reckon with what Christ absorbed on your behalf? How does that land today?"
+          },
+          {
+            "label": "Love your neighbor as yourself",
+            "deepQuestion": "In the middle of all the purity codes, God commands love for the neighbor. Who is the neighbor right in front of you that you've been overlooking, avoiding, or tolerating rather than actually loving?"
+          }
+        ]
+      },
+      "abide": "God, you are holy — and you call us to be holy not because we can earn your presence, but because you have already given it. Every sacrifice in Leviticus was a shadow of the one that ended all sacrifices. Jesus absorbed what we owed. We want to live like that cost something. Make us people who take your holiness seriously and your grace personally."
+    },
+    {
+      "id": "numbers",
+      "title": "Numbers",
+      "subtitle": "Wilderness, Rebellion & Faithfulness",
+      "videoId": "tp5MIrMZFqo",
+      "unlockAfter": "leviticus",
+      "crossRefPills": [
+        "Numbers 6:24-26",
+        "Numbers 14:18",
+        "Numbers 21:8-9",
+        "John 3:14-15"
+      ],
+      "reflection": {
+        "prompt": "Which part of this story is speaking to something real in your life right now?",
+        "choices": [
+          {
+            "label": "So close — and still turning back",
+            "deepQuestion": "Israel stood at the edge of the promised land and chose fear over faith. Is there a place in your life where you are standing at the edge of something God has promised or prepared — and you keep pulling back? What is the fear under the hesitation?"
+          },
+          {
+            "label": "The wilderness I didn't plan for",
+            "deepQuestion": "Numbers is mostly about wandering in a place Israel wasn't supposed to stay. Is there a season of your life that has stretched far longer than you expected? What is God doing in you in the waiting that couldn't happen anywhere else?"
+          },
+          {
+            "label": "He is slow to anger",
+            "deepQuestion": "Numbers 14 reveals a God who is slow to anger and abounding in steadfast love — even toward people who grumbled constantly. Where do you most need to receive that quality of God's patience toward yourself right now?"
+          }
+        ]
+      },
+      "abide": "God, you are slow to anger and abounding in love — even for people who grumble and doubt and refuse to move. The wilderness in Numbers is not a story of Israel's faithfulness; it's a story of yours. You did not abandon them. You do not abandon us. We bring you our wandering and our fear and our complaints. Lead us forward. We are still yours."
+    },
+    {
+      "id": "deuteronomy",
+      "title": "Deuteronomy",
+      "subtitle": "Moses' Final Words — Choose Life",
+      "videoId": "q5QEH9bH8AU",
+      "unlockAfter": "numbers",
+      "crossRefPills": [
+        "Deuteronomy 6:4-5",
+        "Deuteronomy 8:3",
+        "Deuteronomy 30:19-20",
+        "Matthew 4:4"
+      ],
+      "reflection": {
+        "prompt": "From everything in this video — what stayed with you most?",
+        "choices": [
+          {
+            "label": "Love the Lord with everything",
+            "deepQuestion": "The Shema calls for total, undivided love — heart, soul, and strength. What is currently competing most for your complete devotion? What would it look like to deliberately reorient toward God in that specific area today?"
+          },
+          {
+            "label": "Remember what God has done",
+            "deepQuestion": "Deuteronomy is essentially Moses saying: don't forget. When prosperity comes and life gets comfortable, you will be tempted to forget that God brought you here. Where in your story have you already started to forget what God did — and what would it mean to remember it today?"
+          },
+          {
+            "label": "I set before you life and death — choose",
+            "deepQuestion": "Moses closes with one of the most direct invitations in Scripture: choose life. What is the choice that is actually in front of you right now — the one you've been delaying or avoiding? What would choosing life look like in that specific situation?"
+          }
+        ]
+      },
+      "abide": "God, hear our prayer — you are one, and you ask for all of us. Not the performance of devotion, but the reality of it. Moses stood at the edge of everything he'd worked for and handed it to the next generation with one word: choose. Today we choose. Not because we are strong enough, but because life is found only in you. We want to love you with everything we have."
     }
   ]
 }

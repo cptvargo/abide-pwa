@@ -25,11 +25,21 @@
     "description": "A foundational journey through who God is as Father, Son, and Holy Spirit — and who you are in Christ. Walk through twenty-two days of Scripture-anchored teaching on the Trinity, the person and work of Jesus, the Holy Spirit, and your identity as a child of God."
   },
   {
+    "id": "holy-spirit",
+    "title": "The Holy Spirit",
+    "subtitle": "God With You",
+    "author": "ABIDE",
+    "format": "scripture-guided",
+    "dataFile": "day.json",
+    "description": "He will not leave you as orphans. Walk through Scripture to meet the one who was sent to be with you — the Spirit of truth, the Spirit of adoption, the Spirit of power and of love.",
+    "coverVideoId": "seyWEtv_v1s"
+  },
+  {
     "id": "old-testament",
     "title": "Old Testament",
     "subtitle": "The Hebrew Scriptures",
     "author": "The Bible Project",
-    "dayCount": 2,
+    "dayCount": 7,
     "format": "video-daily",
     "description": "Walk through the Old Testament one book at a time. Each session is built around a single Bible Project video — watch it, reflect, and pray. Complete each session to unlock the next.",
     "seriesFile": "series.json",

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import ScriptureGuidedDay from "./ScriptureGuidedDay";
 
 /* ─── localStorage helpers ──────────────────────────────────────────────── */
 const COMPLETED_KEY = "abide_daily_completed_v1";
@@ -211,8 +212,6 @@ function OnboardingOverlay({ onSelect }) {
 
 /* ─── Page 0 — Video + cross-ref pills ─────────────────────────────────── */
 function VideoPage({ day, translation, base, onNext, participants }) {
-  const [playing, setPlaying] = useState(false);
-  const [iframeLoaded, setIframeLoaded] = useState(false);
   const [activePill, setActivePill] = useState(null);
 
   // swipe to advance
@@ -291,66 +290,16 @@ function VideoPage({ day, translation, base, onNext, participants }) {
 
         {/* Video embed */}
         <div style={{
-          position: "relative", width: "100%", aspectRatio: "16/9",
+          width: "100%", aspectRatio: "16/9",
           borderRadius: 12, overflow: "hidden", background: "#0a0a08",
         }}>
-          {!playing ? (
-            <>
-              <img
-                src={`https://img.youtube.com/vi/${day.videoId}/hqdefault.jpg`}
-                alt="Video thumbnail"
-                style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.75 }}
-              />
-              <div style={{
-                position: "absolute", inset: 0,
-                background: "linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4))",
-              }} />
-              <div
-                onClick={() => setPlaying(true)}
-                style={{
-                  position: "absolute", inset: 0,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  cursor: "pointer",
-                }}
-              >
-                <div style={{
-                  width: 64, height: 64, borderRadius: "50%",
-                  background: "rgba(203,178,124,0.92)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  boxShadow: "0 0 0 10px rgba(203,178,124,0.12), 0 8px 32px rgba(0,0,0,0.5)",
-                }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="#141410" style={{ marginLeft: 3 }}>
-                    <polygon points="5 3 19 12 5 21 5 3" />
-                  </svg>
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              {!iframeLoaded && (
-                <div style={{
-                  position: "absolute", inset: 0,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  background: "#0a0a08",
-                }}>
-                  <div style={{
-                    width: 22, height: 22, borderRadius: "50%",
-                    border: "2px solid rgba(203,178,124,0.2)",
-                    borderTopColor: "rgba(203,178,124,0.8)",
-                    animation: "da-spin 0.7s linear infinite",
-                  }} />
-                </div>
-              )}
-              <iframe
-                src={`https://www.youtube-nocookie.com/embed/${day.videoId}?autoplay=1&rel=0&modestbranding=1`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                onLoad={() => setIframeLoaded(true)}
-                style={{ width: "100%", height: "100%", border: "none", display: "block" }}
-                title={day.title}
-              />
-            </>
-          )}
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${day.videoId}?rel=0&modestbranding=1`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{ width: "100%", height: "100%", border: "none", display: "block" }}
+            title={day.title}
+          />
         </div>
 
         {/* Cross-ref pills */}
@@ -697,16 +646,18 @@ function DayExperience({ day, seriesId, translation, base, onComplete, onBack })
         <button
           onClick={onBack}
           style={{
-            width: 34, height: 34, borderRadius: 9, flexShrink: 0,
+            height: 34, borderRadius: 9, flexShrink: 0, padding: "0 12px 0 8px",
             background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)",
             cursor: "pointer", color: "var(--text-primary)",
-            display: "flex", alignItems: "center", justifyContent: "center",
+            display: "flex", alignItems: "center", gap: 5,
+            WebkitTapHighlightColor: "transparent",
           }}
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M12 5l-7 7 7 7" />
           </svg>
+          <span style={{ fontSize: 13, fontFamily: "var(--font-ui, system-ui)", opacity: 0.7 }}>Scripture</span>
         </button>
 
         {/* Page dots */}
@@ -722,8 +673,6 @@ function DayExperience({ day, seriesId, translation, base, onComplete, onBack })
             }} />
           ))}
         </div>
-
-        <div style={{ width: 34 }} /> {/* spacer */}
       </div>
 
       {/* Page strip */}
@@ -778,20 +727,18 @@ function SeriesDetail({ series, onStartDay, onBack }) {
         padding: "calc(env(safe-area-inset-top,0px) + 12px) 16px 12px",
       }}>
         <button onClick={onBack} style={{
-          width: 34, height: 34, borderRadius: 9, flexShrink: 0,
+          height: 34, borderRadius: 9, flexShrink: 0, padding: "0 12px 0 8px",
           background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)",
           cursor: "pointer", color: "var(--text-primary)",
-          display: "flex", alignItems: "center", justifyContent: "center",
+          display: "flex", alignItems: "center", gap: 5,
+          WebkitTapHighlightColor: "transparent",
         }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M12 5l-7 7 7 7" />
           </svg>
+          <span style={{ fontSize: 13, fontFamily: "var(--font-ui, system-ui)", opacity: 0.7 }}>Scripture</span>
         </button>
-        <span style={{
-          fontSize: 14, color: "var(--text-primary)", opacity: 0.55,
-          fontFamily: "var(--font-ui, system-ui)",
-        }}>Daily Abiding</span>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
@@ -973,7 +920,7 @@ function SeriesDetail({ series, onStartDay, onBack }) {
 
 /* ─── Series list — cover cards ─────────────────────────────────────────── */
 function SeriesList({ index, onSelectSeries, onBack }) {
-  const videoSeries = index.filter((s) => s.format === "video-daily");
+  const videoSeries = index.filter((s) => s.format === "video-daily" || s.format === "scripture-guided");
 
   function progress(s) {
     const completed = getCompleted();
@@ -1142,6 +1089,17 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
   }, [base]);
 
   async function handleSelectSeries(meta) {
+    if (meta.format === "scripture-guided") {
+      try {
+        const file = meta.dataFile ?? "day.json";
+        const res = await fetch(`${base}data/devotionals/${meta.id}/${file}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        setActiveDay(data);
+        setView("scripture-guided");
+      } catch { /* silent */ }
+      return;
+    }
     try {
       const file = meta.seriesFile ?? "series.json";
       const res = await fetch(`${base}data/devotionals/${meta.id}/${file}`);
@@ -1179,7 +1137,16 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
           <SeriesDetail
             series={selectedSeries}
             onStartDay={handleStartDay}
-            onBack={() => setView("list")}
+            onBack={onBack}
+          />
+        )}
+        {view === "scripture-guided" && activeDay && (
+          <ScriptureGuidedDay
+            day={activeDay}
+            translation={translation}
+            base={base}
+            onComplete={() => { setView("list"); setActiveDay(null); }}
+            onBack={onBack}
           />
         )}
         {view === "day" && activeDay && (
@@ -1189,7 +1156,7 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
             translation={translation}
             base={base}
             onComplete={handleDayComplete}
-            onBack={() => setView("series")}
+            onBack={onBack}
           />
         )}
       </div>
