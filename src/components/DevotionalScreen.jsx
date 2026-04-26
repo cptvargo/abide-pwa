@@ -8,6 +8,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import DevotionalReader from "./DevotionalReader.jsx";
+import AuthorPage from "./AuthorPage.jsx";
 
 // ── Progress helpers ──────────────────────────────────────────────────────────
 const PROGRESS_KEY = "abide_devotional_progress";
@@ -173,13 +174,23 @@ const SCROLLREADER_URL =
 const AUTHORS = {
   "Andrew Murray": {
     subtitle: "Minister · Devotional Writer",
+    image: "Andrew Murray.png",
     description:
       "Scottish-born minister (1828–1917) whose writings on humility, prayer, and abiding in Christ have shaped generations of believers.",
+    about:
+      "Andrew Murray did not write about the spiritual life from the outside — he wrote from within it. Born in Scotland in 1828 and raised on the frontier of South Africa, he ministered for decades in conditions that demanded both tenacity and surrender. When illness silenced him for months at a time, he did not retreat from God — he went deeper. His writings emerged not from theological distance but from the discipline of a man who had chosen, again and again, to remain close. He believed that humility was not a virtue to be cultivated but a grace to be received. That prayer was not technique but communion. That abiding in Christ was not a spiritual ideal but the only life worth living. His words are not relics — they are invitations. Read them slowly.",
+    quote:
+      "Humility is the only soil in which virtue takes root; the only condition in which man can rightly know himself.",
   },
   "Gavin Todd": {
-    subtitle: "Pastor · Teacher",
+    subtitle: "Author · Prayer Director",
+    image: "Gavin Todd.png",
     description:
-      "Pastor and teacher focused on the life of abiding — practical, unhurried formation in the presence of God.",
+      "A man marked by singular pursuit — to know Jesus Christ deeply and live fully surrendered to Him.",
+    about:
+      "Gavin Todd is a man marked by a singular pursuit — to know Jesus Christ deeply and live fully surrendered to Him. His life is anchored in the reality of being crucified with Christ and raised to new life, with a desire to walk in continual communion with Him.\n\nGavin's greatest passion is to love Jesus with the very love he has received from Him, and to share that love with others. The central priorities of his life are the presence of Jesus and attentiveness to His voice. From this place of intimacy, his aim is to reflect the likeness and nature of Christ in a tangible and transformative way.\n\nHis heart extends beyond personal devotion. Gavin carries a burden to see the Church awakened to a deeper, daily experience of God — one rooted in intimacy, union, and ongoing communion with Christ. His message consistently points believers back to the simplicity and depth of abiding in Jesus, while extending an invitation to a world in need of eternal life.\n\nProfessionally, since 2004, Gavin has contributed to the design of the nation's next-generation nuclear aircraft carriers and continues to work on advanced submarine systems. In parallel with his professional career, he has faithfully served at his church since 2008 and currently serves as the Prayer Director.\n\nGavin resides in Newport News with his wife and their three children, where he continues to pursue a life centered on Christ and His Kingdom.",
+    quote:
+      "The central priorities of his life are the presence of Jesus and attentiveness to His voice.",
   },
 };
 
@@ -259,6 +270,8 @@ export default function DevotionalScreen({ onBack, theme }) {
   const [completedDays, setCompletedDays] = useState([]);
   const [justCompleted, setJustCompleted] = useState(false);
   const [activeAuthor, setActiveAuthor] = useState(null);
+  const [activeAuthorHero, setActiveAuthorHero] = useState(null);
+  const [seriesBackTarget, setSeriesBackTarget] = useState("author");
   const [scriptureResult, setScriptureResult] = useState(null);
   const [scripturesResults, setScripturesResults] = useState([]);
   const [loadingScripture, setLoadingScripture] = useState(false);
@@ -299,8 +312,9 @@ export default function DevotionalScreen({ onBack, theme }) {
     }
   }, [view, activeDay]);
 
-  function openSeries(series) {
+  function openSeries(series, backTarget = "author") {
     setActiveSeries(series);
+    setSeriesBackTarget(backTarget);
     setView("series");
   }
 
@@ -359,31 +373,49 @@ export default function DevotionalScreen({ onBack, theme }) {
             return (
               <button
                 key={group.author}
-                onClick={() => { setActiveAuthor(group.author); setView("author"); }}
+                onClick={() => { setActiveAuthor(group.author); setActiveAuthorHero(group.author); setView("author-hero"); }}
                 className="dv-card"
                 style={s.seriesCard}
               >
-                <div style={{ marginBottom: 12 }}>
-                  <div style={s.eyebrow}>
-                    {group.series.length} {group.series.length === 1 ? "Devotional" : "Devotionals"} · {totalDays} Days
-                  </div>
-                  <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 22, fontWeight: 300, color: "var(--text-primary)", letterSpacing: "0.02em", margin: "6px 0 6px" }}>
-                    {group.author}
-                  </h2>
-                  {meta?.description && (
-                    <p style={{ fontFamily: "var(--font-body)", fontStyle: "italic", fontSize: 13, color: "var(--text-secondary)", opacity: 0.7, lineHeight: 1.6, margin: 0 }}>
-                      {meta.description}
-                    </p>
+                <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 14 }}>
+                  {meta?.image && (
+                    <img
+                      src={`${import.meta.env.BASE_URL ?? "/"}${encodeURIComponent(meta.image)}`}
+                      alt={group.author}
+                      style={{
+                        width: 56, height: 56, borderRadius: "50%",
+                        objectFit: "cover", flexShrink: 0,
+                        border: "1px solid rgba(203,178,124,0.2)",
+                      }}
+                    />
                   )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={s.eyebrow}>
+                      {group.series.length} {group.series.length === 1 ? "Devotional" : "Devotionals"} · {totalDays} Days
+                    </div>
+                    <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 20, fontWeight: 300, color: "var(--text-primary)", letterSpacing: "0.02em", margin: "4px 0 4px" }}>
+                      {group.author}
+                    </h2>
+                    {meta?.subtitle && (
+                      <div style={{ fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: "0.06em", color: "rgba(203,178,124,0.5)" }}>
+                        {meta.subtitle}
+                      </div>
+                    )}
+                  </div>
+                  <span style={{ color: "rgba(203,178,124,0.4)", fontSize: 18, flexShrink: 0 }}>›</span>
                 </div>
-                <div style={{ height: 2, background: "var(--border-subtle)", borderRadius: 2, overflow: "hidden", marginTop: 14 }}>
+                {meta?.description && (
+                  <p style={{ fontFamily: "var(--font-body)", fontStyle: "italic", fontSize: 13, color: "var(--text-secondary)", opacity: 0.7, lineHeight: 1.6, margin: "0 0 14px" }}>
+                    {meta.description}
+                  </p>
+                )}
+                <div style={{ height: 2, background: "var(--border-subtle)", borderRadius: 2, overflow: "hidden" }}>
                   <div style={{ height: "100%", width: `${pct}%`, background: "var(--text-accent)", opacity: 0.5, borderRadius: 2, transition: "width 0.4s ease" }} />
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
                   <span style={{ fontFamily: "var(--font-ui)", fontSize: 10, letterSpacing: "0.1em", color: "var(--text-accent)", opacity: 0.5 }}>
                     {completedCount} of {totalDays} days complete
                   </span>
-                  <span style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-accent)", opacity: 0.6 }}>View →</span>
                 </div>
               </button>
             );
@@ -414,6 +446,50 @@ export default function DevotionalScreen({ onBack, theme }) {
         </div>
 
         <div ref={scrollRef} className="dv-scroll" style={{ flex: 1, overflowY: "auto", padding: "20px 24px 48px" }}>
+          {/* Author card — tap to open hero page */}
+          {meta && (
+            <button
+              onClick={() => { setActiveAuthorHero(activeAuthor); setView("author-hero"); }}
+              className="dv-card"
+              style={{
+                width: "100%", textAlign: "left", display: "flex",
+                alignItems: "center", gap: 16,
+                padding: "16px 18px", marginBottom: 24,
+                borderRadius: 16,
+                background: "rgba(203,178,124,0.04)",
+                border: "1px solid rgba(203,178,124,0.12)",
+                cursor: "pointer",
+                WebkitTapHighlightColor: "transparent",
+              }}
+            >
+              {meta.image && (
+                <img
+                  src={`${import.meta.env.BASE_URL ?? "/"}${encodeURIComponent(meta.image)}`}
+                  alt={activeAuthor}
+                  style={{
+                    width: 52, height: 52, borderRadius: "50%",
+                    objectFit: "cover", flexShrink: 0,
+                    border: "1px solid rgba(203,178,124,0.2)",
+                  }}
+                />
+              )}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontFamily: "var(--font-ui)", fontSize: 16, fontWeight: 400,
+                  color: "var(--text-primary)", marginBottom: 2,
+                }}>
+                  {activeAuthor}
+                </div>
+                <div style={{
+                  fontFamily: "var(--font-ui)", fontSize: 11,
+                  letterSpacing: "0.06em", color: "rgba(203,178,124,0.5)",
+                }}>
+                  {meta.subtitle}
+                </div>
+              </div>
+              <span style={{ color: "rgba(203,178,124,0.4)", fontSize: 18, flexShrink: 0 }}>›</span>
+            </button>
+          )}
           {group.series.map((series) => {
             const done = getCompletedDays(series.id);
             const pct = Math.round((done.length / series.totalDays) * 100);
@@ -449,6 +525,22 @@ export default function DevotionalScreen({ onBack, theme }) {
   }
 
   /* ══════════════════════════════════════════════════
+     AUTHOR HERO PAGE
+  ══════════════════════════════════════════════════ */
+  if (view === "author-hero" && activeAuthorHero) {
+    const group = authorGroups.find((g) => g.author === activeAuthorHero);
+    return (
+      <AuthorPage
+        author={activeAuthorHero}
+        meta={AUTHORS[activeAuthorHero] ?? {}}
+        series={group?.series ?? []}
+        onOpenSeries={(s) => openSeries(s, "author-hero")}
+        onBack={() => setView("library")}
+      />
+    );
+  }
+
+  /* ══════════════════════════════════════════════════
      SERIES — Day list
   ══════════════════════════════════════════════════ */
   if (view === "series") {
@@ -460,7 +552,7 @@ export default function DevotionalScreen({ onBack, theme }) {
       <div style={s.screen}>
         <style>{dynamicCSS}</style>
         <div style={s.header}>
-          <button onClick={() => setView("author")} style={s.backBtn}>
+          <button onClick={() => setView(seriesBackTarget)} style={s.backBtn}>
             <span style={{ fontSize: 13, color: "var(--text-accent)", opacity: 0.7 }}>‹</span>
             <span style={{ fontSize: 12, letterSpacing: "0.04em", color: "var(--text-accent)", opacity: 0.7, fontFamily: "var(--font-ui)" }}>
               {activeAuthor ?? "Devotionals"}

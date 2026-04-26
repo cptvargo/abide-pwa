@@ -535,7 +535,6 @@ function AbidePage({ day, seriesId, onDone, onPrev }) {
     setTimeout(onDone, 1200);
   }
 
-  const dayNum = day.id ? day.id.replace(/[^0-9]/g, "") || "1" : "1";
 
   return (
     <div style={{
@@ -616,7 +615,7 @@ function AbidePage({ day, seriesId, onDone, onPrev }) {
               </svg>
               Session Complete
             </>
-          ) : `Mark Day ${dayNum} Complete`}
+          ) : "Mark Today Complete"}
         </button>
       </div>
       <div style={{ height: "calc(env(safe-area-inset-bottom,0px) + 40px)" }} />
@@ -915,48 +914,135 @@ function SeriesDetail({ series, onStartDay, onBack }) {
   );
 }
 
-/* ─── Series list — cover cards ─────────────────────────────────────────── */
-function SeriesList({ index, onSelectSeries, onBack }) {
-  const displaySeries = index.filter((s) =>
-    s.format === "video-daily" || s.format === "scripture-guided"
+/* ─── Shared header bar ──────────────────────────────────────────────────── */
+function DAHeader({ title, onBack, backLabel }) {
+  return (
+    <div style={{
+      position: "sticky", top: 0, zIndex: 10, background: "var(--bg-app)",
+      borderBottom: "1px solid rgba(255,255,255,0.05)",
+      display: "flex", alignItems: "center", gap: 12,
+      padding: "calc(env(safe-area-inset-top,0px) + 12px) 16px 12px",
+      flexShrink: 0,
+    }}>
+      <button onClick={onBack} style={{
+        width: 34, height: 34, borderRadius: 9, flexShrink: 0,
+        background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)",
+        cursor: "pointer", color: "var(--text-primary)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        WebkitTapHighlightColor: "transparent",
+      }}>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M19 12H5M12 5l-7 7 7 7" />
+        </svg>
+      </button>
+      <div>
+        {backLabel && (
+          <div style={{
+            fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase",
+            color: "rgba(203,178,124,0.38)", fontFamily: "var(--font-ui, system-ui)",
+            marginBottom: 1,
+          }}>{backLabel}</div>
+        )}
+        <h1 style={{
+          fontFamily: "var(--font-ui, system-ui)", fontSize: 17, fontWeight: 400,
+          color: "var(--text-primary)", margin: 0,
+        }}>{title}</h1>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Shared series cover card ───────────────────────────────────────────── */
+function SeriesCoverCard({ series, label, onPress }) {
+  return (
+    <button
+      onClick={onPress}
+      style={{
+        width: "100%", textAlign: "left", cursor: "pointer",
+        borderRadius: 16, overflow: "hidden",
+        border: "1px solid rgba(203,178,124,0.2)",
+        WebkitTapHighlightColor: "transparent",
+      }}
+    >
+      <div style={{ position: "relative", width: "100%", aspectRatio: "16/7", overflow: "hidden" }}>
+        {series.coverVideoId ? (
+          <img
+            src={`https://img.youtube.com/vi/${series.coverVideoId}/hqdefault.jpg`}
+            alt={series.title}
+            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.72 }}
+          />
+        ) : (
+          <div style={{
+            width: "100%", height: "100%",
+            background: "linear-gradient(135deg, rgba(203,178,124,0.1) 0%, rgba(10,10,8,0.95) 100%)",
+          }} />
+        )}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(14,14,10,0.85) 100%)",
+        }} />
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px 14px" }}>
+          <div style={{
+            fontSize: 22, fontWeight: 300, fontFamily: "var(--font-ui, system-ui)",
+            color: "var(--text-primary)", lineHeight: 1.2,
+          }}>{series.title}</div>
+          <div style={{
+            fontSize: 12, fontFamily: "var(--font-ui, system-ui)",
+            color: "rgba(203,178,124,0.5)", marginTop: 2,
+          }}>{series.subtitle}</div>
+        </div>
+      </div>
+      <div style={{
+        padding: "14px 18px", background: "rgba(203,178,124,0.04)",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
+        <div style={{
+          fontFamily: "var(--font-body, Georgia, serif)", fontSize: 13,
+          color: "var(--text-primary)", opacity: 0.42, lineHeight: 1.5,
+          flex: 1, marginRight: 12,
+        }}>
+          {series.description.slice(0, 80)}…
+        </div>
+        <div style={{
+          fontFamily: "var(--font-ui, system-ui)", fontSize: 11,
+          color: "rgba(203,178,124,0.65)", whiteSpace: "nowrap",
+        }}>
+          {label ?? "Begin →"}
+        </div>
+      </div>
+    </button>
+  );
+}
+
+/* ─── Top-level series list ──────────────────────────────────────────────── */
+function SeriesList({ index, onSelectSeries, onSelectSource, onBack }) {
+  const direct = index.filter((s) =>
+    (s.format === "video-daily" || s.format === "scripture-guided") && !s.source
   );
 
-  // Group by author preserving index order
-  const groups = [];
-  const seen = new Map();
-  displaySeries.forEach((s) => {
-    const a = s.author || "Other";
-    if (!seen.has(a)) { seen.set(a, []); groups.push({ author: a, items: seen.get(a) }); }
-    seen.get(a).push(s);
+  // Collect unique sources in order
+  const sources = [];
+  const seenSources = new Set();
+  index.filter((s) => s.source).forEach((s) => {
+    if (!seenSources.has(s.source)) {
+      seenSources.add(s.source);
+      sources.push(s.source);
+    }
   });
+
+  const SOURCE_META = {
+    "bible-project": {
+      name: "The Bible Project",
+      subtitle: "Animated Bible Videos",
+      description: "The Bible Project creates free animated videos, podcasts, and educational resources that explore the Bible as a unified story leading to Jesus.",
+      coverVideoId: "GQI72THyO5I",
+    },
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "var(--bg-app)" }}>
-      {/* Header */}
-      <div style={{
-        position: "sticky", top: 0, zIndex: 10, background: "var(--bg-app)",
-        borderBottom: "1px solid rgba(255,255,255,0.05)",
-        display: "flex", alignItems: "center", gap: 12,
-        padding: "calc(env(safe-area-inset-top,0px) + 12px) 16px 12px",
-      }}>
-        <button onClick={onBack} style={{
-          width: 34, height: 34, borderRadius: 9, flexShrink: 0,
-          background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)",
-          cursor: "pointer", color: "var(--text-primary)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7" />
-          </svg>
-        </button>
-        <h1 style={{
-          fontFamily: "var(--font-ui, system-ui)", fontSize: 17, fontWeight: 400,
-          color: "var(--text-primary)",
-        }}>
-          Daily Abiding
-        </h1>
-      </div>
+      <DAHeader title="Daily Abiding" onBack={onBack} />
 
       <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
         <div style={{ padding: "20px 20px 10px" }}>
@@ -969,118 +1055,347 @@ function SeriesList({ index, onSelectSeries, onBack }) {
           </p>
         </div>
 
-        <div style={{ padding: "4px 16px" }}>
-          {groups.map(({ author, items }) => (
-            <div key={author}>
-              {/* Author section header */}
-              <div style={{
-                display: "flex", alignItems: "center", gap: 12,
-                padding: "20px 4px 12px",
-              }}>
-                <div style={{ flex: 1, height: 1, background: "rgba(203,178,124,0.12)" }} />
-                <span style={{
-                  fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase",
-                  color: "rgba(203,178,124,0.4)", fontFamily: "var(--font-ui, system-ui)",
-                  whiteSpace: "nowrap",
-                }}>
-                  {author}
-                </span>
-                <div style={{ flex: 1, height: 1, background: "rgba(203,178,124,0.12)" }} />
-              </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: "4px 16px" }}>
+          {/* Direct series (e.g. Holy Spirit) */}
+          {direct.map((s) => (
+            <SeriesCoverCard key={s.id} series={s} onPress={() => onSelectSeries(s)} />
+          ))}
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 4 }}>
-                {items.map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => onSelectSeries(s)}
-                    style={{
-                      width: "100%", textAlign: "left", cursor: "pointer",
-                      borderRadius: 16, overflow: "hidden",
-                      border: "1px solid rgba(203,178,124,0.2)",
-                      WebkitTapHighlightColor: "transparent",
-                    }}
-                  >
-                    {/* Cover */}
-                    <div style={{ position: "relative", width: "100%", aspectRatio: "16/7", overflow: "hidden" }}>
-                      {s.coverVideoId ? (
-                        <img
-                          src={`https://img.youtube.com/vi/${s.coverVideoId}/hqdefault.jpg`}
-                          alt={s.title}
-                          style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.72 }}
-                        />
-                      ) : (
-                        <div style={{
-                          width: "100%", height: "100%",
-                          background: "linear-gradient(135deg, rgba(203,178,124,0.1) 0%, rgba(10,10,8,0.95) 100%)",
-                        }} />
-                      )}
-                      <div style={{
-                        position: "absolute", inset: 0,
-                        background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(14,14,10,0.85) 100%)",
-                      }} />
-                      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px 0" }}>
-                        <div style={{
-                          fontSize: 22, fontWeight: 300, fontFamily: "var(--font-ui, system-ui)",
-                          color: "var(--text-primary)", lineHeight: 1.2,
-                        }}>
-                          {s.title}
-                        </div>
-                        <div style={{
-                          fontSize: 12, fontFamily: "var(--font-ui, system-ui)",
-                          color: "rgba(203,178,124,0.5)", marginTop: 2,
-                        }}>
-                          {s.subtitle}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Footer */}
+          {/* Source cards (e.g. The Bible Project) */}
+          {sources.map((srcId) => {
+            const meta = SOURCE_META[srcId] ?? { name: srcId, description: "", coverVideoId: null };
+            return (
+              <button
+                key={srcId}
+                onClick={() => onSelectSource(srcId)}
+                style={{
+                  width: "100%", textAlign: "left", cursor: "pointer",
+                  borderRadius: 16, overflow: "hidden",
+                  border: "1px solid rgba(203,178,124,0.2)",
+                  WebkitTapHighlightColor: "transparent",
+                }}
+              >
+                <div style={{ position: "relative", width: "100%", aspectRatio: "16/7", overflow: "hidden" }}>
+                  {meta.coverVideoId ? (
+                    <img
+                      src={`https://img.youtube.com/vi/${meta.coverVideoId}/hqdefault.jpg`}
+                      alt={meta.name}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.72 }}
+                    />
+                  ) : (
                     <div style={{
-                      padding: "14px 18px", background: "rgba(203,178,124,0.04)",
-                      display: "flex", alignItems: "center", justifyContent: "space-between",
-                    }}>
-                      <div style={{
-                        fontFamily: "var(--font-body, Georgia, serif)", fontSize: 13,
-                        color: "var(--text-primary)", opacity: 0.42, lineHeight: 1.5,
-                        flex: 1, marginRight: 12,
-                      }}>
-                        {s.description.slice(0, 80)}…
-                      </div>
-                      <div style={{
-                        fontFamily: "var(--font-ui, system-ui)", fontSize: 11,
-                        color: "rgba(203,178,124,0.65)", whiteSpace: "nowrap",
-                      }}>
-                        Begin →
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
+                      width: "100%", height: "100%",
+                      background: "linear-gradient(135deg, rgba(203,178,124,0.1) 0%, rgba(10,10,8,0.95) 100%)",
+                    }} />
+                  )}
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(14,14,10,0.85) 100%)",
+                  }} />
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px 14px" }}>
+                    <div style={{
+                      fontSize: 22, fontWeight: 300, fontFamily: "var(--font-ui, system-ui)",
+                      color: "var(--text-primary)", lineHeight: 1.2,
+                    }}>{meta.name}</div>
+                    <div style={{
+                      fontSize: 12, fontFamily: "var(--font-ui, system-ui)",
+                      color: "rgba(203,178,124,0.5)", marginTop: 2,
+                    }}>{meta.subtitle}</div>
+                  </div>
+                </div>
+                <div style={{
+                  padding: "14px 18px", background: "rgba(203,178,124,0.04)",
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                }}>
+                  <div style={{
+                    fontFamily: "var(--font-body, Georgia, serif)", fontSize: 13,
+                    color: "var(--text-primary)", opacity: 0.42, lineHeight: 1.5,
+                    flex: 1, marginRight: 12,
+                  }}>
+                    {meta.description.slice(0, 80)}…
+                  </div>
+                  <div style={{
+                    fontFamily: "var(--font-ui, system-ui)", fontSize: 11,
+                    color: "rgba(203,178,124,0.65)", whiteSpace: "nowrap",
+                  }}>
+                    Explore →
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        <div style={{ height: "calc(env(safe-area-inset-bottom,0px) + 48px)" }} />
+      </div>
+    </div>
+  );
+}
+
+/* ─── Source view (e.g. The Bible Project) ───────────────────────────────── */
+function SourceView({ source, index, onSelectGroup, onBack }) {
+  const SOURCE_META = {
+    "bible-project": {
+      name: "The Bible Project",
+      description: "The Bible Project creates free animated videos, podcasts, and educational resources that explore the Bible as a unified story leading to Jesus. Their goal is to help people read the Bible with depth and clarity — for free, for everyone.",
+      link: "https://bibleproject.com/",
+    },
+  };
+  const GROUP_META = {
+    "old-testament": {
+      name: "Old Testament",
+      subtitle: "The Hebrew Scriptures",
+      description: "Walk through the books of the Old Testament one video at a time. Watch, reflect, and pray.",
+      coverVideoId: "GQI72THyO5I",
+    },
+  };
+
+  const meta = SOURCE_META[source] ?? { name: source, description: "", link: null };
+
+  // Collect unique groups for this source
+  const groups = [];
+  const seenGroups = new Set();
+  index.filter((s) => s.source === source && s.group).forEach((s) => {
+    if (!seenGroups.has(s.group)) {
+      seenGroups.add(s.group);
+      groups.push(s.group);
+    }
+  });
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "var(--bg-app)" }}>
+      <DAHeader title={meta.name} onBack={onBack} backLabel="Daily Abiding" />
+
+      <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ padding: "24px 20px 20px" }}>
+          <p style={{
+            fontFamily: "var(--font-body, Georgia, serif)", fontSize: 14,
+            lineHeight: 1.8, color: "var(--text-primary)", opacity: 0.55,
+            margin: "0 0 20px",
+          }}>
+            {meta.description}
+          </p>
+          {meta.link && (
+            <a
+              href={meta.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 7,
+                textDecoration: "none", padding: "9px 16px",
+                borderRadius: 100,
+                background: "rgba(203,178,124,0.07)",
+                border: "1px solid rgba(203,178,124,0.22)",
+                fontSize: 12, fontFamily: "var(--font-ui, system-ui)",
+                color: "rgba(203,178,124,0.8)", letterSpacing: "0.04em",
+              }}
+            >
+              Visit {meta.name}
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+                <polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+          )}
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: "0 16px" }}>
+          {groups.map((grpId) => {
+            const grp = GROUP_META[grpId] ?? { name: grpId, subtitle: "", description: "", coverVideoId: null };
+            const count = index.filter((s) => s.source === source && s.group === grpId).length;
+            return (
+              <button
+                key={grpId}
+                onClick={() => onSelectGroup(grpId)}
+                style={{
+                  width: "100%", textAlign: "left", cursor: "pointer",
+                  borderRadius: 16, overflow: "hidden",
+                  border: "1px solid rgba(203,178,124,0.2)",
+                  WebkitTapHighlightColor: "transparent",
+                }}
+              >
+                <div style={{ position: "relative", width: "100%", aspectRatio: "16/7", overflow: "hidden" }}>
+                  {grp.coverVideoId ? (
+                    <img
+                      src={`https://img.youtube.com/vi/${grp.coverVideoId}/hqdefault.jpg`}
+                      alt={grp.name}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.72 }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: "100%", height: "100%",
+                      background: "linear-gradient(135deg, rgba(203,178,124,0.1) 0%, rgba(10,10,8,0.95) 100%)",
+                    }} />
+                  )}
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(14,14,10,0.85) 100%)",
+                  }} />
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px 14px" }}>
+                    <div style={{
+                      fontSize: 22, fontWeight: 300, fontFamily: "var(--font-ui, system-ui)",
+                      color: "var(--text-primary)", lineHeight: 1.2,
+                    }}>{grp.name}</div>
+                    <div style={{
+                      fontSize: 12, fontFamily: "var(--font-ui, system-ui)",
+                      color: "rgba(203,178,124,0.5)", marginTop: 2,
+                    }}>{count} series</div>
+                  </div>
+                </div>
+                <div style={{
+                  padding: "14px 18px", background: "rgba(203,178,124,0.04)",
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                }}>
+                  <div style={{
+                    fontFamily: "var(--font-body, Georgia, serif)", fontSize: 13,
+                    color: "var(--text-primary)", opacity: 0.42, lineHeight: 1.5,
+                    flex: 1, marginRight: 12,
+                  }}>
+                    {grp.description}
+                  </div>
+                  <div style={{
+                    fontFamily: "var(--font-ui, system-ui)", fontSize: 11,
+                    color: "rgba(203,178,124,0.65)", whiteSpace: "nowrap",
+                  }}>
+                    Explore →
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        <div style={{ height: "calc(env(safe-area-inset-bottom,0px) + 48px)" }} />
+      </div>
+    </div>
+  );
+}
+
+/* ─── Group view (e.g. Old Testament) — grouped by book ─────────────────── */
+const BOOK_META = {
+  genesis:     { name: "Genesis",     coverVideoId: "GQI72THyO5I" },
+  exodus:      { name: "Exodus",      coverVideoId: "jH_aojNJM3E" },
+  leviticus:   { name: "Leviticus",   coverVideoId: "IJ-FekWUZzE" },
+  numbers:     { name: "Numbers",     coverVideoId: "tp5MIrMZFqo" },
+  deuteronomy: { name: "Deuteronomy", coverVideoId: "q5QEH9bH8AU" },
+};
+
+function GroupView({ group, source, index, onSelectSeries, onSelectBook, onBack }) {
+  const GROUP_META = {
+    "old-testament": { name: "Old Testament", subtitle: "The Hebrew Scriptures" },
+  };
+  const SOURCE_META = {
+    "bible-project": { name: "The Bible Project" },
+  };
+  const grp = GROUP_META[group] ?? { name: group, subtitle: "" };
+  const src = SOURCE_META[source] ?? { name: source };
+
+  const series = index.filter((s) => s.source === source && s.group === group);
+
+  // Group by book, preserving order
+  const books = [];
+  const seenBooks = new Map();
+  series.forEach((s) => {
+    const bookId = s.book || s.id;
+    if (!seenBooks.has(bookId)) { seenBooks.set(bookId, []); books.push({ bookId, items: seenBooks.get(bookId) }); }
+    seenBooks.get(bookId).push(s);
+  });
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "var(--bg-app)" }}>
+      <DAHeader title={grp.name} onBack={onBack} backLabel={src.name} />
+
+      <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ padding: "20px 20px 10px" }}>
+          <p style={{
+            fontFamily: "var(--font-body, Georgia, serif)", fontSize: 14,
+            lineHeight: 1.7, color: "var(--text-primary)", opacity: 0.4, fontStyle: "italic",
+          }}>
+            {grp.subtitle}
+          </p>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: "4px 16px" }}>
+          {books.map(({ bookId, items }) => {
+            if (items.length === 1) {
+              return <SeriesCoverCard key={bookId} series={items[0]} onPress={() => onSelectSeries(items[0])} />;
+            }
+            const meta = BOOK_META[bookId] ?? { name: bookId, coverVideoId: items[0].coverVideoId };
+            return (
+              <button
+                key={bookId}
+                onClick={() => onSelectBook(bookId, items)}
+                style={{
+                  width: "100%", textAlign: "left", cursor: "pointer",
+                  borderRadius: 16, overflow: "hidden",
+                  border: "1px solid rgba(203,178,124,0.2)",
+                  WebkitTapHighlightColor: "transparent",
+                }}
+              >
+                <div style={{ position: "relative", width: "100%", aspectRatio: "16/7", overflow: "hidden" }}>
+                  <img
+                    src={`https://img.youtube.com/vi/${meta.coverVideoId}/hqdefault.jpg`}
+                    alt={meta.name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.72 }}
+                  />
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(14,14,10,0.85) 100%)",
+                  }} />
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px 14px" }}>
+                    <div style={{
+                      fontSize: 22, fontWeight: 300, fontFamily: "var(--font-ui, system-ui)",
+                      color: "var(--text-primary)", lineHeight: 1.2,
+                    }}>{meta.name}</div>
+                    <div style={{
+                      fontSize: 12, fontFamily: "var(--font-ui, system-ui)",
+                      color: "rgba(203,178,124,0.5)", marginTop: 2,
+                    }}>{items.length} parts</div>
+                  </div>
+                </div>
+                <div style={{
+                  padding: "14px 18px", background: "rgba(203,178,124,0.04)",
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                }}>
+                  <div style={{
+                    fontFamily: "var(--font-body, Georgia, serif)", fontSize: 13,
+                    color: "var(--text-primary)", opacity: 0.42, lineHeight: 1.5,
+                    flex: 1, marginRight: 12,
+                  }}>
+                    {items[0].description.slice(0, 80)}…
+                  </div>
+                  <div style={{
+                    fontFamily: "var(--font-ui, system-ui)", fontSize: 11,
+                    color: "rgba(203,178,124,0.65)", whiteSpace: "nowrap",
+                  }}>
+                    Explore →
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        <div style={{ height: "calc(env(safe-area-inset-bottom,0px) + 48px)" }} />
+      </div>
+    </div>
+  );
+}
+
+/* ─── Book view (e.g. Genesis → Part 1 / Part 2) ────────────────────────── */
+function BookView({ book, items, onSelectSeries, onBack }) {
+  const meta = BOOK_META[book] ?? { name: book };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "var(--bg-app)" }}>
+      <DAHeader title={meta.name} onBack={onBack} backLabel="Old Testament" />
+
+      <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: "20px 16px" }}>
+          {items.map((s) => (
+            <SeriesCoverCard key={s.id} series={s} onPress={() => onSelectSeries(s)} />
           ))}
         </div>
-
-        {/* Bible Project credit */}
-        <div style={{ padding: "20px 20px 0", textAlign: "center" }}>
-          <a
-            href="https://bibleproject.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 6,
-              textDecoration: "none", fontSize: 11, color: "rgba(203,178,124,0.4)",
-              fontFamily: "var(--font-ui, system-ui)", letterSpacing: "0.04em",
-            }}
-          >
-            Video content by The Bible Project
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
-              stroke="rgba(203,178,124,0.4)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-              <polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" />
-            </svg>
-          </a>
-        </div>
-
         <div style={{ height: "calc(env(safe-area-inset-bottom,0px) + 48px)" }} />
       </div>
     </div>
@@ -1093,6 +1408,9 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
   const [index, setIndex] = useState([]);
   const [selectedSeries, setSelectedSeries] = useState(null);
   const [activeDay, setActiveDay] = useState(null);
+  const [activeSource, setActiveSource] = useState(null);
+  const [activeGroup, setActiveGroup] = useState(null);
+  const [activeBook, setActiveBook] = useState(null);
 
   const base = import.meta.env.BASE_URL ?? "/";
 
@@ -1123,8 +1441,14 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
       if (data.videoId && Array.isArray(data.days)) {
         data.days = data.days.map(d => d.videoId ? d : { ...d, videoId: data.videoId });
       }
-      setSelectedSeries({ ...data, format: meta.format });
-      setView("series");
+      const loaded = { ...data, format: meta.format };
+      setSelectedSeries(loaded);
+      if (loaded.days?.length === 1) {
+        setActiveDay(loaded.days[0]);
+        setView("day");
+      } else {
+        setView("series");
+      }
     } catch { /* silent */ }
   }
 
@@ -1149,13 +1473,44 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
       `}</style>
       <div style={{ position: "fixed", inset: 0, zIndex: 45, background: "var(--bg-app)" }}>
         {view === "list" && (
-          <SeriesList index={index} onSelectSeries={handleSelectSeries} onBack={onBack} />
+          <SeriesList
+            index={index}
+            onSelectSeries={handleSelectSeries}
+            onSelectSource={(src) => { setActiveSource(src); setView("source"); }}
+            onBack={onBack}
+          />
+        )}
+        {view === "source" && activeSource && (
+          <SourceView
+            source={activeSource}
+            index={index}
+            onSelectGroup={(grp) => { setActiveGroup(grp); setView("group"); }}
+            onBack={() => setView("list")}
+          />
+        )}
+        {view === "group" && activeGroup && (
+          <GroupView
+            group={activeGroup}
+            source={activeSource}
+            index={index}
+            onSelectSeries={handleSelectSeries}
+            onSelectBook={(book, items) => { setActiveBook({ book, items }); setView("book"); }}
+            onBack={() => setView("source")}
+          />
+        )}
+        {view === "book" && activeBook && (
+          <BookView
+            book={activeBook.book}
+            items={activeBook.items}
+            onSelectSeries={handleSelectSeries}
+            onBack={() => setView("group")}
+          />
         )}
         {view === "series" && selectedSeries && (
           <SeriesDetail
             series={selectedSeries}
             onStartDay={handleStartDay}
-            onBack={onBack}
+            onBack={() => setView(activeBook ? "book" : activeGroup ? "group" : "list")}
           />
         )}
         {view === "scripture-guided" && activeDay && (

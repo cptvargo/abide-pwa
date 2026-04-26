@@ -2,99 +2,41 @@
   "seriesTitle": "Genesis: The Story Begins",
   "subtitle": "Creation, Humanity, and the First Fracture",
   "videoId": "GQI72THyO5I",
-  "description": "Genesis 1–11 lays the foundation for everything. Watch the Bible Project's animated overview of these chapters, then spend three days sitting with what it means — for creation, for the human condition, and for you.",
+  "description": "Genesis 1–11 lays the foundation for everything. Watch the Bible Project's animated overview, then sit with what it means — for creation, for the human condition, and for you.",
   "aboutSource": {
     "name": "The Bible Project",
-    "description": "The Bible Project creates free animated videos, podcasts, and educational resources that explore the Bible as a unified story leading to Jesus. Their goal is to help people read the Bible with depth and clarity.",
+    "description": "The Bible Project creates free animated videos, podcasts, and educational resources that explore the Bible as a unified story leading to Jesus.",
     "link": "https://bibleproject.com/"
   },
   "days": [
     {
-      "day": 1,
-      "title": "Made to Reflect",
-      "theme": "The Image of God",
-      "center": "Set down whatever you're carrying from the day. This story begins before any of your problems existed — and it begins with you.",
-      "watchPrompt": "As you think back on the video, notice how it frames 'image of God' — not as a compliment, but as a vocation. Being made in God's image means being placed in creation to represent him, not just inhabit it.",
-      "reflectionQuestion": "If you genuinely believed you were made to reflect God's character into the world, how would that change the way you treat yourself and the people around you today?",
-      "scripture": {
-        "reference": "Genesis 1:26-27",
-        "text": "Then God said, 'Let us make human beings in our image, after our likeness — to have authority over the fish of the sea, the birds of the sky, and all living creatures.' So God created humanity in his own image; in the image of God he created them — male and female he created them."
-      },
-      "crossReferences": [
-        {
-          "reference": "Psalm 8:4-6",
-          "reason": "David marvels at why God would entrust such dignity and authority to fragile human beings — deepening the weight of what Genesis 1 declares about our purpose."
-        },
-        {
-          "reference": "Colossians 1:15",
-          "reason": "Jesus is called the image of the invisible God — the perfect fulfillment and restoration of what humanity was always meant to be."
-        },
-        {
-          "reference": "Genesis 2:15",
-          "reason": "The mandate to tend and keep the garden shows what image-bearing looks like in practice: stewardship and care, not domination."
-        }
+      "id": "genesis-p1-day1",
+      "title": "Genesis, Part 1",
+      "subtitle": "In the Beginning",
+      "crossRefPills": [
+        "Genesis 1:1",
+        "Genesis 1:26-27",
+        "Genesis 3:15",
+        "John 1:1-3"
       ],
-      "abideInsight": "Being made in God's image isn't a status you achieve — it's a calling you carry. God didn't create humanity as an afterthought; he created us as the climax of creation, appointed to represent him on earth. Every person you encounter today bears the same imprint of the divine that you do. The question Genesis raises isn't whether you have worth — it's whether you're living like it's true.",
-      "actionStep": "Before your next conversation today — with a coworker, family member, or stranger — pause for one second and remind yourself that this person bears God's image. Let that awareness change how you listen to them.",
-      "prayer": "God, you made me in your image and I rarely live like that's true. Today, let me see myself and others the way you do — not as problems to manage, but as people who carry your mark. Help me reflect you in the small moments."
-    },
-    {
-      "day": 2,
-      "title": "The Fracture",
-      "theme": "Sin and the Broken Trust",
-      "center": "This is a heavy story. Don't rush it. Where in your life are you most aware of something being wrong?",
-      "watchPrompt": "Think back to how the video handled the fall — it wasn't dramatic. Notice how the serpent's question subtly reframes God's character, and what happens to human perception when that reframe takes hold.",
-      "reflectionQuestion": "Where in your life are you currently trusting your own definition of good and right over what God has said — and what is that costing you?",
-      "scripture": {
-        "reference": "Genesis 3:4-6",
-        "text": "The serpent said to the woman, 'You will not die. God knows that when you eat of it your eyes will be opened — you will be like God, knowing good and evil.' When the woman saw that the tree was good for food, beautiful to look at, and desirable for gaining wisdom, she took from it and ate. She also gave some to her husband who was with her, and he ate."
+      "reflection": {
+        "prompt": "From everything you just watched — what moment stayed with you most?",
+        "choices": [
+          {
+            "label": "The image I was made to carry",
+            "deepQuestion": "If you truly carry God's image, what would change about how you see yourself — not just today, but in the moments when you feel least seen or most forgotten?"
+          },
+          {
+            "label": "How quickly trust broke",
+            "deepQuestion": "Where in your own life do you recognize that same quiet move — reaching for something that looks good, that bypasses trust in God? What is that costing you right now?"
+          },
+          {
+            "label": "That God didn't walk away",
+            "deepQuestion": "Has there been a season where everything felt broken? What does it mean to you — today — that God moved toward that brokenness instead of away from it?"
+          }
+        ]
       },
-      "crossReferences": [
-        {
-          "reference": "Romans 5:12",
-          "reason": "Paul traces the entire human condition — death, brokenness, the need for redemption — back to this single act of mistrust in the garden."
-        },
-        {
-          "reference": "James 1:14-15",
-          "reason": "James describes how temptation still works: desire conceives, then sin is born. The Genesis 3 pattern is the pattern today."
-        },
-        {
-          "reference": "Isaiah 53:6",
-          "reason": "The prophet captures the essence of sin as turning to our own way — which is exactly what the garden scene portrays at its root."
-        }
-      ],
-      "abideInsight": "The serpent's move wasn't to make evil look evil — it was to make evil look reasonable. The fall wasn't a moment of dramatic rebellion; it was a quiet decision to trust a different source of truth. At its root, sin is a relational fracture before it's ever a behavioral failure. Genesis 3 reveals that the human problem isn't primarily a list of wrong actions — it's a broken orientation toward God. We are still eating from that tree whenever we decide we know better.",
-      "actionStep": "Identify one area of your life where you've been defining 'good' on your own terms — a decision, a habit, a relationship you haven't brought to God honestly. Sit with it today and ask: what would it look like to trust God's word here instead of my own judgment?",
-      "prayer": "God, I confess that I do this — I take what looks good, what feels right, what seems wise, and I act without asking you first. Forgive me. I don't want to trust my own definition of good anymore. Teach me to trust yours."
-    },
-    {
-      "day": 3,
-      "title": "Grace After Ruin",
-      "theme": "Covenant and New Beginnings",
-      "center": "Think of a season in your life that felt like everything was being washed away. Bring that memory here. God has something to say to it.",
-      "watchPrompt": "Recall how the video framed the flood — not just as judgment, but as reset. Notice that God initiates the covenant with Noah; Noah doesn't ask for it. What does that reveal about how God operates?",
-      "reflectionQuestion": "Have you experienced God's faithfulness arriving on the other side of something that felt like destruction? What did that season reveal to you about who God is?",
-      "scripture": {
-        "reference": "Genesis 9:11-13",
-        "text": "God said, 'I am establishing my covenant with you: never again will all life be cut off by floodwaters, and never again will a flood destroy the earth.' And God said, 'This is the sign of the covenant I am making between me and you and every living creature for all generations to come — I have set my bow in the clouds, and it will be the sign of this covenant between me and the earth.'"
-      },
-      "crossReferences": [
-        {
-          "reference": "Isaiah 54:9-10",
-          "reason": "God references the flood covenant directly — promising that his covenant love is more unshakeable than the mountains themselves."
-        },
-        {
-          "reference": "1 Peter 3:20-21",
-          "reason": "Peter connects the flood to baptism — both involve passing through judgment into new life on the other side."
-        },
-        {
-          "reference": "Revelation 4:3",
-          "reason": "The rainbow encircling God's throne in Revelation echoes this covenant sign — it is still present and active in the final vision of Scripture."
-        }
-      ],
-      "abideInsight": "God's covenant after the flood wasn't earned by Noah's righteousness — it was given freely before Noah had done anything to deserve it. That's what makes it a covenant rather than a contract. The rainbow wasn't a reward; it was a promise God made to himself on behalf of all creation. This is the pattern that runs through the entire Bible: God consistently moves toward a broken world with grace before anyone has cleaned themselves up.",
-      "actionStep": "Write down one moment — however small — when God showed up with grace or faithfulness after a hard chapter. If you can't think of one, write an honest prayer asking God to help you see where he has been faithful in your story even when you missed it.",
-      "prayer": "God, you keep promises I didn't deserve. Thank you for the ways your faithfulness has followed me through seasons I thought were hopeless. Help me trust that your covenant holds — even now, in whatever I'm walking through."
+      "abide": "God, you spoke the world into being and called it good. You made us to carry your image — not as a title, but as a calling. And when we broke that, you didn't erase us. You came toward us. Today we want to live like that's true — that we bear your mark, and that grace is already moving."
     }
   ]
 }
