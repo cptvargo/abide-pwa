@@ -81,5 +81,65 @@
     "seriesFile": "series.json",
     "sourceLink": "https://bibleproject.com/",
     "coverVideoId": "F4isSyennFo"
+  },
+  {
+    "id": "exodus-part-1",
+    "title": "Exodus: Rescue from Slavery",
+    "subtitle": "Egypt, Plagues, and the Red Sea",
+    "author": "The Bible Project",
+    "dayCount": 1,
+    "format": "video-daily",
+    "description": "God hears the cry of a people in chains and comes down. Exodus Part 1 follows Israel from Egypt through the wilderness — and reveals a God who rescues, not because they deserved it, but because he heard them.",
+    "seriesFile": "series.json",
+    "sourceLink": "https://bibleproject.com/",
+    "coverVideoId": "jH_aojNJM3E"
+  },
+  {
+    "id": "exodus-part-2",
+    "title": "Exodus: Covenant, Law & the Tabernacle",
+    "subtitle": "Sinai, the Law, and God's Dwelling Place",
+    "author": "The Bible Project",
+    "dayCount": 1,
+    "format": "video-daily",
+    "description": "After the rescue comes the relationship. Exodus Part 2 follows Israel to Sinai where God gives his law as a covenant — and then chooses to dwell among a people who broke it almost immediately.",
+    "seriesFile": "series.json",
+    "sourceLink": "https://bibleproject.com/",
+    "coverVideoId": "oNpTha80yyE"
+  },
+  {
+    "id": "leviticus",
+    "title": "Leviticus",
+    "subtitle": "Holiness and the Way to God",
+    "author": "The Bible Project",
+    "dayCount": 1,
+    "format": "video-daily",
+    "description": "Leviticus isn't a rulebook — it's a blueprint for how a holy God can live with an unholy people. Every sacrifice points forward to the one that ended all sacrifices.",
+    "seriesFile": "series.json",
+    "sourceLink": "https://bibleproject.com/",
+    "coverVideoId": "IJ-FekWUZzE"
+  },
+  {
+    "id": "numbers",
+    "title": "Numbers",
+    "subtitle": "Wilderness, Rebellion & Faithfulness",
+    "author": "The Bible Project",
+    "dayCount": 1,
+    "format": "video-daily",
+    "description": "Numbers is mostly a story of what happens when God's people refuse to trust him. But underneath the rebellion is a God who is slow to anger and refuses to let go.",
+    "seriesFile": "series.json",
+    "sourceLink": "https://bibleproject.com/",
+    "coverVideoId": "tp5MIrMZFqo"
+  },
+  {
+    "id": "deuteronomy",
+    "title": "Deuteronomy",
+    "subtitle": "Choose Life — Love God with Everything",
+    "author": "The Bible Project",
+    "dayCount": 1,
+    "format": "video-daily",
+    "description": "Standing at the edge of the promised land, Moses gives his final charge: remember what God has done, love him with everything, and choose life.",
+    "seriesFile": "series.json",
+    "sourceLink": "https://bibleproject.com/",
+    "coverVideoId": "q5QEH9bH8AU"
   }
 ]
