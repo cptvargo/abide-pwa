@@ -169,6 +169,20 @@ async function fetchPassage(ref, priority = TRANSLATION_PRIORITY_ADULT) {
 const SCROLLREADER_URL =
   "https://scrollreader.com/audiobook/humility-the-beauty-of-holiness/";
 
+// ── Author metadata ───────────────────────────────────────────────────────────
+const AUTHORS = {
+  "Andrew Murray": {
+    subtitle: "Minister · Devotional Writer",
+    description:
+      "Scottish-born minister (1828–1917) whose writings on humility, prayer, and abiding in Christ have shaped generations of believers.",
+  },
+  "Gavin Todd": {
+    subtitle: "Pastor · Teacher",
+    description:
+      "Pastor and teacher focused on the life of abiding — practical, unhurried formation in the presence of God.",
+  },
+};
+
 // ── Series metadata (no day content — that lives in JSON files) ───────────────
 const SERIES_LIST = [
   {
@@ -186,6 +200,7 @@ const SERIES_LIST = [
     title: "From the Inside Out",
     subtitle: "A 14-Day Kids Devotional on Humility",
     author: "ABIDE",
+    groupAuthor: "Andrew Murray",
     authorNote: "Based on the writings of Andrew Murray",
     totalDays: 14,
     hasAudio: false,
@@ -214,6 +229,17 @@ const SERIES_LIST = [
   },
 ];
 
+// ── Author groups (derived from SERIES_LIST, computed once) ──────────────────
+const authorGroups = (() => {
+  const map = new Map();
+  SERIES_LIST.forEach((s) => {
+    const key = s.groupAuthor ?? s.author;
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(s);
+  });
+  return Array.from(map.entries()).map(([author, series]) => ({ author, series }));
+})();
+
 // ── Fetch a single day JSON file ──────────────────────────────────────────────
 async function fetchDay(seriesId, dayNum) {
   const padded = String(dayNum).padStart(2, "0");
@@ -232,6 +258,7 @@ export default function DevotionalScreen({ onBack, theme }) {
   const [loadingDay, setLoadingDay] = useState(false);
   const [completedDays, setCompletedDays] = useState([]);
   const [justCompleted, setJustCompleted] = useState(false);
+  const [activeAuthor, setActiveAuthor] = useState(null);
   const [scriptureResult, setScriptureResult] = useState(null);
   const [scripturesResults, setScripturesResults] = useState([]);
   const [loadingScripture, setLoadingScripture] = useState(false);
@@ -313,26 +340,8 @@ export default function DevotionalScreen({ onBack, theme }) {
         <style>{dynamicCSS}</style>
         <div style={s.header}>
           <button onClick={onBack} style={s.backBtn}>
-            <span
-              style={{
-                fontSize: 13,
-                color: "var(--text-accent)",
-                opacity: 0.7,
-              }}
-            >
-              ‹
-            </span>
-            <span
-              style={{
-                fontSize: 12,
-                letterSpacing: "0.04em",
-                color: "var(--text-accent)",
-                opacity: 0.7,
-                fontFamily: "var(--font-ui)",
-              }}
-            >
-              Back
-            </span>
+            <span style={{ fontSize: 13, color: "var(--text-accent)", opacity: 0.7 }}>‹</span>
+            <span style={{ fontSize: 12, letterSpacing: "0.04em", color: "var(--text-accent)", opacity: 0.7, fontFamily: "var(--font-ui)" }}>Back</span>
           </button>
           <div style={{ marginTop: 16 }}>
             <div style={s.eyebrow}>✦ &nbsp;Devotionals</div>
@@ -341,110 +350,40 @@ export default function DevotionalScreen({ onBack, theme }) {
           </div>
         </div>
 
-        <div
-          ref={scrollRef}
-          className="dv-scroll"
-          style={{ flex: 1, overflowY: "auto", padding: "20px 24px 48px" }}
-        >
-          {SERIES_LIST.map((series) => {
-            const done = getCompletedDays(series.id);
-            const pct = Math.round((done.length / series.totalDays) * 100);
+        <div ref={scrollRef} className="dv-scroll" style={{ flex: 1, overflowY: "auto", padding: "20px 24px 48px" }}>
+          {authorGroups.map((group) => {
+            const totalDays = group.series.reduce((sum, s) => sum + s.totalDays, 0);
+            const completedCount = group.series.reduce((sum, s) => sum + getCompletedDays(s.id).length, 0);
+            const pct = totalDays > 0 ? Math.round((completedCount / totalDays) * 100) : 0;
+            const meta = AUTHORS[group.author];
             return (
               <button
-                key={series.id}
-                onClick={() => openSeries(series)}
+                key={group.author}
+                onClick={() => { setActiveAuthor(group.author); setView("author"); }}
                 className="dv-card"
                 style={s.seriesCard}
               >
                 <div style={{ marginBottom: 12 }}>
                   <div style={s.eyebrow}>
-                    {series.totalDays} Days · {series.author}
+                    {group.series.length} {group.series.length === 1 ? "Devotional" : "Devotionals"} · {totalDays} Days
                   </div>
-                  <h2
-                    style={{
-                      fontFamily: "var(--font-ui)",
-                      fontSize: 20,
-                      fontWeight: 400,
-                      color: "var(--text-primary)",
-                      letterSpacing: "0.02em",
-                      margin: "6px 0 4px",
-                    }}
-                  >
-                    {series.title}
+                  <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 22, fontWeight: 300, color: "var(--text-primary)", letterSpacing: "0.02em", margin: "6px 0 6px" }}>
+                    {group.author}
                   </h2>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontStyle: "italic",
-                      fontSize: 13,
-                      color: "var(--text-secondary)",
-                      opacity: 0.7,
-                      lineHeight: 1.6,
-                      margin: 0,
-                    }}
-                  >
-                    {series.subtitle}
-                  </p>
+                  {meta?.description && (
+                    <p style={{ fontFamily: "var(--font-body)", fontStyle: "italic", fontSize: 13, color: "var(--text-secondary)", opacity: 0.7, lineHeight: 1.6, margin: 0 }}>
+                      {meta.description}
+                    </p>
+                  )}
                 </div>
-                <p
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 13,
-                    color: "var(--text-secondary)",
-                    opacity: 0.7,
-                    lineHeight: 1.7,
-                    margin: "0 0 16px",
-                  }}
-                >
-                  {series.description}
-                </p>
-                <div
-                  style={{
-                    height: 2,
-                    background: "var(--border-subtle)",
-                    borderRadius: 2,
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    style={{
-                      height: "100%",
-                      width: `${pct}%`,
-                      background: "var(--text-accent)",
-                      opacity: 0.5,
-                      borderRadius: 2,
-                      transition: "width 0.4s ease",
-                    }}
-                  />
+                <div style={{ height: 2, background: "var(--border-subtle)", borderRadius: 2, overflow: "hidden", marginTop: 14 }}>
+                  <div style={{ height: "100%", width: `${pct}%`, background: "var(--text-accent)", opacity: 0.5, borderRadius: 2, transition: "width 0.4s ease" }} />
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginTop: 6,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "var(--font-ui)",
-                      fontSize: 10,
-                      letterSpacing: "0.1em",
-                      color: "var(--text-accent)",
-                      opacity: 0.5,
-                    }}
-                  >
-                    {done.length} of {series.totalDays} days complete
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
+                  <span style={{ fontFamily: "var(--font-ui)", fontSize: 10, letterSpacing: "0.1em", color: "var(--text-accent)", opacity: 0.5 }}>
+                    {completedCount} of {totalDays} days complete
                   </span>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-ui)",
-                      fontSize: 10,
-                      color: "var(--text-accent)",
-                      opacity: 0.6,
-                    }}
-                  >
-                    Begin →
-                  </span>
+                  <span style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-accent)", opacity: 0.6 }}>View →</span>
                 </div>
               </button>
             );
@@ -452,6 +391,62 @@ export default function DevotionalScreen({ onBack, theme }) {
         </div>
       </div>
     );
+
+  /* ══════════════════════════════════════════════════
+     AUTHOR — Series list for one author
+  ══════════════════════════════════════════════════ */
+  if (view === "author" && activeAuthor) {
+    const group = authorGroups.find((g) => g.author === activeAuthor);
+    const meta = AUTHORS[activeAuthor];
+    return (
+      <div style={s.screen}>
+        <style>{dynamicCSS}</style>
+        <div style={s.header}>
+          <button onClick={() => setView("library")} style={s.backBtn}>
+            <span style={{ fontSize: 13, color: "var(--text-accent)", opacity: 0.7 }}>‹</span>
+            <span style={{ fontSize: 12, letterSpacing: "0.04em", color: "var(--text-accent)", opacity: 0.7, fontFamily: "var(--font-ui)" }}>Devotionals</span>
+          </button>
+          <div style={{ marginTop: 16 }}>
+            <div style={s.eyebrow}>✦ &nbsp;Author</div>
+            <h1 style={s.pageTitle}>{activeAuthor}</h1>
+            <p style={s.pageSub}>{meta?.subtitle ?? `${group.series.length} devotional series`}</p>
+          </div>
+        </div>
+
+        <div ref={scrollRef} className="dv-scroll" style={{ flex: 1, overflowY: "auto", padding: "20px 24px 48px" }}>
+          {group.series.map((series) => {
+            const done = getCompletedDays(series.id);
+            const pct = Math.round((done.length / series.totalDays) * 100);
+            return (
+              <button key={series.id} onClick={() => openSeries(series)} className="dv-card" style={s.seriesCard}>
+                <div style={{ marginBottom: 12 }}>
+                  <div style={s.eyebrow}>{series.totalDays} Days{series.authorNote ? ` · ${series.authorNote}` : ""}</div>
+                  <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 20, fontWeight: 400, color: "var(--text-primary)", letterSpacing: "0.02em", margin: "6px 0 4px" }}>
+                    {series.title}
+                  </h2>
+                  <p style={{ fontFamily: "var(--font-body)", fontStyle: "italic", fontSize: 13, color: "var(--text-secondary)", opacity: 0.7, lineHeight: 1.6, margin: 0 }}>
+                    {series.subtitle}
+                  </p>
+                </div>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--text-secondary)", opacity: 0.7, lineHeight: 1.7, margin: "0 0 16px" }}>
+                  {series.description}
+                </p>
+                <div style={{ height: 2, background: "var(--border-subtle)", borderRadius: 2, overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: `${pct}%`, background: "var(--text-accent)", opacity: 0.5, borderRadius: 2, transition: "width 0.4s ease" }} />
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
+                  <span style={{ fontFamily: "var(--font-ui)", fontSize: 10, letterSpacing: "0.1em", color: "var(--text-accent)", opacity: 0.5 }}>
+                    {done.length} of {series.totalDays} days complete
+                  </span>
+                  <span style={{ fontFamily: "var(--font-ui)", fontSize: 10, color: "var(--text-accent)", opacity: 0.6 }}>Begin →</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   /* ══════════════════════════════════════════════════
      SERIES — Day list
@@ -465,26 +460,10 @@ export default function DevotionalScreen({ onBack, theme }) {
       <div style={s.screen}>
         <style>{dynamicCSS}</style>
         <div style={s.header}>
-          <button onClick={() => setView("library")} style={s.backBtn}>
-            <span
-              style={{
-                fontSize: 13,
-                color: "var(--text-accent)",
-                opacity: 0.7,
-              }}
-            >
-              ‹
-            </span>
-            <span
-              style={{
-                fontSize: 12,
-                letterSpacing: "0.04em",
-                color: "var(--text-accent)",
-                opacity: 0.7,
-                fontFamily: "var(--font-ui)",
-              }}
-            >
-              Devotionals
+          <button onClick={() => setView("author")} style={s.backBtn}>
+            <span style={{ fontSize: 13, color: "var(--text-accent)", opacity: 0.7 }}>‹</span>
+            <span style={{ fontSize: 12, letterSpacing: "0.04em", color: "var(--text-accent)", opacity: 0.7, fontFamily: "var(--font-ui)" }}>
+              {activeAuthor ?? "Devotionals"}
             </span>
           </button>
           <div style={{ marginTop: 16 }}>
