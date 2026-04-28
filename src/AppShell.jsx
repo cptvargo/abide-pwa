@@ -688,21 +688,27 @@ function setCached(q, translation, data) {
         q.toLowerCase().trim(),
       JSON.stringify(data),
     );
-  } catch {}
+  } catch { /* storage full */ }
 }
 
 /* ===============================
-   Search Panel (Scripture + Seek)
+   Search Panel — YouVersion-style
 ================================ */
+const TOPIC_CHIPS = [
+  "Grace", "Faith", "Hope", "Love", "Peace", "Prayer", "Salvation",
+  "Holy Spirit", "Redemption", "Covenant", "Abide", "Glory", "Mercy",
+  "Forgiveness", "Righteousness", "Wisdom", "Strength", "Joy", "Trust",
+];
+
 function SearchPanel({ open, onClose, onNavigate, translation }) {
-  const [tab, setTab] = useState("scripture"); // "scripture" | "seek" | "highlights"
+  const [filter, setFilter] = useState("all"); // "all" | "bible" | "topics" | "highlights"
 
   // Scripture search state
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
   const inputRef = useRef(null);
-  const seekInputRef = useRef(null);
   const debounceRef = useRef(null);
 
   // Seek state
@@ -713,9 +719,8 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
   const [seekView, setSeekView] = useState("input"); // "input" | "result"
   const [fromCache, setFromCache] = useState(false);
 
-  // Highlights tab state
+  // Highlights state
   const [highlightTag, setHighlightTag] = useState("All");
-  const [highlightSearch, setHighlightSearch] = useState("");
 
   function getTagColor(tag) {
     const colors = JSON.parse(localStorage.getItem("customTagColors") || "{}");
@@ -724,23 +729,22 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
 
   useEffect(() => {
     if (!open) {
-      setQuery("");
-      setResults([]);
-      setSeekQuery("");
-      setSeekResult(null);
-      setSeekView("input");
-      setTab("scripture");
-      setHighlightTag("All");
-      setHighlightSearch("");
+      setTimeout(() => {
+        setQuery("");
+        setResults([]);
+        setSuggestions([]);
+        setSeekQuery("");
+        setSeekResult(null);
+        setSeekView("input");
+        setFilter("all");
+        setHighlightTag("All");
+      }, 0);
     }
   }, [open]);
 
   useEffect(() => {
-    if (open && tab === "scripture")
-      setTimeout(() => inputRef.current?.focus(), 100);
-    if (open && tab === "seek")
-      setTimeout(() => seekInputRef.current?.focus(), 100);
-  }, [open, tab]);
+    if (open) setTimeout(() => inputRef.current?.focus(), 100);
+  }, [open]);
 
   useEffect(() => { warmIndex(translation); }, [translation]);
 
@@ -839,7 +843,8 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                 ref: crRef,
                 bookId: parsed.book.id,
                 chapter: parsed.chapter,
-                snippet: highlightSnippet(crText, q.trim().split(/\s+/)[0] ?? ""),
+                text: crText,
+                snippet: highlightSnippet(crText, q.trim()),
                 isCrossRef: true,
                 crossRefFrom: top.ref,
                 score: 0,
@@ -857,30 +862,80 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
     setSearching(false);
   }
 
-  function highlightSnippet(text, term) {
-    const idx = text.toLowerCase().indexOf(term);
-    if (idx === -1) return { pre: "", match: "", post: text.slice(0, 160) };
-    let start = Math.max(0, idx - 60);
-    while (start > 0 && text[start] !== " ") start--;
-    // When the match is near the start, show the full verse rather than
-    // cutting off mid-sentence with a fixed character window.
-    let end = start === 0 ? text.length : Math.min(text.length, idx + term.length + 120);
-    while (end < text.length && text[end] !== " ") end++;
-    const pre = (start > 0 ? "..." : "") + text.slice(start, idx).trimStart();
-    const match = text.slice(idx, idx + term.length);
-    const post =
-      text.slice(idx + term.length, end) + (end < text.length ? "..." : "");
-    return { pre, match, post };
-  }
+  const SEARCH_STOP_WORDS = new Set([
+    "a","an","and","are","as","at","be","been","being","but","by","do","did",
+    "for","from","had","has","have","he","her","his","how","i","if","in","into",
+    "is","it","its","me","may","might","my","no","not","of","on","or","our",
+    "out","shall","she","should","so","than","that","the","their","them","then",
+    "there","these","they","this","those","to","up","us","was","we","were",
+    "what","when","where","who","will","with","would","you","your",
+  ]);
 
-  function checkBookNameQuery(val) {
-    const q = val.trim().toLowerCase();
-    for (const section of BIBLE_SECTIONS) {
-      for (const book of section.books) {
-        if (book.name.toLowerCase() === q || book.id === q) return book;
+  function highlightSnippet(text, query) {
+    const lower = text.toLowerCase();
+
+    // 1. Try full phrase
+    let idx = lower.indexOf(query.toLowerCase());
+    let matchLen = query.length;
+
+    // 2. Fall back to best non-stop word
+    if (idx === -1) {
+      const words = query.split(/\s+/).sort((a, b) => {
+        const aStop = SEARCH_STOP_WORDS.has(a.toLowerCase());
+        const bStop = SEARCH_STOP_WORDS.has(b.toLowerCase());
+        if (aStop !== bStop) return aStop ? 1 : -1;
+        return b.length - a.length;
+      });
+      for (const w of words) {
+        if (w.length < 3) continue;
+        idx = lower.indexOf(w.toLowerCase());
+        if (idx !== -1) { matchLen = w.length; break; }
       }
     }
-    return null;
+
+    if (idx === -1) return { pre: "", match: "", post: text.slice(0, 160) };
+
+    let start = Math.max(0, idx - 60);
+    while (start > 0 && text[start] !== " ") start--;
+    let end = start === 0 ? text.length : Math.min(text.length, idx + matchLen + 120);
+    while (end < text.length && text[end] !== " ") end++;
+    return {
+      pre: (start > 0 ? "..." : "") + text.slice(start, idx).trimStart(),
+      match: text.slice(idx, idx + matchLen),
+      post: text.slice(idx + matchLen, end) + (end < text.length ? "..." : ""),
+    };
+  }
+
+  function buildSuggestions(raw) {
+    if (!raw || raw.trim().length < 2) return [];
+    const lower = raw.trim().toLowerCase();
+    const out = [];
+
+    // Verse reference pattern → navigate directly
+    const refPat = /^(\d?\s?[a-z]+)\s*(\d+)\s*[:\s]\s*(\d+)/i;
+    if (refPat.test(raw.trim())) {
+      out.push({ type: "ref", label: raw.trim() });
+      return out;
+    }
+
+    // Book name prefix match
+    for (const { books } of BIBLE_SECTIONS) {
+      for (const book of books) {
+        if (book.name.toLowerCase().startsWith(lower) || book.id.startsWith(lower)) {
+          out.push({ type: "book", label: book.name, book });
+          if (out.length >= 3) return out;
+        }
+      }
+    }
+
+    // Topic chips
+    for (const topic of TOPIC_CHIPS) {
+      if (topic.toLowerCase().includes(lower)) {
+        out.push({ type: "topic", label: topic });
+        if (out.length >= 6) break;
+      }
+    }
+    return out;
   }
 
   function handleQueryChange(val) {
@@ -888,28 +943,24 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
     clearTimeout(debounceRef.current);
     if (!val.trim()) {
       setResults([]);
+      setSuggestions([]);
       return;
     }
+    setSuggestions(buildSuggestions(val));
     debounceRef.current = setTimeout(() => {
-      const bookMatch = checkBookNameQuery(val);
-      if (bookMatch) {
-        setResults([
-          {
-            ref: bookMatch.name,
-            bookId: bookMatch.id,
-            chapter: 1,
-            isBookNav: true,
-            snippet: {
-              pre: "",
-              match: bookMatch.name,
-              post: " - " + bookMatch.chapters + " chapters",
-            },
-          },
-        ]);
-        return;
+      // Direct book nav
+      const lower = val.trim().toLowerCase();
+      for (const { books } of BIBLE_SECTIONS) {
+        for (const book of books) {
+          if (book.name.toLowerCase() === lower || book.id === lower) {
+            setResults([{ ref: book.name, bookId: book.id, chapter: 1, isBookNav: true, text: `${book.chapters} chapters`, snippet: { pre: "", match: book.name, post: ` · ${book.chapters} chapters` } }]);
+            setSuggestions([]);
+            return;
+          }
+        }
       }
       doSearch(val);
-    }, 300);
+    }, 350);
   }
 
   // ── Seek word study ───────────────────────────────────────────────────────
@@ -959,479 +1010,179 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
 
   if (!open) return null;
 
-  const tabStyle = (active) => ({
-    flex: 1,
-    padding: "11px 0",
-    background: "transparent",
-    border: "none",
-    borderBottom: active
-      ? "2px solid var(--text-accent)"
-      : "2px solid transparent",
-    fontFamily: "var(--font-ui)",
-    fontSize: 11,
-    letterSpacing: "0.12em",
-    textTransform: "uppercase",
-    cursor: "pointer",
-    color: active ? "var(--text-accent)" : "var(--text-secondary)",
-    opacity: active ? 1 : 0.55,
-    transition: "color 0.15s, border-color 0.15s",
-    marginBottom: -1,
-    WebkitTapHighlightColor: "transparent",
-  });
+  const FILTERS = [
+    { id: "all",        label: "All" },
+    { id: "bible",      label: "Bible" },
+    { id: "topics",     label: "Topics" },
+    { id: "highlights", label: "Highlights" },
+  ];
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 80,
-        background: "var(--bg-app)",
-        display: "flex",
-        flexDirection: "column",
-        animation: "searchSlideUp 0.32s cubic-bezier(0.4,0,0.2,1)",
-      }}
-    >
-      <style>{`@keyframes searchSlideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }`}</style>
+    <div style={{ position:"fixed", inset:0, zIndex:80, background:"var(--bg-app)", display:"flex", flexDirection:"column", animation:"searchSlideUp 0.32s cubic-bezier(0.4,0,0.2,1)" }}>
+      <style>{`
+        @keyframes searchSlideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+        @keyframes shimmer { 0%,100%{opacity:0.35} 50%{opacity:0.75} }
+      `}</style>
 
-      {/* Header */}
-      <div
-        style={{
-          padding: "calc(env(safe-area-inset-top) + 12px) 20px 0",
-          borderBottom: "1px solid rgba(255,255,255,0.07)",
-          flexShrink: 0,
-        }}
-      >
-        {/* Input row */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            marginBottom: 12,
-          }}
-        >
-          {tab !== "highlights" && (
-            <div
-              style={{
-                flex: 1,
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                borderRadius: 12,
-                padding: "10px 14px",
+      {/* ── Header ── */}
+      <div style={{ padding:"calc(env(safe-area-inset-top) + 12px) 20px 0", borderBottom:"1px solid rgba(255,255,255,0.07)", flexShrink:0 }}>
+        {/* Input + Cancel */}
+        <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:10 }}>
+          <div style={{ flex:1, display:"flex", alignItems:"center", gap:10, background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:12, padding:"10px 14px" }}>
+            <SearchIcon size={16} />
+            <input
+              ref={inputRef}
+              value={filter === "topics" ? seekQuery : query}
+              onChange={(e) => {
+                if (filter === "topics") {
+                  setSeekQuery(e.target.value);
+                  if (seekView === "result") { setSeekView("input"); setSeekResult(null); }
+                } else {
+                  handleQueryChange(e.target.value);
+                }
               }}
-            >
-              <SearchIcon size={16} />
-              {tab === "scripture" ? (
-                <input
-                  ref={inputRef}
-                  value={query}
-                  onChange={(e) => handleQueryChange(e.target.value)}
-                  placeholder={`Search ${translation}…`}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    outline: "none",
-                    color: "var(--text-primary)",
-                    fontSize: 15,
-                    fontFamily: "var(--font-ui)",
-                    width: "100%",
-                    caretColor: "var(--text-accent)",
-                  }}
-                />
-              ) : (
-                <input
-                  ref={seekInputRef}
-                  value={seekQuery}
-                  onChange={(e) => setSeekQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSeek()}
-                  placeholder="e.g. Grace, Abide in Christ, Behold…"
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    outline: "none",
-                    color: "var(--text-primary)",
-                    fontSize: 15,
-                    fontFamily: "var(--font-ui)",
-                    width: "100%",
-                    caretColor: "var(--text-accent)",
-                  }}
-                />
-              )}
-              {(tab === "scripture" ? query : seekQuery) && (
-                <button
-                  onClick={() =>
-                    tab === "scripture"
-                      ? (setQuery(""), setResults([]))
-                      : (setSeekQuery(""),
-                        setSeekResult(null),
-                        setSeekView("input"))
-                  }
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "var(--text-secondary)",
-                    fontSize: 16,
-                    lineHeight: 1,
-                    padding: 0,
-                  }}
-                >
-                  ×
-                </button>
-              )}
-            </div>
-          )}
-          {tab === "seek" && seekQuery && seekView === "input" && (
-            <button
-              onClick={() => handleSeek()}
-              style={{
-                background: "rgba(203,178,124,0.14)",
-                border: "1px solid rgba(203,178,124,0.2)",
-                borderRadius: 8,
-                padding: "8px 14px",
-                color: "var(--text-accent)",
-                fontFamily: "var(--font-ui)",
-                fontSize: 11,
-                letterSpacing: "0.1em",
-                cursor: "pointer",
-                flexShrink: 0,
-              }}
-            >
-              SEEK
-            </button>
-          )}
-          <button
-            onClick={onClose}
-            style={{
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              color: "var(--text-accent)",
-              fontSize: 14,
-              fontWeight: 600,
-              fontFamily: "var(--font-ui)",
-              flexShrink: 0,
-            }}
-          >
-            Cancel
-          </button>
+              onKeyDown={(e) => filter === "topics" && e.key === "Enter" && seekQuery.trim() && handleSeek()}
+              placeholder={filter === "topics" ? "e.g. Grace, Faith, Holy Spirit…" : `Search ${translation}…`}
+              style={{ background:"transparent", border:"none", outline:"none", color:"var(--text-primary)", fontSize:16, fontFamily:"var(--font-ui)", width:"100%", caretColor:"var(--text-accent)" }}
+            />
+            {(filter === "topics" ? seekQuery : query) && (
+              <button
+                onClick={() => filter === "topics"
+                  ? (setSeekQuery(""), setSeekResult(null), setSeekView("input"))
+                  : (setQuery(""), setResults([]), setSuggestions([]))}
+                style={{ background:"transparent", border:"none", cursor:"pointer", color:"var(--text-secondary)", fontSize:18, lineHeight:1, padding:0 }}
+              >×</button>
+            )}
+          </div>
+          <button onClick={onClose} style={{ background:"transparent", border:"none", cursor:"pointer", color:"var(--text-accent)", fontSize:14, fontWeight:600, fontFamily:"var(--font-ui)", flexShrink:0 }}>Cancel</button>
         </div>
 
-        {/* Tabs */}
-        <div
-          style={{
-            display: "flex",
-            borderBottom: "1px solid rgba(255,255,255,0.07)",
-          }}
-        >
-          <button
-            style={tabStyle(tab === "scripture")}
-            onClick={() => setTab("scripture")}
-          >
-            Scripture
-          </button>
-          <button
-            style={tabStyle(tab === "seek")}
-            onClick={() => setTab("seek")}
-          >
-            Seek
-          </button>
-          <button
-            style={tabStyle(tab === "highlights")}
-            onClick={() => setTab("highlights")}
-          >
-            Highlights
-          </button>
+        {/* Filter pills */}
+        <div style={{ display:"flex", gap:8, paddingBottom:12, overflowX:"auto", WebkitOverflowScrolling:"touch" }}>
+          {FILTERS.map(({ id, label }) => {
+            const active = filter === id;
+            return (
+              <button key={id} onClick={() => setFilter(id)} style={{
+                padding:"5px 16px", borderRadius:999, flexShrink:0, cursor:"pointer",
+                border: active ? "1px solid var(--text-accent)" : "1px solid rgba(255,255,255,0.1)",
+                background: active ? "rgba(203,178,124,0.12)" : "transparent",
+                color: active ? "var(--text-accent)" : "var(--text-secondary)",
+                fontSize:12, fontWeight:600, fontFamily:"var(--font-ui)", letterSpacing:"0.06em",
+                transition:"all 0.15s", WebkitTapHighlightColor:"transparent",
+              }}>{label}</button>
+            );
+          })}
         </div>
       </div>
 
-      {/* ── SCRIPTURE TAB ── */}
-      {tab === "scripture" && (
-        <div
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            padding: "16px 20px",
-            WebkitOverflowScrolling: "touch",
-          }}
-        >
+      {/* ── Body ── */}
+      <div style={{ flex:1, overflowY:"auto", WebkitOverflowScrolling:"touch" }}>
+
+      {/* BIBLE / ALL */}
+      {(filter === "all" || filter === "bible") && (
+        <div style={{ padding:"12px 20px 40px" }}>
+          {/* Empty state */}
           {!query && (
-            <p
-              style={{
-                textAlign: "center",
-                color: "var(--text-secondary)",
-                fontSize: 14,
-                opacity: 0.55,
-                marginTop: 48,
-                fontFamily: "var(--font-body)",
-                fontStyle: "italic",
-                lineHeight: 1.8,
-              }}
-            >
-              Search across all 66 books
-              <br />
-              in your active translation ({translation})
-            </p>
+            <>
+              <p style={{ textAlign:"center", color:"var(--text-secondary)", fontSize:14, opacity:0.45, marginTop:36, marginBottom:28, fontFamily:"var(--font-body)", fontStyle:"italic", lineHeight:1.8 }}>
+                Search across all 66 books<br />in {translation}
+              </p>
+              <div style={{ fontSize:10, fontWeight:700, letterSpacing:"0.16em", textTransform:"uppercase", color:"var(--text-secondary)", opacity:0.4, marginBottom:10, fontFamily:"var(--font-ui)" }}>Explore Topics</div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+                {TOPIC_CHIPS.slice(0, 12).map(topic => (
+                  <button key={topic} onClick={() => { setFilter("topics"); setSeekQuery(topic); handleSeek(topic); }} style={{ background:"rgba(203,178,124,0.05)", border:"1px solid rgba(203,178,124,0.14)", borderRadius:20, padding:"7px 14px", fontFamily:"var(--font-body)", fontStyle:"italic", fontSize:13, color:"rgba(203,178,124,0.6)", cursor:"pointer", WebkitTapHighlightColor:"transparent" }}>{topic}</button>
+                ))}
+              </div>
+            </>
           )}
+          {/* Typeahead suggestions */}
+          {query && suggestions.length > 0 && !searching && results.length === 0 && (
+            <div style={{ marginTop:4, marginBottom:8 }}>
+              {suggestions.map((s, i) => (
+                <button key={i} onClick={() => {
+                  if (s.type === "book") { onNavigate(s.book.id, 1); onClose(); }
+                  else if (s.type === "topic") { setFilter("topics"); setSeekQuery(s.label); handleSeek(s.label); }
+                  else doSearch(query);
+                }} style={{ display:"flex", alignItems:"center", gap:12, width:"100%", padding:"13px 4px", borderBottom:"1px solid rgba(255,255,255,0.05)", background:"transparent", border:"none", cursor:"pointer", textAlign:"left", WebkitTapHighlightColor:"transparent" }}>
+                  <span style={{ fontSize:15, opacity:0.45, width:22, flexShrink:0 }}>
+                    {s.type === "book" ? "📖" : s.type === "topic" ? "✦" : "→"}
+                  </span>
+                  <span style={{ fontFamily:"var(--font-ui)", fontSize:15, color:"var(--text-primary)", flex:1 }}>{s.label}</span>
+                  <span style={{ fontFamily:"var(--font-ui)", fontSize:11, color:"var(--text-secondary)", opacity:0.45 }}>
+                    {s.type === "book" ? "Book" : s.type === "topic" ? "Topic" : "Verse"}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Searching skeleton */}
           {searching && (
-            <p
-              style={{
-                textAlign: "center",
-                color: "var(--text-secondary)",
-                fontSize: 13,
-                opacity: 0.5,
-                marginTop: 48,
-                fontFamily: "var(--font-ui)",
-              }}
-            >
-              Searching…
-            </p>
+            <div style={{ paddingTop:8 }}>
+              {[85,60,78,50].map((w,i) => (
+                <div key={i} style={{ borderLeft:"3px solid rgba(203,178,124,0.15)", borderRadius:10, padding:"14px 14px", marginBottom:10, background:"rgba(255,255,255,0.03)", animation:"shimmer 1.5s ease infinite", animationDelay:`${i*0.12}s` }}>
+                  <div style={{ height:9, width:`${w*0.45}%`, borderRadius:6, background:"rgba(203,178,124,0.2)", marginBottom:10 }} />
+                  <div style={{ height:8, width:`${w}%`, borderRadius:6, background:"rgba(255,255,255,0.07)", marginBottom:6 }} />
+                  <div style={{ height:8, width:`${w*0.75}%`, borderRadius:6, background:"rgba(255,255,255,0.05)" }} />
+                </div>
+              ))}
+            </div>
           )}
-          {!searching && query && results.length === 0 && (
-            <p
-              style={{
-                textAlign: "center",
-                color: "var(--text-secondary)",
-                fontSize: 13,
-                opacity: 0.5,
-                marginTop: 48,
-                fontFamily: "var(--font-ui)",
-              }}
-            >
-              No results found
-            </p>
+
+          {/* No results */}
+          {!searching && query && results.length === 0 && suggestions.length === 0 && (
+            <p style={{ textAlign:"center", color:"var(--text-secondary)", fontSize:13, opacity:0.5, marginTop:48, fontFamily:"var(--font-ui)" }}>No results found</p>
           )}
-          {!searching && (() => {
-            const primaryResults = results.filter((r) => !r.isCrossRef);
+
+          {/* Results */}
+          {!searching && results.length > 0 && (() => {
+            const primaryResults = results.filter(r => !r.isCrossRef);
             const crossRefsBySource = {};
-            results
-              .filter((r) => r.isCrossRef)
-              .forEach((cr) => {
-                if (!crossRefsBySource[cr.crossRefFrom])
-                  crossRefsBySource[cr.crossRefFrom] = [];
-                crossRefsBySource[cr.crossRefFrom].push(cr);
-              });
-            const pairedSources = new Set(Object.keys(crossRefsBySource).filter(
-              (src) => primaryResults.some((p) => p.ref === src),
-            ));
-            const orphanCrossRefs = results.filter(
-              (r) => r.isCrossRef && !pairedSources.has(r.crossRefFrom),
+            results.filter(r => r.isCrossRef).forEach(cr => {
+              if (!crossRefsBySource[cr.crossRefFrom]) crossRefsBySource[cr.crossRefFrom] = [];
+              crossRefsBySource[cr.crossRefFrom].push(cr);
+            });
+            const pairedSources = new Set(Object.keys(crossRefsBySource).filter(src => primaryResults.some(p => p.ref === src)));
+            const orphanCrossRefs = results.filter(r => r.isCrossRef && !pairedSources.has(r.crossRefFrom));
+
+            const getVerseText = r => r.text || (typeof r.snippet === "object" ? r.snippet.pre + r.snippet.match + r.snippet.post : r.snippet || "");
+
+            const NavBtn = ({ r }) => (
+              <button onClick={() => { onNavigate(r.bookId, r.chapter); onClose(); }} style={{ background:"transparent", border:"1px solid rgba(203,178,124,0.25)", borderRadius:8, padding:"6px 14px", color:"var(--text-accent)", fontSize:11, fontWeight:600, fontFamily:"var(--font-ui)", letterSpacing:"0.06em", cursor:"pointer" }}>
+                {r.isBookNav ? "Open book" : "Read chapter"}
+              </button>
             );
 
-            function renderSnippet(r) {
-              return typeof r.snippet === "object" ? (
-                <>
-                  {r.snippet.pre}
-                  <em
-                    style={{
-                      color: "var(--text-accent)",
-                      fontStyle: "normal",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {r.snippet.match}
-                  </em>
-                  {r.snippet.post}
-                </>
-              ) : (
-                r.snippet
-              );
-            }
-
-            function renderNavButton(r) {
+            const VCard = ({ r, sub = false }) => {
+              const crs = crossRefsBySource[r.ref] || [];
               return (
-                <button
-                  onClick={() => {
-                    onNavigate(r.bookId, r.chapter);
-                    onClose();
-                  }}
-                  style={{
-                    background: "transparent",
-                    border: "1px solid rgba(203,178,124,0.3)",
-                    borderRadius: 8,
-                    padding: "7px 14px",
-                    color: "var(--text-accent)",
-                    fontSize: 12,
-                    fontWeight: 600,
-                    fontFamily: "var(--font-ui)",
-                    letterSpacing: "0.06em",
-                    cursor: "pointer",
-                  }}
-                >
-                  {r.isBookNav ? "Go to book" : "Read full chapter"}
-                </button>
+                <div style={{ borderLeft:`3px solid ${sub ? "rgba(203,178,124,0.3)" : "var(--text-accent)"}`, borderRadius:12, padding:"14px 16px", marginBottom:10, background:"rgba(255,255,255,0.03)" }}>
+                  <div style={{ fontSize:11, fontWeight:700, letterSpacing:"0.1em", color: sub ? "var(--text-secondary)" : "var(--text-accent)", textTransform:"uppercase", marginBottom:8, fontFamily:"var(--font-ui)" }}>{r.ref}</div>
+                  <div style={{ fontFamily:"var(--font-body)", fontSize: sub ? 14 : 16, lineHeight:1.8, color:"var(--text-primary)", marginBottom:12, opacity: sub ? 0.8 : 1 }}>{getVerseText(r)}</div>
+                  <NavBtn r={r} />
+                  {crs.length > 0 && (
+                    <div style={{ borderTop:"1px solid rgba(255,255,255,0.06)", marginTop:14, paddingTop:12 }}>
+                      <div style={{ fontSize:9, fontWeight:700, letterSpacing:"0.14em", color:"var(--text-secondary)", textTransform:"uppercase", fontFamily:"var(--font-ui)", marginBottom:10, opacity:0.5 }}>See also</div>
+                      {crs.map((cr, j) => <VCard key={j} r={cr} sub />)}
+                    </div>
+                  )}
+                </div>
               );
-            }
+            };
 
             return (
               <>
-                {primaryResults.map((r, i) => {
-                  const crossRefs = crossRefsBySource[r.ref] || [];
-                  return (
-                    <div
-                      key={i}
-                      style={{
-                        background: "rgba(255,255,255,0.04)",
-                        border: "1px solid rgba(255,255,255,0.07)",
-                        borderRadius: 12,
-                        padding: 16,
-                        marginBottom: 12,
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: 11,
-                          fontWeight: 700,
-                          letterSpacing: "0.1em",
-                          color: "var(--text-accent)",
-                          textTransform: "uppercase",
-                          marginBottom: 6,
-                          fontFamily: "var(--font-ui)",
-                        }}
-                      >
-                        {r.ref}
-                      </div>
-                      <div
-                        style={{
-                          fontFamily: "var(--font-body)",
-                          fontSize: 15,
-                          lineHeight: 1.65,
-                          color: "var(--text-primary)",
-                          marginBottom: 12,
-                        }}
-                      >
-                        {renderSnippet(r)}
-                      </div>
-                      {renderNavButton(r)}
-
-                      {crossRefs.length > 0 && (
-                        <>
-                          <div
-                            style={{
-                              borderTop: "1px solid rgba(255,255,255,0.07)",
-                              marginTop: 14,
-                              paddingTop: 12,
-                            }}
-                          >
-                            <div
-                              style={{
-                                fontSize: 10,
-                                fontWeight: 700,
-                                letterSpacing: "0.12em",
-                                color: "var(--text-secondary)",
-                                textTransform: "uppercase",
-                                fontFamily: "var(--font-ui)",
-                                marginBottom: 10,
-                                opacity: 0.6,
-                              }}
-                            >
-                              See also
-                            </div>
-                            {crossRefs.map((cr, j) => (
-                              <div
-                                key={j}
-                                style={{
-                                  marginBottom: j < crossRefs.length - 1 ? 14 : 0,
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    fontSize: 11,
-                                    fontWeight: 700,
-                                    letterSpacing: "0.1em",
-                                    color: "var(--text-secondary)",
-                                    textTransform: "uppercase",
-                                    marginBottom: 4,
-                                    fontFamily: "var(--font-ui)",
-                                  }}
-                                >
-                                  {cr.ref}
-                                </div>
-                                <div
-                                  style={{
-                                    fontFamily: "var(--font-body)",
-                                    fontSize: 14,
-                                    lineHeight: 1.6,
-                                    color: "var(--text-primary)",
-                                    opacity: 0.85,
-                                    marginBottom: 8,
-                                  }}
-                                >
-                                  {renderSnippet(cr)}
-                                </div>
-                                {renderNavButton(cr)}
-                              </div>
-                            ))}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  );
-                })}
-
-                {orphanCrossRefs.map((r, i) => (
-                  <div
-                    key={`orphan-${i}`}
-                    style={{
-                      background: "rgba(255,255,255,0.04)",
-                      border: "1px solid rgba(255,255,255,0.07)",
-                      borderRadius: 12,
-                      padding: 16,
-                      marginBottom: 12,
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 700,
-                        letterSpacing: "0.1em",
-                        color: "var(--text-secondary)",
-                        textTransform: "uppercase",
-                        marginBottom: 6,
-                        fontFamily: "var(--font-ui)",
-                      }}
-                    >
-                      {r.ref}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-body)",
-                        fontSize: 15,
-                        lineHeight: 1.65,
-                        color: "var(--text-primary)",
-                        marginBottom: 12,
-                      }}
-                    >
-                      {renderSnippet(r)}
-                    </div>
-                    {renderNavButton(r)}
-                  </div>
-                ))}
+                {primaryResults.map((r, i) => <VCard key={i} r={r} />)}
+                {orphanCrossRefs.map((r, i) => <VCard key={`o${i}`} r={r} sub />)}
+                {results.length >= 25 && <p style={{ textAlign:"center", color:"var(--text-secondary)", fontSize:12, opacity:0.4, marginTop:8, fontFamily:"var(--font-ui)" }}>Showing top results — refine for more</p>}
               </>
             );
           })()}
-          {!searching && results.length === 30 && (
-            <p
-              style={{
-                textAlign: "center",
-                color: "var(--text-secondary)",
-                fontSize: 12,
-                opacity: 0.45,
-                marginTop: 8,
-                fontFamily: "var(--font-ui)",
-              }}
-            >
-              Showing first 30 results — refine your search for more
-            </p>
-          )}
         </div>
       )}
 
-      {/* ── SEEK TAB ── */}
-      {tab === "seek" && (
+      {/* ── TOPICS (Seek) ── */}
+      {filter === "topics" && (
         <div
           style={{
             flex: 1,
@@ -1586,7 +1337,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                     color: "rgba(203,178,124,0.7)",
                   }}
                 >
-                  Seek
+                  Topics
                 </span>
               </button>
 
@@ -1841,8 +1592,8 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
         </div>
       )}
 
-      {/* ── HIGHLIGHTS TAB ── */}
-      {tab === "highlights" &&
+      {/* ── HIGHLIGHTS ── */}
+      {filter === "highlights" &&
         (() => {
           const saved = JSON.parse(
             localStorage.getItem("verseHighlights") || "{}",
@@ -1856,12 +1607,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
           );
           const filtered = allHighlights.filter((h) => {
             if (!h.tags || h.tags.length === 0) return false;
-            const matchTag =
-              highlightTag === "All" || h.tags.includes(highlightTag);
-            const matchText =
-              !highlightSearch ||
-              h.text?.toLowerCase().includes(highlightSearch.toLowerCase());
-            return matchTag && matchText;
+            return highlightTag === "All" || h.tags.includes(highlightTag);
           });
 
           return (
@@ -2049,6 +1795,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
             </div>
           );
         })()}
+      </div>
     </div>
   );
 }

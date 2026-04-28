@@ -124,18 +124,49 @@ export function normalizeQuery(raw) {
   return q;
 }
 
+/* ─── Stop words (never highlight alone) ────────────────────────────────── */
+const STOP_WORDS = new Set([
+  "a","an","and","are","as","at","be","been","being","but","by","do","did",
+  "for","from","had","has","have","he","her","his","how","i","if","in","into",
+  "is","it","its","me","may","might","my","no","not","of","on","or","our",
+  "out","shall","she","should","so","than","that","the","their","them","then",
+  "there","these","they","this","those","to","up","us","was","we","were",
+  "what","when","where","who","will","with","would","you","your",
+]);
+
 /* ─── Snippet extraction (matches AppShell's highlightSnippet shape) ───── */
-function makeSnippet(text, term) {
-  if (!term) return { pre: "", match: "", post: text.slice(0, 160) };
+function makeSnippet(text, query) {
+  if (!query) return { pre: "", match: "", post: text.slice(0, 160) };
   const lower = text.toLowerCase();
-  const idx = lower.indexOf(term.toLowerCase());
+
+  // 1. Try to match the full phrase
+  let idx = lower.indexOf(query.toLowerCase());
+  let matchLen = query.length;
+
+  // 2. Fall back: pick the best (longest, non-stop) word from the query
+  if (idx === -1) {
+    const words = query.split(/\s+/).sort((a, b) => {
+      const aStop = STOP_WORDS.has(a.toLowerCase());
+      const bStop = STOP_WORDS.has(b.toLowerCase());
+      if (aStop !== bStop) return aStop ? 1 : -1;
+      return b.length - a.length;
+    });
+    for (const w of words) {
+      if (w.length < 3) continue;
+      idx = lower.indexOf(w.toLowerCase());
+      if (idx !== -1) { matchLen = w.length; break; }
+    }
+  }
+
+  // 3. Nothing matched — return plain preview without a highlight
   if (idx === -1) return { pre: "", match: "", post: text.slice(0, 160) };
+
   const start = Math.max(0, idx - 60);
-  const end = Math.min(text.length, idx + term.length + 100);
+  const end = Math.min(text.length, idx + matchLen + 100);
   return {
     pre: (start > 0 ? "…" : "") + text.slice(start, idx),
-    match: text.slice(idx, idx + term.length),
-    post: text.slice(idx + term.length, end) + (end < text.length ? "…" : ""),
+    match: text.slice(idx, idx + matchLen),
+    post: text.slice(idx + matchLen, end) + (end < text.length ? "…" : ""),
   };
 }
 
@@ -306,14 +337,42 @@ export function warmIndex(translation) {
   setTimeout(() => getMiniIndex(translation), 500);
 }
 
+/* ─── Popularity scores for well-known verses ────────────────────────── */
+const POPULAR_VERSES = new Map([
+  ["John 3:16", 100], ["Philippians 4:13", 95], ["Jeremiah 29:11", 95],
+  ["Psalm 23:1", 90],  ["Romans 8:28", 90],    ["Proverbs 3:5", 88],
+  ["Isaiah 40:31", 87],["Matthew 28:19", 85],  ["John 14:6", 85],
+  ["Romans 3:23", 83], ["Romans 6:23", 83],    ["Ephesians 2:8", 82],
+  ["John 1:1", 80],    ["Genesis 1:1", 80],    ["Psalm 46:10", 79],
+  ["Romans 8:1", 78],  ["John 15:5", 77],      ["Hebrews 11:1", 77],
+  ["Galatians 2:20", 76], ["2 Timothy 3:16", 76], ["Matthew 6:33", 75],
+  ["Psalm 119:105", 75], ["Proverbs 3:6", 74], ["John 10:10", 74],
+  ["Romans 5:8", 73],  ["Isaiah 41:10", 73],   ["Colossians 3:23", 72],
+  ["1 Corinthians 13:4", 72], ["Matthew 5:16", 71], ["Psalm 91:1", 70],
+  ["Romans 12:2", 70], ["Ephesians 3:20", 69], ["James 1:2", 68],
+  ["2 Chronicles 7:14", 68], ["Psalm 139:14", 67], ["Micah 6:8", 67],
+  ["1 John 4:7", 66],  ["John 3:17", 65],      ["Matthew 11:28", 65],
+  ["Revelation 3:20", 64], ["Luke 1:37", 63],  ["John 16:33", 63],
+  ["Acts 1:8", 62],    ["Ephesians 6:11", 61], ["Psalm 37:4", 61],
+  ["1 John 1:9", 60],  ["Matthew 7:7", 59],    ["John 8:32", 58],
+  ["Proverbs 4:23", 57], ["Isaiah 53:5", 57],  ["Romans 10:9", 56],
+  ["Psalm 27:1", 55],  ["John 15:13", 55],     ["Romans 1:16", 54],
+]);
+
+function popularityBoost(ref) {
+  return (POPULAR_VERSES.get(ref) ?? 0) / 100 * 0.25;
+}
+
 /* ─── Format helpers ─────────────────────────────────────────────────── */
 function meiliHitToResult(hit, term) {
   return {
     ref: hit.reference ?? hit.ref,
     bookId: hit.book,
     chapter: hit.chapter,
+    verse: hit.verse,
+    text: hit.text ?? "",
     snippet: makeSnippet(hit.text ?? "", term),
-    score: hit._rankingScore ?? 1,
+    score: (hit._rankingScore ?? 1) + popularityBoost(hit.reference ?? hit.ref),
   };
 }
 
@@ -322,8 +381,10 @@ function miniHitToResult(hit, term) {
     ref: hit.ref,
     bookId: hit.bookId,
     chapter: hit.chapter,
+    verse: hit.verse,
+    text: hit.text ?? "",
     snippet: makeSnippet(hit.text ?? "", term),
-    score: hit.score ?? 1,
+    score: (hit.score ?? 1) + popularityBoost(hit.ref),
   };
 }
 
@@ -350,7 +411,7 @@ async function setCachedResults(query, translation, results) {
  */
 export async function search(rawQuery, translation = "KJV") {
   const q    = normalizeQuery(rawQuery);
-  const term = q.split(/\s+/)[0] ?? q;
+  const term = q;
 
   if (q.length < 2) return [];
 
@@ -362,14 +423,35 @@ export async function search(rawQuery, translation = "KJV") {
   if (await isMeiliAvailable()) {
     try {
       const client = getMeiliClient();
-      const { hits } = await client.index("verses").search(q, {
-        filter: `translation = "${translation.toUpperCase()}"`,
-        limit: 30,
-        attributesToRetrieve: ["reference", "ref", "book", "chapter", "verse", "text"],
-        rankingScoreThreshold: 0.2,
+      const idx = client.index("verses");
+      const filter = `translation = "${translation.toUpperCase()}"`;
+      const attrs = ["reference", "ref", "book", "chapter", "verse", "text"];
+
+      // Try exact (all-words-must-match) first for precise results
+      let { hits } = await idx.search(q, {
+        filter,
+        limit: 25,
+        matchingStrategy: "all",
+        attributesToRetrieve: attrs,
+        showRankingScore: true,
       });
 
-      const results = hits.map((h) => meiliHitToResult(h, term));
+      // If too few, fall back to "last" strategy (at least last word matches)
+      if (hits.length < 3) {
+        const fallback = await idx.search(q, {
+          filter,
+          limit: 25,
+          matchingStrategy: "last",
+          attributesToRetrieve: attrs,
+          showRankingScore: true,
+          rankingScoreThreshold: 0.35,
+        });
+        hits = fallback.hits;
+      }
+
+      const results = hits
+        .map((h) => meiliHitToResult(h, term))
+        .sort((a, b) => b.score - a.score);
       setCachedResults(q, translation, results);
       return results;
     } catch {
