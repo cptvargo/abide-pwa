@@ -18,6 +18,7 @@ import {
   getColorFromId,
   getThemeColors,
 } from "./components/HighlightSystem";
+import { shareVerseAsImage } from "./ShareAsImage";
 
 /* ===============================
    Merge verses into paragraphs
@@ -975,6 +976,30 @@ export default function SwipeReading({
               : []
           }
           onTagsChange={setPendingTags}
+          onShare={async () => {
+            const bookName = getBookDisplayName(book);
+            const verseNums = selectedVerses.map((v) => v.verse).sort((a, b) => a - b);
+            const first = verseNums[0];
+            const last = verseNums[verseNums.length - 1];
+            const reference = `${bookName} ${currentChapter}:${first === last ? first : `${first}-${last}`} • ${translation}`;
+            const text = [...selectedVerses]
+              .sort((a, b) => a.verse - b.verse)
+              .map((v) => v.text)
+              .join(" ");
+
+            // Try image share first, fall back to plain text
+            const imageOk = await shareVerseAsImage({ reference, text }, theme);
+            if (!imageOk) {
+              const shareText = `"${text}"\n\n— ${reference}`;
+              if (navigator.share) {
+                navigator.share({ text: shareText }).catch(() => {});
+              } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                  alert("Verse copied to clipboard!");
+                }).catch(() => {});
+              }
+            }
+          }}
         />
       )}
       {/* Dialogue Bottom Sheet */}

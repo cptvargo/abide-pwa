@@ -30,6 +30,151 @@ function loadImageWithCORS(src) {
 }
 
 /**
+ * Share a Bible verse as a branded image card.
+ * @param {{ reference: string, text: string }} verse
+ * @param {string} theme - Current app theme
+ * @returns {Promise<boolean>} true if share/download succeeded
+ */
+export async function shareVerseAsImage(verse, theme) {
+  let container = null;
+  try {
+    const themeColors = {
+      classic:          { bg: "#1C1A14", accent: "#CBB27C", text: "#E8DCC8", sub: "#9B8E6E" },
+      "still-waters":   { bg: "#071E22", accent: "#4AABB8", text: "#D4E8EB", sub: "#6A9FA8" },
+      "stone-fire":     { bg: "#1A0A06", accent: "#F97316", text: "#FED7AA", sub: "#B85A1A" },
+      "olive-parchment":{ bg: "#1E1C14", accent: "#B0A070", text: "#E8E3D6", sub: "#7E7850" },
+      parchment:        { bg: "#1C1A14", accent: "#9B8055", text: "#E8DCC8", sub: "#7A6A48" },
+    };
+    const colors = themeColors[theme] || themeColors.classic;
+
+    // Preload logo
+    const logoUrl = `${import.meta.env.BASE_URL}ABIDE.png`;
+    const logoImg = await loadImageWithCORS(logoUrl);
+
+    // Off-screen container
+    container = document.createElement("div");
+    container.style.cssText = "position:fixed;left:-9999px;top:0;z-index:-1;";
+    document.body.appendChild(container);
+
+    // Card
+    const card = document.createElement("div");
+    card.style.cssText = `
+      width:600px; box-sizing:border-box;
+      background:${colors.bg};
+      padding:56px 52px 48px;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      display:flex; flex-direction:column; align-items:center;
+    `;
+
+    // Logo
+    const logo = document.createElement("img");
+    logo.crossOrigin = "anonymous";
+    logo.src = logoImg.src;
+    logo.style.cssText = "width:140px;height:auto;opacity:0.85;margin-bottom:40px;";
+    card.appendChild(logo);
+
+    // Top rule
+    const topRule = document.createElement("div");
+    topRule.style.cssText = `
+      width:1px; height:36px;
+      background:linear-gradient(to bottom,transparent,${colors.accent}60);
+      margin-bottom:32px;
+    `;
+    card.appendChild(topRule);
+
+    // Verse text
+    const verseText = document.createElement("p");
+    verseText.style.cssText = `
+      font-size:22px; line-height:1.75; font-style:italic;
+      color:${colors.text}; text-align:center;
+      margin:0 0 32px; padding:0 8px; letter-spacing:0.01em;
+    `;
+    verseText.textContent = `“${verse.text}”`;
+    card.appendChild(verseText);
+
+    // Bottom rule
+    const botRule = document.createElement("div");
+    botRule.style.cssText = `
+      width:1px; height:36px;
+      background:linear-gradient(to bottom,${colors.accent}60,transparent);
+      margin-bottom:28px;
+    `;
+    card.appendChild(botRule);
+
+    // Reference
+    const ref = document.createElement("div");
+    ref.style.cssText = `
+      font-size:13px; font-weight:600; letter-spacing:0.14em;
+      text-transform:uppercase; color:${colors.accent};
+      text-align:center; margin-bottom:32px;
+    `;
+    ref.textContent = verse.reference;
+    card.appendChild(ref);
+
+    // Divider line
+    const divider = document.createElement("div");
+    divider.style.cssText = `
+      width:100%; height:1px;
+      background:linear-gradient(to right,transparent,${colors.accent}30,transparent);
+      margin-bottom:24px;
+    `;
+    card.appendChild(divider);
+
+    // ABIDE wordmark
+    const wordmark = document.createElement("div");
+    wordmark.style.cssText = `
+      font-size:10px; letter-spacing:0.28em; text-transform:uppercase;
+      color:${colors.sub}; text-align:center;
+    `;
+    wordmark.textContent = "ABIDE";
+    card.appendChild(wordmark);
+
+    container.appendChild(card);
+    await new Promise((r) => setTimeout(r, 150));
+
+    const canvas = await html2canvas(card, {
+      backgroundColor: colors.bg,
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      allowTaint: false,
+      foreignObjectRendering: false,
+    });
+
+    document.body.removeChild(container);
+    container = null;
+
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob((b) => b ? resolve(b) : reject(new Error("toBlob returned null")), "image/png", 1.0);
+    });
+
+    const filename = `abide-verse-${Date.now()}.png`;
+    const file = new File([blob], filename, { type: "image/png" });
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ files: [file], title: verse.reference });
+        return true;
+      } catch (e) {
+        if (e.name === "AbortError") return true;
+      }
+    }
+
+    // Fallback: download
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; a.style.display = "none";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return true;
+  } catch (err) {
+    console.error("[shareVerseAsImage]", err);
+    if (container?.parentNode) document.body.removeChild(container);
+    return false;
+  }
+}
+
+/**
  * Share dialogue entry as a beautiful branded image
  * @param {Object} entry - Dialogue entry data
  * @param {string} theme - Current theme (classic, still-waters, etc)

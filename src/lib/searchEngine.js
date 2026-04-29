@@ -226,23 +226,83 @@ function getMeiliClient() {
   return _meili;
 }
 
-// Cache availability state for 30 s so we don't ping on every keystroke
-let _meiliOk = null;
-let _meiliChecked = 0;
+// No health-check round-trip — just attempt the search and treat any error as a miss.
+// Failed searches back off for 30 s before retrying Meilisearch.
+let _meiliFailedAt = 0;
 
-async function isMeiliAvailable() {
-  const now = Date.now();
-  if (_meiliOk !== null && now - _meiliChecked < 30_000) return _meiliOk;
+async function meiliSearch(q, translation) {
+  if (Date.now() - _meiliFailedAt < 30_000) return null;
   const client = getMeiliClient();
-  if (!client) { _meiliOk = false; return false; }
+  if (!client) return null;
+  const idx    = client.index("verses");
+  const filter = `translation = "${translation.toUpperCase()}"`;
+  const attrs  = ["reference", "book", "chapter", "verse", "text"];
   try {
-    await client.health();
-    _meiliOk = true;
+    // Phrase search first — highest precision, best for "For God so loved"
+    if (q.includes(" ")) {
+      const { hits } = await idx.search(`"${q}"`, {
+        filter, limit: 10, attributesToRetrieve: attrs, showRankingScore: true,
+      });
+      if (hits.length > 0) return hits;
+    }
+    // All-words match
+    const { hits: allHits } = await idx.search(q, {
+      filter, limit: 25, matchingStrategy: "all",
+      attributesToRetrieve: attrs, showRankingScore: true,
+    });
+    if (allHits.length >= 2) return allHits;
+    // Last-word fallback
+    const { hits: lastHits } = await idx.search(q, {
+      filter, limit: 25, matchingStrategy: "last",
+      attributesToRetrieve: attrs, showRankingScore: true,
+      rankingScoreThreshold: 0.35,
+    });
+    return lastHits.length ? lastHits : null;
   } catch {
-    _meiliOk = false;
+    _meiliFailedAt = Date.now();
+    return null;
   }
-  _meiliChecked = Date.now();
-  return _meiliOk;
+}
+
+/* ─── Direct verse-reference lookup from local files ─────────────────────
+   Handles queries like "John 3:16", "Psalm 23:1", "Gen 1:1 KJV" etc.
+   Returns a single-item result array synchronously from local JSON.      */
+async function directRefLookup(q, translation) {
+  const norm = normalizeQuery(q); // expands abbreviations → "John 3:16"
+  const m = norm.match(/^(.+?)\s+(\d+):(\d+)/);
+  if (!m) return null;
+  const bookName = m[1].trim();
+  const chapter  = parseInt(m[2]);
+  const verse    = parseInt(m[3]);
+
+  const book = ALL_BOOKS.find(
+    b => b.name.toLowerCase() === bookName.toLowerCase() ||
+         b.id === bookName.toLowerCase().replace(/\s+/g, ""),
+  );
+  if (!book) return null;
+
+  const t    = translation.toLowerCase();
+  const base = import.meta.env.BASE_URL ?? "/";
+  try {
+    const res = await fetch(`${base}data/translations/${t}/${book.id}/${chapter}.json`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const verses = data.verses ?? data;
+    const entries = Array.isArray(verses)
+      ? verses
+      : Object.entries(verses)
+          .filter(([k]) => !isNaN(Number(k)))
+          .map(([k, v]) => ({ verse: Number(k), text: typeof v === "string" ? v : (v?.text ?? "") }));
+    const match = entries.find(v => v.verse === verse);
+    if (!match) return null;
+    const text = typeof match.text === "string" ? match.text : (match.text?.text ?? "");
+    const ref  = `${book.name} ${chapter}:${verse}`;
+    return [{
+      ref, bookId: book.id, chapter, verse, text,
+      snippet: makeSnippet(text, norm),
+      score: 1 + popularityBoost(ref),
+    }];
+  } catch { return null; }
 }
 
 /* ─── MiniSearch index management ────────────────────────────────────────
@@ -419,45 +479,21 @@ export async function search(rawQuery, translation = "KJV") {
   const cached = await getCachedResults(q, translation);
   if (cached) return cached;
 
-  // ── 1. Meilisearch ───────────────────────────────────────────────────
-  if (await isMeiliAvailable()) {
-    try {
-      const client = getMeiliClient();
-      const idx = client.index("verses");
-      const filter = `translation = "${translation.toUpperCase()}"`;
-      const attrs = ["reference", "ref", "book", "chapter", "verse", "text"];
+  // ── 0. Direct reference lookup (instant from local JSON) ────────────
+  const refResult = await directRefLookup(q, translation);
+  if (refResult) {
+    setCachedResults(q, translation, refResult);
+    return refResult;
+  }
 
-      // Try exact (all-words-must-match) first for precise results
-      let { hits } = await idx.search(q, {
-        filter,
-        limit: 25,
-        matchingStrategy: "all",
-        attributesToRetrieve: attrs,
-        showRankingScore: true,
-      });
-
-      // If too few, fall back to "last" strategy (at least last word matches)
-      if (hits.length < 3) {
-        const fallback = await idx.search(q, {
-          filter,
-          limit: 25,
-          matchingStrategy: "last",
-          attributesToRetrieve: attrs,
-          showRankingScore: true,
-          rankingScoreThreshold: 0.35,
-        });
-        hits = fallback.hits;
-      }
-
-      const results = hits
-        .map((h) => meiliHitToResult(h, term))
-        .sort((a, b) => b.score - a.score);
-      setCachedResults(q, translation, results);
-      return results;
-    } catch {
-      // Fall through to MiniSearch
-      _meiliOk = false;
-    }
+  // ── 1. Meilisearch (no health-check round-trip) ───────────────────
+  const meiliHits = await meiliSearch(q, translation);
+  if (meiliHits) {
+    const results = meiliHits
+      .map((h) => meiliHitToResult(h, term))
+      .sort((a, b) => b.score - a.score);
+    setCachedResults(q, translation, results);
+    return results;
   }
 
   // ── 2. MiniSearch ────────────────────────────────────────────────────

@@ -386,8 +386,16 @@ function VideoPage({ day, translation, base, onNext, participants }) {
 }
 
 /* ─── Page 1 — Reflection ───────────────────────────────────────────────── */
-function ReflectionPage({ day, onNext, onPrev }) {
+function ReflectionPage({ day, participants = 1, onNext, onPrev }) {
   const [selected, setSelected] = useState(null);
+
+  const gc = participants >= 4
+    ? { eyebrow: "Open to the Room",    deepIntro: "Open this to the group —", cta: "Continue Together" }
+    : participants === 3
+    ? { eyebrow: "Share with Your Group", deepIntro: "Let someone share —",    cta: "Continue Together" }
+    : participants === 2
+    ? { eyebrow: "Discuss Together",    deepIntro: "Talk about this together —", cta: "Continue Together" }
+    : { eyebrow: "Reflect",             deepIntro: null,                         cta: "Continue to Abide" };
 
   return (
     <div style={{
@@ -401,7 +409,7 @@ function ReflectionPage({ day, onNext, onPrev }) {
           color: "rgba(203,178,124,0.45)", fontFamily: "var(--font-ui, system-ui)",
           textAlign: "center", marginBottom: 18,
         }}>
-          Reflect
+          {gc.eyebrow}
         </div>
         <p style={{
           fontFamily: "var(--font-body, Georgia, serif)", fontSize: 19,
@@ -469,6 +477,15 @@ function ReflectionPage({ day, onNext, onPrev }) {
                     borderBottom: "1px solid rgba(203,178,124,0.15)",
                     animation: "da-fade-in 0.25s ease",
                   }}>
+                    {gc.deepIntro && (
+                      <div style={{
+                        fontFamily: "var(--font-ui, system-ui)", fontSize: 10,
+                        letterSpacing: "0.1em", textTransform: "uppercase",
+                        color: "rgba(203,178,124,0.5)", marginBottom: 10,
+                      }}>
+                        {gc.deepIntro}
+                      </div>
+                    )}
                     <p style={{
                       fontFamily: "var(--font-body, Georgia, serif)", fontSize: 15.5,
                       lineHeight: 1.75, color: "var(--text-primary)", opacity: 0.82,
@@ -516,7 +533,7 @@ function ReflectionPage({ day, onNext, onPrev }) {
               transition: "all 0.2s",
             }}
           >
-            {selected !== null ? "Continue to Abide →" : "Choose what speaks to you"}
+            {selected !== null ? `${gc.cta} →` : "Choose what speaks to you"}
           </button>
         </div>
       </div>
@@ -531,6 +548,7 @@ function AbidePage({ day, seriesId, onDone, onPrev }) {
 
   function handleDone() {
     markComplete(day.id);
+    if (seriesId) markComplete(seriesId);
     setDone(true);
     setTimeout(onDone, 1200);
   }
@@ -688,6 +706,7 @@ function DayExperience({ day, seriesId, translation, base, onComplete, onBack })
           />
           <ReflectionPage
             day={day}
+            participants={participants ?? 1}
             onNext={() => goTo(2)}
             onPrev={() => goTo(0, -1)}
           />
@@ -954,7 +973,7 @@ function DAHeader({ title, onBack, backLabel }) {
 }
 
 /* ─── Shared series cover card ───────────────────────────────────────────── */
-function SeriesCoverCard({ series, label, onPress }) {
+function SeriesCoverCard({ series, label, done, onPress }) {
   return (
     <button
       onClick={onPress}
@@ -970,7 +989,7 @@ function SeriesCoverCard({ series, label, onPress }) {
           <img
             src={`https://img.youtube.com/vi/${series.coverVideoId}/hqdefault.jpg`}
             alt={series.title}
-            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.72 }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: done ? 0.45 : 0.72 }}
           />
         ) : (
           <div style={{
@@ -982,6 +1001,19 @@ function SeriesCoverCard({ series, label, onPress }) {
           position: "absolute", inset: 0,
           background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(14,14,10,0.85) 100%)",
         }} />
+        {done && (
+          <div style={{
+            position: "absolute", top: 10, right: 10,
+            width: 28, height: 28, borderRadius: "50%",
+            background: "rgba(203,178,124,0.9)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="#141410" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+        )}
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px 14px" }}>
           <div style={{
             fontSize: 22, fontWeight: 300, fontFamily: "var(--font-ui, system-ui)",
@@ -1002,14 +1034,16 @@ function SeriesCoverCard({ series, label, onPress }) {
           color: "var(--text-primary)", opacity: 0.42, lineHeight: 1.5,
           flex: 1, marginRight: 12,
         }}>
-          {series.description.slice(0, 80)}…
+          {series.description}
         </div>
-        <div style={{
-          fontFamily: "var(--font-ui, system-ui)", fontSize: 11,
-          color: "rgba(203,178,124,0.65)", whiteSpace: "nowrap",
-        }}>
-          {label ?? "Begin →"}
-        </div>
+        {!done && (
+          <div style={{
+            fontFamily: "var(--font-ui, system-ui)", fontSize: 11,
+            color: "rgba(203,178,124,0.65)", whiteSpace: "nowrap",
+          }}>
+            {label ?? "Begin →"}
+          </div>
+        )}
       </div>
     </button>
   );
@@ -1384,7 +1418,8 @@ function GroupView({ group, source, index, onSelectSeries, onSelectBook, onBack 
 }
 
 /* ─── Book view (e.g. Genesis → Part 1 / Part 2) ────────────────────────── */
-function BookView({ book, items, onSelectSeries, onBack }) {
+function BookView({ book, items, onSelectSeries, onBack, completionVersion }) {
+  const completed = getCompleted();
   const meta = BOOK_META[book] ?? { name: book };
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "var(--bg-app)" }}>
@@ -1393,7 +1428,7 @@ function BookView({ book, items, onSelectSeries, onBack }) {
       <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: "20px 16px" }}>
           {items.map((s) => (
-            <SeriesCoverCard key={s.id} series={s} onPress={() => onSelectSeries(s)} />
+            <SeriesCoverCard key={s.id} series={s} done={completed.has(s.id)} onPress={() => onSelectSeries(s)} />
           ))}
         </div>
         <div style={{ height: "calc(env(safe-area-inset-bottom,0px) + 48px)" }} />
@@ -1411,6 +1446,7 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
   const [activeSource, setActiveSource] = useState(null);
   const [activeGroup, setActiveGroup] = useState(null);
   const [activeBook, setActiveBook] = useState(null);
+  const [completionVersion, setCompletionVersion] = useState(0);
 
   const base = import.meta.env.BASE_URL ?? "/";
 
@@ -1441,7 +1477,7 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
       if (data.videoId && Array.isArray(data.days)) {
         data.days = data.days.map(d => d.videoId ? d : { ...d, videoId: data.videoId });
       }
-      const loaded = { ...data, format: meta.format };
+      const loaded = { ...data, format: meta.format, id: meta.id };
       setSelectedSeries(loaded);
       if (loaded.days?.length === 1) {
         setActiveDay(loaded.days[0]);
@@ -1458,10 +1494,14 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
   }
 
   function handleDayComplete() {
-    setView("series");
     setActiveDay(null);
-    // Re-render series to pick up new completed state
-    setSelectedSeries((s) => s ? { ...s } : s);
+    if (activeBook) {
+      setCompletionVersion((v) => v + 1);
+      setView("book");
+    } else {
+      setSelectedSeries((s) => s ? { ...s } : s);
+      setView("series");
+    }
   }
 
   return (
@@ -1504,6 +1544,7 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
             items={activeBook.items}
             onSelectSeries={handleSelectSeries}
             onBack={() => setView("group")}
+            completionVersion={completionVersion}
           />
         )}
         {view === "series" && selectedSeries && (
@@ -1529,7 +1570,11 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
             translation={translation}
             base={base}
             onComplete={handleDayComplete}
-            onBack={onBack}
+            onBack={() => {
+              if (activeBook) setView("book");
+              else if (selectedSeries) setView("series");
+              else onBack();
+            }}
           />
         )}
       </div>

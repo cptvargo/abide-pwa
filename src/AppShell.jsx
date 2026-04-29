@@ -625,28 +625,53 @@ const SEEK_BOOK_NAME_TO_ID = {
 };
 
 function seekParseRef(ref) {
-  const match = ref.match(/^(.+?)\s+(\d+):(\d+)$/);
+  // Matches "Book Chapter:Verse" or "Book Chapter:VerseStart-VerseEnd"
+  const match = ref.match(/^(.+?)\s+(\d+):(\d+)(?:-(\d+))?$/);
   if (!match) return null;
   const bookId = SEEK_BOOK_NAME_TO_ID[match[1].toLowerCase().trim()];
   if (!bookId) return null;
-  return { book: bookId, chapter: match[2], verse: match[3] };
+  return {
+    book: bookId,
+    chapter: match[2],
+    verse: match[3],
+    verseEnd: match[4] ?? null,
+  };
+}
+
+function extractVerseText(raw, verseNum) {
+  if (Array.isArray(raw)) {
+    const entry = raw.find(v => v.verse === verseNum);
+    if (entry) return typeof entry.text === "string" ? entry.text : (entry.text?.text ?? "");
+    const byIdx = raw[verseNum] ?? raw[verseNum - 1];
+    if (byIdx) return typeof byIdx === "string" ? byIdx : (typeof byIdx.text === "string" ? byIdx.text : "");
+  } else {
+    const entry = raw[String(verseNum)] ?? raw[verseNum];
+    if (entry) return typeof entry === "string" ? entry : (entry.text ?? "");
+  }
+  return "";
 }
 
 async function seekFetchVerseText(ref, translation) {
   const parsed = seekParseRef(ref);
   if (!parsed) return null;
-  const { book, chapter, verse } = parsed;
+  const { book, chapter, verse, verseEnd } = parsed;
+  const verseStart = parseInt(verse, 10);
+  const verseEndNum = verseEnd ? parseInt(verseEnd, 10) : verseStart;
   const t = translation.toLowerCase();
   const priority = t === "kjv" ? ["kjv"] : [t, "kjv"];
   for (const trans of priority) {
     try {
       const base = import.meta.env.BASE_URL;
-      const res = await fetch(
-        `${base}data/translations/${trans}/${book}/${chapter}.json`,
-      );
+      const res = await fetch(`${base}data/translations/${trans}/${book}/${chapter}.json`);
       if (!res.ok) continue;
       const data = await res.json();
-      const text = data.verses?.[verse];
+      const raw = data.verses ?? data;
+      const parts = [];
+      for (let v = verseStart; v <= verseEndNum; v++) {
+        const t = extractVerseText(raw, v);
+        if (t) parts.push(t);
+      }
+      const text = parts.join(" ");
       if (text) return { text, translation: trans.toUpperCase() };
     } catch {
       continue;
@@ -661,7 +686,7 @@ async function seekEnrichVerses(verses, translation) {
       const result = await seekFetchVerseText(v.ref, translation);
       return result
         ? { ...v, text: result.text, translation: result.translation }
-        : v;
+        : { ...v, text: "", translation: translation.toUpperCase() };
     }),
   );
 }
@@ -701,7 +726,7 @@ const TOPIC_CHIPS = [
 ];
 
 function SearchPanel({ open, onClose, onNavigate, translation }) {
-  const [filter, setFilter] = useState("all"); // "all" | "bible" | "topics" | "highlights"
+  const [filter, setFilter] = useState("scripture"); // "scripture" | "seek" | "highlights"
 
   // Scripture search state
   const [query, setQuery] = useState("");
@@ -736,7 +761,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
         setSeekQuery("");
         setSeekResult(null);
         setSeekView("input");
-        setFilter("all");
+        setFilter("scripture");
         setHighlightTag("All");
       }, 0);
     }
@@ -960,7 +985,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
         }
       }
       doSearch(val);
-    }, 350);
+    }, 200);
   }
 
   // ── Seek word study ───────────────────────────────────────────────────────
@@ -985,15 +1010,21 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
       return;
     }
     try {
+      const isQuestion = /^(why|what|who|how|when|where|did|does|is|are|can|could|would|should|was|were)\b/i.test(q) || q.endsWith("?");
       const response = await fetch(
         "https://abide-seek-proxy.jvargas22.workers.dev",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: q, translation }),
+          body: JSON.stringify({ query: q, translation, queryType: isQuestion ? "question" : "word_study" }),
         },
       );
       const data = await response.json();
+      if (data.error) {
+        setSeekError(`API error: ${data.error.message || JSON.stringify(data.error)}`);
+        setSeekLoading(false);
+        return;
+      }
       const text = data.content?.[0]?.text || "";
       const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
       // Enrich verses with actual text from local translation files
@@ -1002,8 +1033,8 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
       }
       setCached(q, translation, parsed);
       setSeekResult(parsed);
-    } catch {
-      setSeekError("Something went wrong. Please try again.");
+    } catch (err) {
+      setSeekError(`Something went wrong: ${err.message}`);
     }
     setSeekLoading(false);
   }
@@ -1011,9 +1042,8 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
   if (!open) return null;
 
   const FILTERS = [
-    { id: "all",        label: "All" },
-    { id: "bible",      label: "Bible" },
-    { id: "topics",     label: "Topics" },
+    { id: "scripture",  label: "Scripture" },
+    { id: "seek",       label: "Seek" },
     { id: "highlights", label: "Highlights" },
   ];
 
@@ -1032,22 +1062,22 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
             <SearchIcon size={16} />
             <input
               ref={inputRef}
-              value={filter === "topics" ? seekQuery : query}
+              value={filter === "seek" ? seekQuery : query}
               onChange={(e) => {
-                if (filter === "topics") {
+                if (filter === "seek") {
                   setSeekQuery(e.target.value);
                   if (seekView === "result") { setSeekView("input"); setSeekResult(null); }
                 } else {
                   handleQueryChange(e.target.value);
                 }
               }}
-              onKeyDown={(e) => filter === "topics" && e.key === "Enter" && seekQuery.trim() && handleSeek()}
-              placeholder={filter === "topics" ? "e.g. Grace, Faith, Holy Spirit…" : `Search ${translation}…`}
+              onKeyDown={(e) => filter === "seek" && e.key === "Enter" && seekQuery.trim() && handleSeek()}
+              placeholder={filter === "seek" ? "e.g. Abide · Why did Jesus weep? · Grace" : `Search ${translation}…`}
               style={{ background:"transparent", border:"none", outline:"none", color:"var(--text-primary)", fontSize:16, fontFamily:"var(--font-ui)", width:"100%", caretColor:"var(--text-accent)" }}
             />
-            {(filter === "topics" ? seekQuery : query) && (
+            {(filter === "seek" ? seekQuery : query) && (
               <button
-                onClick={() => filter === "topics"
+                onClick={() => filter === "seek"
                   ? (setSeekQuery(""), setSeekResult(null), setSeekView("input"))
                   : (setQuery(""), setResults([]), setSuggestions([]))}
                 style={{ background:"transparent", border:"none", cursor:"pointer", color:"var(--text-secondary)", fontSize:18, lineHeight:1, padding:0 }}
@@ -1057,18 +1087,23 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
           <button onClick={onClose} style={{ background:"transparent", border:"none", cursor:"pointer", color:"var(--text-accent)", fontSize:14, fontWeight:600, fontFamily:"var(--font-ui)", flexShrink:0 }}>Cancel</button>
         </div>
 
-        {/* Filter pills */}
-        <div style={{ display:"flex", gap:8, paddingBottom:12, overflowX:"auto", WebkitOverflowScrolling:"touch" }}>
+        {/* Pills */}
+        <div style={{ display:"flex", gap:8, padding:"4px 0 12px" }}>
           {FILTERS.map(({ id, label }) => {
             const active = filter === id;
             return (
               <button key={id} onClick={() => setFilter(id)} style={{
-                padding:"5px 16px", borderRadius:999, flexShrink:0, cursor:"pointer",
-                border: active ? "1px solid var(--text-accent)" : "1px solid rgba(255,255,255,0.1)",
-                background: active ? "rgba(203,178,124,0.12)" : "transparent",
-                color: active ? "var(--text-accent)" : "var(--text-secondary)",
-                fontSize:12, fontWeight:600, fontFamily:"var(--font-ui)", letterSpacing:"0.06em",
-                transition:"all 0.15s", WebkitTapHighlightColor:"transparent",
+                flex:1, padding:"8px 0",
+                background: active ? "var(--text-accent)" : "rgba(255,255,255,0.06)",
+                border: active ? "none" : "1px solid rgba(255,255,255,0.09)",
+                borderRadius:999,
+                fontFamily:"var(--font-ui)", fontSize:11, letterSpacing:"0.1em",
+                textTransform:"uppercase", cursor:"pointer",
+                color: active ? "#1a1510" : "var(--text-secondary)",
+                fontWeight: active ? 700 : 500,
+                opacity: active ? 1 : 0.7,
+                transition:"background 0.15s, color 0.15s",
+                WebkitTapHighlightColor:"transparent",
               }}>{label}</button>
             );
           })}
@@ -1079,7 +1114,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
       <div style={{ flex:1, overflowY:"auto", WebkitOverflowScrolling:"touch" }}>
 
       {/* BIBLE / ALL */}
-      {(filter === "all" || filter === "bible") && (
+      {filter === "scripture" && (
         <div style={{ padding:"12px 20px 40px" }}>
           {/* Empty state */}
           {!query && (
@@ -1087,12 +1122,6 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
               <p style={{ textAlign:"center", color:"var(--text-secondary)", fontSize:14, opacity:0.45, marginTop:36, marginBottom:28, fontFamily:"var(--font-body)", fontStyle:"italic", lineHeight:1.8 }}>
                 Search across all 66 books<br />in {translation}
               </p>
-              <div style={{ fontSize:10, fontWeight:700, letterSpacing:"0.16em", textTransform:"uppercase", color:"var(--text-secondary)", opacity:0.4, marginBottom:10, fontFamily:"var(--font-ui)" }}>Explore Topics</div>
-              <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
-                {TOPIC_CHIPS.slice(0, 12).map(topic => (
-                  <button key={topic} onClick={() => { setFilter("topics"); setSeekQuery(topic); handleSeek(topic); }} style={{ background:"rgba(203,178,124,0.05)", border:"1px solid rgba(203,178,124,0.14)", borderRadius:20, padding:"7px 14px", fontFamily:"var(--font-body)", fontStyle:"italic", fontSize:13, color:"rgba(203,178,124,0.6)", cursor:"pointer", WebkitTapHighlightColor:"transparent" }}>{topic}</button>
-                ))}
-              </div>
             </>
           )}
           {/* Typeahead suggestions */}
@@ -1101,7 +1130,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
               {suggestions.map((s, i) => (
                 <button key={i} onClick={() => {
                   if (s.type === "book") { onNavigate(s.book.id, 1); onClose(); }
-                  else if (s.type === "topic") { setFilter("topics"); setSeekQuery(s.label); handleSeek(s.label); }
+                  else if (s.type === "topic") { setFilter("seek"); setSeekQuery(s.label); handleSeek(s.label); }
                   else doSearch(query);
                 }} style={{ display:"flex", alignItems:"center", gap:12, width:"100%", padding:"13px 4px", borderBottom:"1px solid rgba(255,255,255,0.05)", background:"transparent", border:"none", cursor:"pointer", textAlign:"left", WebkitTapHighlightColor:"transparent" }}>
                   <span style={{ fontSize:15, opacity:0.45, width:22, flexShrink:0 }}>
@@ -1182,7 +1211,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
       )}
 
       {/* ── TOPICS (Seek) ── */}
-      {filter === "topics" && (
+      {filter === "seek" && (
         <div
           style={{
             flex: 1,
@@ -1395,73 +1424,77 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
               {/* Result */}
               {seekResult && !seekLoading && (
                 <>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-ui)",
-                      fontSize: 10,
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      color: "rgba(203,178,124,0.5)",
-                      marginBottom: 6,
-                    }}
-                  >
-                    ✦ Word Study
-                    {fromCache && (
-                      <span style={{ opacity: 0.5 }}> · saved</span>
-                    )}
-                  </div>
-                  <h2
-                    style={{
-                      fontFamily: "var(--font-ui)",
-                      fontSize: 26,
-                      fontWeight: 300,
-                      letterSpacing: "0.03em",
-                      color: "var(--text-primary)",
-                      lineHeight: 1.2,
-                      marginBottom: 20,
-                    }}
-                  >
-                    {seekResult.word}
-                  </h2>
+                  {(() => {
+                    const isQ = seekResult.type === "question";
+                    return (
+                      <>
+                        <div style={{ fontFamily:"var(--font-ui)", fontSize:10, letterSpacing:"0.14em", textTransform:"uppercase", color:"rgba(203,178,124,0.5)", marginBottom:6 }}>
+                          {isQ ? "✦ Insight" : "✦ Word Study"}
+                          {fromCache && <span style={{ opacity:0.5 }}> · saved</span>}
+                        </div>
+                        <h2 style={{ fontFamily:"var(--font-ui)", fontSize: isQ ? 20 : 26, fontWeight:300, letterSpacing:"0.03em", color:"var(--text-primary)", lineHeight:1.3, marginBottom:20 }}>
+                          {isQ ? (seekResult.question || seekQuery) : seekResult.word}
+                        </h2>
+                        {!isQ && seekResult.originalLanguage && (
+                          <div style={{ background:"rgba(203,178,124,0.05)", border:"1px solid rgba(203,178,124,0.12)", borderRadius:12, padding:"14px 16px", marginBottom:24 }}>
+                            <div style={{ fontFamily:"var(--font-ui)", fontSize:9, letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(203,178,124,0.4)", marginBottom:10 }}>
+                              Original · {seekResult.originalLanguage.language}
+                            </div>
+                            <div style={{ display:"flex", alignItems:"baseline", gap:10, marginBottom:8, flexWrap:"wrap" }}>
+                              <span style={{ fontFamily:"serif", fontSize:28, color:"var(--text-accent)", lineHeight:1.2 }}>{seekResult.originalLanguage.word}</span>
+                              <span style={{ fontFamily:"var(--font-ui)", fontSize:14, color:"var(--text-secondary)", fontStyle:"italic", opacity:0.75 }}>{seekResult.originalLanguage.transliteration}</span>
+                              {seekResult.originalLanguage.strongs && (
+                                <span style={{ fontFamily:"var(--font-ui)", fontSize:10, color:"rgba(203,178,124,0.35)", letterSpacing:"0.05em" }}>{seekResult.originalLanguage.strongs}</span>
+                              )}
+                            </div>
+                            <p style={{ fontFamily:"var(--font-body)", fontSize:14, color:"var(--text-primary)", opacity:0.7, lineHeight:1.65, margin:0 }}>
+                              {seekResult.originalLanguage.meaning}
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
 
-                  {[
-                    { label: "Definition", content: seekResult.definition },
-                    { label: "In Scripture", content: seekResult.significance },
-                  ].map(({ label, content }) => (
+                  {(seekResult.type === "question"
+                    ? [{ label: "Answer", content: seekResult.answer }, { label: "Context", content: seekResult.context }]
+                    : [{ label: "Definition", content: seekResult.definition }, { label: "In Scripture", content: seekResult.significance }]
+                  ).map(({ label, content }) => (
                     <div key={label} style={{ marginBottom: 20 }}>
-                      <div
-                        style={{
-                          fontFamily: "var(--font-ui)",
-                          fontSize: 9,
-                          letterSpacing: "0.2em",
-                          textTransform: "uppercase",
-                          color: "rgba(203,178,124,0.4)",
-                          marginBottom: 10,
-                        }}
-                      >
+                      <div style={{ fontFamily:"var(--font-ui)", fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(203,178,124,0.4)", marginBottom:10 }}>
                         {label}
                       </div>
-                      <p
-                        style={{
-                          fontFamily: "var(--font-body)",
-                          fontSize: 15,
-                          lineHeight: 1.8,
-                          color: "var(--text-primary)",
-                          opacity: 0.85,
-                          margin: 0,
-                        }}
-                      >
-                        {content}
+                      <p style={{ fontFamily:"var(--font-body)", fontSize:15, lineHeight:1.8, color:"var(--text-primary)", opacity:0.85, margin:0 }}>
+                        {typeof content === "string" ? content : ""}
                       </p>
-                      <div
-                        style={{
-                          height: 1,
-                          background: "rgba(203,178,124,0.08)",
-                          margin: "20px 0",
-                        }}
-                      />
+                      <div style={{ height:1, background:"rgba(203,178,124,0.08)", margin:"20px 0" }} />
                     </div>
                   ))}
+
+                  {/* Exegesis — shown for questions */}
+                  {seekResult.type === "question" && Array.isArray(seekResult.exegesis) && seekResult.exegesis.length > 0 && (
+                    <div style={{ marginBottom:20 }}>
+                      <div style={{ fontFamily:"var(--font-ui)", fontSize:9, letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(203,178,124,0.4)", marginBottom:12 }}>
+                        Exegesis
+                      </div>
+                      {seekResult.exegesis.map((ex, i) => (
+                        <div key={i} style={{ background:"rgba(203,178,124,0.04)", border:"1px solid rgba(203,178,124,0.1)", borderRadius:10, padding:"12px 14px", marginBottom:8 }}>
+                          <div style={{ fontFamily:"var(--font-ui)", fontSize:10, letterSpacing:"0.08em", color:"var(--text-accent)", marginBottom:6 }}>{ex.passage}</div>
+                          <p style={{ fontFamily:"var(--font-body)", fontSize:14, lineHeight:1.75, color:"var(--text-primary)", opacity:0.8, margin:"0 0 8px" }}>{typeof ex.explanation === "string" ? ex.explanation : ""}</p>
+                          {ex.keyInsight && <div style={{ fontFamily:"var(--font-body)", fontStyle:"italic", fontSize:13, color:"var(--text-accent)", opacity:0.65 }}>"{ex.keyInsight}"</div>}
+                        </div>
+                      ))}
+                      <div style={{ height:1, background:"rgba(203,178,124,0.08)", margin:"20px 0" }} />
+                    </div>
+                  )}
+
+                  {/* Pastoral caution — shown if returned */}
+                  {typeof seekResult.pastoralCaution === "string" && seekResult.pastoralCaution.trim() && (
+                    <div style={{ background:"rgba(203,178,124,0.06)", border:"1px solid rgba(203,178,124,0.15)", borderRadius:10, padding:"12px 14px", marginBottom:20 }}>
+                      <div style={{ fontFamily:"var(--font-ui)", fontSize:9, letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(203,178,124,0.5)", marginBottom:6 }}>A Note</div>
+                      <p style={{ fontFamily:"var(--font-body)", fontSize:13, lineHeight:1.7, color:"var(--text-primary)", opacity:0.65, margin:0 }}>{seekResult.pastoralCaution}</p>
+                    </div>
+                  )}
 
                   <div style={{ marginBottom: 20 }}>
                     <div
@@ -1483,68 +1516,23 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                         gap: 8,
                       }}
                     >
-                      {seekResult.verses?.map((v, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            background: "rgba(203,178,124,0.04)",
-                            border: "1px solid rgba(203,178,124,0.1)",
-                            borderRadius: 12,
-                            padding: "12px 14px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontFamily: "var(--font-ui)",
-                              fontSize: 10,
-                              letterSpacing: "0.1em",
-                              color: "rgba(203,178,124,0.55)",
-                              marginBottom: 8,
-                            }}
-                          >
-                            {v.ref}
+                      {Array.isArray(seekResult.verses) && seekResult.verses.map((v, i) => (
+                        <div key={i} style={{ background:"rgba(203,178,124,0.04)", border:"1px solid rgba(203,178,124,0.1)", borderRadius:12, padding:"12px 14px" }}>
+                          <div style={{ fontFamily:"var(--font-ui)", fontSize:10, letterSpacing:"0.1em", color:"rgba(203,178,124,0.55)", marginBottom:8 }}>
+                            {typeof v.ref === "string" ? v.ref : ""}
                           </div>
-                          <div
-                            style={{
-                              borderLeft: "2px solid rgba(203,178,124,0.45)",
-                              paddingLeft: 12,
-                              marginBottom: 4,
-                            }}
-                          >
-                            <div
-                              style={{
-                                fontFamily: "var(--font-body)",
-                                fontStyle: "italic",
-                                fontSize: 14,
-                                color: "var(--text-accent)",
-                                lineHeight: 1.65,
-                              }}
-                            >
-                              "{v.text}"
+                          {v.text && (
+                            <div style={{ borderLeft:"2px solid rgba(203,178,124,0.45)", paddingLeft:12, marginBottom:4 }}>
+                              <div style={{ fontFamily:"var(--font-body)", fontStyle:"italic", fontSize:14, color:"var(--text-accent)", lineHeight:1.65 }}>
+                                "{typeof v.text === "string" ? v.text : ""}"
+                              </div>
                             </div>
+                          )}
+                          <div style={{ fontFamily:"var(--font-ui)", fontSize:10, letterSpacing:"0.08em", color:"rgba(203,178,124,0.4)", marginTop:4, marginBottom:8 }}>
+                            — {typeof v.translation === "string" ? v.translation : "KJV"}
                           </div>
-                          <div
-                            style={{
-                              fontFamily: "var(--font-ui)",
-                              fontSize: 10,
-                              letterSpacing: "0.08em",
-                              color: "rgba(203,178,124,0.4)",
-                              marginTop: 4,
-                              marginBottom: 8,
-                            }}
-                          >
-                            — {v.translation || "KJV"}
-                          </div>
-                          <div
-                            style={{
-                              fontFamily: "var(--font-body)",
-                              fontSize: 12,
-                              color: "var(--text-primary)",
-                              opacity: 0.45,
-                              lineHeight: 1.5,
-                            }}
-                          >
-                            {v.note}
+                          <div style={{ fontFamily:"var(--font-body)", fontSize:12, color:"var(--text-primary)", opacity:0.45, lineHeight:1.5 }}>
+                            {typeof v.note === "string" ? v.note : ""}
                           </div>
                         </div>
                       ))}
@@ -1582,7 +1570,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                         margin: 0,
                       }}
                     >
-                      {seekResult.reflection}
+                      {typeof seekResult.reflection === "string" ? seekResult.reflection : ""}
                     </p>
                   </div>
                 </>

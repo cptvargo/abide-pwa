@@ -102,6 +102,7 @@ export function HighlightPanel({
   onClear,
   onCancel,
   onTagsChange,
+  onShare,
 }) {
   const colors = THEME_COLORS[theme] || THEME_COLORS.classic;
   const reference = formatVerseReference(
@@ -326,21 +327,42 @@ export function HighlightPanel({
           </div>
         </div>
 
-        {/* Save */}
-        <button
-          onClick={() =>
-            activeColor && onSelectColor(activeColor, selectedTags)
-          }
-          disabled={!activeColor}
-          className="w-full mt-4 py-3 rounded-2xl text-sm font-bold transition-all active:scale-95"
-          style={{
-            background: activeColor ? "var(--text-accent)" : "rgba(0,0,0,0.15)",
-            color: activeColor ? "#fff" : "var(--text-secondary)",
-            opacity: activeColor ? 1 : 0.5,
-          }}
-        >
-          {activeColor ? "Save Highlight" : "Select a color to highlight"}
-        </button>
+        {/* Share + Save row */}
+        <div className="flex gap-3 mt-4">
+          {onShare && (
+            <button
+              onClick={onShare}
+              className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl text-sm font-semibold transition-all active:scale-95"
+              style={{
+                background: "rgba(203,178,124,0.12)",
+                border: "1px solid rgba(203,178,124,0.3)",
+                color: "var(--text-accent)",
+                flexShrink: 0,
+              }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              Share
+            </button>
+          )}
+          <button
+            onClick={() => activeColor && onSelectColor(activeColor, selectedTags)}
+            disabled={!activeColor}
+            className="flex-1 py-3 rounded-2xl text-sm font-bold transition-all active:scale-95"
+            style={{
+              background: activeColor ? "var(--text-accent)" : "rgba(0,0,0,0.15)",
+              color: activeColor ? "#fff" : "var(--text-secondary)",
+              opacity: activeColor ? 1 : 0.5,
+            }}
+          >
+            {activeColor ? "Save Highlight" : "Select a color to highlight"}
+          </button>
+        </div>
       </div>
 
       <style>{`
