@@ -17,6 +17,16 @@
     "description": "Based on Andrew Murray's classic work, these fourteen days invite kids into the simple, beautiful truth that humility is the heart of following Jesus."
   },
   {
+    "id": "blood-of-christ",
+    "title": "The Blood of Christ",
+    "subtitle": "A 7-Day Devotional",
+    "author": "Gavin Todd",
+    "format": "video-daily",
+    "seriesFile": "series.json",
+    "days": 7,
+    "description": "The blood of Christ is not symbolic sentiment — it is the foundation of everything. Seven days sitting with what it means: forgiveness, cleansing, justification, reconciliation, freedom, bold access, and new life."
+  },
+  {
     "id": "discipleship-guide",
     "title": "Discipleship Guide",
     "subtitle": "A 22-Day Foundational Devotional",

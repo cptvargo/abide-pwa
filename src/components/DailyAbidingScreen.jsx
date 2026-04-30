@@ -342,6 +342,34 @@ function VideoPage({ day, translation, base, onNext, participants }) {
           </div>
         )}
 
+        {/* Reading content */}
+        {(day.theme || day.reading || day.forBeliever || day.forUnbeliever) && (
+          <div style={{ marginTop: 28 }}>
+            {day.theme && (
+              <div style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(203,178,124,0.45)", fontFamily: "var(--font-ui, system-ui)", marginBottom: 18 }}>
+                {day.theme}
+              </div>
+            )}
+            {day.reading && (
+              <p style={{ fontFamily: "var(--font-body, Georgia, serif)", fontSize: 16, lineHeight: 1.9, color: "var(--text-primary)", opacity: 0.9, marginBottom: 24, margin: "0 0 24px" }}>
+                {day.reading}
+              </p>
+            )}
+            {day.forBeliever && (
+              <div style={{ borderLeft: "2px solid rgba(203,178,124,0.4)", paddingLeft: 16, marginBottom: 20 }}>
+                <div style={{ fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(203,178,124,0.5)", fontFamily: "var(--font-ui, system-ui)", marginBottom: 8 }}>For the Believer</div>
+                <p style={{ fontFamily: "var(--font-body, Georgia, serif)", fontSize: 15, lineHeight: 1.85, color: "var(--text-primary)", opacity: 0.88, margin: 0 }}>{day.forBeliever}</p>
+              </div>
+            )}
+            {day.forUnbeliever && (
+              <div style={{ borderLeft: "2px solid rgba(203,178,124,0.2)", paddingLeft: 16, marginBottom: 8 }}>
+                <div style={{ fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(203,178,124,0.38)", fontFamily: "var(--font-ui, system-ui)", marginBottom: 8 }}>For the Seeker</div>
+                <p style={{ fontFamily: "var(--font-body, Georgia, serif)", fontSize: 15, lineHeight: 1.85, color: "var(--text-primary)", opacity: 0.75, margin: 0 }}>{day.forUnbeliever}</p>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Continue button */}
         <div style={{ marginTop: 32, marginBottom: 4 }}>
           <button
