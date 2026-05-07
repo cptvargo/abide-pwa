@@ -17,10 +17,26 @@
     "description": "Based on Andrew Murray's classic work, these fourteen days invite kids into the simple, beautiful truth that humility is the heart of following Jesus."
   },
   {
+    "id": "slow-to-anger",
+    "title": "Slow to Anger",
+    "subtitle": "A 7-Day Devotional on Anger and Righteousness",
+    "author": "ABIDE",
+    "days": 7,
+    "description": "Human anger does not produce the righteousness of God. Seven days sitting with what James means — and what happens when we ignore him."
+  },
+  {
+    "id": "validated-by-god",
+    "title": "Validated by God Alone",
+    "subtitle": "A 7-Day Devotional on People Pleasing and God's Approval",
+    "author": "ABIDE",
+    "days": 7,
+    "description": "The approval of others is a counterfeit for what God alone can give. Seven days sitting with what it means to be chosen, loved, and validated by God — and what it costs when we seek that from people instead."
+  },
+  {
     "id": "blood-of-christ",
     "title": "The Blood of Christ",
     "subtitle": "A 7-Day Devotional",
-    "author": "Gavin Todd",
+    "author": "ABIDE",
     "format": "video-daily",
     "seriesFile": "series.json",
     "days": 7,
@@ -30,7 +46,7 @@
     "id": "discipleship-guide",
     "title": "Discipleship Guide",
     "subtitle": "A 22-Day Foundational Devotional",
-    "author": "Gavin Todd",
+    "author": "ABIDE",
     "days": 22,
     "description": "A foundational journey through who God is as Father, Son, and Holy Spirit — and who you are in Christ. Walk through twenty-two days of Scripture-anchored teaching on the Trinity, the person and work of Jesus, the Holy Spirit, and your identity as a child of God."
   },

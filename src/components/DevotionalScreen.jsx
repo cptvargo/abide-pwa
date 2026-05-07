@@ -182,15 +182,13 @@ const AUTHORS = {
     quote:
       "Humility is the only soil in which virtue takes root; the only condition in which man can rightly know himself.",
   },
-  "Gavin Todd": {
-    subtitle: "Author · Prayer Director",
-    image: "Gavin Todd.png",
+  "ABIDE": {
+    subtitle: "Devotionals · Inspired by the Word",
+    image: null,
     description:
-      "A man marked by singular pursuit — to know Jesus Christ deeply and live fully surrendered to Him.",
+      "A collection of devotionals written by those whose lives have been shaped by the Word of God.",
     about:
-      "Gavin Todd is a man marked by a singular pursuit — to know Jesus Christ deeply and live fully surrendered to Him. His life is anchored in the reality of being crucified with Christ and raised to new life, with a desire to walk in continual communion with Him.\n\nGavin's greatest passion is to love Jesus with the very love he has received from Him, and to share that love with others. The central priorities of his life are the presence of Jesus and attentiveness to His voice. From this place of intimacy, his aim is to reflect the likeness and nature of Christ in a tangible and transformative way.\n\nHis heart extends beyond personal devotion. Gavin carries a burden to see the Church awakened to a deeper, daily experience of God — one rooted in intimacy, union, and ongoing communion with Christ. His message consistently points believers back to the simplicity and depth of abiding in Jesus, while extending an invitation to a world in need of eternal life.\n\nProfessionally, since 2004, Gavin has contributed to the design of the nation's next-generation nuclear aircraft carriers and continues to work on advanced submarine systems. In parallel with his professional career, he has faithfully served at his church since 2008 and currently serves as the Prayer Director.\n\nGavin resides in Newport News with his wife and their three children, where he continues to pursue a life centered on Christ and His Kingdom.",
-    quote:
-      "The central priorities of his life are the presence of Jesus and attentiveness to His voice.",
+      "A compilation of those who are inspired by the Word of God — people marked by pursuit, surrender, and the daily discipline of abiding in Christ. These devotionals are not written from a distance. They come from lives shaped by Scripture, formed in prayer, and pointed toward one thing: knowing Jesus.",
   },
 };
 
@@ -222,7 +220,7 @@ const SERIES_LIST = [
     id: "discipleship-guide",
     title: "Discipleship Guide",
     subtitle: "A 22-Day Foundational Devotional",
-    author: "Gavin Todd",
+    author: "ABIDE",
     totalDays: 22,
     hasAudio: false,
     description:
@@ -232,11 +230,31 @@ const SERIES_LIST = [
     id: "living-close-to-jesus",
     title: "Living Close to Jesus",
     subtitle: "A 5-Day Devotional",
-    author: "Gavin Todd",
+    author: "ABIDE",
     totalDays: 5,
     hasAudio: false,
     description:
       "Five daily readings on the posture of abiding — withdrawal, rest, stillness, beholding, and intimacy. What it truly means to live close to Jesus.",
+  },
+  {
+    id: "validated-by-god",
+    title: "Validated by God Alone",
+    subtitle: "A 7-Day Devotional",
+    author: "ABIDE",
+    totalDays: 7,
+    hasAudio: false,
+    description:
+      "The approval of others is a counterfeit for what God alone can give. Seven days sitting with what it means to be chosen, loved, and validated by God — and what it costs when we seek that from people instead.",
+  },
+  {
+    id: "slow-to-anger",
+    title: "Slow to Anger",
+    subtitle: "A 7-Day Devotional",
+    author: "ABIDE",
+    totalDays: 7,
+    hasAudio: false,
+    description:
+      "Human anger does not produce the righteousness of God. Seven days sitting with what James means — and what happens when we ignore him.",
   },
 ];
 
@@ -706,6 +724,26 @@ export default function DevotionalScreen({ onBack, theme }) {
                               "Behold Before You Behave",
                               "Seek Intimacy, Not Power",
                             ][dayNum - 1]
+                          : activeSeries.id === "validated-by-god"
+                            ? [
+                                "Who Gets to Validate You?",
+                                "Fearfully and Wonderfully Made",
+                                "Loved at Your Worst",
+                                "Chosen Before You Could Choose",
+                                "I Feared the People",
+                                "The High Cost of People Pleasing",
+                                "Do Everything As to the Lord",
+                              ][dayNum - 1]
+                          : activeSeries.id === "slow-to-anger"
+                            ? [
+                                "Human Anger Does Not Produce Righteousness",
+                                "Quick to Listen",
+                                "Slow to Speak",
+                                "Slow to Become Angry",
+                                "Anger at the Door — The Story of Cain",
+                                "When Anger Takes the Throne — The Story of Saul",
+                                "Hope Beyond Anger",
+                              ][dayNum - 1]
                           : [
                               "The Two Sons",
                               "What God Sees in the Heart",
