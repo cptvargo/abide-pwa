@@ -5,7 +5,7 @@
  */
 
 import { useState } from "react";
-import VSVInfo from "./VSVInfo";
+import emailjs from "@emailjs/browser";
 
 function BibleIcon({ style }) {
   return (
@@ -455,6 +455,9 @@ export default function SettingsModal({
   setChapterlessMode,
 }) {
   const [view, setView] = useState("main");
+  const [contactMsg, setContactMsg] = useState("");
+  const [contactSent, setContactSent] = useState(false);
+  const [contactSending, setContactSending] = useState(false);
 
   if (!open) return null;
 
@@ -570,63 +573,6 @@ export default function SettingsModal({
             {/* ── MAIN VIEW ─────────────────────────────────── */}
             {view === "main" && (
               <div className="sm-view">
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    justifyContent: "space-between",
-                    marginBottom: "24px",
-                  }}
-                >
-                  <div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-ui, system-ui)",
-                        fontSize: "10px",
-                        letterSpacing: "0.14em",
-                        textTransform: "uppercase",
-                        color: "rgba(var(--accent-rgb,203,178,124),0.55)",
-                        marginBottom: "7px",
-                      }}
-                    >
-                      ✦ &nbsp;Preferences
-                    </div>
-                    <h2
-                      style={{
-                        fontFamily: "var(--font-ui, system-ui)",
-                        fontSize: "26px",
-                        fontWeight: "300",
-                        letterSpacing: "0.02em",
-                        color: "var(--text-primary, #f0ebe0)",
-                        margin: 0,
-                      }}
-                    >
-                      Settings
-                    </h2>
-                  </div>
-                  <button
-                    onClick={handleClose}
-                    style={{
-                      width: "34px",
-                      height: "34px",
-                      borderRadius: "100px",
-                      background: "rgba(var(--accent-rgb,203,178,124),0.08)",
-                      border:
-                        "1px solid rgba(var(--accent-rgb,203,178,124),0.15)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      fontSize: "13px",
-                      color: "var(--text-primary, #f0ebe0)",
-                      opacity: 0.5,
-                      transition: "opacity 0.2s",
-                      WebkitTapHighlightColor: "transparent",
-                    }}
-                  >
-                    ✕
-                  </button>
-                </div>
 
                 <Divider />
 
@@ -712,6 +658,20 @@ export default function SettingsModal({
 
                 <Divider />
 
+                <SectionRow
+                  icon={
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="3" />
+                      <path d="M2 7l10 7 10-7" />
+                    </svg>
+                  }
+                  label="Contact"
+                  onClick={() => setView("contact")}
+                />
+
+                <Divider />
+
                 {/* Footer */}
                 <div style={{ textAlign: "center" }}>
                   <div
@@ -719,30 +679,9 @@ export default function SettingsModal({
                       fontSize: "13px",
                       letterSpacing: "0.18em",
                       color: "rgba(var(--accent-rgb,203,178,124),0.2)",
-                      marginBottom: "8px",
                     }}
                   >
                     ✦ ✦ ✦
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-ui, system-ui)",
-                      fontSize: "11px",
-                      color: "var(--text-primary, #f0ebe0)",
-                      opacity: 0.28,
-                    }}
-                  >
-                    Made with ♥ by Jesus Vargas
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-ui, system-ui)",
-                      fontSize: "11px",
-                      color: "rgba(var(--accent-rgb,203,178,124),0.32)",
-                      marginTop: "3px",
-                    }}
-                  >
-                    Version 2.3.0
                   </div>
                 </div>
               </div>
@@ -1022,98 +961,113 @@ export default function SettingsModal({
                   <TranslationCard key={t.id} t={t} />
                 ))}
 
-                {/* VSV — Coming Soon */}
-                <div
-                  style={{
-                    borderRadius: "16px",
-                    background: "rgba(var(--accent-rgb,203,178,124),0.03)",
-                    border:
-                      "1px dashed rgba(var(--accent-rgb,203,178,124),0.12)",
-                    padding: "14px 16px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "14px",
-                    marginTop: "4px",
-                    opacity: 0.6,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "11px",
-                      background: "rgba(var(--accent-rgb,203,178,124),0.05)",
-                      border:
-                        "1px solid rgba(var(--accent-rgb,203,178,124),0.1)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "var(--font-ui, system-ui)",
-                        fontSize: "9px",
-                        fontWeight: "700",
-                        letterSpacing: "0.04em",
-                        color: "rgba(var(--accent-rgb,203,178,124),0.5)",
-                      }}
-                    >
-                      VSV
-                    </span>
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-ui, system-ui)",
-                        fontSize: "14px",
-                        fontWeight: "400",
-                        color: "var(--text-primary, #f0ebe0)",
-                        marginBottom: "2px",
-                        opacity: 0.7,
-                      }}
-                    >
-                      Vine Standard Version
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-body, Georgia, serif)",
-                        fontSize: "11px",
-                        fontStyle: "italic",
-                        color: "var(--text-primary, #f0ebe0)",
-                        opacity: 0.38,
-                      }}
-                    >
-                      ABIDE's original translation — coming soon
-                    </div>
-                  </div>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-ui, system-ui)",
-                      fontSize: "9px",
-                      fontWeight: "600",
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      color: "rgba(var(--accent-rgb,203,178,124),0.45)",
-                      background: "rgba(var(--accent-rgb,203,178,124),0.06)",
-                      border:
-                        "1px solid rgba(var(--accent-rgb,203,178,124),0.1)",
-                      borderRadius: "4px",
-                      padding: "2px 6px",
-                      flexShrink: 0,
-                    }}
-                  >
-                    In Progress
-                  </span>
-                </div>
               </div>
             )}
 
-            {/* ── VSV INFO VIEW ─────────────────────────────── */}
-            {view === "vsv" && (
+            {/* ── CONTACT VIEW ──────────────────────────────── */}
+            {view === "contact" && (
               <div className="sm-view">
-                <VSVInfo onBack={() => setView("main")} />
+                <BackHeader label="Contact" onBack={() => { setView("main"); setContactSent(false); setContactMsg(""); }} />
+
+                {contactSent ? (
+                  <div style={{ textAlign: "center", paddingTop: 40 }}>
+                    <div style={{ fontSize: 36, marginBottom: 16 }}>✦</div>
+                    <div style={{
+                      fontFamily: "var(--font-ui, system-ui)",
+                      fontSize: 17, fontWeight: 300,
+                      color: "var(--text-primary)",
+                      marginBottom: 8,
+                    }}>
+                      Message sent
+                    </div>
+                    <p style={{
+                      fontFamily: "var(--font-body, Georgia, serif)",
+                      fontSize: 14, lineHeight: 1.7,
+                      color: "var(--text-secondary)", opacity: 0.6,
+                      margin: 0,
+                    }}>
+                      Thank you for reaching out. I'll get back to you soon.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <p style={{
+                      fontFamily: "var(--font-body, Georgia, serif)",
+                      fontSize: 14, lineHeight: 1.75,
+                      color: "var(--text-primary)",
+                      opacity: 0.6,
+                      margin: "0 0 20px",
+                    }}>
+                      Found a bug, have an idea, or just want to say something? Write it here and it'll go straight to me.
+                    </p>
+
+                    <textarea
+                      value={contactMsg}
+                      onChange={(e) => setContactMsg(e.target.value)}
+                      placeholder="Write your message..."
+                      rows={6}
+                      style={{
+                        width: "100%",
+                        boxSizing: "border-box",
+                        background: "rgba(var(--accent-rgb,203,178,124),0.05)",
+                        border: "1px solid rgba(var(--accent-rgb,203,178,124),0.15)",
+                        borderRadius: 12,
+                        padding: "14px 16px",
+                        fontFamily: "var(--font-body, Georgia, serif)",
+                        fontSize: 15,
+                        lineHeight: 1.7,
+                        color: "var(--text-primary)",
+                        resize: "none",
+                        outline: "none",
+                        marginBottom: 16,
+                      }}
+                    />
+
+                    <button
+                      onClick={async () => {
+                        if (!contactMsg.trim() || contactSending) return;
+                        setContactSending(true);
+                        try {
+                          await emailjs.send(
+                            "service_z9q4col",
+                            "template_fyclurw",
+                            { message: contactMsg.trim() },
+                            { publicKey: "tTCVbghqW-ocRbMLd" }
+                          );
+                          setContactSent(true);
+                          setContactMsg("");
+                        } catch (err) {
+                          console.error("[EmailJS]", err);
+                        } finally {
+                          setContactSending(false);
+                        }
+                      }}
+                      style={{
+                        width: "100%",
+                        padding: "14px",
+                        borderRadius: 12,
+                        background: contactMsg.trim() && !contactSending
+                          ? "rgba(var(--accent-rgb,203,178,124),0.15)"
+                          : "rgba(var(--accent-rgb,203,178,124),0.05)",
+                        border: contactMsg.trim() && !contactSending
+                          ? "1px solid rgba(var(--accent-rgb,203,178,124),0.4)"
+                          : "1px solid rgba(var(--accent-rgb,203,178,124),0.1)",
+                        cursor: contactMsg.trim() && !contactSending ? "pointer" : "default",
+                        fontFamily: "var(--font-ui, system-ui)",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        letterSpacing: "0.06em",
+                        color: contactMsg.trim() && !contactSending
+                          ? "rgba(var(--accent-rgb,203,178,124),0.9)"
+                          : "rgba(var(--accent-rgb,203,178,124),0.3)",
+                        transition: "all 0.2s",
+                        WebkitTapHighlightColor: "transparent",
+                      }}
+                    >
+                      {contactSending ? "Sending..." : "Send"}
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>

@@ -424,28 +424,6 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
             >
               ✦ ✦ ✦
             </div>
-            <div
-              style={{
-                fontFamily: "var(--font-ui, system-ui)",
-                fontSize: 11,
-                color: "var(--text-primary, #f0ebe0)",
-                opacity: 0.3,
-                letterSpacing: "0.02em",
-              }}
-            >
-              Made with ♥ by Jesus Vargas
-            </div>
-            <div
-              style={{
-                fontFamily: "var(--font-ui, system-ui)",
-                fontSize: 11,
-                color: "rgba(var(--accent-rgb,203,178,124),0.35)",
-                marginTop: 3,
-                letterSpacing: "0.04em",
-              }}
-            >
-              Version 2.4.0
-            </div>
           </div>
         </div>
       </div>

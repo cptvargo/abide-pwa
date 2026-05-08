@@ -2054,13 +2054,19 @@ export default function AppShell() {
           <nav
             style={{
               position: "sticky",
-              top: 0,
+              top: "calc(env(safe-area-inset-top) + 8px)",
               zIndex: 40,
-              background: "var(--bg-app)",
-              borderBottom: "1px solid rgba(255,255,255,0.07)",
+              margin: "calc(env(safe-area-inset-top) + 8px) 0 0 16px",
+              alignSelf: "flex-start",
+              background: "rgba(15,12,8,0.85)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              borderRadius: 14,
+              border: "1px solid rgba(255,255,255,0.08)",
+              boxShadow: "0 2px 20px rgba(0,0,0,0.4)",
               display: "flex",
               alignItems: "center",
-              padding: "calc(env(safe-area-inset-top) + 10px) 16px 10px",
+              padding: "8px 10px",
               gap: 10,
             }}
           >
@@ -2069,7 +2075,6 @@ export default function AppShell() {
               className="nav-item-btn"
               onClick={() => setNavigatorOpen(true)}
               style={{
-                flex: 1,
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
@@ -2078,7 +2083,6 @@ export default function AppShell() {
                 borderRadius: 10,
                 padding: "8px 14px",
                 cursor: "pointer",
-                minWidth: 0,
               }}
             >
               <BibleIcon
@@ -2276,20 +2280,24 @@ export default function AppShell() {
           <nav
             style={{
               position: "fixed",
-              bottom: 0,
-              left: 0,
-              right: 0,
+              bottom: "calc(env(safe-area-inset-bottom) + 16px)",
+              left: 24,
+              right: 24,
               zIndex: 40,
-              background: "var(--bg-app)",
-              borderTop: "1px solid rgba(255,255,255,0.07)",
+              background: "rgba(15,12,8,0.85)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              borderRadius: 999,
+              border: "1px solid rgba(255,255,255,0.08)",
+              boxShadow: "0 4px 28px rgba(0,0,0,0.5)",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-around",
               paddingTop: 10,
               paddingLeft: 8,
               paddingRight: 8,
-              paddingBottom: "max(10px, env(safe-area-inset-bottom))",
-              transform: navVisible ? "translateY(0)" : "translateY(100%)",
+              paddingBottom: 10,
+              transform: navVisible ? "translateY(0)" : "translateY(140%)",
               opacity: navVisible ? 1 : 0,
               transition:
                 "transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease",
