@@ -91,3 +91,102 @@
     radial-gradient(rgba(0,0,0,0.02) 1px, transparent 1px);
   background-size: 4px 4px;
 }
+
+/* ========================================
+   Settings Modal — Parchment Overrides
+======================================== */
+
+[data-theme="parchment"] .sm-modal {
+  box-shadow: 0 32px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(92,65,35,0.2) !important;
+}
+
+[data-theme="parchment"] .sm-row {
+  background: rgba(92,65,35,0.08) !important;
+  border-color: rgba(92,65,35,0.2) !important;
+}
+
+[data-theme="parchment"] .sm-row:hover,
+[data-theme="parchment"] .sm-row:active {
+  background: rgba(92,65,35,0.14) !important;
+}
+
+/* ========================================
+   Premium Menu — Parchment Overrides
+======================================== */
+
+[data-theme="parchment"] .pm-item {
+  background: rgba(92,65,35,0.07) !important;
+  border-color: rgba(92,65,35,0.18) !important;
+}
+
+[data-theme="parchment"] .pm-item-available:hover {
+  background: rgba(92,65,35,0.16) !important;
+  border-color: rgba(92,65,35,0.35) !important;
+}
+
+[data-theme="parchment"] .pm-rule {
+  background: rgba(92,65,35,0.25) !important;
+}
+
+[data-theme="parchment"] .pm-footer {
+  border-color: rgba(92,65,35,0.15) !important;
+}
+
+/* ========================================
+   Devotionals — Card Enhancement
+======================================== */
+
+[data-theme="parchment"] .dv-card {
+  background: rgba(92,65,35,0.08) !important;
+  border-color: rgba(92,65,35,0.22) !important;
+}
+
+[data-theme="parchment"] .dv-card:hover {
+  background: rgba(92,65,35,0.13) !important;
+  border-color: rgba(92,65,35,0.32) !important;
+}
+
+/* ========================================
+   Daily Abiding — Parchment Overrides
+======================================== */
+
+[data-theme="parchment"] .da-hdr {
+  border-color: rgba(92,65,35,0.14) !important;
+}
+
+[data-theme="parchment"] .da-hdr-btn {
+  background: rgba(92,65,35,0.08) !important;
+  border-color: rgba(92,65,35,0.18) !important;
+}
+
+[data-theme="parchment"] .da-day-card {
+  border-color: rgba(92,65,35,0.18) !important;
+}
+
+[data-theme="parchment"] .da-day-card.da-day-next {
+  border-color: rgba(92,65,35,0.40) !important;
+}
+
+[data-theme="parchment"] .da-day-card.da-day-done {
+  border-color: rgba(92,65,35,0.22) !important;
+}
+
+[data-theme="parchment"] .da-card-body {
+  background: rgba(92,65,35,0.05) !important;
+}
+
+[data-theme="parchment"] .da-choice {
+  background: rgba(92,65,35,0.05) !important;
+  border-color: rgba(92,65,35,0.14) !important;
+}
+
+[data-theme="parchment"] .da-choice.da-choice-sel {
+  background: rgba(92,65,35,0.14) !important;
+  border-color: rgba(92,65,35,0.40) !important;
+}
+
+[data-theme="parchment"] .da-pill {
+  background: rgba(92,65,35,0.10) !important;
+  border-color: rgba(92,65,35,0.35) !important;
+  color: rgba(72,45,20,0.90) !important;
+}

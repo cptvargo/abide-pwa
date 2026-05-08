@@ -2087,14 +2087,14 @@ export default function AppShell() {
             >
               <BibleIcon
                 size={18}
-                color="var(--text-accent)"
+                color="rgba(203,178,124,0.85)"
                 strokeWidth={2.5}
               />
               <span
                 style={{
                   fontSize: 15,
                   fontWeight: 600,
-                  color: "var(--text-primary)",
+                  color: "rgba(255,255,255,0.92)",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -2106,7 +2106,7 @@ export default function AppShell() {
               <svg
                 style={{
                   marginLeft: "auto",
-                  color: "var(--text-secondary)",
+                  color: "rgba(255,255,255,0.35)",
                   flexShrink: 0,
                 }}
                 width="14"
@@ -2143,8 +2143,7 @@ export default function AppShell() {
                   fontSize: 12,
                   fontWeight: 700,
                   letterSpacing: "0.1em",
-                  color: "var(--text-primary)",
-                  opacity: 0.85,
+                  color: "rgba(255,255,255,0.88)",
                   fontFamily: "var(--font-ui)",
                 }}
               >
@@ -2156,7 +2155,7 @@ export default function AppShell() {
                     width: 5,
                     height: 5,
                     borderRadius: "50%",
-                    background: "var(--text-accent)",
+                    background: "rgba(203,178,124,0.85)",
                   }}
                 />
               )}
@@ -2322,14 +2321,14 @@ export default function AppShell() {
                 minWidth: 60,
               }}
             >
-              <div style={{ color: "var(--text-secondary)" }}>
+              <div style={{ color: "rgba(255,255,255,0.55)" }}>
                 <MenuIcon />
               </div>
               <span
                 style={{
                   fontSize: 10,
                   fontWeight: 500,
-                  color: "var(--text-secondary)",
+                  color: "rgba(255,255,255,0.55)",
                   letterSpacing: "0.04em",
                   fontFamily: "var(--font-ui)",
                 }}
@@ -2364,11 +2363,7 @@ export default function AppShell() {
               >
                 <BibleIcon
                   size={22}
-                  color={
-                    isScriptureActive
-                      ? "var(--text-accent)"
-                      : "var(--text-secondary)"
-                  }
+                  color={isScriptureActive ? "rgba(203,178,124,0.95)" : "rgba(255,255,255,0.55)"}
                 />
                 {isScriptureActive && (
                   <span
@@ -2380,7 +2375,7 @@ export default function AppShell() {
                       width: 4,
                       height: 4,
                       borderRadius: "50%",
-                      background: "var(--text-accent)",
+                      background: "rgba(203,178,124,0.95)",
                     }}
                   />
                 )}
@@ -2391,9 +2386,7 @@ export default function AppShell() {
                   fontWeight: 500,
                   letterSpacing: "0.04em",
                   fontFamily: "var(--font-ui)",
-                  color: isScriptureActive
-                    ? "var(--text-accent)"
-                    : "var(--text-secondary)",
+                  color: isScriptureActive ? "rgba(203,178,124,0.95)" : "rgba(255,255,255,0.55)",
                 }}
               >
                 Scripture
@@ -2416,14 +2409,14 @@ export default function AppShell() {
                 minWidth: 60,
               }}
             >
-              <div style={{ color: "var(--text-secondary)" }}>
+              <div style={{ color: "rgba(255,255,255,0.55)" }}>
                 <SearchIcon />
               </div>
               <span
                 style={{
                   fontSize: 10,
                   fontWeight: 500,
-                  color: "var(--text-secondary)",
+                  color: "rgba(255,255,255,0.55)",
                   letterSpacing: "0.04em",
                   fontFamily: "var(--font-ui)",
                 }}
@@ -2448,14 +2441,14 @@ export default function AppShell() {
                 minWidth: 60,
               }}
             >
-              <div style={{ color: "var(--text-secondary)" }}>
+              <div style={{ color: "rgba(255,255,255,0.55)" }}>
                 <SettingsIcon />
               </div>
               <span
                 style={{
                   fontSize: 10,
                   fontWeight: 500,
-                  color: "var(--text-secondary)",
+                  color: "rgba(255,255,255,0.55)",
                   letterSpacing: "0.04em",
                   fontFamily: "var(--font-ui)",
                 }}

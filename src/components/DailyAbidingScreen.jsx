@@ -317,6 +317,7 @@ function VideoPage({ day, translation, base, onNext, participants }) {
                 <button
                   key={pill}
                   onClick={() => setActivePill(pill)}
+                  className="da-pill"
                   style={{
                     padding: "7px 13px", borderRadius: 100, cursor: "pointer",
                     background: "rgba(203,178,124,0.07)",
@@ -455,6 +456,7 @@ function ReflectionPage({ day, participants = 1, onNext, onPrev }) {
               <div key={i}>
                 <button
                   onClick={() => setSelected(isSelected ? null : i)}
+                  className={`da-choice${isSelected ? " da-choice-sel" : ""}`}
                   style={{
                     width: "100%", textAlign: "left",
                     padding: "16px 18px", borderRadius: 13, cursor: "pointer",
@@ -683,13 +685,14 @@ function DayExperience({ day, seriesId, translation, base, onComplete, onBack })
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--bg-app)", display: "flex", flexDirection: "column" }}>
       {/* Header */}
-      <div style={{
+      <div className="da-hdr" style={{
         display: "flex", alignItems: "center", gap: 10, flexShrink: 0,
         padding: "calc(env(safe-area-inset-top,0px) + 10px) 16px 10px",
         borderBottom: "1px solid rgba(255,255,255,0.05)",
       }}>
         <button
           onClick={onBack}
+          className="da-hdr-btn"
           style={{
             height: 34, borderRadius: 9, flexShrink: 0, padding: "0 12px 0 8px",
             background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)",
@@ -766,13 +769,13 @@ function SeriesDetail({ series, onStartDay, onBack }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "var(--bg-app)" }}>
       {/* Header */}
-      <div style={{
+      <div className="da-hdr" style={{
         position: "sticky", top: 0, zIndex: 10, background: "var(--bg-app)",
         borderBottom: "1px solid rgba(255,255,255,0.05)",
         display: "flex", alignItems: "center", gap: 10,
         padding: "calc(env(safe-area-inset-top,0px) + 12px) 16px 12px",
       }}>
-        <button onClick={onBack} style={{
+        <button onClick={onBack} className="da-hdr-btn" style={{
           height: 34, borderRadius: 9, flexShrink: 0, padding: "0 12px 0 8px",
           background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)",
           cursor: "pointer", color: "var(--text-primary)",
@@ -859,6 +862,7 @@ function SeriesDetail({ series, onStartDay, onBack }) {
                 key={day.id}
                 onClick={() => unlocked && onStartDay(day, idx)}
                 disabled={!unlocked}
+                className={`da-day-card${!unlocked ? " da-day-locked" : done ? " da-day-done" : isNext ? " da-day-next" : ""}`}
                 style={{
                   width: "100%", textAlign: "left", cursor: unlocked ? "pointer" : "default",
                   borderRadius: 14, overflow: "hidden",
@@ -932,7 +936,7 @@ function SeriesDetail({ series, onStartDay, onBack }) {
                 </div>
 
                 {/* Card body */}
-                <div style={{
+                <div className="da-card-body" style={{
                   padding: "14px 16px",
                   background: isNext ? "rgba(203,178,124,0.06)" : "rgba(255,255,255,0.02)",
                 }}>
@@ -964,14 +968,14 @@ function SeriesDetail({ series, onStartDay, onBack }) {
 /* ─── Shared header bar ──────────────────────────────────────────────────── */
 function DAHeader({ title, onBack, backLabel }) {
   return (
-    <div style={{
+    <div className="da-hdr" style={{
       position: "sticky", top: 0, zIndex: 10, background: "var(--bg-app)",
       borderBottom: "1px solid rgba(255,255,255,0.05)",
       display: "flex", alignItems: "center", gap: 12,
       padding: "calc(env(safe-area-inset-top,0px) + 12px) 16px 12px",
       flexShrink: 0,
     }}>
-      <button onClick={onBack} style={{
+      <button onClick={onBack} className="da-hdr-btn" style={{
         width: 34, height: 34, borderRadius: 9, flexShrink: 0,
         background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)",
         cursor: "pointer", color: "var(--text-primary)",
