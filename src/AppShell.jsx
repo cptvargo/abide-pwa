@@ -15,6 +15,7 @@ import {
   CHAPTER_COUNT,
 } from "./lib/bibleStructure";
 import { search, warmIndex } from "./lib/searchEngine";
+import RichTextJournal from "./RichTextJournal";
 
 const TRANSLATIONS = ["KJV", "ASR", "WAE"];
 const TRANSLATION_FULL = {
@@ -1814,6 +1815,12 @@ export default function AppShell() {
   const [miniPlayerOpen, setMiniPlayerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
+  // Persistent scripture scratchpad — draft auto-saved to localStorage
+  const [quickNoteOpen, setQuickNoteOpen] = useState(false);
+  const [scratchpadHasDraft, setScratchpadHasDraft] = useState(
+    () => !!(localStorage.getItem("scratchpad_draft"))
+  );
+
   // Bottom nav hide/show on scroll
   const [navVisible, setNavVisible] = useState(true);
   const lastScrollY = useRef(0);
@@ -2026,6 +2033,30 @@ export default function AppShell() {
   // Nav item active state
   const isScriptureActive = activeScreen === "scripture";
 
+  // Parchment is a light theme — its CSS variables are dark ink, which would be
+  // invisible on the dark-glass pill backgrounds. All other themes have light CSS vars.
+  const isParchment = theme === "parchment";
+  const navAccent   = isParchment ? "rgba(203,178,124,0.95)" : "var(--text-accent)";
+  const navPrimary  = isParchment ? "rgba(255,255,255,0.92)" : "var(--text-primary)";
+  const navInactive = isParchment ? "rgba(255,255,255,0.55)" : "var(--text-secondary)";
+  const navMuted    = isParchment ? "rgba(255,255,255,0.35)" : "var(--text-secondary)";
+
+  function handleScratchpadSave({ html, text }) {
+    const entry = {
+      id: Date.now().toString(),
+      type: "journal",
+      scripture: `${readingContext.book} ${readingContext.chapter}`,
+      text,
+      html,
+      createdAt: new Date().toISOString(),
+    };
+    const saved = JSON.parse(localStorage.getItem("dialogues") || "[]");
+    saved.unshift(entry);
+    localStorage.setItem("dialogues", JSON.stringify(saved));
+    setScratchpadHasDraft(false);
+    setQuickNoteOpen(false);
+  }
+
   return (
     <div
       className="no-select flex flex-col relative bg-[var(--bg-app)] text-[var(--text-primary)] font-[var(--font-ui)]"
@@ -2087,14 +2118,14 @@ export default function AppShell() {
             >
               <BibleIcon
                 size={18}
-                color="rgba(203,178,124,0.85)"
+                color={navAccent}
                 strokeWidth={2.5}
               />
               <span
                 style={{
                   fontSize: 15,
                   fontWeight: 600,
-                  color: "rgba(255,255,255,0.92)",
+                  color: navPrimary,
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -2106,7 +2137,7 @@ export default function AppShell() {
               <svg
                 style={{
                   marginLeft: "auto",
-                  color: "rgba(255,255,255,0.35)",
+                  color: navMuted,
                   flexShrink: 0,
                 }}
                 width="14"
@@ -2143,7 +2174,7 @@ export default function AppShell() {
                   fontSize: 12,
                   fontWeight: 700,
                   letterSpacing: "0.1em",
-                  color: "rgba(255,255,255,0.88)",
+                  color: navPrimary,
                   fontFamily: "var(--font-ui)",
                 }}
               >
@@ -2155,7 +2186,7 @@ export default function AppShell() {
                     width: 5,
                     height: 5,
                     borderRadius: "50%",
-                    background: "rgba(203,178,124,0.85)",
+                    background: navAccent,
                   }}
                 />
               )}
@@ -2210,6 +2241,52 @@ export default function AppShell() {
                 )}
               </button>
             )}
+
+            {/* Pencil pill — sermon notes scratchpad, pushed to far right */}
+            <button
+              className="nav-item-btn"
+              onClick={() => setQuickNoteOpen(true)}
+              style={{
+                marginLeft: "auto",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                background: scratchpadHasDraft
+                  ? "rgba(var(--accent-rgb),0.18)"
+                  : "rgba(255,255,255,0.06)",
+                border: scratchpadHasDraft
+                  ? "1px solid rgba(var(--accent-rgb),0.45)"
+                  : "1px solid rgba(255,255,255,0.07)",
+                borderRadius: 10,
+                padding: "8px 12px",
+                cursor: "pointer",
+                flexShrink: 0,
+                position: "relative",
+              }}
+              aria-label="Sermon notes"
+            >
+              {scratchpadHasDraft && (
+                <span style={{
+                  position: "absolute", top: 5, right: 5,
+                  width: 5, height: 5, borderRadius: "50%",
+                  background: "var(--text-accent)",
+                }} />
+              )}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke={navAccent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+              <span style={{
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: "0.05em",
+                color: scratchpadHasDraft ? "var(--text-accent)" : navPrimary,
+                fontFamily: "var(--font-ui)",
+              }}>
+                Notes
+              </span>
+            </button>
           </nav>
         )}
 
@@ -2321,14 +2398,14 @@ export default function AppShell() {
                 minWidth: 60,
               }}
             >
-              <div style={{ color: "rgba(255,255,255,0.55)" }}>
+              <div style={{ color: navInactive }}>
                 <MenuIcon />
               </div>
               <span
                 style={{
                   fontSize: 10,
                   fontWeight: 500,
-                  color: "rgba(255,255,255,0.55)",
+                  color: navInactive,
                   letterSpacing: "0.04em",
                   fontFamily: "var(--font-ui)",
                 }}
@@ -2363,7 +2440,7 @@ export default function AppShell() {
               >
                 <BibleIcon
                   size={22}
-                  color={isScriptureActive ? "rgba(203,178,124,0.95)" : "rgba(255,255,255,0.55)"}
+                  color={isScriptureActive ? navAccent : navInactive}
                 />
                 {isScriptureActive && (
                   <span
@@ -2375,7 +2452,7 @@ export default function AppShell() {
                       width: 4,
                       height: 4,
                       borderRadius: "50%",
-                      background: "rgba(203,178,124,0.95)",
+                      background: navAccent,
                     }}
                   />
                 )}
@@ -2386,7 +2463,7 @@ export default function AppShell() {
                   fontWeight: 500,
                   letterSpacing: "0.04em",
                   fontFamily: "var(--font-ui)",
-                  color: isScriptureActive ? "rgba(203,178,124,0.95)" : "rgba(255,255,255,0.55)",
+                  color: isScriptureActive ? navAccent : navInactive,
                 }}
               >
                 Scripture
@@ -2409,14 +2486,14 @@ export default function AppShell() {
                 minWidth: 60,
               }}
             >
-              <div style={{ color: "rgba(255,255,255,0.55)" }}>
+              <div style={{ color: navInactive }}>
                 <SearchIcon />
               </div>
               <span
                 style={{
                   fontSize: 10,
                   fontWeight: 500,
-                  color: "rgba(255,255,255,0.55)",
+                  color: navInactive,
                   letterSpacing: "0.04em",
                   fontFamily: "var(--font-ui)",
                 }}
@@ -2441,14 +2518,14 @@ export default function AppShell() {
                 minWidth: 60,
               }}
             >
-              <div style={{ color: "rgba(255,255,255,0.55)" }}>
+              <div style={{ color: navInactive }}>
                 <SettingsIcon />
               </div>
               <span
                 style={{
                   fontSize: 10,
                   fontWeight: 500,
-                  color: "rgba(255,255,255,0.55)",
+                  color: navInactive,
                   letterSpacing: "0.04em",
                   fontFamily: "var(--font-ui)",
                 }}
@@ -2458,6 +2535,17 @@ export default function AppShell() {
             </button>
           </nav>
         )}
+
+      {/* ── Scripture Scratchpad — full RichTextJournal overlay ── */}
+      {quickNoteOpen && (
+        <RichTextJournal
+          scratchpadMode
+          translation={translation}
+          onSave={handleScratchpadSave}
+          onMinimize={() => setQuickNoteOpen(false)}
+          onDraftChange={setScratchpadHasDraft}
+        />
+      )}
 
       {/* ── Bible Navigator Sheet ── */}
       <BibleNavigatorSheet

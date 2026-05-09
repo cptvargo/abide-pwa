@@ -1,7 +1,6 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
-import CharacterCount from "@tiptap/extension-character-count";
 import Placeholder from "@tiptap/extension-placeholder";
 import { useState, useEffect, useRef } from "react";
 
@@ -72,7 +71,6 @@ const BOOK_TO_ID = {
 
 function parseRef(refStr) {
   const clean = refStr.trim();
-  // Greedy match: everything up to last "space number" is the book
   const m = clean.match(/^(.*)\s+(\d+)(?::(\d+)(?:-(\d+))?)?$/);
   if (!m) return null;
   const bookId = BOOK_TO_ID[m[1].toLowerCase().trim()];
@@ -113,6 +111,10 @@ async function fetchVerseText(bookId, chapter, startVerse, endVerse, translation
   }
 }
 
+// Broad regex to detect potential verse references typed inline
+// Requires book name to start with uppercase, reducing false positives
+const VERSE_RE = /\b(?:(?:1|2|3)\s+)?[A-Z][a-z]+(?:\s+[A-Za-z]+)?\s+\d+:\d+(?:-\d+)?\b/g;
+
 export default function RichTextJournal({
   initialText = "",
   initialScriptureRef = "",
@@ -121,22 +123,42 @@ export default function RichTextJournal({
   translation = "KJV",
   onSave,
   onClose,
+  scratchpadMode = false,
+  onMinimize,
+  onDraftChange,
 }) {
   const [showFormatMenu, setShowFormatMenu] = useState(false);
-  const [scriptureRef, setScriptureRef] = useState(initialScriptureRef);
-  const [versePreview, setVersePreview] = useState(initialVerseText);
-  const [verseFetching, setVerseFetching] = useState(false);
-  const debounceRef = useRef(null);
-  const activeTranslation = initialVerseTranslation || translation;
+  const [verseSuggestion, setVerseSuggestion] = useState(null);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
+  const scanRef = useRef(null);
+  const autoSaveRef = useRef(null);
+  const dismissedRefs = useRef(new Set());
+
+  // Track keyboard height via visualViewport so content stays above keyboard
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    function onResize() {
+      const offset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      setKeyboardOffset(offset);
+    }
+    vv.addEventListener("resize", onResize);
+    vv.addEventListener("scroll", onResize);
+    return () => {
+      vv.removeEventListener("resize", onResize);
+      vv.removeEventListener("scroll", onResize);
+    };
+  }, []);
 
   const editor = useEditor({
     extensions: [
       StarterKit,
       Underline,
-      CharacterCount.configure({ limit: 100000 }),
-      Placeholder.configure({ placeholder: "Start typing here…" }),
+      Placeholder.configure({ placeholder: "Start typing your notes…" }),
     ],
-    content: initialText || "<p></p>",
+    content: scratchpadMode
+      ? (localStorage.getItem("scratchpad_draft") || "<p></p>")
+      : (initialText || "<p></p>"),
     editorProps: {
       attributes: {
         class: "prose prose-lg focus:outline-none max-w-none px-6 py-4 min-h-[300px]",
@@ -144,138 +166,186 @@ export default function RichTextJournal({
     },
   });
 
-  // Debounced verse fetch when user types a scripture reference
+  // Scan editor text for verse references and show a suggestion chip
   useEffect(() => {
-    const ref = scriptureRef.trim();
-    if (!ref) {
-      setVersePreview(null);
-      return;
+    if (!editor) return;
+
+    function handleUpdate() {
+      clearTimeout(scanRef.current);
+      scanRef.current = setTimeout(async () => {
+        const editorText = editor.getText();
+        VERSE_RE.lastIndex = 0;
+        const matches = [...editorText.matchAll(VERSE_RE)];
+        if (!matches.length) {
+          setVerseSuggestion(null);
+          return;
+        }
+
+        // Use the last (most recently typed) match
+        const refStr = matches[matches.length - 1][0];
+
+        // Skip refs the user already dismissed
+        if (dismissedRefs.current.has(refStr)) return;
+
+        // Skip if it's already the active suggestion
+        if (verseSuggestion?.ref === refStr) return;
+
+        const parsed = parseRef(refStr);
+        if (!parsed?.startVerse) { setVerseSuggestion(null); return; }
+
+        const verseText = await fetchVerseText(
+          parsed.bookId, parsed.chapter,
+          parsed.startVerse, parsed.endVerse,
+          translation,
+        );
+        if (verseText) {
+          setVerseSuggestion({ ref: refStr, text: verseText });
+        }
+      }, 800);
     }
 
-    // If we already have a preview for this ref (e.g., from initialVerseText), skip fetch
-    if (ref === initialScriptureRef && versePreview) return;
+    editor.on("update", handleUpdate);
+    return () => {
+      editor.off("update", handleUpdate);
+      clearTimeout(scanRef.current);
+    };
+  }, [editor, translation, verseSuggestion]);
 
-    clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(async () => {
-      const parsed = parseRef(ref);
-      if (!parsed || !parsed.startVerse) {
-        setVersePreview(null);
-        return;
-      }
-      setVerseFetching(true);
-      const text = await fetchVerseText(
-        parsed.bookId,
-        parsed.chapter,
-        parsed.startVerse,
-        parsed.endVerse,
-        activeTranslation,
-      );
-      setVerseFetching(false);
-      setVersePreview(text);
-    }, 600);
-
-    return () => clearTimeout(debounceRef.current);
-  }, [scriptureRef]);
+  // Auto-save draft to localStorage in scratchpad mode
+  useEffect(() => {
+    if (!editor || !scratchpadMode) return;
+    function onUpdate() {
+      clearTimeout(autoSaveRef.current);
+      autoSaveRef.current = setTimeout(() => {
+        const html = editor.getHTML();
+        localStorage.setItem("scratchpad_draft", html);
+        onDraftChange?.(editor.getText().trim().length > 0);
+      }, 800);
+    }
+    editor.on("update", onUpdate);
+    return () => {
+      editor.off("update", onUpdate);
+      clearTimeout(autoSaveRef.current);
+    };
+  }, [editor, scratchpadMode]);
 
   const handleSave = () => {
     if (editor) {
-      const html = editor.getHTML();
-      const text = editor.getText();
-      const ref = scriptureRef.trim() || null;
       onSave({
-        html,
-        text,
-        scripture: ref,
-        verseText: ref ? versePreview : null,
-        verseTranslation: ref ? activeTranslation : null,
+        html: editor.getHTML(),
+        text: editor.getText(),
+        scripture: initialScriptureRef || null,
+        verseText: initialVerseText || null,
+        verseTranslation: initialVerseTranslation || null,
       });
     }
   };
 
-  if (!editor) return null;
+  function handleScratchpadSave() {
+    if (!editor) return;
+    onSave({ html: editor.getHTML(), text: editor.getText() });
+    localStorage.removeItem("scratchpad_draft");
+    onDraftChange?.(false);
+    editor.commands.clearContent();
+  }
 
-  const wordCount = editor.storage.characterCount.words();
-  const charCount = editor.storage.characterCount.characters();
+  function insertVerse() {
+    if (!editor || !verseSuggestion) return;
+    const { ref, text } = verseSuggestion;
+    editor.chain().focus().insertContent([
+      {
+        type: "blockquote",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              { type: "text", marks: [{ type: "italic" }], text: `“${text}”` },
+            ],
+          },
+          {
+            type: "paragraph",
+            content: [
+              { type: "text", text: `— ${ref} (${translation})` },
+            ],
+          },
+        ],
+      },
+    ]).run();
+    dismissedRefs.current.add(ref);
+    setVerseSuggestion(null);
+  }
+
+  function dismissSuggestion() {
+    if (verseSuggestion) dismissedRefs.current.add(verseSuggestion.ref);
+    setVerseSuggestion(null);
+  }
+
+  if (!editor) return null;
 
   return (
     <div
-      className="fixed inset-0 z-[60] bg-[var(--bg-menu)] text-[var(--text-primary)] flex flex-col"
+      className="fixed inset-0 z-[60] flex flex-col overflow-hidden"
       style={{
+        background: "var(--bg-menu)",
+        color: "var(--text-primary)",
         paddingTop: "env(safe-area-inset-top)",
-        paddingBottom: "env(safe-area-inset-bottom)",
+        // Shrink from bottom as keyboard opens; fall back to safe area when closed
+        paddingBottom: keyboardOffset > 0
+          ? `${keyboardOffset}px`
+          : "env(safe-area-inset-bottom)",
       }}
     >
       {/* Header */}
-      <div className="flex justify-between items-center px-5 py-4 border-b border-[var(--text-accent)]/20">
-        <span className="text-sm opacity-70">{new Date().toLocaleString()}</span>
-        <button
-          className="text-[var(--text-accent)] font-semibold"
-          onClick={() => {
-            handleSave();
-            onClose();
-          }}
-        >
-          Done
-        </button>
-      </div>
-
-      {/* Scripture Reference Input */}
-      <div className="px-5 pt-3 pb-2 border-b border-[var(--text-accent)]/10">
-        <div className="flex items-center gap-2">
-          <svg
-            viewBox="0 0 24 24"
-            className="w-4 h-4 shrink-0 opacity-50"
-            fill="currentColor"
-            style={{ color: "var(--text-accent)" }}
-          >
-            <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 3z" />
-            <path d="M17 4h3v16h-3" />
-          </svg>
-          <input
-            type="text"
-            value={scriptureRef}
-            onChange={(e) => setScriptureRef(e.target.value)}
-            placeholder="Scripture reference (e.g. John 3:16)"
-            className="flex-1 bg-transparent text-sm outline-none"
-            style={{ color: "var(--text-primary)" }}
-          />
-          {verseFetching && (
-            <span className="text-xs opacity-40" style={{ color: "var(--text-primary)" }}>
-              …
-            </span>
-          )}
-          {scriptureRef && !verseFetching && (
+      <div
+        className="flex justify-between items-center px-5 py-4 shrink-0"
+        style={{ borderBottom: "1px solid rgba(var(--accent-rgb),0.15)" }}
+      >
+        {scratchpadMode ? (
+          <>
             <button
-              onClick={() => { setScriptureRef(""); setVersePreview(null); }}
-              className="text-xs opacity-40 hover:opacity-70"
-              style={{ color: "var(--text-primary)" }}
+              onClick={onMinimize}
+              className="flex items-center gap-1.5 text-sm transition active:scale-95"
+              style={{ color: "var(--text-primary)", opacity: 0.55 }}
             >
-              ✕
+              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+              Minimize
             </button>
-          )}
-        </div>
-
-        {/* Verse preview */}
-        {versePreview && (
-          <div
-            className="mt-2 px-3 py-2 rounded-lg text-sm italic"
-            style={{
-              background: "rgba(var(--accent-rgb), 0.08)",
-              color: "var(--text-primary)",
-              borderLeft: "2px solid var(--text-accent)",
-            }}
-          >
-            "{versePreview}"
-            <span className="ml-2 text-xs not-italic opacity-50">
-              {activeTranslation}
+            <span
+              className="text-[10px] font-bold tracking-widest uppercase"
+              style={{ color: "var(--text-accent)", opacity: 0.7 }}
+            >
+              Notes
             </span>
-          </div>
+            <button
+              className="font-semibold text-sm px-3 py-1.5 rounded-lg transition active:scale-95"
+              style={{ background: "var(--text-accent)", color: "var(--text-inverse)" }}
+              onClick={handleScratchpadSave}
+            >
+              Save to Notes
+            </button>
+          </>
+        ) : (
+          <>
+            <span className="text-sm opacity-60">{new Date().toLocaleString()}</span>
+            <button
+              className="font-semibold text-sm"
+              style={{ color: "var(--text-accent)" }}
+              onClick={() => { handleSave(); onClose(); }}
+            >
+              Done
+            </button>
+          </>
         )}
       </div>
 
       {/* Formatting Toolbar */}
-      <div className="flex items-center gap-1 px-5 py-3 border-b border-[var(--text-accent)]/10 overflow-x-auto">
-        {/* Aa Button */}
+      <div
+        className="flex items-center gap-1 px-5 py-3 overflow-x-auto shrink-0"
+        style={{ borderBottom: "1px solid rgba(var(--accent-rgb),0.10)" }}
+      >
+        {/* Aa / Format */}
         <button
           onClick={() => setShowFormatMenu(!showFormatMenu)}
           className={`px-3 py-1.5 rounded-lg font-semibold text-sm transition flex flex-col items-center ${
@@ -340,7 +410,7 @@ export default function RichTextJournal({
           <span className="text-[9px] opacity-60 mt-0.5">Quote</span>
         </button>
 
-        {/* List */}
+        {/* Bullet List */}
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={`px-3 py-1.5 rounded-lg transition flex flex-col items-center ${
@@ -369,70 +439,97 @@ export default function RichTextJournal({
 
       {/* Format Menu Dropdown */}
       {showFormatMenu && (
-        <div className="mx-5 mt-2 rounded-lg bg-[var(--text-primary)]/5 border border-[var(--text-accent)]/10 overflow-hidden">
-          <button
-            onClick={() => { editor.chain().toggleHeading({ level: 1 }).run(); setShowFormatMenu(false); }}
-            className={`w-full px-4 py-3 text-left transition border-b border-[var(--text-accent)]/5 ${editor.isActive("heading", { level: 1 }) ? "bg-[var(--text-accent)]/10" : "hover:bg-[var(--text-primary)]/5"}`}
-          >
-            <div className="text-2xl font-bold text-[var(--text-primary)]">Heading 1</div>
-            <div className="text-xs text-[var(--text-primary)]/50 mt-1">Large title</div>
-          </button>
-
-          <button
-            onClick={() => { editor.chain().toggleHeading({ level: 2 }).run(); setShowFormatMenu(false); }}
-            className={`w-full px-4 py-3 text-left transition border-b border-[var(--text-accent)]/5 ${editor.isActive("heading", { level: 2 }) ? "bg-[var(--text-accent)]/10" : "hover:bg-[var(--text-primary)]/5"}`}
-          >
-            <div className="text-xl font-bold text-[var(--text-primary)]">Heading 2</div>
-            <div className="text-xs text-[var(--text-primary)]/50 mt-1">Section title</div>
-          </button>
-
-          <button
-            onClick={() => { editor.chain().toggleHeading({ level: 3 }).run(); setShowFormatMenu(false); }}
-            className={`w-full px-4 py-3 text-left transition border-b border-[var(--text-accent)]/5 ${editor.isActive("heading", { level: 3 }) ? "bg-[var(--text-accent)]/10" : "hover:bg-[var(--text-primary)]/5"}`}
-          >
-            <div className="text-lg font-semibold text-[var(--text-primary)]">Heading 3</div>
-            <div className="text-xs text-[var(--text-primary)]/50 mt-1">Subsection</div>
-          </button>
-
+        <div
+          className="mx-5 mt-2 rounded-lg overflow-hidden shrink-0"
+          style={{
+            background: "rgba(var(--accent-rgb),0.06)",
+            border: "1px solid rgba(var(--accent-rgb),0.12)",
+          }}
+        >
+          {[
+            { label: "Heading 1", size: "text-2xl font-bold", level: 1, hint: "Large title" },
+            { label: "Heading 2", size: "text-xl font-bold", level: 2, hint: "Section title" },
+            { label: "Heading 3", size: "text-lg font-semibold", level: 3, hint: "Subsection" },
+          ].map(({ label, size, level, hint }) => (
+            <button
+              key={level}
+              onClick={() => { editor.chain().toggleHeading({ level }).run(); setShowFormatMenu(false); }}
+              className={`w-full px-4 py-3 text-left transition border-b border-[var(--text-accent)]/5 ${
+                editor.isActive("heading", { level })
+                  ? "bg-[var(--text-accent)]/10"
+                  : "hover:bg-[var(--text-primary)]/5"
+              }`}
+            >
+              <div className={`${size} text-[var(--text-primary)]`}>{label}</div>
+              <div className="text-xs text-[var(--text-primary)]/50 mt-0.5">{hint}</div>
+            </button>
+          ))}
           <button
             onClick={() => { editor.chain().setParagraph().run(); setShowFormatMenu(false); }}
             className="w-full px-4 py-3 text-left hover:bg-[var(--text-primary)]/5 transition"
           >
             <div className="text-base text-[var(--text-primary)]">Body</div>
-            <div className="text-xs text-[var(--text-primary)]/50 mt-1">Normal text</div>
+            <div className="text-xs text-[var(--text-primary)]/50 mt-0.5">Normal text</div>
           </button>
         </div>
       )}
 
-      {/* Rich Text Editor */}
-      <div className="flex-1 overflow-y-auto">
-        <EditorContent editor={editor} />
-      </div>
+      {/* Inline verse suggestion chip */}
+      {verseSuggestion && (
+        <div
+          className="mx-4 mt-2 shrink-0 rounded-xl overflow-hidden"
+          style={{
+            background: "rgba(var(--accent-rgb),0.07)",
+            border: "1px solid rgba(var(--accent-rgb),0.18)",
+            borderLeft: "3px solid var(--text-accent)",
+          }}
+        >
+          <div className="px-4 pt-3 pb-1 flex items-center justify-between">
+            <span
+              className="text-[11px] font-semibold tracking-wider uppercase"
+              style={{ color: "var(--text-accent)" }}
+            >
+              {verseSuggestion.ref}
+            </span>
+            <button
+              onClick={dismissSuggestion}
+              className="text-xs opacity-40 hover:opacity-70 ml-3"
+              style={{ color: "var(--text-primary)" }}
+            >
+              ✕
+            </button>
+          </div>
+          <p
+            className="px-4 pb-2 text-sm italic leading-relaxed"
+            style={{ color: "var(--text-primary)", opacity: 0.82 }}
+          >
+            &ldquo;{verseSuggestion.text}&rdquo;
+          </p>
+          <div
+            className="px-4 pb-3"
+            style={{ borderTop: "1px solid rgba(var(--accent-rgb),0.10)" }}
+          >
+            <button
+              onClick={insertVerse}
+              className="mt-2 text-xs font-semibold tracking-wide px-3 py-1.5 rounded-lg"
+              style={{
+                background: "rgba(var(--accent-rgb),0.14)",
+                color: "var(--text-accent)",
+                border: "1px solid rgba(var(--accent-rgb),0.25)",
+              }}
+            >
+              Insert as quote block
+            </button>
+          </div>
+        </div>
+      )}
 
-      {/* Stats Footer */}
-      <div className="flex justify-between items-center px-6 py-2 text-xs text-[var(--text-primary)]/50 border-t border-[var(--text-accent)]/10">
-        <div>
-          {wordCount} {wordCount === 1 ? "word" : "words"} • {charCount}{" "}
-          {charCount === 1 ? "character" : "characters"}
-        </div>
-        <div className="flex gap-4">
-          <button
-            onClick={() => editor.chain().focus().undo().run()}
-            disabled={!editor.can().undo()}
-            className="hover:text-[var(--text-accent)] disabled:opacity-30 disabled:cursor-not-allowed"
-            title="Undo (⌘Z)"
-          >
-            ↶ Undo
-          </button>
-          <button
-            onClick={() => editor.chain().focus().redo().run()}
-            disabled={!editor.can().redo()}
-            className="hover:text-[var(--text-accent)] disabled:opacity-30 disabled:cursor-not-allowed"
-            title="Redo (⌘⇧Z)"
-          >
-            ↷ Redo
-          </button>
-        </div>
+      {/* Rich Text Editor — scrollable area */}
+      <div
+        className="flex-1 overflow-y-auto"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
+        <EditorContent editor={editor} />
       </div>
     </div>
   );

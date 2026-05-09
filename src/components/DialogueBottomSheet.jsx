@@ -121,7 +121,7 @@ export default function DialogueBottomSheet({
       const dialogueData = {
         id: Date.now().toString(),
         type: "scripture",
-        book: book.toLowerCase(),
+        book: book,
         chapter,
         verseRange,
         verseText: combinedText,

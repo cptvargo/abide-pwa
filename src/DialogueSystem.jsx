@@ -7,6 +7,12 @@ import { useState, useEffect } from "react";
 import { shareDialogueAsImage } from "./ShareAsImage";
 import RichTextJournal from "./RichTextJournal";
 
+// Capitalize first letter of each word — fixes entries saved with book.toLowerCase()
+function fmtBook(b) {
+  if (!b) return b;
+  return b.replace(/(?:^|\s)\S/g, (c) => c.toUpperCase());
+}
+
 /* ===============================
    Data Management
 ================================ */
@@ -83,8 +89,8 @@ export default function DialogueSystem({ theme, translation, onBack }) {
     // Add Scripture reference if present
     if (entry.type === "scripture" && entry.book && entry.chapter) {
       const ref = entry.verseRange
-        ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
-        : `${entry.book} ${entry.chapter}`;
+        ? `${fmtBook(entry.book)} ${entry.chapter}:${entry.verseRange}`
+        : `${fmtBook(entry.book)} ${entry.chapter}`;
       shareText += `${ref}${entry.translation ? ` • ${entry.translation}` : ""}\n`;
       if (entry.verseText) {
         shareText += `"${entry.verseText}"\n\n`;
@@ -119,7 +125,7 @@ export default function DialogueSystem({ theme, translation, onBack }) {
         .share({
           title:
             entry.type === "scripture"
-              ? `${entry.book} ${entry.chapter}:${entry.verseRange}`
+              ? `${fmtBook(entry.book)} ${entry.chapter}:${entry.verseRange}`
               : entry.scripture || "My Journal",
           text: shareText,
         })
@@ -410,7 +416,7 @@ function DialogueCard({ entry, theme, onView, onShare }) {
                   <path d="M17 4h3v16h-3" />
                 </svg>
                 <span>
-                  {entry.book} {entry.chapter}
+                  {fmtBook(entry.book)} {entry.chapter}
                   {entry.verseRange ? `:${entry.verseRange}` : ""}
                   {entry.translation ? ` • ${entry.translation}` : ""}
                 </span>
@@ -779,7 +785,7 @@ function DialogueDetail({ entry, theme, onBack, onEdit, onDelete, onShare }) {
                 <path d="M17 4h3v16h-3" />
               </svg>
               <span>
-                {entry.book} {entry.chapter}
+                {fmtBook(entry.book)} {entry.chapter}
                 {entry.verseRange ? `:${entry.verseRange}` : ""}
                 {entry.translation ? ` • ${entry.translation}` : ""}
               </span>

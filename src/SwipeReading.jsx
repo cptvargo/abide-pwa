@@ -374,11 +374,18 @@ export default function SwipeReading({
     return () => el.removeEventListener("scroll", handleScroll);
   }, [onScrollProgress]);
 
+  // Scroll content up when highlight panel opens so last verse isn't hidden
+  useEffect(() => {
+    if (highlightPanelOpen && scrollRef.current) {
+      scrollRef.current.scrollBy({ top: 240, behavior: "smooth" });
+    }
+  }, [highlightPanelOpen]);
+
   /* ===============================
      Highlighting Helpers
   ================================ */
   function getVerseKey(verseNum) {
-    return `${book}-${currentChapter}-${verseNum}-${translation}`;
+    return `${book}-${currentChapter}-${verseNum}-${translation}-${theme}`;
   }
 
   function isVerseHighlighted(verseNum) {
@@ -679,8 +686,9 @@ export default function SwipeReading({
           transition: isSwiping ? "none" : "opacity 0.2s ease-out",
           pointerEvents: isModalOpen ? "none" : "auto",
           paddingTop: "calc(env(safe-area-inset-top) + 24px)",
-          paddingBottom:
-            "max(128px, calc(128px + env(safe-area-inset-bottom)))",
+          paddingBottom: highlightPanelOpen
+            ? "max(360px, calc(360px + env(safe-area-inset-bottom)))"
+            : "max(128px, calc(128px + env(safe-area-inset-bottom)))",
           paddingLeft: chapterlessMode ? "40px" : "24px",
           paddingRight: chapterlessMode ? "40px" : "24px",
           WebkitOverflowScrolling: "touch",
