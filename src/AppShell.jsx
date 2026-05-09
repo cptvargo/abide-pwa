@@ -2356,7 +2356,7 @@ export default function AppShell() {
           <nav
             style={{
               position: "fixed",
-              bottom: "calc(env(safe-area-inset-bottom) + 16px)",
+              bottom: "calc(env(safe-area-inset-bottom) + 2px)",
               left: 24,
               right: 24,
               zIndex: 40,
