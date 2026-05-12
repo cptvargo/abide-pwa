@@ -187,6 +187,12 @@ export default function RichTextJournal({
         // Skip refs the user already dismissed
         if (dismissedRefs.current.has(refStr)) return;
 
+        // Skip if already inserted as a blockquote attribution in the editor
+        if (editorText.includes(`— ${refStr}`)) {
+          dismissedRefs.current.add(refStr);
+          return;
+        }
+
         // Skip if it's already the active suggestion
         if (verseSuggestion?.ref === refStr) return;
 
@@ -252,25 +258,42 @@ export default function RichTextJournal({
   function insertVerse() {
     if (!editor || !verseSuggestion) return;
     const { ref, text } = verseSuggestion;
-    editor.chain().focus().insertContent([
+
+    const blockquote = [
       {
         type: "blockquote",
         content: [
           {
             type: "paragraph",
-            content: [
-              { type: "text", marks: [{ type: "italic" }], text: `“${text}”` },
-            ],
+            content: [{ type: "text", marks: [{ type: "italic" }], text: `"${text}"` }],
           },
           {
             type: "paragraph",
-            content: [
-              { type: "text", text: `— ${ref} (${translation})` },
-            ],
+            content: [{ type: "text", text: `— ${ref} (${translation})` }],
           },
         ],
       },
-    ]).run();
+    ];
+
+    // Find the typed reference in the document and replace it with the blockquote
+    const { doc } = editor.state;
+    let from = -1, to = -1;
+    doc.descendants((node, pos) => {
+      if (from !== -1) return false;
+      if (node.isText && node.text.includes(ref)) {
+        const idx = node.text.indexOf(ref);
+        from = pos + idx;
+        to = from + ref.length;
+        return false;
+      }
+    });
+
+    if (from !== -1) {
+      editor.chain().focus().deleteRange({ from, to }).insertContentAt(from, blockquote).run();
+    } else {
+      editor.chain().focus().insertContent(blockquote).run();
+    }
+
     dismissedRefs.current.add(ref);
     setVerseSuggestion(null);
   }
@@ -484,42 +507,48 @@ export default function RichTextJournal({
             borderLeft: "3px solid var(--text-accent)",
           }}
         >
-          <div className="px-4 pt-3 pb-1 flex items-center justify-between">
-            <span
-              className="text-[11px] font-semibold tracking-wider uppercase"
-              style={{ color: "var(--text-accent)" }}
+          <div className="px-4 pt-3 pb-3">
+            <div className="flex items-start justify-between gap-3 mb-2.5">
+              <p
+                className="flex-1 text-sm italic leading-relaxed"
+                style={{
+                  color: "var(--text-primary)",
+                  opacity: 0.88,
+                  fontFamily: "var(--font-body, Georgia, serif)",
+                }}
+              >
+                &ldquo;{verseSuggestion.text}&rdquo;
+              </p>
+              <button
+                onClick={dismissSuggestion}
+                className="shrink-0 text-xs opacity-35 hover:opacity-65 mt-0.5"
+                style={{ color: "var(--text-primary)" }}
+              >
+                ✕
+              </button>
+            </div>
+            <div
+              className="flex items-center justify-between pt-2.5"
+              style={{ borderTop: "1px solid rgba(var(--accent-rgb),0.10)" }}
             >
-              {verseSuggestion.ref}
-            </span>
-            <button
-              onClick={dismissSuggestion}
-              className="text-xs opacity-40 hover:opacity-70 ml-3"
-              style={{ color: "var(--text-primary)" }}
-            >
-              ✕
-            </button>
-          </div>
-          <p
-            className="px-4 pb-2 text-sm italic leading-relaxed"
-            style={{ color: "var(--text-primary)", opacity: 0.82 }}
-          >
-            &ldquo;{verseSuggestion.text}&rdquo;
-          </p>
-          <div
-            className="px-4 pb-3"
-            style={{ borderTop: "1px solid rgba(var(--accent-rgb),0.10)" }}
-          >
-            <button
-              onClick={insertVerse}
-              className="mt-2 text-xs font-semibold tracking-wide px-3 py-1.5 rounded-lg"
-              style={{
-                background: "rgba(var(--accent-rgb),0.14)",
-                color: "var(--text-accent)",
-                border: "1px solid rgba(var(--accent-rgb),0.25)",
-              }}
-            >
-              Insert as quote block
-            </button>
+              <span
+                className="text-[10px] font-bold tracking-widest uppercase opacity-50"
+                style={{ color: "var(--text-accent)" }}
+              >
+                {translation}
+              </span>
+              <button
+                onClick={insertVerse}
+                className="text-xs font-semibold tracking-wide px-3 py-1.5 rounded-lg"
+                style={{
+                  background: "rgba(var(--accent-rgb),0.14)",
+                  color: "var(--text-accent)",
+                  border: "1px solid rgba(var(--accent-rgb),0.25)",
+                }}
+              >
+                Insert
+              </button>
+            </div>
           </div>
         </div>
       )}

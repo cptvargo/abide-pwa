@@ -62,7 +62,7 @@ export default function DialogueSystem({ theme, translation, onBack }) {
 
     const newEntry = {
       id: Date.now().toString(),
-      type: "journal",
+      type: "spontaneous",
       reflection: html,
       text: text,
       ...(scripture ? { scripture, verseText, verseTranslation } : {}),
@@ -83,58 +83,34 @@ export default function DialogueSystem({ theme, translation, onBack }) {
       if (success) return; // Image share worked, we're done
     }
 
-    // Fall back to text (either user chose text or image failed)
-    let shareText = "";
+    // Image share failed — fall back to sharing just the reference so the
+    // message field stays empty for the user to write their own message.
+    // The image carries the content; we don't pre-fill the text field.
+    let shareTitle = "";
+    let shareText  = "";
 
-    // Add Scripture reference if present
     if (entry.type === "scripture" && entry.book && entry.chapter) {
       const ref = entry.verseRange
         ? `${fmtBook(entry.book)} ${entry.chapter}:${entry.verseRange}`
         : `${fmtBook(entry.book)} ${entry.chapter}`;
-      shareText += `${ref}${entry.translation ? ` • ${entry.translation}` : ""}\n`;
-      if (entry.verseText) {
-        shareText += `"${entry.verseText}"\n\n`;
-      }
-    }
-
-    // Add scripture for journal entries
-    if ((entry.type === "journal" || entry.type === "spontaneous") && entry.scripture) {
-      shareText += `${entry.scripture}${entry.verseTranslation ? ` • ${entry.verseTranslation}` : ""}\n`;
-      if (entry.verseText) {
-        shareText += `"${entry.verseText}"\n\n`;
-      }
-    }
-
-    // Add reflection
-    shareText += entry.text || entry.reflection.replace(/<[^>]*>/g, "");
-
-    // Add timestamp
-    const date = new Date(entry.createdAt);
-    const timestamp = date.toLocaleString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
-    shareText += `\n\n— ${timestamp}`;
-
-    // Use native share API if available (iOS, Android)
-    if (navigator.share) {
-      navigator
-        .share({
-          title:
-            entry.type === "scripture"
-              ? `${fmtBook(entry.book)} ${entry.chapter}:${entry.verseRange}`
-              : entry.scripture || "My Journal",
-          text: shareText,
-        })
-        .catch(() => {
-          // User cancelled, do nothing
-        });
+      shareTitle = ref;
+      // text intentionally left empty — user writes their own message
+    } else if ((entry.type === "journal" || entry.type === "spontaneous") && entry.scripture) {
+      shareTitle = entry.scripture;
     } else {
-      // Fallback: Copy to clipboard
-      navigator.clipboard.writeText(shareText).then(() => {
+      shareTitle = "Shared from ABIDE";
+    }
+
+    if (navigator.share) {
+      navigator.share({ title: shareTitle, text: shareText }).catch(() => {});
+    } else {
+      // Clipboard fallback — only then include the content
+      const clipText = [
+        shareTitle,
+        entry.verseText ? `"${entry.verseText}"` : "",
+        entry.text || (entry.reflection || "").replace(/<[^>]*>/g, ""),
+      ].filter(Boolean).join("\n\n");
+      navigator.clipboard.writeText(clipText).then(() => {
         alert("Copied to clipboard!");
       });
     }
@@ -172,6 +148,20 @@ export default function DialogueSystem({ theme, translation, onBack }) {
   ================================ */
   return (
     <div className="flex flex-col h-full relative">
+      <style>{`
+        .entry-preview { font-size: 0.875rem; line-height: 1.65; }
+        .entry-preview h1 { font-size: 1.25em; font-weight: 700; line-height: 1.2; margin: 0 0 0.3em; color: var(--text-accent); }
+        .entry-preview h2 { font-size: 1.08em; font-weight: 600; line-height: 1.25; margin: 0 0 0.25em; color: var(--text-accent); }
+        .entry-preview h3 { font-size: 0.95em; font-weight: 600; line-height: 1.3; margin: 0 0 0.2em; color: var(--text-accent); opacity: 0.8; }
+        .entry-preview p { margin: 0 0 0.3em; }
+        .entry-preview p:last-child { margin-bottom: 0; }
+        .entry-preview strong { font-weight: 600; }
+        .entry-preview em { font-style: italic; }
+        .entry-preview ul, .entry-preview ol { padding-left: 1.2em; margin: 0.2em 0; }
+        .entry-preview li { margin: 0.1em 0; }
+        .entry-preview blockquote { border-left: 2px solid var(--text-accent); padding-left: 0.75em; margin: 0.25em 0; opacity: 0.75; font-style: italic; }
+      `}</style>
+
       {/* Fixed Header */}
       <div
         className="fixed top-0 left-0 right-0 z-10 border-b"
@@ -376,187 +366,314 @@ export default function DialogueSystem({ theme, translation, onBack }) {
 ================================ */
 function DialogueCard({ entry, theme, onView, onShare }) {
   const date = new Date(entry.createdAt);
+  const wordCount = (entry.text || "").trim().split(/\s+/).filter(Boolean).length;
+  const readMin = Math.max(1, Math.round(wordCount / 180));
 
+  const isScripture    = entry.type === "scripture";
+  const isNotes        = entry.type === "journal";
+  const isSpontaneous  = entry.type === "spontaneous";
+  const isDevotional   = entry.type === "devotional";
+
+  const accentColor = isScripture && entry.highlightColor?.color
+    ? entry.highlightColor.color
+    : null;
+
+  /* ── Shared footer ── */
+  const Footer = () => (
+    <div
+      className="flex items-center justify-between mt-3 pt-2.5"
+      style={{ borderTop: "1px solid rgba(var(--accent-rgb),0.07)" }}
+    >
+      <span className="text-[10px] opacity-30" style={{ color: "var(--text-primary)" }}>
+        {date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+        {" · "}
+        {date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+      </span>
+      {wordCount > 10 && (
+        <span className="text-[10px] opacity-20" style={{ color: "var(--text-primary)" }}>
+          {readMin} min read
+        </span>
+      )}
+    </div>
+  );
+
+  /* ── Shared share button ── */
+  const ShareBtn = () => (
+    <button
+      onClick={(e) => { e.stopPropagation(); onShare(); }}
+      className="ml-2 shrink-0 p-1.5 rounded-lg opacity-25 hover:opacity-65 transition-opacity"
+      style={{ color: "var(--text-accent)" }}
+      title="Share"
+    >
+      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+      </svg>
+    </button>
+  );
+
+  /* ── Shared reflection preview ── */
+  const Preview = ({ clamp = 3 }) => (
+    <button onClick={onView} className="w-full text-left">
+      <div
+        className={`entry-preview line-clamp-${clamp}`}
+        style={{
+          color: "var(--text-primary)",
+          opacity: 0.82,
+          fontFamily: "var(--font-body, Georgia, serif)",
+        }}
+        dangerouslySetInnerHTML={{ __html: entry.reflection || entry.text }}
+      />
+    </button>
+  );
+
+  /* ══════════════════════════════════
+     SCRIPTURE DIALOGUE card
+  ══════════════════════════════════ */
+  if (isScripture) {
+    return (
+      <div
+        className="rounded-2xl overflow-hidden transition-all duration-200"
+        style={{
+          background: accentColor
+            ? `linear-gradient(140deg, ${accentColor}16 0%, rgba(var(--accent-rgb),0.02) 55%)`
+            : "rgba(var(--accent-rgb),0.03)",
+          border: `1px solid ${accentColor ? `${accentColor}35` : "rgba(var(--accent-rgb),0.12)"}`,
+          boxShadow: accentColor
+            ? `0 3px 16px ${accentColor}18, 0 1px 4px rgba(0,0,0,0.08)`
+            : "0 2px 14px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)",
+        }}
+      >
+        {/* Top strip in highlight color */}
+        <div style={{
+          height: 3,
+          background: accentColor
+            ? `linear-gradient(to right, ${accentColor}, ${accentColor}44, transparent)`
+            : `linear-gradient(to right, var(--text-accent), transparent)`,
+        }} />
+
+        <div className="px-4 pt-3.5 pb-4">
+          {/* Header row */}
+          <div className="flex items-start justify-between mb-3">
+            <div className="flex items-center gap-2">
+              {/* Color swatch */}
+              {accentColor && (
+                <div
+                  className="w-3 h-3 rounded-full shrink-0"
+                  style={{ background: accentColor, boxShadow: `0 0 6px ${accentColor}88` }}
+                />
+              )}
+              <div>
+                <div
+                  className="text-[10px] font-bold tracking-widest uppercase"
+                  style={{ color: accentColor || "var(--text-accent)" }}
+                >
+                  Scripture Dialogue
+                </div>
+                {entry.book && entry.chapter && (
+                  <div className="text-[10px] mt-0.5 opacity-60 flex items-center gap-1"
+                    style={{ color: accentColor || "var(--text-accent)" }}>
+                    <svg viewBox="0 0 24 24" className="w-2 h-2 shrink-0" fill="currentColor">
+                      <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 3z"/>
+                      <path d="M17 4h3v16h-3"/>
+                    </svg>
+                    {fmtBook(entry.book)} {entry.chapter}
+                    {entry.verseRange ? `:${entry.verseRange}` : ""}
+                    {entry.translation ? ` · ${entry.translation}` : ""}
+                  </div>
+                )}
+              </div>
+            </div>
+            <ShareBtn />
+          </div>
+
+          {/* Highlighted verse block */}
+          {entry.verseText && (
+            <div
+              className="mb-3 rounded-xl overflow-hidden"
+              style={{
+                background: accentColor ? `${accentColor}12` : "rgba(var(--accent-rgb),0.06)",
+                border: `1px solid ${accentColor ? `${accentColor}28` : "rgba(var(--accent-rgb),0.12)"}`,
+              }}
+            >
+              <div
+                className="px-3 pt-2.5 pb-1 text-[9px] font-bold tracking-widest uppercase flex items-center gap-1.5"
+                style={{ color: accentColor || "var(--text-accent)", opacity: 0.75 }}
+              >
+                <svg viewBox="0 0 24 24" className="w-2.5 h-2.5" fill="currentColor">
+                  <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/>
+                </svg>
+                Highlighted
+              </div>
+              <p
+                className="px-3 pb-3 text-sm italic leading-relaxed"
+                style={{
+                  color: "var(--text-primary)",
+                  fontFamily: "var(--font-body, Georgia, serif)",
+                  opacity: 0.88,
+                }}
+              >
+                &ldquo;{entry.verseText}&rdquo;
+              </p>
+            </div>
+          )}
+
+          {/* Reflection label + preview */}
+          <div
+            className="text-[9px] font-bold tracking-widest uppercase mb-1.5 opacity-30"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Reflection
+          </div>
+          <Preview clamp={3} />
+          <Footer />
+        </div>
+      </div>
+    );
+  }
+
+  /* ══════════════════════════════════
+     NOTES card (scratchpad)
+  ══════════════════════════════════ */
+  if (isNotes) {
+    return (
+      <div
+        className="rounded-2xl overflow-hidden transition-all duration-200"
+        style={{
+          background: "rgba(var(--accent-rgb),0.03)",
+          border: "1px solid rgba(var(--accent-rgb),0.1)",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)",
+        }}
+      >
+        <div style={{
+          height: 2,
+          background: "linear-gradient(to right, rgba(var(--accent-rgb),0.4), transparent)",
+        }} />
+
+        <div className="px-4 pt-3.5 pb-4">
+          <div className="flex items-start justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider uppercase"
+                style={{ background: "rgba(var(--accent-rgb),0.08)", color: "var(--text-accent)" }}
+              >
+                <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 20h9"/>
+                  <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                Notes
+              </div>
+              {entry.scripture && (
+                <span className="text-[10px] flex items-center gap-1 opacity-45" style={{ color: "var(--text-accent)" }}>
+                  <svg viewBox="0 0 24 24" className="w-2 h-2 shrink-0" fill="currentColor">
+                    <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 3z"/>
+                  </svg>
+                  {entry.scripture}
+                </span>
+              )}
+            </div>
+            <ShareBtn />
+          </div>
+
+          <Preview clamp={4} />
+          <Footer />
+        </div>
+      </div>
+    );
+  }
+
+  /* ══════════════════════════════════
+     SPONTANEOUS card (plus button)
+  ══════════════════════════════════ */
+  if (isSpontaneous) {
+    return (
+      <div
+        className="rounded-2xl overflow-hidden transition-all duration-200"
+        style={{
+          background: "rgba(var(--accent-rgb),0.025)",
+          border: "1px solid rgba(var(--accent-rgb),0.09)",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)",
+        }}
+      >
+        <div style={{
+          height: 2,
+          background: "linear-gradient(to right, rgba(var(--accent-rgb),0.25), transparent)",
+        }} />
+
+        <div className="px-4 pt-3.5 pb-4">
+          <div className="flex items-start justify-between mb-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <div
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider uppercase"
+                style={{ background: "rgba(var(--accent-rgb),0.07)", color: "var(--text-accent)" }}
+              >
+                <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                Spontaneous
+              </div>
+              {entry.scripture && (
+                <span className="text-[10px] flex items-center gap-1 opacity-45" style={{ color: "var(--text-accent)" }}>
+                  <svg viewBox="0 0 24 24" className="w-2 h-2 shrink-0" fill="currentColor">
+                    <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 3z"/>
+                  </svg>
+                  {entry.scripture}
+                </span>
+              )}
+            </div>
+            <ShareBtn />
+          </div>
+
+          <Preview clamp={4} />
+          <Footer />
+        </div>
+      </div>
+    );
+  }
+
+  /* ══════════════════════════════════
+     DEVOTIONAL card
+  ══════════════════════════════════ */
   return (
     <div
-      className="group relative rounded-2xl overflow-hidden transition-all hover:scale-[1.01]"
+      className="rounded-2xl overflow-hidden transition-all duration-200"
       style={{
-        background: "rgba(var(--accent-rgb), 0.03)",
-        border: "1px solid rgba(var(--accent-rgb), 0.1)",
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+        background: "rgba(var(--accent-rgb),0.03)",
+        border: "1px solid rgba(var(--accent-rgb),0.1)",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)",
       }}
     >
-      {/* Decorative accent bar */}
-      <div
-        className="absolute left-0 top-0 bottom-0 w-1"
-        style={{
-          background:
-            entry.type === "scripture" && entry.highlightColor
-              ? entry.highlightColor.color
-              : "var(--text-accent)",
-        }}
-      />
+      <div style={{
+        height: 2,
+        background: "linear-gradient(to right, rgba(var(--accent-rgb),0.55), transparent)",
+      }} />
 
-      <div className="pl-6 pr-4 py-5">
-        {/* Header */}
+      <div className="px-4 pt-3.5 pb-4">
         <div className="flex items-start justify-between mb-3">
-          <div className="flex-1">
-            {/* Scripture Reference */}
-            {entry.type === "scripture" && entry.book && entry.chapter && (
-              <div
-                className="text-xs font-bold mb-2 flex items-center gap-2"
-                style={{ color: "var(--text-accent)" }}
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-3 h-3"
-                  fill="currentColor"
-                >
-                  <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 3z" />
-                  <path d="M17 4h3v16h-3" />
-                </svg>
-                <span>
-                  {fmtBook(entry.book)} {entry.chapter}
-                  {entry.verseRange ? `:${entry.verseRange}` : ""}
-                  {entry.translation ? ` • ${entry.translation}` : ""}
-                </span>
-              </div>
-            )}
-
-            {/* Journal scripture reference */}
-            {(entry.type === "journal" || entry.type === "spontaneous") && entry.scripture && (
-              <div
-                className="text-xs font-bold mb-2 flex items-center gap-2"
-                style={{ color: "var(--text-accent)" }}
-              >
-                <svg viewBox="0 0 24 24" className="w-3 h-3" fill="currentColor">
-                  <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 3z" />
-                  <path d="M17 4h3v16h-3" />
-                </svg>
-                <span>
-                  {entry.scripture}
-                  {entry.verseTranslation ? ` • ${entry.verseTranslation}` : ""}
-                </span>
-              </div>
-            )}
-
-            {/* Devotional series/day reference */}
-            {entry.type === "devotional" && entry.seriesTitle && (
-              <div
-                className="text-xs font-bold mb-2 flex items-center gap-2"
-                style={{ color: "var(--text-accent)" }}
-              >
-                <svg viewBox="0 0 24 24" className="w-3 h-3" fill="currentColor">
-                  <path d="M2 4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4z" opacity="0.15"/>
-                  <path d="M7 8h10M7 12h7M7 16h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-                </svg>
-                <span>
-                  {entry.seriesTitle}
-                  {entry.day ? ` • Day ${entry.day}` : ""}
-                  {entry.dayTitle ? ` — ${entry.dayTitle}` : ""}
-                </span>
-              </div>
-            )}
-
-            {/* Date & Time */}
+          <div>
             <div
-              className="text-xs opacity-50"
-              style={{ color: "var(--text-primary)" }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider uppercase"
+              style={{ background: "rgba(var(--accent-rgb),0.08)", color: "var(--text-accent)" }}
             >
-              {date.toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
-              {" — "}
-              {date.toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "2-digit",
-              })}
+              <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2C8 2 5 5.5 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.5-3-7-7-7z"/>
+                <circle cx="12" cy="9" r="2.5" fill="currentColor" stroke="none"/>
+              </svg>
+              {entry.seriesTitle || "Devotional"}
+              {entry.day ? ` · Day ${entry.day}` : ""}
             </div>
+            {entry.dayTitle && (
+              <div className="mt-1.5 text-xs opacity-55 font-medium" style={{ color: "var(--text-primary)" }}>
+                {entry.dayTitle}
+              </div>
+            )}
           </div>
-
-          {/* Share button */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onShare();
-            }}
-            className="p-2 rounded-lg transition-opacity"
-            style={{
-              background: "rgba(var(--accent-rgb), 0.1)",
-              color: "var(--text-accent)",
-            }}
-            title="Share"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <circle cx="18" cy="5" r="3" />
-              <circle cx="6" cy="12" r="3" />
-              <circle cx="18" cy="19" r="3" />
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-            </svg>
-          </button>
+          <ShareBtn />
         </div>
 
-        {/* Verse Text (if journal with scripture) */}
-        {(entry.type === "journal" || entry.type === "spontaneous") && entry.verseText && (
-          <div
-            className="mb-3 p-3 rounded-lg text-sm italic"
-            style={{
-              background: "rgba(var(--accent-rgb), 0.08)",
-              color: "var(--text-primary)",
-            }}
-          >
-            "{entry.verseText}"
-          </div>
-        )}
-
-        {/* Verse Text (if Scripture-linked) */}
-        {entry.type === "scripture" && entry.verseText && (
-          <div
-            className="mb-3 p-3 rounded-lg text-sm italic"
-            style={{
-              background:
-                entry.highlightColor?.color || "rgba(var(--accent-rgb), 0.1)",
-              color: "var(--text-primary)",
-            }}
-          >
-            "{entry.verseText}"
-          </div>
-        )}
-
-        {/* Reflection Preview */}
-        <button onClick={onView} className="w-full text-left">
-          <div
-            className="text-sm leading-relaxed line-clamp-3 prose prose-sm max-w-none"
-            style={{ color: "var(--text-primary)" }}
-            dangerouslySetInnerHTML={{ __html: entry.reflection || entry.text }}
-          />
-
-          {/* Read more indicator */}
-          <div
-            className="text-xs mt-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
-            style={{ color: "var(--text-accent)" }}
-          >
-            <span>Read full entry</span>
-            <svg
-              viewBox="0 0 24 24"
-              className="w-3 h-3"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </div>
-        </button>
+        <Preview clamp={4} />
+        <Footer />
       </div>
     </div>
   );
