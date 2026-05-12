@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import ScriptureGuidedDay from "./ScriptureGuidedDay";
+import BibleProjectHub from "./BibleProjectHub";
 
 /* ─── localStorage helpers ──────────────────────────────────────────────── */
 const COMPLETED_KEY = "abide_daily_completed_v1";
@@ -672,9 +673,9 @@ function AbidePage({ day, seriesId, onDone, onPrev }) {
 }
 
 /* ─── Day experience — 3-page flow ─────────────────────────────────────── */
-function DayExperience({ day, seriesId, translation, base, onComplete, onBack }) {
+function DayExperience({ day, seriesId, translation, base, onComplete, onBack, initialPage = 0 }) {
   const [participants, setParticipants] = useState(null); // null = onboarding not done
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(initialPage);
   const [animDir, setAnimDir] = useState(1); // 1 = forward, -1 = back
 
   function goTo(p, dir = 1) {
@@ -757,7 +758,164 @@ function DayExperience({ day, seriesId, translation, base, onComplete, onBack })
   );
 }
 
-/* ─── Series detail — sequential day cards ──────────────────────────────── */
+/* ─── Featured hero card (next session) ─────────────────────────────────── */
+function FeaturedHero({ day, onPress }) {
+  const imgSrc = day.videoId
+    ? `https://img.youtube.com/vi/${day.videoId}/hqdefault.jpg`
+    : null;
+  return (
+    <button
+      onClick={onPress}
+      style={{
+        width: "100%", textAlign: "left", cursor: "pointer",
+        borderRadius: 16, overflow: "hidden",
+        border: "1px solid rgba(203,178,124,0.35)",
+        WebkitTapHighlightColor: "transparent",
+      }}
+    >
+      <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", overflow: "hidden" }}>
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt={day.title}
+            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.78 }}
+          />
+        ) : (
+          <div style={{
+            width: "100%", height: "100%",
+            background: "linear-gradient(135deg, rgba(203,178,124,0.12) 0%, rgba(10,10,8,0.95) 100%)",
+          }} />
+        )}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.04) 0%, rgba(14,14,10,0.9) 100%)",
+        }} />
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "16px 18px 20px" }}>
+          <div style={{
+            fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase",
+            color: "rgba(203,178,124,0.6)", fontFamily: "var(--font-ui, system-ui)", marginBottom: 5,
+          }}>
+            {day.subtitle}
+          </div>
+          <div style={{
+            fontSize: 20, fontWeight: 300, fontFamily: "var(--font-ui, system-ui)",
+            color: "var(--text-primary)", lineHeight: 1.25, marginBottom: 16,
+          }}>
+            {day.title}
+          </div>
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 8,
+            padding: "10px 18px", borderRadius: 100,
+            background: "rgba(203,178,124,0.88)",
+            fontSize: 13, fontWeight: 600, fontFamily: "var(--font-ui, system-ui)",
+            color: "#141410", letterSpacing: "0.02em",
+          }}>
+            Begin Session
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="#141410" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+/* ─── Compact day row (done / coming up) ─────────────────────────────────── */
+function CompactDayRow({ day, status, onPress }) {
+  const imgSrc = day.videoId
+    ? `https://img.youtube.com/vi/${day.videoId}/hqdefault.jpg`
+    : null;
+  const locked = status === "locked";
+  const done = status === "done";
+  return (
+    <button
+      onClick={!locked ? onPress : undefined}
+      disabled={locked}
+      style={{
+        width: "100%", textAlign: "left", cursor: locked ? "default" : "pointer",
+        display: "flex", alignItems: "center", gap: 12,
+        padding: "10px 12px", borderRadius: 12,
+        background: done ? "rgba(203,178,124,0.04)" : "rgba(255,255,255,0.02)",
+        border: done
+          ? "1px solid rgba(203,178,124,0.18)"
+          : "1px solid rgba(255,255,255,0.06)",
+        WebkitTapHighlightColor: "transparent",
+      }}
+    >
+      <div style={{
+        width: 72, height: 46, borderRadius: 8, overflow: "hidden",
+        flexShrink: 0, position: "relative", background: "rgba(255,255,255,0.04)",
+      }}>
+        {imgSrc && (
+          <img
+            src={imgSrc}
+            alt={day.title}
+            style={{
+              width: "100%", height: "100%", objectFit: "cover",
+              opacity: locked ? 0.18 : done ? 0.45 : 0.7,
+              filter: locked ? "grayscale(80%)" : "none",
+            }}
+          />
+        )}
+        {locked && (
+          <div style={{
+            position: "absolute", inset: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="rgba(255,255,255,0.35)" strokeWidth="1.5"
+              strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0110 0v4" />
+            </svg>
+          </div>
+        )}
+      </div>
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{
+          fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+          color: "rgba(203,178,124,0.4)", fontFamily: "var(--font-ui, system-ui)", marginBottom: 3,
+        }}>
+          {day.subtitle}
+        </div>
+        <div style={{
+          fontSize: 14, fontFamily: "var(--font-ui, system-ui)",
+          color: "var(--text-primary)", opacity: locked ? 0.3 : 0.82,
+          lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+        }}>
+          {day.title}
+        </div>
+      </div>
+
+      {done && (
+        <div style={{
+          width: 24, height: 24, borderRadius: "50%", flexShrink: 0,
+          background: "rgba(203,178,124,0.85)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+            stroke="#141410" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+      )}
+      {locked && (
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+          stroke="rgba(255,255,255,0.18)" strokeWidth="1.5"
+          strokeLinecap="round" strokeLinejoin="round"
+          style={{ flexShrink: 0 }}>
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0110 0v4" />
+        </svg>
+      )}
+    </button>
+  );
+}
+
+/* ─── Series detail — Option A layout ───────────────────────────────────── */
 function SeriesDetail({ series, onStartDay, onBack }) {
   const completed = getCompleted();
 
@@ -765,6 +923,16 @@ function SeriesDetail({ series, onStartDay, onBack }) {
     return day.unlockAfter === null || day.unlockAfter === undefined || completed.has(day.unlockAfter);
   }
   function isDone(day) { return completed.has(day.id); }
+
+  const doneDays = series.days.filter(isDone);
+  const nextDayIdx = series.days.findIndex((d) => !isDone(d) && isUnlocked(d));
+  const nextDay = nextDayIdx >= 0 ? series.days[nextDayIdx] : null;
+  const comingUpDays = series.days.filter((_, i) => {
+    const d = series.days[i];
+    return !isDone(d) && i !== nextDayIdx;
+  });
+  const completedCount = doneDays.length;
+  const totalCount = series.days.length;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "var(--bg-app)" }}>
@@ -786,19 +954,18 @@ function SeriesDetail({ series, onStartDay, onBack }) {
             stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M12 5l-7 7 7 7" />
           </svg>
-          <span style={{ fontSize: 13, fontFamily: "var(--font-ui, system-ui)", opacity: 0.7 }}>Scripture</span>
+          <span style={{ fontSize: 13, fontFamily: "var(--font-ui, system-ui)", opacity: 0.7 }}>Back</span>
         </button>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
-        {/* Series hero */}
-        <div style={{ padding: "28px 20px 0" }}>
+        {/* Series header */}
+        <div style={{ padding: "24px 20px 20px" }}>
           <div style={{
             fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase",
-            color: "rgba(203,178,124,0.45)", fontFamily: "var(--font-ui, system-ui)",
-            marginBottom: 8,
+            color: "rgba(203,178,124,0.45)", fontFamily: "var(--font-ui, system-ui)", marginBottom: 6,
           }}>
-            {series.days.filter(d => completed.has(d.id)).length} / {series.days.length} complete
+            {completedCount} / {totalCount} complete
           </div>
           <h1 style={{
             fontFamily: "var(--font-ui, system-ui)", fontSize: 26, fontWeight: 300,
@@ -808,14 +975,91 @@ function SeriesDetail({ series, onStartDay, onBack }) {
           </h1>
           <p style={{
             fontFamily: "var(--font-body, Georgia, serif)", fontSize: 13.5,
-            lineHeight: 1.65, color: "var(--text-primary)", opacity: 0.42,
-            marginBottom: 16,
+            lineHeight: 1.65, color: "var(--text-primary)", opacity: 0.42, marginBottom: 14,
           }}>
             {series.description}
           </p>
 
-          {/* Source credit */}
-          {series.sourceCredit && (
+          {/* Progress bar */}
+          {totalCount > 1 && (
+            <div style={{
+              height: 2, borderRadius: 1, background: "rgba(255,255,255,0.07)", marginBottom: 4,
+            }}>
+              <div style={{
+                height: "100%", borderRadius: 1,
+                background: "rgba(203,178,124,0.6)",
+                width: `${(completedCount / totalCount) * 100}%`,
+                transition: "width 0.5s ease",
+              }} />
+            </div>
+          )}
+        </div>
+
+        {/* Completed sessions */}
+        {doneDays.length > 0 && (
+          <div style={{ padding: "0 16px 20px" }}>
+            <div style={{
+              fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase",
+              color: "rgba(203,178,124,0.35)", fontFamily: "var(--font-ui, system-ui)", marginBottom: 8,
+            }}>
+              Completed
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {doneDays.map((day) => (
+                <CompactDayRow
+                  key={day.id}
+                  day={day}
+                  status="done"
+                  onPress={() => onStartDay(day, series.days.indexOf(day))}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Featured hero — next session */}
+        {nextDay && (
+          <div style={{ padding: "0 16px 20px" }}>
+            {doneDays.length > 0 && (
+              <div style={{
+                fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase",
+                color: "rgba(203,178,124,0.35)", fontFamily: "var(--font-ui, system-ui)", marginBottom: 8,
+              }}>
+                Up Next
+              </div>
+            )}
+            <FeaturedHero
+              day={nextDay}
+              onPress={() => onStartDay(nextDay, nextDayIdx)}
+            />
+          </div>
+        )}
+
+        {/* Coming up — locked / remaining sessions */}
+        {comingUpDays.length > 0 && (
+          <div style={{ padding: "0 16px 20px" }}>
+            <div style={{
+              fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase",
+              color: "rgba(203,178,124,0.35)", fontFamily: "var(--font-ui, system-ui)", marginBottom: 8,
+            }}>
+              Coming Up
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {comingUpDays.map((day) => (
+                <CompactDayRow
+                  key={day.id}
+                  day={day}
+                  status={isUnlocked(day) ? "available" : "locked"}
+                  onPress={() => isUnlocked(day) && onStartDay(day, series.days.indexOf(day))}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Source credit */}
+        {series.sourceCredit && (
+          <div style={{ padding: "0 20px 16px" }}>
             <a
               href={series.sourceCredit.link}
               target="_blank"
@@ -826,12 +1070,9 @@ function SeriesDetail({ series, onStartDay, onBack }) {
                 background: "rgba(255,255,255,0.03)",
                 border: "1px solid rgba(255,255,255,0.07)",
                 borderRadius: 10, textDecoration: "none",
-                marginBottom: 8,
               }}
             >
-              <span style={{ fontSize: 12, color: "rgba(203,178,124,0.7)", fontFamily: "var(--font-ui, system-ui)" }}>
-                ▶
-              </span>
+              <span style={{ fontSize: 12, color: "rgba(203,178,124,0.7)", fontFamily: "var(--font-ui, system-ui)" }}>▶</span>
               <span style={{ fontSize: 12, color: "var(--text-primary)", opacity: 0.6, fontFamily: "var(--font-ui, system-ui)" }}>
                 {series.sourceCredit.name}
               </span>
@@ -841,123 +1082,8 @@ function SeriesDetail({ series, onStartDay, onBack }) {
                 <polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" />
               </svg>
             </a>
-          )}
-        </div>
-
-        {/* Divider */}
-        <div style={{
-          height: 1, margin: "20px 20px 20px",
-          background: "linear-gradient(90deg, rgba(203,178,124,0.2), transparent)",
-        }} />
-
-        {/* Day cards */}
-        <div style={{ padding: "0 16px", display: "flex", flexDirection: "column", gap: 12 }}>
-          {series.days.map((day, idx) => {
-            const unlocked = isUnlocked(day);
-            const done = isDone(day);
-            const isNext = !done && unlocked && (idx === 0 || isDone(series.days[idx - 1]));
-
-            return (
-              <button
-                key={day.id}
-                onClick={() => unlocked && onStartDay(day, idx)}
-                disabled={!unlocked}
-                className={`da-day-card${!unlocked ? " da-day-locked" : done ? " da-day-done" : isNext ? " da-day-next" : ""}`}
-                style={{
-                  width: "100%", textAlign: "left", cursor: unlocked ? "pointer" : "default",
-                  borderRadius: 14, overflow: "hidden",
-                  border: isNext
-                    ? "1px solid rgba(203,178,124,0.35)"
-                    : done ? "1px solid rgba(203,178,124,0.15)"
-                    : "1px solid rgba(255,255,255,0.06)",
-                  position: "relative",
-                  WebkitTapHighlightColor: "transparent",
-                }}
-              >
-                {/* Video thumbnail */}
-                <div style={{ position: "relative", width: "100%", aspectRatio: "16/6", overflow: "hidden" }}>
-                  <img
-                    src={`https://img.youtube.com/vi/${day.videoId}/hqdefault.jpg`}
-                    alt={day.title}
-                    style={{
-                      width: "100%", height: "100%", objectFit: "cover",
-                      opacity: unlocked ? (done ? 0.45 : 0.7) : 0.2,
-                      filter: unlocked ? "none" : "grayscale(80%)",
-                    }}
-                  />
-                  <div style={{
-                    position: "absolute", inset: 0,
-                    background: "linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(14,14,10,0.75))",
-                  }} />
-                  {!unlocked && (
-                    <div style={{
-                      position: "absolute", inset: 0,
-                      display: "flex", flexDirection: "column",
-                      alignItems: "center", justifyContent: "center", gap: 6,
-                    }}>
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                        stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0110 0v4" />
-                      </svg>
-                      <span style={{
-                        fontSize: 11, color: "rgba(255,255,255,0.35)",
-                        fontFamily: "var(--font-ui, system-ui)", letterSpacing: "0.04em",
-                      }}>
-                        Complete {series.days[idx - 1]?.title} to unlock
-                      </span>
-                    </div>
-                  )}
-                  {done && (
-                    <div style={{
-                      position: "absolute", top: 10, right: 10,
-                      width: 26, height: 26, borderRadius: "50%",
-                      background: "rgba(203,178,124,0.85)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-                        stroke="#141410" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </div>
-                  )}
-                  {isNext && (
-                    <div style={{
-                      position: "absolute", top: 10, left: 10,
-                      padding: "3px 9px", borderRadius: 100,
-                      background: "rgba(203,178,124,0.9)",
-                      fontSize: 10, fontWeight: 600, letterSpacing: "0.06em",
-                      color: "#141410", fontFamily: "var(--font-ui, system-ui)",
-                      textTransform: "uppercase",
-                    }}>
-                      Today
-                    </div>
-                  )}
-                </div>
-
-                {/* Card body */}
-                <div className="da-card-body" style={{
-                  padding: "14px 16px",
-                  background: isNext ? "rgba(203,178,124,0.06)" : "rgba(255,255,255,0.02)",
-                }}>
-                  <div style={{
-                    fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase",
-                    color: "rgba(203,178,124,0.5)", fontFamily: "var(--font-ui, system-ui)",
-                    marginBottom: 4,
-                  }}>
-                    {day.subtitle}
-                  </div>
-                  <div style={{
-                    fontFamily: "var(--font-ui, system-ui)", fontSize: 15, fontWeight: 400,
-                    color: "var(--text-primary)", opacity: unlocked ? 0.9 : 0.4,
-                  }}>
-                    {day.title}
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+          </div>
+        )}
 
         <div style={{ height: "calc(env(safe-area-inset-bottom,0px) + 48px)" }} />
       </div>
@@ -1006,6 +1132,13 @@ function DAHeader({ title, onBack, backLabel }) {
 
 /* ─── Shared series cover card ───────────────────────────────────────────── */
 function SeriesCoverCard({ series, label, done, onPress }) {
+  const base = import.meta.env.BASE_URL ?? "/";
+  const imgSrc = series.coverImage
+    ? `${base}${series.coverImage}`
+    : series.coverVideoId
+    ? `https://img.youtube.com/vi/${series.coverVideoId}/hqdefault.jpg`
+    : null;
+
   return (
     <button
       onClick={onPress}
@@ -1017,9 +1150,9 @@ function SeriesCoverCard({ series, label, done, onPress }) {
       }}
     >
       <div style={{ position: "relative", width: "100%", aspectRatio: "16/7", overflow: "hidden" }}>
-        {series.coverVideoId ? (
+        {imgSrc ? (
           <img
-            src={`https://img.youtube.com/vi/${series.coverVideoId}/hqdefault.jpg`}
+            src={imgSrc}
             alt={series.title}
             style={{ width: "100%", height: "100%", objectFit: "cover", opacity: done ? 0.45 : 0.72 }}
           />
@@ -1102,7 +1235,7 @@ function SeriesList({ index, onSelectSeries, onSelectSource, onBack }) {
       name: "The Bible Project",
       subtitle: "Animated Bible Videos",
       description: "The Bible Project creates free animated videos, podcasts, and educational resources that explore the Bible as a unified story leading to Jesus.",
-      coverVideoId: "GQI72THyO5I",
+      coverImage: "the_bible_project.png",
     },
   };
 
@@ -1129,7 +1262,13 @@ function SeriesList({ index, onSelectSeries, onSelectSource, onBack }) {
 
           {/* Source cards (e.g. The Bible Project) */}
           {sources.map((srcId) => {
-            const meta = SOURCE_META[srcId] ?? { name: srcId, description: "", coverVideoId: null };
+            const meta = SOURCE_META[srcId] ?? { name: srcId, description: "", coverImage: null, coverVideoId: null };
+            const base = import.meta.env.BASE_URL ?? "/";
+            const srcImgSrc = meta.coverImage
+              ? `${base}${meta.coverImage}`
+              : meta.coverVideoId
+              ? `https://img.youtube.com/vi/${meta.coverVideoId}/hqdefault.jpg`
+              : null;
             return (
               <button
                 key={srcId}
@@ -1142,9 +1281,9 @@ function SeriesList({ index, onSelectSeries, onSelectSource, onBack }) {
                 }}
               >
                 <div style={{ position: "relative", width: "100%", aspectRatio: "16/7", overflow: "hidden" }}>
-                  {meta.coverVideoId ? (
+                  {srcImgSrc ? (
                     <img
-                      src={`https://img.youtube.com/vi/${meta.coverVideoId}/hqdefault.jpg`}
+                      src={srcImgSrc}
                       alt={meta.name}
                       style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.72 }}
                     />
@@ -1212,7 +1351,7 @@ function SourceView({ source, index, onSelectGroup, onBack }) {
       name: "Old Testament",
       subtitle: "The Hebrew Scriptures",
       description: "Walk through the books of the Old Testament one video at a time. Watch, reflect, and pray.",
-      coverVideoId: "GQI72THyO5I",
+      coverImage: "bible_project_old_testament.png",
     },
   };
 
@@ -1268,8 +1407,14 @@ function SourceView({ source, index, onSelectGroup, onBack }) {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: "0 16px" }}>
           {groups.map((grpId) => {
-            const grp = GROUP_META[grpId] ?? { name: grpId, subtitle: "", description: "", coverVideoId: null };
+            const grp = GROUP_META[grpId] ?? { name: grpId, subtitle: "", description: "", coverImage: null, coverVideoId: null };
             const count = index.filter((s) => s.source === source && s.group === grpId).length;
+            const base = import.meta.env.BASE_URL ?? "/";
+            const grpImgSrc = grp.coverImage
+              ? `${base}${grp.coverImage}`
+              : grp.coverVideoId
+              ? `https://img.youtube.com/vi/${grp.coverVideoId}/hqdefault.jpg`
+              : null;
             return (
               <button
                 key={grpId}
@@ -1282,9 +1427,9 @@ function SourceView({ source, index, onSelectGroup, onBack }) {
                 }}
               >
                 <div style={{ position: "relative", width: "100%", aspectRatio: "16/7", overflow: "hidden" }}>
-                  {grp.coverVideoId ? (
+                  {grpImgSrc ? (
                     <img
-                      src={`https://img.youtube.com/vi/${grp.coverVideoId}/hqdefault.jpg`}
+                      src={grpImgSrc}
                       alt={grp.name}
                       style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.72 }}
                     />
@@ -1479,6 +1624,7 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
   const [activeGroup, setActiveGroup] = useState(null);
   const [activeBook, setActiveBook] = useState(null);
   const [completionVersion, setCompletionVersion] = useState(0);
+  const [dayInitialPage, setDayInitialPage] = useState(0);
 
   const base = import.meta.env.BASE_URL ?? "/";
 
@@ -1521,15 +1667,26 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
   }
 
   function handleStartDay(day, idx) {
+    setDayInitialPage(0);
     setActiveDay(day);
+    setView("day");
+  }
+
+  function handleStartDayAtReflection(seriesMeta, day) {
+    setSelectedSeries({ id: seriesMeta.id, title: seriesMeta.title, days: [day] });
+    setActiveDay(day);
+    setDayInitialPage(1);
     setView("day");
   }
 
   function handleDayComplete() {
     setActiveDay(null);
+    setDayInitialPage(0);
     if (activeBook) {
       setCompletionVersion((v) => v + 1);
       setView("book");
+    } else if (activeSource === "bible-project") {
+      setView("hub");
     } else {
       setSelectedSeries((s) => s ? { ...s } : s);
       setView("series");
@@ -1548,8 +1705,21 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
           <SeriesList
             index={index}
             onSelectSeries={handleSelectSeries}
-            onSelectSource={(src) => { setActiveSource(src); setView("source"); }}
+            onSelectSource={(src) => {
+              setActiveSource(src);
+              setView(src === "bible-project" ? "hub" : "source");
+            }}
             onBack={onBack}
+          />
+        )}
+        {view === "hub" && activeSource === "bible-project" && (
+          <BibleProjectHub
+            index={index}
+            onSelectSeries={handleSelectSeries}
+            onSelectSeriesAtReflection={handleStartDayAtReflection}
+            onBack={() => setView("list")}
+            base={base}
+            translation={translation}
           />
         )}
         {view === "source" && activeSource && (
@@ -1583,7 +1753,12 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
           <SeriesDetail
             series={selectedSeries}
             onStartDay={handleStartDay}
-            onBack={() => setView(activeBook ? "book" : activeGroup ? "group" : "list")}
+            onBack={() => {
+              if (activeBook) setView("book");
+              else if (activeSource === "bible-project") setView("hub");
+              else if (activeGroup) setView("group");
+              else setView("list");
+            }}
           />
         )}
         {view === "scripture-guided" && activeDay && (
@@ -1601,9 +1776,12 @@ export default function DailyAbidingScreen({ onBack, translation = "KJV" }) {
             seriesId={selectedSeries?.id}
             translation={translation}
             base={base}
+            initialPage={dayInitialPage}
             onComplete={handleDayComplete}
             onBack={() => {
+              setDayInitialPage(0);
               if (activeBook) setView("book");
+              else if (activeSource === "bible-project") setView("hub");
               else if (selectedSeries) setView("series");
               else onBack();
             }}
