@@ -2,6 +2,13 @@
   "chapter": 11,
   "book": "Matthew",
   "translation": "ASR",
+  "sections": [
+    { "title": "John's Question from Prison", "startVerse": 1 },
+    { "title": "Jesus Speaks About John", "startVerse": 7 },
+    { "title": "Woe to the Unrepentant Cities", "startVerse": 20 },
+    { "title": "All Things Entrusted to the Son", "startVerse": 25 },
+    { "title": "Come to Me", "startVerse": 28 }
+  ],
   "verses": {
     "1": "After Jesus had finished instructing His twelve disciples, He went on from there to teach and preach in their cities.",
     "2": "Meanwhile John heard in prison about the works of Christ, and he sent his disciples",
