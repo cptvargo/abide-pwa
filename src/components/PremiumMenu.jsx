@@ -98,6 +98,13 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
           description: "Video devotional experiences",
           available: true,
         },
+        {
+          id: "abide-dictionary",
+          icon: "◉",
+          title: "Abide Dictionary",
+          description: "Your curated word study collection",
+          available: true,
+        },
       ],
     },
     {

@@ -3,6 +3,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Placeholder from "@tiptap/extension-placeholder";
 import { useState, useEffect, useRef } from "react";
+import { getDictionaryEntries } from "./components/AbideDictionary";
 
 /* ── Book name → file ID lookup ── */
 const BOOK_TO_ID = {
@@ -129,6 +130,8 @@ export default function RichTextJournal({
 }) {
   const [showFormatMenu, setShowFormatMenu] = useState(false);
   const [verseSuggestion, setVerseSuggestion] = useState(null);
+  const [showDictPicker, setShowDictPicker] = useState(false);
+  const [dictSearch, setDictSearch] = useState("");
   const [keyboardOffset, setKeyboardOffset] = useState(0);
   const scanRef = useRef(null);
   const autoSaveRef = useRef(null);
@@ -458,6 +461,19 @@ export default function RichTextJournal({
           <span className="text-base leading-none font-mono">1.</span>
           <span className="text-[9px] opacity-60 mt-0.5">Numbers</span>
         </button>
+
+        {/* Dictionary */}
+        <button
+          onClick={() => { setShowDictPicker(true); setDictSearch(""); }}
+          className={`px-3 py-1.5 rounded-lg transition flex flex-col items-center ${
+            showDictPicker
+              ? "bg-[var(--text-accent)]/20 text-[var(--text-accent)]"
+              : "hover:bg-[var(--text-primary)]/5 text-[var(--text-primary)]"
+          }`}
+        >
+          <span className="text-base leading-none">◉</span>
+          <span className="text-[9px] opacity-60 mt-0.5">Dict</span>
+        </button>
       </div>
 
       {/* Format Menu Dropdown */}
@@ -559,6 +575,200 @@ export default function RichTextJournal({
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         <EditorContent editor={editor} />
+      </div>
+
+      {/* Dictionary picker sheet */}
+      {showDictPicker && (
+        <DictionaryPickerSheet
+          search={dictSearch}
+          onSearchChange={setDictSearch}
+          onClose={() => setShowDictPicker(false)}
+          onInsert={(entry) => {
+            setShowDictPicker(false);
+            const isQ = entry.type === "question";
+            const word = isQ ? (entry.question || entry.query) : (entry.word || entry.query);
+            const defText = isQ ? (entry.answer || "") : (entry.definition || "");
+            const origWord = (!isQ && entry.originalLanguage?.word)
+              ? ` · ${entry.originalLanguage.word} (${entry.originalLanguage.transliteration || ""})`
+              : "";
+            const noteText = entry.personalNote ? `\n\nMy note: ${entry.personalNote}` : "";
+            const blockquote = {
+              type: "blockquote",
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: defText.slice(0, 280) + (defText.length > 280 ? "…" : "") }],
+                },
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", marks: [{ type: "italic" }], text: `— ${word}${origWord}` }],
+                },
+              ],
+            };
+            editor.chain().focus().insertContent(blockquote).run();
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Dictionary picker sheet ───────────────────────────────────────────────────
+function DictionaryPickerSheet({ search, onSearchChange, onClose, onInsert }) {
+  const entries = getDictionaryEntries();
+  const filtered = search.trim()
+    ? entries.filter((e) =>
+        (e.word || e.query || "").toLowerCase().includes(search.toLowerCase())
+      )
+    : entries;
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        background: "var(--bg-app, #141410)",
+        zIndex: 20,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          padding: "calc(env(safe-area-inset-top, 0px) + 12px) 16px 12px",
+          borderBottom: "1px solid rgba(var(--accent-rgb),0.10)",
+          flexShrink: 0,
+        }}
+      >
+        <button
+          onClick={onClose}
+          style={{
+            background: "rgba(var(--accent-rgb),0.08)",
+            border: "1px solid rgba(var(--accent-rgb),0.15)",
+            borderRadius: 100,
+            padding: "6px 14px",
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            color: "var(--text-accent)",
+            fontFamily: "var(--font-ui)",
+            fontSize: 13,
+            fontWeight: 500,
+            letterSpacing: "0.04em",
+            cursor: "pointer",
+            flexShrink: 0,
+            WebkitTapHighlightColor: "transparent",
+          }}
+        >
+          ← Back to Journal
+        </button>
+        <div style={{ flex: 1 }} />
+      </div>
+
+      {/* Search */}
+      {entries.length > 0 && (
+        <div style={{ padding: "10px 16px 0", flexShrink: 0 }}>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search words…"
+            autoFocus
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              background: "rgba(var(--accent-rgb),0.06)",
+              border: "1px solid rgba(var(--accent-rgb),0.12)",
+              borderRadius: 9,
+              padding: "9px 12px",
+              fontFamily: "var(--font-ui)",
+              fontSize: 14,
+              color: "var(--text-primary)",
+              outline: "none",
+            }}
+          />
+        </div>
+      )}
+
+      {/* List */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "10px 16px calc(env(safe-area-inset-bottom, 0px) + 24px)", WebkitOverflowScrolling: "touch" }}>
+        {entries.length === 0 ? (
+          <div style={{ textAlign: "center", paddingTop: 60 }}>
+            <div style={{ fontSize: 28, opacity: 0.25, marginBottom: 12 }}>◉</div>
+            <p
+              style={{
+                fontFamily: "var(--font-body)",
+                fontSize: 14,
+                fontStyle: "italic",
+                color: "var(--text-primary)",
+                opacity: 0.4,
+                lineHeight: 1.6,
+              }}
+            >
+              No words saved yet.{"\n"}Search a word in Seek to build your dictionary.
+            </p>
+          </div>
+        ) : filtered.length === 0 ? (
+          <p style={{ fontFamily: "var(--font-body)", fontSize: 13, fontStyle: "italic", color: "var(--text-primary)", opacity: 0.4, textAlign: "center", paddingTop: 30 }}>
+            No words match "{search}"
+          </p>
+        ) : (
+          filtered.map((entry) => {
+            const isQ = entry.type === "question";
+            const word = isQ ? (entry.question || entry.query) : (entry.word || entry.query);
+            const preview = isQ ? entry.answer : entry.definition;
+            return (
+              <button
+                key={entry.id}
+                onClick={() => onInsert(entry)}
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  background: "rgba(var(--accent-rgb),0.05)",
+                  border: "1px solid rgba(var(--accent-rgb),0.1)",
+                  borderRadius: 12,
+                  padding: "12px 14px",
+                  marginBottom: 8,
+                  cursor: "pointer",
+                  WebkitTapHighlightColor: "transparent",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 10,
+                }}
+              >
+                <span style={{ fontSize: 14, color: "rgba(203,178,124,0.7)", flexShrink: 0, marginTop: 1 }}>
+                  {isQ ? "✦" : "◉"}
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 3, flexWrap: "wrap" }}>
+                    <span style={{ fontFamily: "var(--font-ui)", fontSize: 15, fontWeight: 500, color: "var(--text-primary)" }}>
+                      {word}
+                    </span>
+                    {!isQ && entry.originalLanguage?.word && (
+                      <span style={{ fontFamily: "serif", fontSize: 14, color: "var(--text-accent)", opacity: 0.65 }}>
+                        {entry.originalLanguage.word}
+                      </span>
+                    )}
+                  </div>
+                  {preview && (
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: 12, lineHeight: 1.5,
+                      color: "var(--text-primary)", opacity: 0.45, margin: 0,
+                      display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
+                    }}>
+                      {typeof preview === "string" ? preview : ""}
+                    </p>
+                  )}
+                </div>
+                <span style={{ fontSize: 14, color: "rgba(203,178,124,0.35)", flexShrink: 0, alignSelf: "center" }}>→</span>
+              </button>
+            );
+          })
+        )}
       </div>
     </div>
   );

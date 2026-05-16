@@ -16,6 +16,7 @@ import {
 } from "./lib/bibleStructure";
 import { search, warmIndex } from "./lib/searchEngine";
 import RichTextJournal from "./RichTextJournal";
+import AbideDictionary, { saveDictionaryEntry } from "./components/AbideDictionary";
 
 const TRANSLATIONS = ["KJV", "ASR", "WAE"];
 const TRANSLATION_FULL = {
@@ -744,6 +745,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
   const [seekError, setSeekError] = useState(null);
   const [seekView, setSeekView] = useState("input"); // "input" | "result"
   const [fromCache, setFromCache] = useState(false);
+  const [seekSaved, setSeekSaved] = useState(false);
 
   // Highlights state
   const [highlightTag, setHighlightTag] = useState("All");
@@ -997,6 +999,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
     setSeekError(null);
     setSeekResult(null);
     setFromCache(false);
+    setSeekSaved(false);
     setSeekView("result");
     const cached = getCached(q, translation);
     if (cached) {
@@ -1574,6 +1577,39 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                       {typeof seekResult.reflection === "string" ? seekResult.reflection : ""}
                     </p>
                   </div>
+
+                  {/* Save to Dictionary */}
+                  <button
+                    onClick={() => {
+                      saveDictionaryEntry(seekResult, seekQuery);
+                      setSeekSaved(true);
+                    }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                      width: "100%",
+                      padding: "13px",
+                      marginBottom: 32,
+                      background: seekSaved
+                        ? "rgba(203,178,124,0.12)"
+                        : "rgba(203,178,124,0.07)",
+                      border: `1px solid rgba(203,178,124,${seekSaved ? "0.35" : "0.18"})`,
+                      borderRadius: 12,
+                      color: "var(--text-accent)",
+                      fontFamily: "var(--font-ui)",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      letterSpacing: "0.08em",
+                      cursor: seekSaved ? "default" : "pointer",
+                      WebkitTapHighlightColor: "transparent",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <span style={{ fontSize: 15 }}>{seekSaved ? "◉" : "◎"}</span>
+                    {seekSaved ? "Saved to Dictionary" : "Save to Dictionary"}
+                  </button>
                 </>
               )}
             </>
@@ -2330,6 +2366,9 @@ export default function AppShell() {
           }}
         />
       )}
+      {activeScreen === "abide-dictionary" && (
+        <AbideDictionary onBack={() => setActiveScreen("scripture")} />
+      )}
       {activeScreen === "devotionals" && (
         <DevotionalScreen
           onBack={() => setActiveScreen("scripture")}
@@ -2756,6 +2795,7 @@ export default function AppShell() {
           else if (id === "devotionals") setActiveScreen("devotionals");
           else if (id === "daily-abiding") setActiveScreen("daily-abiding");
           else if (id === "christ-revealed") handleChristRevealedEntry();
+          else if (id === "abide-dictionary") setActiveScreen("abide-dictionary");
           setMenuOpen(false);
           setMenuVisible(false);
         }}
