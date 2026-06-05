@@ -95,6 +95,7 @@ export default function SwipeReading({
   const navOffsetRef = useRef(0);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
+  const savedScrollTop = useRef(0);
 
   // Highlighting state
   const [selectedVerses, setSelectedVerses] = useState([]);
@@ -374,10 +375,13 @@ export default function SwipeReading({
     return () => el.removeEventListener("scroll", handleScroll);
   }, [onScrollProgress]);
 
-  // Scroll content up when highlight panel opens so last verse isn't hidden
+  // Restore scroll position after paddingBottom change reflows the container
   useEffect(() => {
     if (highlightPanelOpen && scrollRef.current) {
-      scrollRef.current.scrollBy({ top: 240, behavior: "smooth" });
+      const saved = savedScrollTop.current;
+      requestAnimationFrame(() => {
+        if (scrollRef.current) scrollRef.current.scrollTop = saved;
+      });
     }
   }, [highlightPanelOpen]);
 
@@ -416,6 +420,7 @@ export default function SwipeReading({
   ================================ */
   function handleVerseClick(verse) {
     if (!isSelectionMode) {
+      savedScrollTop.current = scrollRef.current?.scrollTop ?? 0;
       setIsSelectionMode(true);
       setSelectedVerses([verse]);
       setHighlightPanelOpen(true);
