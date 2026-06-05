@@ -3,7 +3,6 @@
  * Clean bottom panel with theme colors and conditional clear icon
  */
 
-import { useState, useEffect, useRef } from "react";
 import DialogueBottomSheet from "./DialogueBottomSheet";
 
 /* ===============================
@@ -79,17 +78,8 @@ export function getThemeColors(theme) {
 }
 
 /* ===============================
-   YouVersion-Style Bottom Panel
+   Slim Highlight Pill Bar
 ================================ */
-const DEFAULT_TAGS = [
-  "Prayer",
-  "Promise",
-  "Warning",
-  "Prophecy",
-  "Wisdom",
-  "Gospel",
-];
-
 export function HighlightPanel({
   theme,
   book,
@@ -97,281 +87,157 @@ export function HighlightPanel({
   selectedVerses,
   translation,
   existingColorId,
-  existingTags = [],
   onSelectColor,
   onClear,
   onCancel,
-  onTagsChange,
-  onShare,
 }) {
   const colors = THEME_COLORS[theme] || THEME_COLORS.classic;
-  const reference = formatVerseReference(
-    book,
-    chapter,
-    selectedVerses,
-    translation,
-  );
-  const hasExistingHighlight = !!existingColorId;
-
-  const TAG_PALETTE = [
-    "#e07b5b",
-    "#d4a843",
-    "#7db87d",
-    "#5b9bd4",
-    "#9b7dd4",
-    "#d47db8",
-    "#5bbdb8",
-    "#b8845b",
-  ];
-
-  function getTagColor(tag) {
-    const stored = JSON.parse(localStorage.getItem("customTagColors") || "{}");
-    return stored[tag] || null;
-  }
-
-  function assignTagColor(tag, color) {
-    const stored = JSON.parse(localStorage.getItem("customTagColors") || "{}");
-    stored[tag] = color;
-    localStorage.setItem("customTagColors", JSON.stringify(stored));
-    return color;
-  }
-
-  const [activeColor, setActiveColor] = useState(
-    existingColorId
-      ? colors.find((c) => c.id === existingColorId) || null
-      : null,
-  );
-  const [selectedTags, setSelectedTags] = useState(existingTags);
-  const [customInput, setCustomInput] = useState("");
-  const [pickedColor, setPickedColor] = useState(TAG_PALETTE[0]);
-  const [allTags, setAllTags] = useState(() => {
-    const saved = localStorage.getItem("customTags");
-    return saved ? JSON.parse(saved) : [];
-  });
-  const inputRef = useRef(null);
-
-  function toggleTag(tag) {
-    const next = selectedTags.includes(tag)
-      ? selectedTags.filter((t) => t !== tag)
-      : [...selectedTags, tag];
-    setSelectedTags(next);
-    onTagsChange?.(next);
-  }
-
-  function addCustomTag() {
-    const tag = customInput.trim();
-    if (!tag) return;
-    const newAll = allTags.includes(tag) ? allTags : [...allTags, tag];
-    setAllTags(newAll);
-    localStorage.setItem("customTags", JSON.stringify(newAll));
-    assignTagColor(tag, pickedColor);
-    if (!selectedTags.includes(tag)) {
-      const next = [...selectedTags, tag];
-      setSelectedTags(next);
-      onTagsChange?.(next);
-    }
-    setCustomInput("");
-  }
+  const reference = formatVerseReference(book, chapter, selectedVerses, translation);
+  const hasExisting = !!existingColorId;
 
   return (
-    <div
-      className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-menu)] rounded-t-3xl shadow-2xl"
-      style={{
-        paddingBottom: "calc(env(safe-area-inset-bottom) + 20px)",
-        animation: "slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-      }}
-    >
-      <div className="px-6 py-5">
-        {/* Reference Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex-1">
+    <>
+      <style>{`
+        @keyframes hl-slide-up {
+          from { transform: translateY(100%); opacity: 0; }
+          to   { transform: translateY(0);    opacity: 1; }
+        }
+      `}</style>
+      <div
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 40,
+          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)",
+          paddingLeft: 16,
+          paddingRight: 16,
+          paddingTop: 12,
+          animation: "hl-slide-up 0.28s cubic-bezier(0.22,1,0.36,1)",
+        }}
+      >
+        <div
+          style={{
+            background: "var(--bg-menu)",
+            borderRadius: 20,
+            border: "1px solid rgba(var(--accent-rgb,203,178,124),0.18)",
+            boxShadow: "0 -4px 32px rgba(0,0,0,0.35)",
+            padding: "14px 18px",
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+          }}
+        >
+          {/* Reference */}
+          <div style={{ flex: 1, minWidth: 0 }}>
             <div
-              className="text-sm font-semibold"
-              style={{ color: "var(--text-primary)" }}
-            >
-              Currently Selected:
-            </div>
-            <div
-              className="text-base font-bold mt-1"
-              style={{ color: "var(--text-accent)" }}
+              style={{
+                fontFamily: "var(--font-ui, system-ui)",
+                fontSize: 11,
+                fontWeight: 600,
+                letterSpacing: "0.08em",
+                color: "var(--text-accent)",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
             >
               {reference}
             </div>
+            <div
+              style={{
+                fontFamily: "var(--font-ui, system-ui)",
+                fontSize: 10,
+                color: "var(--text-primary)",
+                opacity: 0.4,
+                marginTop: 2,
+                letterSpacing: "0.04em",
+              }}
+            >
+              Tap a color to highlight
+            </div>
           </div>
+
+          {/* Clear button — only when re-highlighting */}
+          {hasExisting && (
+            <button
+              onClick={onClear}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+                border: "1.5px solid rgba(var(--accent-rgb,203,178,124),0.3)",
+                background: "transparent",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--text-primary)",
+                opacity: 0.55,
+                cursor: "pointer",
+                flexShrink: 0,
+                WebkitTapHighlightColor: "transparent",
+              }}
+              title="Remove highlight"
+            >
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none"
+                stroke="currentColor" strokeWidth="2.5">
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </button>
+          )}
+
+          {/* Color dots */}
+          {colors.map((c) => {
+            const isActive = existingColorId === c.id;
+            return (
+              <button
+                key={c.id}
+                onClick={() => onSelectColor(c, [])}
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: "50%",
+                  background: c.color,
+                  border: isActive
+                    ? "2.5px solid var(--text-accent)"
+                    : "2px solid rgba(var(--accent-rgb,203,178,124),0.2)",
+                  boxShadow: isActive ? "0 0 0 2px var(--text-accent)" : "none",
+                  cursor: "pointer",
+                  flexShrink: 0,
+                  transition: "transform 0.12s ease, box-shadow 0.12s ease",
+                  WebkitTapHighlightColor: "transparent",
+                }}
+                title={c.name}
+              />
+            );
+          })}
+
+          {/* Dismiss */}
           <button
             onClick={onCancel}
-            className="w-8 h-8 rounded-full flex items-center justify-center"
             style={{
-              background: "rgba(0, 0, 0, 0.2)",
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              background: "rgba(0,0,0,0.18)",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               color: "var(--text-primary)",
+              opacity: 0.5,
+              fontSize: 13,
+              cursor: "pointer",
+              flexShrink: 0,
+              WebkitTapHighlightColor: "transparent",
             }}
           >
             ✕
           </button>
         </div>
-
-        {/* Color Swatches Row */}
-        <div className="flex items-center gap-3 mb-4">
-          {hasExistingHighlight && (
-            <button
-              onClick={onClear}
-              className="w-12 h-12 rounded-full flex items-center justify-center border-2 transition-transform active:scale-95"
-              style={{ borderColor: "var(--text-primary)", opacity: 0.6 }}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="8" y1="12" x2="16" y2="12" />
-              </svg>
-            </button>
-          )}
-          {colors.map((colorOption) => {
-            const isActive = activeColor?.id === colorOption.id;
-            return (
-              <button
-                key={colorOption.id}
-                onClick={() => setActiveColor(colorOption)}
-                className="w-12 h-12 rounded-full border-2 transition-all active:scale-95"
-                style={{
-                  background: colorOption.color,
-                  borderColor: isActive ? "var(--text-accent)" : "transparent",
-                  boxShadow: isActive ? "0 0 0 2px var(--text-accent)" : "none",
-                }}
-                title={colorOption.name}
-              />
-            );
-          })}
-        </div>
-
-        {/* Tags */}
-        <div className="mt-1">
-          <div
-            className="text-xs font-semibold mb-2 opacity-60"
-            style={{ color: "var(--text-primary)" }}
-          >
-            TAGS
-          </div>
-          {allTags.length === 0 && (
-            <p
-              className="text-xs opacity-40 mb-2"
-              style={{ color: "var(--text-primary)" }}
-            >
-              No tags yet — add one below
-            </p>
-          )}
-          <div className="flex flex-wrap gap-2 mb-3">
-            {allTags.map((tag) => {
-              const active = selectedTags.includes(tag);
-              const tagColor = getTagColor(tag);
-              return (
-                <button
-                  key={tag}
-                  onClick={() => toggleTag(tag)}
-                  className="px-3 py-1 rounded-full text-sm transition-all active:scale-95"
-                  style={{
-                    background: active
-                      ? tagColor || "var(--text-accent)"
-                      : "rgba(0,0,0,0.15)",
-                    color: active ? "#fff" : "var(--text-primary)",
-                    border: `1px solid ${active ? tagColor || "var(--text-accent)" : "transparent"}`,
-                  }}
-                >
-                  {tag}
-                </button>
-              );
-            })}
-          </div>
-          {/* Color dots for new tag */}
-          <div className="flex gap-2 mb-2">
-            {TAG_PALETTE.map((c) => (
-              <button
-                key={c}
-                onClick={() => setPickedColor(c)}
-                className="w-6 h-6 rounded-full transition-all active:scale-95"
-                style={{
-                  background: c,
-                  boxShadow:
-                    pickedColor === c
-                      ? `0 0 0 2px #fff, 0 0 0 3px ${c}`
-                      : "none",
-                }}
-              />
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <input
-              ref={inputRef}
-              value={customInput}
-              onChange={(e) => setCustomInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && addCustomTag()}
-              placeholder="Add custom tag…"
-              className="flex-1 rounded-full px-4 py-1.5 text-sm outline-none"
-              style={{
-                background: "rgba(0,0,0,0.15)",
-                color: "var(--text-primary)",
-                border: `1px solid ${pickedColor}`,
-              }}
-            />
-            <button
-              onClick={addCustomTag}
-              className="px-4 py-1.5 rounded-full text-sm font-semibold active:scale-95"
-              style={{ background: pickedColor, color: "#fff" }}
-            >
-              Add
-            </button>
-          </div>
-        </div>
-
-        {/* Share + Save row */}
-        <div className="flex gap-3 mt-4">
-          {onShare && (
-            <button
-              onClick={onShare}
-              className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl text-sm font-semibold transition-all active:scale-95"
-              style={{
-                background: "rgba(203,178,124,0.12)",
-                border: "1px solid rgba(203,178,124,0.3)",
-                color: "var(--text-accent)",
-                flexShrink: 0,
-              }}
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/>
-                <circle cx="18" cy="19" r="3"/>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-              </svg>
-              Share
-            </button>
-          )}
-          <button
-            onClick={() => activeColor && onSelectColor(activeColor, selectedTags)}
-            disabled={!activeColor}
-            className="flex-1 py-3 rounded-2xl text-sm font-bold transition-all active:scale-95"
-            style={{
-              background: activeColor ? "var(--text-accent)" : "rgba(0,0,0,0.15)",
-              color: activeColor ? "#fff" : "var(--text-secondary)",
-              opacity: activeColor ? 1 : 0.5,
-            }}
-          >
-            {activeColor ? "Save Highlight" : "Select a color to highlight"}
-          </button>
-        </div>
       </div>
-
-      <style>{`
-        @keyframes slideUp {
-          from { transform: translateY(100%); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-      `}</style>
-    </div>
+    </>
   );
 }
 

@@ -749,6 +749,46 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
 
   // Highlights state
   const [highlightTag, setHighlightTag] = useState("All");
+  const [highlights, setHighlights] = useState(() =>
+    JSON.parse(localStorage.getItem("verseHighlights") || "{}")
+  );
+  const [userTags, setUserTags] = useState(() =>
+    JSON.parse(localStorage.getItem("customTags") || "[]")
+  );
+  const [activeTagCard, setActiveTagCard] = useState(null);
+  const [newTagName, setNewTagName] = useState("");
+  const [newTagColor, setNewTagColor] = useState("#d4a843");
+
+  const TAG_PALETTE = ["#e07b5b","#d4a843","#7db87d","#5b9bd4","#9b7dd4","#d47db8","#5bbdb8","#b8845b"];
+
+  function addCustomTag(highlightKey) {
+    const tag = newTagName.trim();
+    if (!tag) return;
+    const next = userTags.includes(tag) ? userTags : [...userTags, tag];
+    setUserTags(next);
+    localStorage.setItem("customTags", JSON.stringify(next));
+    const colors = JSON.parse(localStorage.getItem("customTagColors") || "{}");
+    colors[tag] = newTagColor;
+    localStorage.setItem("customTagColors", JSON.stringify(colors));
+    // Auto-apply to the current highlight
+    if (highlightKey) toggleHighlightTag(highlightKey, tag);
+    setNewTagName("");
+  }
+
+  function saveHighlights(next) {
+    setHighlights(next);
+    localStorage.setItem("verseHighlights", JSON.stringify(next));
+  }
+
+  function toggleHighlightTag(key, tag) {
+    const h = highlights[key];
+    if (!h) return;
+    const current = h.tags || [];
+    const next = current.includes(tag)
+      ? current.filter((t) => t !== tag)
+      : [...current, tag];
+    saveHighlights({ ...highlights, [key]: { ...h, tags: next } });
+  }
 
   function getTagColor(tag) {
     const colors = JSON.parse(localStorage.getItem("customTagColors") || "{}");
@@ -1618,201 +1658,272 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
       )}
 
       {/* ── HIGHLIGHTS ── */}
-      {filter === "highlights" &&
-        (() => {
-          const saved = JSON.parse(
-            localStorage.getItem("verseHighlights") || "{}",
+      {filter === "highlights" && (() => {
+          const allHighlights = Object.entries(highlights).map(([key, h]) => ({ key, ...h }));
+          const filtered = highlightTag === "All"
+            ? allHighlights
+            : allHighlights.filter((h) => (h.tags || []).includes(highlightTag));
+          const sorted = [...filtered].sort(
+            (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
           );
-          const allHighlights = Object.values(saved);
-          const userTags = JSON.parse(
-            localStorage.getItem("customTags") || "[]",
-          );
-          const usedTags = userTags.filter((t) =>
-            allHighlights.some((h) => (h.tags || []).includes(t)),
-          );
-          const filtered = allHighlights.filter((h) => {
-            if (!h.tags || h.tags.length === 0) return false;
-            return highlightTag === "All" || h.tags.includes(highlightTag);
-          });
 
           return (
-            <div
-              style={{
-                flex: 1,
-                overflowY: "auto",
-                padding: "16px 20px",
-                WebkitOverflowScrolling: "touch",
-              }}
-            >
-              {usedTags.length > 0 && (
-                <div
-                  style={{
-                    display: "flex",
-                    gap: 8,
-                    flexWrap: "wrap",
-                    marginBottom: 16,
-                  }}
-                >
-                  {["All", ...usedTags].map((tag) => {
-                    const tagColor = getTagColor(tag);
-                    const isActive = highlightTag === tag;
-                    return (
-                      <button
-                        key={tag}
-                        onClick={() => setHighlightTag(tag)}
-                        style={{
-                          padding: "5px 14px",
-                          borderRadius: 999,
-                          border: "none",
-                          cursor: "pointer",
-                          fontSize: 12,
-                          fontFamily: "var(--font-ui)",
-                          fontWeight: 600,
-                          background: isActive
-                            ? tag === "All"
-                              ? "var(--text-accent)"
-                              : tagColor || "var(--text-accent)"
-                            : "rgba(255,255,255,0.08)",
-                          color: isActive ? "#fff" : "var(--text-secondary)",
-                          boxShadow:
-                            isActive && tag !== "All" && tagColor
-                              ? `0 0 0 1px ${tagColor}`
-                              : "none",
-                          transition: "background 0.15s",
-                        }}
-                      >
-                        {tag}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+            <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px", WebkitOverflowScrolling: "touch" }}>
 
+              {/* Tag filter bar + New Tag button */}
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: 14 }}>
+                {["All", ...userTags].map((tag) => {
+                  const tagColor = getTagColor(tag);
+                  const isActive = highlightTag === tag;
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => setHighlightTag(tag)}
+                      style={{
+                        padding: "5px 14px", borderRadius: 999, border: "none",
+                        cursor: "pointer", fontSize: 12, fontFamily: "var(--font-ui)",
+                        fontWeight: 600,
+                        background: isActive ? (tag === "All" ? "var(--text-accent)" : tagColor || "var(--text-accent)") : "rgba(255,255,255,0.08)",
+                        color: isActive ? "#fff" : "var(--text-secondary)",
+                        transition: "background 0.15s",
+                        WebkitTapHighlightColor: "transparent",
+                      }}
+                    >{tag}</button>
+                  );
+                })}
+              </div>
+
+              {/* Empty states */}
               {allHighlights.length === 0 && (
-                <p
-                  style={{
-                    textAlign: "center",
-                    color: "var(--text-secondary)",
-                    fontSize: 14,
-                    opacity: 0.55,
-                    marginTop: 48,
-                    fontFamily: "var(--font-body)",
-                    fontStyle: "italic",
-                    lineHeight: 1.8,
-                  }}
-                >
-                  No highlights yet.
-                  <br />
-                  Tap a verse while reading to highlight it.
+                <p style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: 14, opacity: 0.55, marginTop: 48, fontFamily: "var(--font-body)", fontStyle: "italic", lineHeight: 1.8 }}>
+                  No highlights yet.<br />Tap a verse while reading to highlight it.
                 </p>
               )}
-              {allHighlights.length > 0 && filtered.length === 0 && (
-                <p
-                  style={{
-                    textAlign: "center",
-                    color: "var(--text-secondary)",
-                    fontSize: 13,
-                    opacity: 0.5,
-                    marginTop: 48,
-                    fontFamily: "var(--font-ui)",
-                  }}
-                >
-                  No highlights match
+              {allHighlights.length > 0 && sorted.length === 0 && (
+                <p style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: 13, opacity: 0.5, marginTop: 48, fontFamily: "var(--font-ui)" }}>
+                  No highlights tagged "{highlightTag}"
                 </p>
               )}
 
-              {filtered.map((h, i) => {
-                const book = h.book
-                  ? h.book.charAt(0).toUpperCase() + h.book.slice(1)
-                  : "";
-                const ref = `${book} ${h.chapter}:${h.verse}`;
+              {/* Highlight cards */}
+              {sorted.map((h) => {
+                const ref = `${h.book || ""} ${h.chapter}:${h.verse}`;
+                const appliedTags = h.tags || [];
+                const highlightColor = (() => {
+                  const themeColors = {
+                    classic:          [{ id:"gold",color:"rgba(203,178,124,0.50)"},{id:"amber",color:"rgba(255,191,105,0.35)"},{id:"bronze",color:"rgba(139,115,85,0.45)"}],
+                    "still-waters":   [{ id:"teal",color:"rgba(0,128,128,0.35)"},{id:"aqua",color:"rgba(127,255,212,0.30)"},{id:"deep-sea",color:"rgba(25,89,89,0.40)"}],
+                    "stone-fire":     [{ id:"flame",color:"rgba(255,99,71,0.38)"},{id:"sunset",color:"rgba(255,140,0,0.35)"},{id:"ember",color:"rgba(178,34,34,0.40)"}],
+                    "olive-parchment":[{ id:"sage",color:"rgba(143,151,121,0.40)"},{id:"wheat",color:"rgba(196,164,132,0.38)"},{id:"moss",color:"rgba(101,104,71,0.42)"}],
+                    parchment:        [{ id:"sepia",color:"rgba(112,66,20,0.35)"},{id:"sand",color:"rgba(194,178,128,0.38)"},{id:"mahogany",color:"rgba(75,35,15,0.42)"}],
+                  };
+                  const palette = themeColors[h.theme] || themeColors.classic;
+                  return (palette.find((c) => c.id === h.colorId) || palette[0]).color;
+                })();
+
                 return (
                   <div
-                    key={i}
+                    key={h.key}
                     style={{
                       background: "rgba(255,255,255,0.04)",
                       border: "1px solid rgba(255,255,255,0.07)",
-                      borderLeft: "3px solid var(--text-accent)",
+                      borderLeft: `3px solid ${highlightColor}`,
                       borderRadius: 12,
                       padding: 16,
                       marginBottom: 12,
                     }}
                   >
-                    <div
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 700,
-                        letterSpacing: "0.1em",
-                        color: "var(--text-accent)",
-                        textTransform: "uppercase",
-                        marginBottom: 6,
-                        fontFamily: "var(--font-ui)",
-                      }}
-                    >
-                      {ref} · {h.translation}
+                    {/* Header row: color dot + reference + share */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                      <div style={{
+                        width: 10, height: 10, borderRadius: "50%", flexShrink: 0,
+                        background: highlightColor,
+                        border: "1px solid rgba(255,255,255,0.2)",
+                      }} />
+                      <div style={{
+                        flex: 1, fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 700,
+                        letterSpacing: "0.1em", color: "var(--text-accent)", textTransform: "uppercase",
+                      }}>
+                        {ref} · {h.translation}
+                      </div>
+                      {/* Share */}
+                      <button
+                        onClick={async () => {
+                          const { shareVerseAsImage } = await import("./ShareAsImage");
+                          const bookName = h.book ? h.book.charAt(0).toUpperCase() + h.book.slice(1) : "";
+                          const reference = `${bookName} ${h.chapter}:${h.verse} · ${h.translation}`;
+                          const ok = await shareVerseAsImage({ reference, text: h.text }, h.theme || "classic");
+                          if (!ok && navigator.share) {
+                            navigator.share({ text: `"${h.text}"\n\n— ${reference}` }).catch(() => {});
+                          }
+                        }}
+                        style={{
+                          background: "transparent", border: "none", padding: 4,
+                          color: "var(--text-accent)", opacity: 0.55, cursor: "pointer",
+                          display: "flex", alignItems: "center",
+                          WebkitTapHighlightColor: "transparent",
+                        }}
+                        title="Share verse"
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/>
+                          <circle cx="18" cy="19" r="3"/>
+                          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                        </svg>
+                      </button>
                     </div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-body)",
-                        fontSize: 15,
-                        lineHeight: 1.65,
-                        color: "var(--text-primary)",
-                        marginBottom: (h.tags || []).length ? 10 : 12,
-                      }}
-                    >
+
+                    {/* Verse text */}
+                    <div style={{
+                      fontFamily: "var(--font-body)", fontSize: 15, lineHeight: 1.65,
+                      color: "var(--text-primary)", marginBottom: 12,
+                    }}>
                       {h.text}
                     </div>
-                    {(h.tags || []).length > 0 && (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: 6,
-                          marginBottom: 12,
-                        }}
-                      >
-                        {h.tags.map((t) => {
-                          const tc = getTagColor(t);
+
+                    {/* Applied tags display */}
+                    {appliedTags.length > 0 && (
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
+                        {appliedTags.map((tag) => {
+                          const tc = getTagColor(tag);
                           return (
                             <span
-                              key={t}
+                              key={tag}
                               style={{
-                                fontSize: 11,
-                                padding: "3px 10px",
-                                borderRadius: 999,
-                                background: tc
-                                  ? `${tc}22`
-                                  : "rgba(255,255,255,0.08)",
-                                color: tc || "var(--text-secondary)",
-                                border: `1px solid ${tc ? `${tc}55` : "transparent"}`,
-                                fontFamily: "var(--font-ui)",
+                                fontSize: 11, padding: "3px 10px", borderRadius: 999,
+                                fontFamily: "var(--font-ui)", fontWeight: 500,
+                                background: tc ? `${tc}33` : "rgba(203,178,124,0.18)",
+                                color: tc || "var(--text-accent)",
+                                border: `1px solid ${tc ? `${tc}66` : "rgba(203,178,124,0.35)"}`,
                               }}
                             >
-                              {t}
+                              {tag}
                             </span>
                           );
                         })}
                       </div>
                     )}
+
+                    {/* + Tag button */}
                     <button
                       onClick={() => {
-                        onNavigate(h.book, h.chapter);
-                        onClose();
+                        setActiveTagCard(activeTagCard === h.key ? null : h.key);
+                        setNewTagName("");
+                        setNewTagColor("#d4a843");
                       }}
                       style={{
-                        background: "transparent",
-                        border: "1px solid rgba(203,178,124,0.3)",
-                        borderRadius: 8,
-                        padding: "7px 14px",
-                        color: "var(--text-accent)",
-                        fontSize: 12,
-                        fontWeight: 600,
-                        fontFamily: "var(--font-ui)",
-                        letterSpacing: "0.06em",
-                        cursor: "pointer",
+                        fontSize: 11, padding: "3px 10px", borderRadius: 999, marginBottom: 10,
+                        cursor: "pointer", fontFamily: "var(--font-ui)", fontWeight: 600,
+                        background: "transparent", color: "var(--text-accent)",
+                        border: "1px dashed rgba(203,178,124,0.35)",
+                        WebkitTapHighlightColor: "transparent",
                       }}
                     >
-                      Read chapter
+                      {activeTagCard === h.key ? "✕ Close" : "+ Tag"}
+                    </button>
+
+                    {/* Per-card tag panel */}
+                    {activeTagCard === h.key && (
+                      <div style={{
+                        background: "rgba(203,178,124,0.06)",
+                        border: "1px solid rgba(203,178,124,0.15)",
+                        borderRadius: 12, padding: "12px 14px", marginBottom: 10,
+                      }}>
+                        {/* Existing tags to pick */}
+                        {userTags.length > 0 && (
+                          <>
+                            <div style={{ fontFamily: "var(--font-ui)", fontSize: 9, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(203,178,124,0.45)", marginBottom: 8 }}>
+                              Your Tags
+                            </div>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
+                              {userTags.map((tag) => {
+                                const active = appliedTags.includes(tag);
+                                const tc = getTagColor(tag);
+                                return (
+                                  <button
+                                    key={tag}
+                                    onClick={() => toggleHighlightTag(h.key, tag)}
+                                    style={{
+                                      fontSize: 11, padding: "4px 12px", borderRadius: 999,
+                                      cursor: "pointer", fontFamily: "var(--font-ui)", fontWeight: 500,
+                                      background: active ? (tc ? `${tc}33` : "rgba(203,178,124,0.18)") : "rgba(255,255,255,0.05)",
+                                      color: active ? (tc || "var(--text-accent)") : "var(--text-secondary)",
+                                      border: `1px solid ${active ? (tc ? `${tc}66` : "rgba(203,178,124,0.35)") : "rgba(255,255,255,0.1)"}`,
+                                      transition: "all 0.15s ease",
+                                      WebkitTapHighlightColor: "transparent",
+                                    }}
+                                  >
+                                    {active ? "✓ " : ""}{tag}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                            <div style={{ height: 1, background: "rgba(203,178,124,0.1)", marginBottom: 12 }} />
+                          </>
+                        )}
+
+                        {/* New tag creator */}
+                        <div style={{ fontFamily: "var(--font-ui)", fontSize: 9, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(203,178,124,0.45)", marginBottom: 8 }}>
+                          New Tag
+                        </div>
+                        <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
+                          {TAG_PALETTE.map((c) => (
+                            <button
+                              key={c}
+                              onClick={() => setNewTagColor(c)}
+                              style={{
+                                width: 22, height: 22, borderRadius: "50%", background: c,
+                                border: "none", cursor: "pointer", flexShrink: 0,
+                                boxShadow: newTagColor === c ? `0 0 0 2px #fff, 0 0 0 3.5px ${c}` : "none",
+                                transition: "box-shadow 0.12s ease",
+                                WebkitTapHighlightColor: "transparent",
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <input
+                            value={newTagName}
+                            onChange={(e) => setNewTagName(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && addCustomTag(h.key)}
+                            placeholder="Tag name…"
+                            style={{
+                              flex: 1, background: "rgba(0,0,0,0.2)",
+                              border: `1px solid ${newTagColor}`,
+                              borderRadius: 999, padding: "6px 12px",
+                              fontFamily: "var(--font-ui)", fontSize: 12,
+                              color: "var(--text-primary)", outline: "none",
+                            }}
+                          />
+                          <button
+                            onClick={() => addCustomTag(h.key)}
+                            style={{
+                              padding: "6px 14px", borderRadius: 999, border: "none",
+                              background: newTagColor, color: "#fff",
+                              fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 600,
+                              cursor: "pointer", WebkitTapHighlightColor: "transparent",
+                            }}
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Read chapter */}
+                    <button
+                      onClick={() => { onNavigate(h.book, h.chapter); onClose(); }}
+                      style={{
+                        background: "transparent", border: "1px solid rgba(203,178,124,0.25)",
+                        borderRadius: 8, padding: "7px 14px", color: "var(--text-accent)",
+                        fontSize: 12, fontWeight: 600, fontFamily: "var(--font-ui)",
+                        letterSpacing: "0.06em", cursor: "pointer",
+                        WebkitTapHighlightColor: "transparent",
+                      }}
+                    >
+                      Read chapter →
                     </button>
                   </div>
                 );
