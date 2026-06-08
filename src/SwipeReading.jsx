@@ -15,7 +15,6 @@ import { getBookDisplayName } from "./lib/bibleStructure";
 import {
   HighlightPanel,
   DialogueBottomSheet,
-  getColorFromId,
   getThemeColors,
 } from "./components/HighlightSystem";
 
@@ -104,8 +103,22 @@ export default function SwipeReading({
   const [selectedColor, setSelectedColor] = useState(null);
   const [pendingTags, setPendingTags] = useState([]);
   const [highlights, setHighlights] = useState(() => {
-    const saved = localStorage.getItem("verseHighlights");
-    return saved ? JSON.parse(saved) : {};
+    const saved = JSON.parse(localStorage.getItem("verseHighlights") || "{}");
+    // Migrate old theme-keyed highlights (book-ch-v-translation-theme) → (book-ch-v-translation)
+    const THEMES = ["classic","still-waters","stone-fire","olive-parchment","parchment"];
+    let needsMigration = false;
+    const migrated = {};
+    for (const [key, val] of Object.entries(saved)) {
+      let newKey = key;
+      for (const t of THEMES) {
+        if (key.endsWith(`-${t}`)) { newKey = key.slice(0, -(t.length + 1)); needsMigration = true; break; }
+      }
+      if (!migrated[newKey] || new Date(val.createdAt) > new Date(migrated[newKey].createdAt)) {
+        migrated[newKey] = val;
+      }
+    }
+    if (needsMigration) localStorage.setItem("verseHighlights", JSON.stringify(migrated));
+    return needsMigration ? migrated : saved;
   });
 
   // ── Scroll lock during audio playback ──
@@ -388,7 +401,7 @@ export default function SwipeReading({
      Highlighting Helpers
   ================================ */
   function getVerseKey(verseNum) {
-    return `${book}-${currentChapter}-${verseNum}-${translation}-${theme}`;
+    return `${book}-${currentChapter}-${verseNum}-${translation}`;
   }
 
   function isVerseHighlighted(verseNum) {
@@ -410,8 +423,11 @@ export default function SwipeReading({
   function getVerseHighlightColor(verseNum) {
     const highlight = isVerseHighlighted(verseNum);
     if (!highlight) return null;
-    const colorObj = getColorFromId(highlight.colorId, highlight.theme);
-    return colorObj.color;
+    // Use the saved color's palette position to pick the equivalent color in the current theme
+    const savedPalette = getThemeColors(highlight.theme || theme);
+    const idx = savedPalette.findIndex((c) => c.id === highlight.colorId);
+    const currentPalette = getThemeColors(theme);
+    return (currentPalette[idx >= 0 ? idx : 0]).color;
   }
 
   /* ===============================

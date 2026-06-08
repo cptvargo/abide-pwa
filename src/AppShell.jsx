@@ -752,6 +752,10 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
   const [highlights, setHighlights] = useState(() =>
     JSON.parse(localStorage.getItem("verseHighlights") || "{}")
   );
+  // Re-read after SwipeReading may have migrated theme-keyed highlights on mount
+  useEffect(() => {
+    setHighlights(JSON.parse(localStorage.getItem("verseHighlights") || "{}"));
+  }, [open]);
   const [userTags, setUserTags] = useState(() =>
     JSON.parse(localStorage.getItem("customTags") || "[]")
   );
