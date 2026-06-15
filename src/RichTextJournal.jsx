@@ -252,10 +252,14 @@ export default function RichTextJournal({
 
   function handleScratchpadSave() {
     if (!editor) return;
-    onSave({ html: editor.getHTML(), text: editor.getText() });
-    localStorage.removeItem("scratchpad_draft");
-    onDraftChange?.(false);
-    editor.commands.clearContent();
+    try {
+      onSave({ html: editor.getHTML(), text: editor.getText() });
+      localStorage.removeItem("scratchpad_draft");
+      onDraftChange?.(false);
+      editor.commands.clearContent();
+    } catch {
+      alert("Could not save note — storage may be full or restricted.");
+    }
   }
 
   function insertVerse() {
@@ -346,7 +350,7 @@ export default function RichTextJournal({
             </span>
             <button
               className="font-semibold text-sm px-3 py-1.5 rounded-lg transition active:scale-95"
-              style={{ background: "var(--text-accent)", color: "var(--text-inverse)" }}
+              style={{ background: "var(--text-accent)", color: "var(--text-inverse)", touchAction: "manipulation" }}
               onClick={handleScratchpadSave}
             >
               Save to Notes
@@ -357,7 +361,7 @@ export default function RichTextJournal({
             <span className="text-sm opacity-60">{new Date().toLocaleString()}</span>
             <button
               className="font-semibold text-sm"
-              style={{ color: "var(--text-accent)" }}
+              style={{ color: "var(--text-accent)", touchAction: "manipulation" }}
               onClick={() => { handleSave(); onClose(); }}
             >
               Done

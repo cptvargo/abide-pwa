@@ -998,6 +998,14 @@ export default function SwipeReading({
           onSelectColor={handleColorSelected}
           onClear={handleClearHighlights}
           onCancel={handleCancelSelection}
+          onShare={async () => {
+            const text = selectedVerses.map((v) => v.text).join(" ");
+            const nums = selectedVerses.map((v) => v.verse).sort((a, b) => a - b);
+            const range = nums.length > 1 ? `${nums[0]}-${nums[nums.length - 1]}` : `${nums[0]}`;
+            const reference = `${getBookDisplayName(book)} ${currentChapter}:${range} ${translation}`;
+            const { shareVerseAsImage } = await import("./ShareAsImage");
+            shareVerseAsImage({ reference, text }, theme);
+          }}
         />
       )}
       {/* Dialogue Bottom Sheet */}

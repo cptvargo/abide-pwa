@@ -1625,8 +1625,13 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                   {/* Save to Dictionary */}
                   <button
                     onClick={() => {
-                      saveDictionaryEntry(seekResult, seekQuery);
-                      setSeekSaved(true);
+                      if (seekSaved) return;
+                      try {
+                        saveDictionaryEntry(seekResult, seekQuery);
+                        setSeekSaved(true);
+                      } catch {
+                        alert("Could not save — storage may be full or restricted.");
+                      }
                     }}
                     style={{
                       display: "flex",
@@ -1648,6 +1653,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                       letterSpacing: "0.08em",
                       cursor: seekSaved ? "default" : "pointer",
                       WebkitTapHighlightColor: "transparent",
+                      touchAction: "manipulation",
                       transition: "all 0.2s ease",
                     }}
                   >
