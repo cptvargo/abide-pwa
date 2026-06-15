@@ -17,6 +17,7 @@ import {
 import { search, warmIndex } from "./lib/searchEngine";
 import RichTextJournal from "./RichTextJournal";
 import AbideDictionary, { saveDictionaryEntry } from "./components/AbideDictionary";
+import { getSeekCached, setSeekCached } from "./lib/seekCache";
 
 const TRANSLATIONS = ["KJV", "ASR", "WAE"];
 const TRANSLATION_FULL = {
@@ -552,8 +553,6 @@ const SEEK_SUGGESTIONS = [
   "Mercy",
   "Shalom",
 ];
-const SEEK_CACHE_PREFIX = "abide_seek_v9:"; // v9: full verse snippet for start-of-verse matches
-
 // ── Verse enrichment — replaces AI-generated text with real local translation ─
 const SEEK_BOOK_NAME_TO_ID = {
   genesis: "genesis",
@@ -693,43 +692,6 @@ async function seekEnrichVerses(verses, translation) {
   );
 }
 
-function clearSeekCache() {
-  const keys = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k?.startsWith(SEEK_CACHE_PREFIX)) keys.push(k);
-  }
-  keys.forEach((k) => localStorage.removeItem(k));
-}
-
-function getCached(q, translation) {
-  try {
-    const r = localStorage.getItem(
-      SEEK_CACHE_PREFIX +
-        translation.toLowerCase() +
-        ":" +
-        q.toLowerCase().trim(),
-    );
-    return r ? JSON.parse(r) : null;
-  } catch {
-    return null;
-  }
-}
-function setCached(q, translation, data) {
-  const key =
-    SEEK_CACHE_PREFIX +
-    translation.toLowerCase() +
-    ":" +
-    q.toLowerCase().trim();
-  const value = JSON.stringify(data);
-  try {
-    localStorage.setItem(key, value);
-  } catch {
-    // Storage full — clear seek cache and retry once
-    clearSeekCache();
-    try { localStorage.setItem(key, value); } catch { /* still full, skip cache */ }
-  }
-}
 
 /* ===============================
    Search Panel — YouVersion-style
@@ -842,7 +804,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
     setSearching(true);
     try {
       const cacheKey = q.trim().toLowerCase();
-      const cached = getCached(cacheKey, translation);
+      const cached = await getSeekCached(cacheKey, translation);
       if (cached) {
         setResults(cached);
         setSearching(false);
@@ -939,7 +901,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
         } catch { /* cross-ref unavailable */ }
       }
 
-      setCached(cacheKey, translation, finalResults);
+      await setSeekCached(cacheKey, translation, finalResults);
       setResults(finalResults);
     } catch {
       setResults([]);
@@ -1058,7 +1020,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
     setFromCache(false);
     setSeekSaved(false);
     setSeekView("result");
-    const cached = getCached(q, translation);
+    const cached = await getSeekCached(q, translation);
     if (cached) {
       setSeekResult(cached);
       setFromCache(true);
@@ -1092,7 +1054,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
       if (parsed.verses?.length) {
         parsed.verses = await seekEnrichVerses(parsed.verses, translation);
       }
-      setCached(q, translation, parsed);
+      await setSeekCached(q, translation, parsed);
       setSeekResult(parsed);
     } catch (err) {
       setSeekError(`Something went wrong: ${err.message}`);
@@ -1976,6 +1938,16 @@ export default function AppShell() {
     }
   }, []);
 
+  // Migrate seek cache from localStorage (v7/v9) to IndexedDB
+  useEffect(() => {
+    if (!localStorage.getItem("abide_idb_migrated")) {
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith("abide_seek_v"))
+        .forEach((k) => localStorage.removeItem(k));
+      localStorage.setItem("abide_idb_migrated", "1");
+    }
+  }, []);
+
   const [activeScreen, setActiveScreen] = useState("scripture");
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -2228,13 +2200,7 @@ export default function AppShell() {
     try {
       saveEntry();
     } catch {
-      // Storage full — clear seek cache to free space and retry
-      clearSeekCache();
-      try {
-        saveEntry();
-      } catch {
-        alert("Storage is full. Your search cache was cleared but there is still not enough space. Please delete some content and try again.");
-      }
+      alert("Storage is full. Please delete some content and try again.");
     }
     setScratchpadHasDraft(false);
     setQuickNoteOpen(false);
