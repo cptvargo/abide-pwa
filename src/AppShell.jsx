@@ -693,6 +693,15 @@ async function seekEnrichVerses(verses, translation) {
   );
 }
 
+function clearSeekCache() {
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k?.startsWith(SEEK_CACHE_PREFIX)) keys.push(k);
+  }
+  keys.forEach((k) => localStorage.removeItem(k));
+}
+
 function getCached(q, translation) {
   try {
     const r = localStorage.getItem(
@@ -707,15 +716,19 @@ function getCached(q, translation) {
   }
 }
 function setCached(q, translation, data) {
+  const key =
+    SEEK_CACHE_PREFIX +
+    translation.toLowerCase() +
+    ":" +
+    q.toLowerCase().trim();
+  const value = JSON.stringify(data);
   try {
-    localStorage.setItem(
-      SEEK_CACHE_PREFIX +
-        translation.toLowerCase() +
-        ":" +
-        q.toLowerCase().trim(),
-      JSON.stringify(data),
-    );
-  } catch { /* storage full */ }
+    localStorage.setItem(key, value);
+  } catch {
+    // Storage full — clear seek cache and retry once
+    clearSeekCache();
+    try { localStorage.setItem(key, value); } catch { /* still full, skip cache */ }
+  }
 }
 
 /* ===============================
@@ -2207,9 +2220,22 @@ export default function AppShell() {
       html,
       createdAt: new Date().toISOString(),
     };
-    const saved = JSON.parse(localStorage.getItem("dialogues") || "[]");
-    saved.unshift(entry);
-    localStorage.setItem("dialogues", JSON.stringify(saved));
+    const saveEntry = () => {
+      const saved = JSON.parse(localStorage.getItem("dialogues") || "[]");
+      saved.unshift(entry);
+      localStorage.setItem("dialogues", JSON.stringify(saved));
+    };
+    try {
+      saveEntry();
+    } catch {
+      // Storage full — clear seek cache to free space and retry
+      clearSeekCache();
+      try {
+        saveEntry();
+      } catch {
+        alert("Storage is full. Your search cache was cleared but there is still not enough space. Please delete some content and try again.");
+      }
+    }
     setScratchpadHasDraft(false);
     setQuickNoteOpen(false);
   }

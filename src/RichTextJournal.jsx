@@ -252,14 +252,12 @@ export default function RichTextJournal({
 
   function handleScratchpadSave() {
     if (!editor) return;
+    onSave({ html: editor.getHTML(), text: editor.getText() });
+    localStorage.removeItem("scratchpad_draft");
+    onDraftChange?.(false);
     try {
-      onSave({ html: editor.getHTML(), text: editor.getText() });
-      localStorage.removeItem("scratchpad_draft");
-      onDraftChange?.(false);
       editor.commands.clearContent();
-    } catch {
-      alert("Could not save note — storage may be full or restricted.");
-    }
+    } catch { /* ignore if editor is already unmounting */ }
   }
 
   function insertVerse() {
