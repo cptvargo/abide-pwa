@@ -423,7 +423,7 @@ function DialogueCard({ entry, theme, onView, onShare }) {
           opacity: 0.82,
           fontFamily: "var(--font-body, Georgia, serif)",
         }}
-        dangerouslySetInnerHTML={{ __html: entry.reflection || entry.text }}
+        dangerouslySetInnerHTML={{ __html: entry.reflection || entry.html || entry.text }}
       />
     </button>
   );
@@ -975,14 +975,14 @@ function DialogueDetail({ entry, theme, onBack, onEdit, onDelete, onShare }) {
             <div
               className="prose prose-lg max-w-none"
               style={{ color: "var(--text-primary)" }}
-              dangerouslySetInnerHTML={{ __html: entry.reflection || entry.text }}
+              dangerouslySetInnerHTML={{ __html: entry.reflection || entry.html || entry.text }}
             />
           </div>
         ) : (
           <div
             className="prose prose-lg max-w-none"
             style={{ color: "var(--text-primary)" }}
-            dangerouslySetInnerHTML={{ __html: entry.reflection || entry.text }}
+            dangerouslySetInnerHTML={{ __html: entry.reflection || entry.html || entry.text }}
           />
         )}
       </div>
