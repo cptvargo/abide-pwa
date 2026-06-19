@@ -38,6 +38,18 @@ function groupByMonth(dialogues) {
   }, {});
 }
 
+function getOnThisDay(dialogues) {
+  const today = new Date();
+  return dialogues.filter((entry) => {
+    const d = new Date(entry.createdAt);
+    return (
+      d.getMonth() === today.getMonth() &&
+      d.getDate() === today.getDate() &&
+      d.getFullYear() < today.getFullYear()
+    );
+  });
+}
+
 /* ===============================
    Main Component
 ================================ */
@@ -239,6 +251,12 @@ export default function DialogueSystem({ theme, translation, onBack }) {
         }}
       >
         <div className="px-6 py-8 pb-24">
+          <OnThisDayBanner
+            entries={getOnThisDay(dialogues)}
+            theme={theme}
+            onView={setViewingEntry}
+            onShare={handleShareEntry}
+          />
           {dialogues.length === 0 ? (
             <div
               className="text-center py-16 rounded-2xl"
@@ -356,6 +374,84 @@ export default function DialogueSystem({ theme, translation, onBack }) {
             setEditingEntry(null);
           }}
         />
+      )}
+    </div>
+  );
+}
+
+/* ===============================
+   On This Day Banner
+================================ */
+function OnThisDayBanner({ entries, theme, onView, onShare }) {
+  const [expanded, setExpanded] = useState(false);
+  if (!entries.length) return null;
+
+  const years = [...new Set(entries.map((e) => new Date(e.createdAt).getFullYear()))].sort((a, b) => b - a);
+  const yearLabel = years.length === 1
+    ? `${years[0]} · ${entries.length} ${entries.length === 1 ? "entry" : "entries"}`
+    : `${years.join(", ")} · ${entries.length} ${entries.length === 1 ? "entry" : "entries"}`;
+
+  return (
+    <div style={{ marginBottom: 32 }}>
+      <button
+        onClick={() => setExpanded((v) => !v)}
+        style={{
+          width: "100%",
+          textAlign: "left",
+          background: "linear-gradient(135deg, rgba(var(--accent-rgb),0.13) 0%, rgba(var(--accent-rgb),0.04) 100%)",
+          border: "1px solid rgba(var(--accent-rgb),0.28)",
+          borderRadius: 18,
+          padding: "14px 18px",
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          cursor: "pointer",
+          WebkitTapHighlightColor: "transparent",
+          touchAction: "manipulation",
+        }}
+      >
+        <div style={{
+          width: 38, height: 38, borderRadius: "50%",
+          background: "rgba(var(--accent-rgb),0.15)",
+          border: "1px solid rgba(var(--accent-rgb),0.2)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          flexShrink: 0,
+        }}>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text-accent)" }}>
+            <rect x="3" y="4" width="18" height="18" rx="2.5" />
+            <path d="M16 2v4M8 2v4M3 10h18" />
+            <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" />
+          </svg>
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.07em", color: "var(--text-accent)", fontFamily: "var(--font-ui)" }}>
+            On This Day
+          </div>
+          <div style={{ fontSize: 11, opacity: 0.5, color: "var(--text-primary)", marginTop: 2, fontFamily: "var(--font-ui)" }}>
+            {yearLabel}
+          </div>
+        </div>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+          style={{ color: "var(--text-accent)", opacity: 0.4, flexShrink: 0, transform: expanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.22s ease" }}>
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+
+      {expanded && (
+        <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.35, color: "var(--text-primary)", fontFamily: "var(--font-ui)", paddingLeft: 4, marginBottom: -4 }}>
+            What you wrote
+          </div>
+          {entries.map((entry) => (
+            <DialogueCard
+              key={entry.id}
+              entry={entry}
+              theme={theme}
+              onView={() => onView(entry)}
+              onShare={() => onShare(entry)}
+            />
+          ))}
+        </div>
       )}
     </div>
   );
