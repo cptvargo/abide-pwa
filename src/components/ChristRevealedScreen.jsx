@@ -1,326 +1,383 @@
 /**
  * ChristRevealedScreen.jsx
- * Main home base of the Christ Revealed pilgrimage.
+ * Christ Revealed pilgrimage hub — journey map redesign.
  *
- * Grid shows ONLY:
- *   - Completed books (gold ring + checkmark)
- *   - Current in-progress book (partial ring)
- *   - The single next locked book as a teaser (muted, lock icon)
- *   Everything beyond that is hidden — the path reveals itself as you walk.
- *
- * Header: book name + circular progress ring, no counts.
+ * Shows:
+ *   1. Today's Session card (streak + current stop + CTA)
+ *   2. Journey path — vertical road with nodes for each visible book
+ *      completed = glowing gold dot | in-progress = pulsing ring | teaser = dimmed
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { OT_BOOKS, NT_BOOKS, ALL_BOOKS_IN_ORDER } from "./useCRProgress";
 
-/* ── Book abbreviation map ── */
-const ABBREV = {
-  genesis: "Gen",
-  exodus: "Exo",
-  leviticus: "Lev",
-  numbers: "Num",
-  deuteronomy: "Deu",
-  joshua: "Jos",
-  judges: "Jdg",
-  ruth: "Rut",
-  "1samuel": "1Sa",
-  "2samuel": "2Sa",
-  "1kings": "1Ki",
-  "2kings": "2Ki",
-  "1chronicles": "1Ch",
-  "2chronicles": "2Ch",
-  ezra: "Ezr",
-  nehemiah: "Neh",
-  esther: "Est",
-  job: "Job",
-  psalms: "Psa",
-  proverbs: "Pro",
-  ecclesiastes: "Ecc",
-  songofsolomon: "Sng",
-  isaiah: "Isa",
-  jeremiah: "Jer",
-  lamentations: "Lam",
-  ezekiel: "Eze",
-  daniel: "Dan",
-  hosea: "Hos",
-  joel: "Joe",
-  amos: "Amo",
-  obadiah: "Oba",
-  jonah: "Jon",
-  micah: "Mic",
-  nahum: "Nah",
-  habakkuk: "Hab",
-  zephaniah: "Zep",
-  haggai: "Hag",
-  zechariah: "Zec",
-  malachi: "Mal",
-  matthew: "Mat",
-  mark: "Mrk",
-  luke: "Luk",
-  john: "Jhn",
-  acts: "Act",
-  romans: "Rom",
-  "1corinthians": "1Co",
-  "2corinthians": "2Co",
-  galatians: "Gal",
-  ephesians: "Eph",
-  philippians: "Php",
-  colossians: "Col",
-  "1thessalonians": "1Th",
-  "2thessalonians": "2Th",
-  "1timothy": "1Ti",
-  "2timothy": "2Ti",
-  titus: "Tit",
-  philemon: "Phm",
-  hebrews: "Heb",
-  james: "Jas",
-  "1peter": "1Pe",
-  "2peter": "2Pe",
-  "1john": "1Jn",
-  "2john": "2Jn",
-  "3john": "3Jn",
-  jude: "Jud",
-  revelation: "Rev",
-};
-
+/* ── Book display names ── */
 const DISPLAY_NAMES = {
-  genesis: "Genesis",
-  exodus: "Exodus",
-  leviticus: "Leviticus",
-  numbers: "Numbers",
-  deuteronomy: "Deuteronomy",
-  joshua: "Joshua",
-  judges: "Judges",
-  ruth: "Ruth",
-  "1samuel": "1 Samuel",
-  "2samuel": "2 Samuel",
-  "1kings": "1 Kings",
-  "2kings": "2 Kings",
-  "1chronicles": "1 Chronicles",
-  "2chronicles": "2 Chronicles",
-  ezra: "Ezra",
-  nehemiah: "Nehemiah",
-  esther: "Esther",
-  job: "Job",
-  psalms: "Psalms",
-  proverbs: "Proverbs",
-  ecclesiastes: "Ecclesiastes",
-  songofsolomon: "Song of Solomon",
-  isaiah: "Isaiah",
-  jeremiah: "Jeremiah",
-  lamentations: "Lamentations",
-  ezekiel: "Ezekiel",
-  daniel: "Daniel",
-  hosea: "Hosea",
-  joel: "Joel",
-  amos: "Amos",
-  obadiah: "Obadiah",
-  jonah: "Jonah",
-  micah: "Micah",
-  nahum: "Nahum",
-  habakkuk: "Habakkuk",
-  zephaniah: "Zephaniah",
-  haggai: "Haggai",
-  zechariah: "Zechariah",
-  malachi: "Malachi",
-  matthew: "Matthew",
-  mark: "Mark",
-  luke: "Luke",
-  john: "John",
-  acts: "Acts",
-  romans: "Romans",
-  "1corinthians": "1 Corinthians",
-  "2corinthians": "2 Corinthians",
-  galatians: "Galatians",
-  ephesians: "Ephesians",
-  philippians: "Philippians",
-  colossians: "Colossians",
-  "1thessalonians": "1 Thessalonians",
-  "2thessalonians": "2 Thessalonians",
-  "1timothy": "1 Timothy",
-  "2timothy": "2 Timothy",
-  titus: "Titus",
-  philemon: "Philemon",
-  hebrews: "Hebrews",
-  james: "James",
-  "1peter": "1 Peter",
-  "2peter": "2 Peter",
-  "1john": "1 John",
-  "2john": "2 John",
-  "3john": "3 John",
-  jude: "Jude",
-  revelation: "Revelation",
+  genesis: "Genesis", exodus: "Exodus", leviticus: "Leviticus",
+  numbers: "Numbers", deuteronomy: "Deuteronomy", joshua: "Joshua",
+  judges: "Judges", ruth: "Ruth", "1samuel": "1 Samuel", "2samuel": "2 Samuel",
+  "1kings": "1 Kings", "2kings": "2 Kings", "1chronicles": "1 Chronicles",
+  "2chronicles": "2 Chronicles", ezra: "Ezra", nehemiah: "Nehemiah",
+  esther: "Esther", job: "Job", psalms: "Psalms", proverbs: "Proverbs",
+  ecclesiastes: "Ecclesiastes", songofsolomon: "Song of Solomon",
+  isaiah: "Isaiah", jeremiah: "Jeremiah", lamentations: "Lamentations",
+  ezekiel: "Ezekiel", daniel: "Daniel", hosea: "Hosea", joel: "Joel",
+  amos: "Amos", obadiah: "Obadiah", jonah: "Jonah", micah: "Micah",
+  nahum: "Nahum", habakkuk: "Habakkuk", zephaniah: "Zephaniah",
+  haggai: "Haggai", zechariah: "Zechariah", malachi: "Malachi",
+  matthew: "Matthew", mark: "Mark", luke: "Luke", john: "John",
+  acts: "Acts", romans: "Romans", "1corinthians": "1 Corinthians",
+  "2corinthians": "2 Corinthians", galatians: "Galatians",
+  ephesians: "Ephesians", philippians: "Philippians", colossians: "Colossians",
+  "1thessalonians": "1 Thessalonians", "2thessalonians": "2 Thessalonians",
+  "1timothy": "1 Timothy", "2timothy": "2 Timothy", titus: "Titus",
+  philemon: "Philemon", hebrews: "Hebrews", james: "James",
+  "1peter": "1 Peter", "2peter": "2 Peter", "1john": "1 John",
+  "2john": "2 John", "3john": "3 John", jude: "Jude", revelation: "Revelation",
 };
 
-/* ── Header progress ring ── */
-function HeaderRing({ percent, size = 52 }) {
-  const r = (size - 5) / 2;
-  const circ = 2 * Math.PI * r;
-  const dash = circ * percent;
-  const gap = circ - dash;
-
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      {/* Track */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        fill="none"
-        stroke="rgba(196,169,107,0.12)"
-        strokeWidth="2.5"
-      />
-      {/* Progress */}
-      {percent > 0 && (
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          fill="none"
-          stroke={percent >= 1 ? "#C4A96B" : "rgba(196,169,107,0.6)"}
-          strokeWidth="2.5"
-          strokeDasharray={`${dash} ${gap}`}
-          strokeLinecap="round"
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-        />
-      )}
-    </svg>
-  );
+/* ── Streak helpers ── */
+function getStreakData() {
+  try {
+    const lastDate = localStorage.getItem("cr_last_date");
+    const count = parseInt(localStorage.getItem("cr_streak_count") || "0", 10);
+    const today = new Date().toISOString().slice(0, 10);
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    if (!lastDate) return { count: 0, readToday: false };
+    if (lastDate === today) return { count, readToday: true };
+    if (lastDate === yesterday) return { count, readToday: false };
+    return { count: 0, readToday: false };
+  } catch {
+    return { count: 0, readToday: false };
+  }
 }
 
-/* ── Book card ring (smaller, in grid) ── */
-function CardRing({ percent, size = 64, complete = false }) {
-  const r = (size - 4) / 2;
-  const circ = 2 * Math.PI * r;
-  const dash = circ * percent;
-  const gap = circ - dash;
+function recordCRRead() {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const lastDate = localStorage.getItem("cr_last_date");
+    if (lastDate === today) return;
+    const count = parseInt(localStorage.getItem("cr_streak_count") || "0", 10);
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    const newCount = lastDate === yesterday ? count + 1 : 1;
+    localStorage.setItem("cr_last_date", today);
+    localStorage.setItem("cr_streak_count", String(newCount));
+  } catch { /* ignore */ }
+}
 
+/* ── Today's Session card ── */
+function TodayCard({ currentBookName, currentChapter, streak, readToday, onContinue }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox={`0 0 ${size} ${size}`}
-      style={{ position: "absolute", top: 0, left: 0, pointerEvents: "none" }}
+    <div
+      style={{
+        margin: "0 0 32px",
+        background: "rgba(196,169,107,0.05)",
+        border: "1px solid rgba(196,169,107,0.2)",
+        borderRadius: "18px",
+        padding: "22px 20px 20px",
+      }}
     >
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        fill="none"
-        stroke="rgba(196,169,107,0.1)"
-        strokeWidth="2"
-      />
-      {percent > 0 && (
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          fill="none"
-          stroke={complete ? "#C4A96B" : "rgba(196,169,107,0.55)"}
-          strokeWidth="2"
-          strokeDasharray={`${dash} ${gap}`}
-          strokeLinecap="round"
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-        />
+      {/* Streak row */}
+      {streak.count > 0 && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "7px",
+            marginBottom: "16px",
+          }}
+        >
+          <span style={{ fontSize: "13px", color: "#C4A96B" }}>✦</span>
+          <span
+            style={{
+              fontSize: "12px",
+              fontWeight: 600,
+              color: "#C4A96B",
+              fontFamily: "var(--font-ui,system-ui)",
+              letterSpacing: "0.04em",
+            }}
+          >
+            {streak.count} day{streak.count !== 1 ? "s" : ""} in a row
+          </span>
+          {readToday && (
+            <span
+              style={{
+                fontSize: "11px",
+                color: "rgba(196,169,107,0.35)",
+                fontFamily: "var(--font-ui,system-ui)",
+              }}
+            >
+              · Read today
+            </span>
+          )}
+        </div>
       )}
-    </svg>
+
+      {/* Label */}
+      <div
+        style={{
+          fontSize: "10px",
+          letterSpacing: "0.2em",
+          textTransform: "uppercase",
+          color: "rgba(196,169,107,0.38)",
+          fontFamily: "var(--font-ui,system-ui)",
+          marginBottom: "6px",
+        }}
+      >
+        Today's Stop
+      </div>
+
+      {/* Book name */}
+      <div
+        style={{
+          fontSize: "24px",
+          fontWeight: 300,
+          color: "#F0EBE0",
+          fontFamily: "var(--font-ui,system-ui)",
+          letterSpacing: "0.01em",
+          lineHeight: 1.15,
+          marginBottom: "4px",
+        }}
+      >
+        {currentBookName}
+      </div>
+
+      {/* Chapter + duration */}
+      <div
+        style={{
+          fontSize: "13px",
+          color: "rgba(196,169,107,0.42)",
+          fontFamily: "var(--font-ui,system-ui)",
+          marginBottom: "20px",
+        }}
+      >
+        Chapter {currentChapter} · ~10 min
+      </div>
+
+      {/* CTA button */}
+      <button
+        onClick={onContinue}
+        style={{
+          width: "100%",
+          padding: "15px",
+          borderRadius: "13px",
+          background: "#C4A96B",
+          border: "none",
+          color: "#1A1510",
+          fontSize: "14px",
+          fontWeight: 700,
+          fontFamily: "var(--font-ui,system-ui)",
+          letterSpacing: "0.04em",
+          cursor: "pointer",
+          WebkitTapHighlightColor: "transparent",
+          transition: "opacity 0.15s ease",
+        }}
+      >
+        {readToday ? "Continue Reading" : "Begin Today's Reading"}
+      </button>
+    </div>
   );
 }
 
-/* ── Book card ── */
-function BookCard({ bookId, status, percent, onTap }) {
-  const abbrev = ABBREV[bookId] || bookId.slice(0, 3);
+/* ── Journey path node ── */
+function PathNode({
+  bookId,
+  status,
+  totalEvents,
+  completedEvents,
+  isLast,
+  onTap,
+}) {
+  const displayName = DISPLAY_NAMES[bookId] || bookId;
   const complete = status === "complete";
   const inProg = status === "in-progress";
   const teaser = status === "teaser";
-  const cardSize = 64;
+
+  const nodeSize = inProg ? 20 : 10;
 
   return (
-    <button
-      onClick={() => onTap(bookId, status)}
-      style={{
-        position: "relative",
-        width: `${cardSize}px`,
-        height: `${cardSize}px`,
-        borderRadius: "12px",
-        background: complete
-          ? "rgba(196,169,107,0.1)"
-          : inProg
-            ? "rgba(196,169,107,0.06)"
-            : "rgba(255,255,255,0.02)",
-        border: complete
-          ? "1px solid rgba(196,169,107,0.35)"
-          : inProg
-            ? "1px solid rgba(196,169,107,0.2)"
-            : "1px solid rgba(255,255,255,0.06)",
-        cursor: teaser ? "default" : "pointer",
-        opacity: teaser ? 0.3 : 1,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "3px",
-        WebkitTapHighlightColor: "transparent",
-        transition: "background 0.15s ease",
-        flexShrink: 0,
-      }}
-    >
-      {(inProg || complete) && (
-        <CardRing percent={percent} size={cardSize} complete={complete} />
-      )}
-
-      {complete ? (
-        <span style={{ fontSize: "17px", color: "#C4A96B", lineHeight: 1 }}>
-          ✓
-        </span>
-      ) : (
-        <span
+    <div style={{ display: "flex", alignItems: "flex-start" }}>
+      {/* Left rail — node + connecting line */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          width: "28px",
+          flexShrink: 0,
+        }}
+      >
+        {/* Node */}
+        <div
           style={{
-            fontSize: "12px",
-            fontWeight: "600",
-            letterSpacing: "0.04em",
-            color: teaser
-              ? "rgba(240,235,224,0.25)"
+            width: nodeSize + "px",
+            height: nodeSize + "px",
+            borderRadius: "50%",
+            marginTop: inProg ? "1px" : "5px",
+            flexShrink: 0,
+            background: complete
+              ? "#C4A96B"
+              : teaser
+                ? "rgba(255,255,255,0.04)"
+                : "transparent",
+            border: complete
+              ? "none"
               : inProg
-                ? "#C4A96B"
-                : "rgba(240,235,224,0.25)",
-            fontFamily: "var(--font-ui, system-ui)",
-            lineHeight: 1,
+                ? "2px solid #C4A96B"
+                : "1px solid rgba(255,255,255,0.12)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            animation: inProg ? "cr-node-pulse 2.8s ease-in-out infinite" : "none",
+            boxSizing: "border-box",
           }}
         >
-          {abbrev}
-        </span>
-      )}
+          {complete && (
+            <span style={{ fontSize: "6px", color: "#1A1510", fontWeight: 800 }}>
+              ✓
+            </span>
+          )}
+          {inProg && (
+            <div
+              style={{
+                width: "8px",
+                height: "8px",
+                borderRadius: "50%",
+                background: "#C4A96B",
+              }}
+            />
+          )}
+        </div>
 
-      {teaser && (
-        <span
+        {/* Connecting line below the node */}
+        {!isLast && (
+          <div
+            style={{
+              width: "1px",
+              flex: 1,
+              minHeight: inProg ? "36px" : "18px",
+              marginTop: "4px",
+              background: complete
+                ? "rgba(196,169,107,0.38)"
+                : inProg
+                  ? "rgba(196,169,107,0.18)"
+                  : "rgba(255,255,255,0.05)",
+            }}
+          />
+        )}
+      </div>
+
+      {/* Right — book info */}
+      <button
+        onClick={() => !teaser && onTap(bookId, status)}
+        disabled={teaser}
+        style={{
+          flex: 1,
+          background: "none",
+          border: "none",
+          textAlign: "left",
+          cursor: teaser ? "default" : "pointer",
+          paddingLeft: "14px",
+          paddingBottom: isLast ? "0" : inProg ? "28px" : "10px",
+          WebkitTapHighlightColor: "transparent",
+          opacity: teaser ? 0.22 : 1,
+        }}
+      >
+        <div
           style={{
-            fontSize: "9px",
-            color: "rgba(255,255,255,0.2)",
-            lineHeight: 1,
+            fontSize: inProg ? "20px" : complete ? "15px" : "14px",
+            fontWeight: inProg ? 300 : 300,
+            letterSpacing: inProg ? "0.01em" : "0",
+            color: complete
+              ? "rgba(196,169,107,0.55)"
+              : inProg
+                ? "#F0EBE0"
+                : "rgba(240,235,224,0.3)",
+            fontFamily: "var(--font-ui,system-ui)",
+            lineHeight: 1.2,
+            marginTop: inProg ? "1px" : "4px",
           }}
         >
-          ⚬
-        </span>
-      )}
-    </button>
+          {displayName}
+          {complete && (
+            <span
+              style={{
+                marginLeft: "7px",
+                fontSize: "11px",
+                color: "rgba(196,169,107,0.38)",
+                fontWeight: 400,
+              }}
+            >
+              Complete
+            </span>
+          )}
+        </div>
+        {inProg && totalEvents > 0 && (
+          <div
+            style={{
+              fontSize: "12px",
+              color: "rgba(196,169,107,0.35)",
+              fontFamily: "var(--font-ui,system-ui)",
+              marginTop: "4px",
+              letterSpacing: "0.02em",
+            }}
+          >
+            {completedEvents} of {totalEvents} events complete
+          </div>
+        )}
+      </button>
+    </div>
   );
 }
 
-/* ── Locked modal (shown when teaser tapped — not applicable here since teaser is non-interactive,
-   but keeping for any edge case) ── */
+/* ── Testament crossing divider ── */
+function TestamentDivider() {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        padding: "14px 0 22px",
+      }}
+    >
+      <div
+        style={{
+          flex: 1,
+          height: "1px",
+          background: "rgba(196,169,107,0.1)",
+        }}
+      />
+      <div
+        style={{
+          fontSize: "10px",
+          letterSpacing: "0.14em",
+          textTransform: "uppercase",
+          color: "rgba(196,169,107,0.22)",
+          fontFamily: "var(--font-ui,system-ui)",
+          whiteSpace: "nowrap",
+        }}
+      >
+        ✦ The Word Made Flesh ✦
+      </div>
+      <div
+        style={{
+          flex: 1,
+          height: "1px",
+          background: "rgba(196,169,107,0.1)",
+        }}
+      />
+    </div>
+  );
+}
+
+/* ── Locked sheet ── */
 function LockedModal({ onClose, nextBookName }) {
   return (
     <>
       <div
         onClick={onClose}
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,0.6)",
-          zIndex: 80,
-        }}
+        style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 80 }}
       />
       <div
         style={{
@@ -339,19 +396,19 @@ function LockedModal({ onClose, nextBookName }) {
       >
         <div
           style={{
-            width: "32px",
-            height: "3px",
+            width: 32,
+            height: 3,
             background: "rgba(255,255,255,0.1)",
-            borderRadius: "2px",
+            borderRadius: 2,
             margin: "0 auto 20px",
           }}
         />
         <p
           style={{
-            fontSize: "15px",
-            fontWeight: "600",
+            fontSize: 15,
+            fontWeight: 600,
             color: "#F0EBE0",
-            fontFamily: "var(--font-ui, system-ui)",
+            fontFamily: "var(--font-ui,system-ui)",
             margin: "0 0 8px",
           }}
         >
@@ -359,27 +416,27 @@ function LockedModal({ onClose, nextBookName }) {
         </p>
         <p
           style={{
-            fontSize: "13px",
+            fontSize: 13,
             lineHeight: 1.6,
             color: "rgba(240,235,224,0.45)",
-            fontFamily: "var(--font-ui, system-ui)",
+            fontFamily: "var(--font-ui,system-ui)",
             margin: "0 0 20px",
           }}
         >
-          Complete every stop in the current book to begin the journey into{" "}
+          Complete every stop in the current book to continue the journey into{" "}
           {nextBookName}.
         </p>
         <button
           onClick={onClose}
           style={{
             width: "100%",
-            padding: "14px",
-            borderRadius: "12px",
+            padding: 14,
+            borderRadius: 12,
             background: "rgba(196,169,107,0.08)",
             border: "1px solid rgba(196,169,107,0.2)",
             color: "#C4A96B",
-            fontSize: "14px",
-            fontFamily: "var(--font-ui, system-ui)",
+            fontSize: 14,
+            fontFamily: "var(--font-ui,system-ui)",
             cursor: "pointer",
             WebkitTapHighlightColor: "transparent",
           }}
@@ -397,12 +454,7 @@ function LeaveModal({ onConfirm, onCancel, lastBook, lastChapter }) {
     <>
       <div
         onClick={onCancel}
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,0.6)",
-          zIndex: 80,
-        }}
+        style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 80 }}
       />
       <div
         style={{
@@ -421,19 +473,19 @@ function LeaveModal({ onConfirm, onCancel, lastBook, lastChapter }) {
       >
         <div
           style={{
-            width: "32px",
-            height: "3px",
+            width: 32,
+            height: 3,
             background: "rgba(255,255,255,0.1)",
-            borderRadius: "2px",
+            borderRadius: 2,
             margin: "0 auto 20px",
           }}
         />
         <p
           style={{
-            fontSize: "17px",
-            fontWeight: "600",
+            fontSize: 17,
+            fontWeight: 600,
             color: "#F0EBE0",
-            fontFamily: "var(--font-ui, system-ui)",
+            fontFamily: "var(--font-ui,system-ui)",
             margin: "0 0 8px",
             textAlign: "center",
           }}
@@ -442,10 +494,10 @@ function LeaveModal({ onConfirm, onCancel, lastBook, lastChapter }) {
         </p>
         <p
           style={{
-            fontSize: "13px",
+            fontSize: 13,
             lineHeight: 1.6,
             color: "rgba(240,235,224,0.45)",
-            fontFamily: "var(--font-ui, system-ui)",
+            fontFamily: "var(--font-ui,system-ui)",
             margin: "0 0 24px",
             textAlign: "center",
           }}
@@ -456,18 +508,18 @@ function LeaveModal({ onConfirm, onCancel, lastBook, lastChapter }) {
           </strong>{" "}
           in the Bible reader.
         </p>
-        <div style={{ display: "flex", gap: "10px" }}>
+        <div style={{ display: "flex", gap: 10 }}>
           <button
             onClick={onCancel}
             style={{
               flex: 1,
-              padding: "14px",
-              borderRadius: "12px",
+              padding: 14,
+              borderRadius: 12,
               background: "transparent",
               border: "1px solid rgba(255,255,255,0.1)",
               color: "rgba(240,235,224,0.5)",
-              fontSize: "14px",
-              fontFamily: "var(--font-ui, system-ui)",
+              fontSize: 14,
+              fontFamily: "var(--font-ui,system-ui)",
               cursor: "pointer",
               WebkitTapHighlightColor: "transparent",
             }}
@@ -478,14 +530,14 @@ function LeaveModal({ onConfirm, onCancel, lastBook, lastChapter }) {
             onClick={onConfirm}
             style={{
               flex: 1,
-              padding: "14px",
-              borderRadius: "12px",
+              padding: 14,
+              borderRadius: 12,
               background: "#C4A96B",
               border: "none",
               color: "#1A1510",
-              fontSize: "14px",
-              fontWeight: "600",
-              fontFamily: "var(--font-ui, system-ui)",
+              fontSize: 14,
+              fontWeight: 600,
+              fontFamily: "var(--font-ui,system-ui)",
               cursor: "pointer",
               WebkitTapHighlightColor: "transparent",
             }}
@@ -506,16 +558,18 @@ export default function ChristRevealedScreen({
   onSelectBook,
   progress,
   isBookComplete,
-  getBookProgress,
   bookIndex,
   readingContext,
 }) {
   const [lockedModal, setLockedModal] = useState(null);
   const [leaveModal, setLeaveModal] = useState(false);
+  const [streak, setStreak] = useState({ count: 0, readToday: false });
 
-  /* ── Determine which books to show ──
-     Visible = completed books + current book + one teaser (next locked)
-  ── */
+  useEffect(() => {
+    setStreak(getStreakData());
+  }, []);
+
+  /* ── Determine which books to show ── */
   function getVisibleBooks() {
     const visible = [];
     let teaserAdded = false;
@@ -531,19 +585,15 @@ export default function ChristRevealedScreen({
         (entry?.available && i === 0 && progress.completedBooks.length === 0)
       ) {
         visible.push({ bookId, status: "in-progress" });
-        // Add one teaser after current book
         if (!teaserAdded && i + 1 < ALL_BOOKS_IN_ORDER.length) {
-          const nextId = ALL_BOOKS_IN_ORDER[i + 1];
-          visible.push({ bookId: nextId, status: "teaser" });
+          visible.push({ bookId: ALL_BOOKS_IN_ORDER[i + 1], status: "teaser" });
           teaserAdded = true;
         }
         break;
       } else if (entry?.available && !teaserAdded) {
-        // Available but not started and not current — treat as current
         visible.push({ bookId, status: "in-progress" });
         if (i + 1 < ALL_BOOKS_IN_ORDER.length) {
-          const nextId = ALL_BOOKS_IN_ORDER[i + 1];
-          visible.push({ bookId: nextId, status: "teaser" });
+          visible.push({ bookId: ALL_BOOKS_IN_ORDER[i + 1], status: "teaser" });
           teaserAdded = true;
         }
         break;
@@ -555,36 +605,22 @@ export default function ChristRevealedScreen({
 
   const visibleBooks = getVisibleBooks();
   const currentBookId = progress.currentBook || "genesis";
-  const currentBookEntry =
-    bookIndex.find((b) => b.book === currentBookId) || {};
+  const currentChapter = progress.currentChapter || 1;
   const currentBookName = DISPLAY_NAMES[currentBookId] || currentBookId;
 
-  // Progress for current book header ring
-  const completedInCurrent = progress.completedStops.filter((s) =>
-    s.startsWith(currentBookId.slice(0, 3)),
-  ).length;
-  const totalInCurrent = currentBookEntry.eventCount || 1;
-  const currentPercent = isBookComplete(currentBookId)
-    ? 1
-    : completedInCurrent / totalInCurrent;
+  function handleContinue() {
+    recordCRRead();
+    setStreak(getStreakData());
+    onSelectBook(currentBookId);
+  }
 
   function handleBookTap(bookId, status) {
     if (status === "teaser") {
-      const name = DISPLAY_NAMES[bookId] || bookId;
-      setLockedModal(name);
+      setLockedModal(DISPLAY_NAMES[bookId] || bookId);
       return;
     }
     onSelectBook(bookId);
   }
-
-  /* ── OT / NT split label ── */
-  function getTestamentLabel(bookId) {
-    return OT_BOOKS.includes(bookId) ? "Old Testament" : "New Testament";
-  }
-
-  // Detect if we're crossing a testament boundary in visible books
-  const hasOT = visibleBooks.some((b) => OT_BOOKS.includes(b.bookId));
-  const hasNT = visibleBooks.some((b) => NT_BOOKS.includes(b.bookId));
 
   return (
     <div
@@ -598,25 +634,28 @@ export default function ChristRevealedScreen({
       }}
     >
       <style>{`
+        @keyframes cr-node-pulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(196,169,107,0); }
+          50%       { box-shadow: 0 0 0 7px rgba(196,169,107,0.10); }
+        }
         @keyframes cr-card-in {
-          from { opacity: 0; transform: translateY(8px); }
+          from { opacity: 0; transform: translateY(6px); }
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
 
-      {/* ── Fixed header ── */}
+      {/* ── Header ── */}
       <div
         style={{
           paddingTop: "calc(env(safe-area-inset-top) + 16px)",
-          paddingBottom: "20px",
+          paddingBottom: "16px",
           paddingLeft: "20px",
           paddingRight: "20px",
           background: "#0D0C09",
-          borderBottom: "1px solid rgba(196,169,107,0.08)",
+          borderBottom: "1px solid rgba(196,169,107,0.07)",
           flexShrink: 0,
         }}
       >
-        {/* Leave Journey button */}
         <button
           onClick={() => setLeaveModal(true)}
           style={{
@@ -625,276 +664,121 @@ export default function ChristRevealedScreen({
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
-            gap: "6px",
-            color: "rgba(196,169,107,0.6)",
-            fontSize: "13px",
-            fontFamily: "var(--font-ui, system-ui)",
+            gap: 6,
+            color: "rgba(196,169,107,0.55)",
+            fontSize: 13,
+            fontFamily: "var(--font-ui,system-ui)",
             WebkitTapHighlightColor: "transparent",
             padding: "4px 0",
-            marginBottom: "20px",
+            marginBottom: 14,
           }}
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           Leave Journey
         </button>
 
-        {/* Pilgrimage label */}
         <div
           style={{
-            fontSize: "10px",
-            letterSpacing: "0.2em",
+            fontSize: 10,
+            letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "rgba(196,169,107,0.4)",
-            fontFamily: "var(--font-ui, system-ui)",
-            marginBottom: "16px",
+            color: "rgba(196,169,107,0.35)",
+            fontFamily: "var(--font-ui,system-ui)",
           }}
         >
           The Redemption Pilgrimage
         </div>
-
-        {/* Current book + ring */}
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          {/* Ring */}
-          <div
-            style={{
-              position: "relative",
-              width: "52px",
-              height: "52px",
-              flexShrink: 0,
-            }}
-          >
-            <HeaderRing percent={currentPercent} size={52} />
-            {/* Centre label */}
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {currentPercent >= 1 ? (
-                <span style={{ fontSize: "16px", color: "#C4A96B" }}>✓</span>
-              ) : (
-                <span
-                  style={{
-                    fontSize: "10px",
-                    color: "rgba(196,169,107,0.6)",
-                    fontFamily: "var(--font-ui, system-ui)",
-                  }}
-                >
-                  {ABBREV[currentBookId] || "—"}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Book name */}
-          <div>
-            <div
-              style={{
-                fontSize: "22px",
-                fontWeight: "300",
-                color: "#F0EBE0",
-                fontFamily: "var(--font-ui, system-ui)",
-                letterSpacing: "0.02em",
-                lineHeight: 1.1,
-              }}
-            >
-              {currentBookName}
-            </div>
-            <div
-              style={{
-                fontSize: "11px",
-                color: "rgba(196,169,107,0.4)",
-                fontFamily: "var(--font-ui, system-ui)",
-                marginTop: "3px",
-                letterSpacing: "0.06em",
-              }}
-            >
-              {isBookComplete(currentBookId) ? "Complete" : "In progress"}
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* ── Scrollable journey path ── */}
+      {/* ── Scrollable content ── */}
       <div
         style={{
           flex: 1,
           overflowY: "auto",
           WebkitOverflowScrolling: "touch",
-          padding: "28px 20px",
-          paddingBottom: "max(48px, env(safe-area-inset-bottom))",
+          padding: "24px 20px",
+          paddingBottom: "max(56px, env(safe-area-inset-bottom))",
         }}
       >
-        {/* OT label if present */}
-        {hasOT && (
-          <div
-            style={{
-              fontSize: "10px",
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              color: "rgba(196,169,107,0.35)",
-              fontFamily: "var(--font-ui, system-ui)",
-              marginBottom: "16px",
-            }}
-          >
-            Old Testament
-          </div>
-        )}
+        {/* Today's session */}
+        <div style={{ animation: "cr-card-in 0.35s ease 0.05s both" }}>
+          <TodayCard
+            currentBookName={currentBookName}
+            currentChapter={currentChapter}
+            streak={streak}
+            readToday={streak.readToday}
+            onContinue={handleContinue}
+          />
+        </div>
 
-        {/* Book cards — OT */}
+        {/* Journey path label */}
         <div
           style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "12px",
-            marginBottom: hasNT ? "32px" : "0",
+            fontSize: 10,
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: "rgba(196,169,107,0.28)",
+            fontFamily: "var(--font-ui,system-ui)",
+            marginBottom: "20px",
+            animation: "cr-card-in 0.35s ease 0.12s both",
           }}
         >
-          {visibleBooks
-            .filter((b) => OT_BOOKS.includes(b.bookId))
-            .map(({ bookId, status }, idx) => {
-              const completed = progress.completedStops.filter((s) =>
-                s.startsWith(bookId.slice(0, 3)),
-              ).length;
-              const total =
-                (bookIndex.find((b) => b.book === bookId) || {}).eventCount ||
-                1;
-              const pct = isBookComplete(bookId) ? 1 : completed / total;
-
-              return (
-                <div
-                  key={bookId}
-                  style={{
-                    animation: `cr-card-in 0.4s ease ${idx * 0.07}s both`,
-                  }}
-                >
-                  <BookCard
-                    bookId={bookId}
-                    status={status}
-                    percent={pct}
-                    onTap={handleBookTap}
-                  />
-                </div>
-              );
-            })}
+          Your Journey
         </div>
 
-        {/* OT → NT boundary */}
-        {hasOT && hasNT && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              marginBottom: "28px",
-            }}
-          >
-            <div
-              style={{
-                flex: 1,
-                height: "1px",
-                background: "rgba(196,169,107,0.1)",
-              }}
-            />
-            <div
-              style={{
-                fontSize: "10px",
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "rgba(196,169,107,0.25)",
-                fontFamily: "var(--font-ui, system-ui)",
-                whiteSpace: "nowrap",
-              }}
-            >
-              ✦ The Word Made Flesh ✦
-            </div>
-            <div
-              style={{
-                flex: 1,
-                height: "1px",
-                background: "rgba(196,169,107,0.1)",
-              }}
-            />
-          </div>
-        )}
+        {/* Journey path */}
+        <div style={{ animation: "cr-card-in 0.35s ease 0.18s both" }}>
+          {visibleBooks.map(({ bookId, status }, idx) => {
+            const isOT = OT_BOOKS.includes(bookId);
+            const nextBook = visibleBooks[idx + 1];
+            const crossingTestament =
+              isOT && nextBook && NT_BOOKS.includes(nextBook.bookId);
 
-        {/* NT label if present */}
-        {hasNT && (
-          <div
-            style={{
-              fontSize: "10px",
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              color: "rgba(196,169,107,0.35)",
-              fontFamily: "var(--font-ui, system-ui)",
-              marginBottom: "16px",
-            }}
-          >
-            New Testament
-          </div>
-        )}
+            const bookEntry = bookIndex.find((b) => b.book === bookId) || {};
+            const totalEvents = bookEntry.eventCount || 0;
+            const prefix = bookId.slice(0, 3);
+            const completedEvents = progress.completedStops.filter((s) =>
+              s.startsWith(prefix),
+            ).length;
 
-        {/* Book cards — NT */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
-          {visibleBooks
-            .filter((b) => NT_BOOKS.includes(b.bookId))
-            .map(({ bookId, status }, idx) => {
-              const completed = progress.completedStops.filter((s) =>
-                s.startsWith(bookId.slice(0, 3)),
-              ).length;
-              const total =
-                (bookIndex.find((b) => b.book === bookId) || {}).eventCount ||
-                1;
-              const pct = isBookComplete(bookId) ? 1 : completed / total;
+            const isLast = !crossingTestament && idx === visibleBooks.length - 1;
 
-              return (
-                <div
-                  key={bookId}
-                  style={{
-                    animation: `cr-card-in 0.4s ease ${idx * 0.07}s both`,
-                  }}
-                >
-                  <BookCard
-                    bookId={bookId}
-                    status={status}
-                    percent={pct}
-                    onTap={handleBookTap}
-                  />
-                </div>
-              );
-            })}
+            return (
+              <div key={bookId}>
+                <PathNode
+                  bookId={bookId}
+                  status={status}
+                  totalEvents={totalEvents}
+                  completedEvents={completedEvents}
+                  isLast={isLast}
+                  onTap={handleBookTap}
+                />
+                {crossingTestament && <TestamentDivider />}
+              </div>
+            );
+          })}
+
         </div>
 
-        {/* Empty state — just started */}
+        {/* Empty state */}
         {visibleBooks.length === 0 && (
-          <div style={{ textAlign: "center", paddingTop: "60px" }}>
+          <div style={{ textAlign: "center", paddingTop: 60 }}>
             <div
               style={{
-                fontSize: "28px",
+                fontSize: 28,
                 color: "rgba(196,169,107,0.3)",
-                marginBottom: "12px",
+                marginBottom: 12,
               }}
             >
               ✧
             </div>
             <p
               style={{
-                fontSize: "14px",
+                fontSize: 14,
                 color: "rgba(240,235,224,0.3)",
-                fontFamily: "var(--font-ui, system-ui)",
+                fontFamily: "var(--font-ui,system-ui)",
               }}
             >
               Your pilgrimage begins in Genesis

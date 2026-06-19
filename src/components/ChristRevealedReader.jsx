@@ -873,6 +873,126 @@ function ObservationDrawer({
   );
 }
 
+/* ─────────────────────────────────────────
+   Revelation Moment — full-screen dramatic overlay
+   Fires when a Christ Revealed trigger is crossed.
+   Tap anywhere to dismiss; drawer opens after.
+───────────────────────────────────────── */
+function RevealMoment({ observation, bookDisplayName, chapter, onDismiss }) {
+  return (
+    <div
+      onClick={onDismiss}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 100,
+        background: "rgba(5,4,2,0.97)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "48px 36px",
+        animation: "cr-rm-in 0.5s ease both",
+        cursor: "pointer",
+      }}
+    >
+      <style>{`
+        @keyframes cr-rm-in {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes cr-rm-up {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
+      {/* Glyph */}
+      <div
+        style={{
+          fontSize: "22px",
+          color: "#C4A96B",
+          letterSpacing: "0.35em",
+          animation: "cr-rm-up 0.55s ease 0.1s both",
+          marginBottom: "18px",
+        }}
+      >
+        ✦
+      </div>
+
+      {/* Label */}
+      <div
+        style={{
+          fontSize: "10px",
+          letterSpacing: "0.3em",
+          textTransform: "uppercase",
+          color: "rgba(196,169,107,0.45)",
+          fontFamily: "var(--font-ui,system-ui)",
+          animation: "cr-rm-up 0.55s ease 0.18s both",
+          marginBottom: "28px",
+        }}
+      >
+        Christ Revealed
+      </div>
+
+      {/* Gold rule */}
+      <div
+        style={{
+          width: "40px",
+          height: "1px",
+          background: "rgba(196,169,107,0.28)",
+          animation: "cr-rm-up 0.55s ease 0.22s both",
+          marginBottom: "30px",
+        }}
+      />
+
+      {/* Insight text */}
+      <p
+        style={{
+          fontSize: "19px",
+          lineHeight: 1.75,
+          color: "rgba(240,235,224,0.93)",
+          fontFamily: "var(--font-body,Georgia,serif)",
+          textAlign: "center",
+          margin: "0 0 34px",
+          animation: "cr-rm-up 0.6s ease 0.28s both",
+          maxWidth: "320px",
+        }}
+      >
+        {divinize(observation.text)}
+      </p>
+
+      {/* Book reference */}
+      <div
+        style={{
+          fontSize: "11px",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "rgba(196,169,107,0.3)",
+          fontFamily: "var(--font-ui,system-ui)",
+          animation: "cr-rm-up 0.55s ease 0.36s both",
+          marginBottom: "52px",
+        }}
+      >
+        {bookDisplayName} {chapter}
+      </div>
+
+      {/* Tap hint */}
+      <div
+        style={{
+          fontSize: "12px",
+          color: "rgba(240,235,224,0.18)",
+          fontFamily: "var(--font-ui,system-ui)",
+          letterSpacing: "0.08em",
+          animation: "cr-rm-up 0.5s ease 0.6s both",
+        }}
+      >
+        Tap to continue
+      </div>
+    </div>
+  );
+}
+
 function ChapterSummaryCard({
   summaryText,
   bookDisplayName,
@@ -1068,6 +1188,7 @@ export default function ChristRevealedReader({
   const [marking, setMarking] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [paragraphBreaks, setParagraphBreaks] = useState({});
+  const [revealMoment, setRevealMoment] = useState(null);
 
   const scrollRef = useRef(null);
   const observerRef = useRef(null);
@@ -1122,6 +1243,7 @@ export default function ChristRevealedReader({
     setUnreadChrist(false);
     setUnreadAdversary(false);
     setShowSummaryCard(false);
+    setRevealMoment(null);
 
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
 
@@ -1201,25 +1323,25 @@ export default function ChristRevealedReader({
           );
 
           if (christItems.length > 0) {
-            setChristObservations((prev) => [...prev, ...christItems]);
-            setActiveTab("christRevealed");
-            setDrawerOpen(true);
-            setUnreadChrist(false);
-            if (adversaryItems.length > 0) setUnreadAdversary(true);
-          }
-          if (adversaryItems.length > 0) {
-            setAdversaryObservations((prev) => [...prev, ...adversaryItems]);
-            if (christItems.length === 0) {
-              setActiveTab("adversarysMoves");
-              setDrawerOpen(true);
-              setUnreadAdversary(false);
-            } else {
+            // Show dramatic full-screen revelation overlay; drawer opens on dismiss
+            if (adversaryItems.length > 0) {
+              setAdversaryObservations((prev) => [...prev, ...adversaryItems]);
               setUnreadAdversary(true);
             }
+            setRevealMoment({
+              observation: christItems[christItems.length - 1],
+              christItems,
+              adversaryItems,
+            });
+          } else if (adversaryItems.length > 0) {
+            // Adversary-only trigger — open drawer directly
+            setAdversaryObservations((prev) => [...prev, ...adversaryItems]);
+            setActiveTab("adversarysMoves");
+            setDrawerOpen(true);
+            setUnreadAdversary(false);
+            if (autoCloseTimer.current) clearTimeout(autoCloseTimer.current);
+            autoCloseTimer.current = setTimeout(() => setDrawerOpen(false), 5000);
           }
-
-          if (autoCloseTimer.current) clearTimeout(autoCloseTimer.current);
-          autoCloseTimer.current = setTimeout(() => setDrawerOpen(false), 5000);
         }
       },
       {
@@ -1247,6 +1369,17 @@ export default function ChristRevealedReader({
     setActiveTab(tab);
     if (tab === "christRevealed") setUnreadChrist(false);
     else setUnreadAdversary(false);
+  }
+
+  function handleRevealDismiss() {
+    const moment = revealMoment;
+    setRevealMoment(null);
+    setChristObservations((prev) => [...prev, ...moment.christItems]);
+    setActiveTab("christRevealed");
+    setDrawerOpen(true);
+    setUnreadChrist(false);
+    if (autoCloseTimer.current) clearTimeout(autoCloseTimer.current);
+    autoCloseTimer.current = setTimeout(() => setDrawerOpen(false), 6000);
   }
 
   function handleNextChapterPress() {
@@ -1542,8 +1675,7 @@ export default function ChristRevealedReader({
                               ? CHRIST_COLOR
                               : isAdversary
                                 ? ADVERSARY_COLOR
-                                : "rgba(196,169,107,0.3)",
-                            opacity: hasTrigger ? 0.9 : 0.4,
+                                : "rgba(196,169,107,0.45)",
                             fontFamily: "var(--font-ui, system-ui)",
                             fontStyle: "normal",
                             verticalAlign: "super",
@@ -1594,8 +1726,7 @@ export default function ChristRevealedReader({
                           ? CHRIST_COLOR
                           : isAdversary
                             ? ADVERSARY_COLOR
-                            : "rgba(196,169,107,0.3)",
-                        opacity: hasTrigger ? 0.9 : 0.4,
+                            : "rgba(196,169,107,0.45)",
                         fontFamily: "var(--font-ui, system-ui)",
                         fontStyle: "normal",
                         verticalAlign: "super",
@@ -1830,6 +1961,16 @@ export default function ChristRevealedReader({
           onCancel={() => setShowLeaveModal(false)}
           lastBook={readingContext?.book || "Genesis"}
           lastChapter={readingContext?.chapter || 1}
+        />
+      )}
+
+      {/* Revelation moment overlay */}
+      {revealMoment && (
+        <RevealMoment
+          observation={revealMoment.observation}
+          bookDisplayName={bookDisplayName}
+          chapter={currentChapter}
+          onDismiss={handleRevealDismiss}
         />
       )}
     </div>
