@@ -107,11 +107,11 @@ export function HighlightPanel({
       <div
         style={{
           position: "fixed",
-          bottom: 0,
+          bottom: "calc(env(safe-area-inset-bottom, 0px) + 68px)",
           left: 0,
           right: 0,
-          zIndex: 40,
-          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)",
+          zIndex: 45,
+          paddingBottom: 0,
           paddingLeft: 16,
           paddingRight: 16,
           paddingTop: 12,

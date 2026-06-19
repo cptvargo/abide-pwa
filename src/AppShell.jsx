@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import CoreReading from "./SwipeReading";
-import PremiumMenu from "./components/PremiumMenu";
+import HomeScreen from "./components/HomeScreen";
 import SettingsModal from "./components/SettingsModal";
 import DialogueSystem from "./DialogueSystem";
 import DevotionalScreen from "./components/DevotionalScreen";
@@ -1948,9 +1948,7 @@ export default function AppShell() {
     }
   }, []);
 
-  const [activeScreen, setActiveScreen] = useState("scripture");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [menuVisible, setMenuVisible] = useState(false);
+  const [activeScreen, setActiveScreen] = useState("home");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [navigatorOpen, setNavigatorOpen] = useState(false);
   const [translationPickerOpen, setTranslationPickerOpen] = useState(false);
@@ -2229,7 +2227,7 @@ export default function AppShell() {
 
       {/* ── TOP NAV ── */}
       {activeScreen === "scripture" &&
-        uiMode === "reading" &&
+        (uiMode === "reading" || uiMode === "highlighting") &&
         !reflectionOpen && (
           <nav
             style={{
@@ -2502,9 +2500,8 @@ export default function AppShell() {
       )}
 
       {/* ── BOTTOM NAV ── */}
-      {activeScreen === "scripture" &&
-        uiMode === "reading" &&
-        !reflectionOpen && (
+      {((activeScreen === "scripture" && (uiMode === "reading" || uiMode === "highlighting") && !reflectionOpen) ||
+        activeScreen === "home") && (
           <nav
             style={{
               position: "fixed",
@@ -2525,19 +2522,16 @@ export default function AppShell() {
               paddingLeft: 8,
               paddingRight: 8,
               paddingBottom: 10,
-              transform: navVisible ? "translateY(0)" : "translateY(140%)",
-              opacity: navVisible ? 1 : 0,
+              transform: (activeScreen === "home" || navVisible) ? "translateY(0)" : "translateY(140%)",
+              opacity: (activeScreen === "home" || navVisible) ? 1 : 0,
               transition:
                 "transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease",
             }}
           >
-            {/* Menu */}
+            {/* Home */}
             <button
               className="nav-item-btn"
-              onClick={() => {
-                setMenuVisible(true);
-                requestAnimationFrame(() => setMenuOpen(true));
-              }}
+              onClick={() => setActiveScreen("home")}
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -2550,19 +2544,25 @@ export default function AppShell() {
                 minWidth: 60,
               }}
             >
-              <div style={{ color: navInactive }}>
-                <MenuIcon />
+              <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  style={{ color: activeScreen === "home" ? navAccent : navInactive }}>
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                {activeScreen === "home" && (
+                  <span style={{
+                    position: "absolute", bottom: -4, left: "50%", transform: "translateX(-50%)",
+                    width: 4, height: 4, borderRadius: "50%", background: navAccent,
+                  }} />
+                )}
               </div>
-              <span
-                style={{
-                  fontSize: 10,
-                  fontWeight: 500,
-                  color: navInactive,
-                  letterSpacing: "0.04em",
-                  fontFamily: "var(--font-ui)",
-                }}
-              >
-                Menu
+              <span style={{
+                fontSize: 10, fontWeight: 500,
+                color: activeScreen === "home" ? navAccent : navInactive,
+                letterSpacing: "0.04em", fontFamily: "var(--font-ui)",
+              }}>
+                Home
               </span>
             </button>
 
@@ -2896,24 +2896,28 @@ export default function AppShell() {
         </>
       )}
 
-      {/* Premium Menu */}
-      <PremiumMenu
-        open={menuOpen}
-        onClose={() => {
-          setMenuOpen(false);
-          setMenuVisible(false);
-        }}
-        onNavigate={(id) => {
-          if (id === "dialogue") setActiveScreen("dialogue");
-          else if (id === "devotionals") setActiveScreen("devotionals");
-          else if (id === "daily-abiding") setActiveScreen("daily-abiding");
-          else if (id === "christ-revealed") handleChristRevealedEntry();
-          else if (id === "abide-dictionary") setActiveScreen("abide-dictionary");
-          setMenuOpen(false);
-          setMenuVisible(false);
-        }}
-        theme={theme}
-      />
+      {activeScreen === "home" && (
+        <HomeScreen
+          theme={theme}
+          translation={translation}
+          onNavigate={(id, ctx) => {
+            if (id === "dialogue") setActiveScreen("dialogue");
+            else if (id === "devotionals") setActiveScreen("devotionals");
+            else if (id === "daily-abiding") setActiveScreen("daily-abiding");
+            else if (id === "abide-dictionary") setActiveScreen("abide-dictionary");
+            else if (id === "christ-revealed") handleChristRevealedEntry();
+            else if (id === "scripture") {
+              if (ctx?.book) {
+                const displayName = getBookDisplayName(ctx.book);
+                setCurrentBookId(ctx.book);
+                setReadingContext({ book: displayName, chapter: ctx.chapter });
+                setNavigationTarget({ book: ctx.book, chapter: ctx.chapter });
+              }
+              setActiveScreen("scripture");
+            }
+          }}
+        />
+      )}
 
       {/* Settings Modal */}
       <SettingsModal

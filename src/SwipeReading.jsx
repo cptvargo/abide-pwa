@@ -573,6 +573,27 @@ export default function SwipeReading({
   }
 
   /* ===============================
+     Per-theme selection colors
+     (--accent-rgb not defined on every theme, so use explicit values)
+  ================================ */
+  const SELECTION_BG = {
+    classic:           "rgba(203,178,124,0.32)",
+    "still-waters":    "rgba(126,208,216,0.28)",
+    "stone-fire":      "rgba(249,115,22,0.26)",
+    "olive-parchment": "rgba(214,200,159,0.28)",
+    parchment:         "rgba(139,107,70,0.22)",
+  };
+  const SELECTION_RING = {
+    classic:           "rgba(203,178,124,0.6)",
+    "still-waters":    "rgba(126,208,216,0.6)",
+    "stone-fire":      "rgba(249,115,22,0.6)",
+    "olive-parchment": "rgba(214,200,159,0.55)",
+    parchment:         "rgba(139,107,70,0.55)",
+  };
+  const selectionBg   = SELECTION_BG[theme]   || SELECTION_BG.classic;
+  const selectionRing = SELECTION_RING[theme] || SELECTION_RING.classic;
+
+  /* ===============================
      Swipe indicator chapter numbers
   ================================ */
   const maxChapters = CHAPTER_COUNT[book] || 1;
@@ -781,53 +802,95 @@ export default function SwipeReading({
             </div>
           )}
 
-          {/* ── Standard Mode: Verses ── */}
-          {!chapterlessMode && (
-            <div className="space-y-6">
-              {verses.map((v) => {
-                const isSelected = selectedVerses.some(
-                  (sv) => sv.verse === v.verse,
-                );
-                const highlightColor = getVerseHighlightColor(v.verse);
-                const sectionTitle = v.sectionTitle;
-                return (
-                  <div key={v.verse}>
-                    {sectionTitle && <SectionTitle title={sectionTitle} />}
+          {/* ── Standard Mode: Inline prose verses ── */}
+          {!chapterlessMode && (() => {
+            // Group verses: break at section titles, then every 8 verses for breathing room
+            const PARA_SIZE = 8;
+            const groups = [];
+            let curr = { sectionTitle: null, verses: [] };
+            for (const v of verses) {
+              if (v.sectionTitle && curr.verses.length > 0) {
+                groups.push(curr);
+                curr = { sectionTitle: v.sectionTitle, verses: [] };
+              } else if (v.sectionTitle) {
+                curr.sectionTitle = v.sectionTitle;
+              } else if (curr.verses.length > 0 && curr.verses.length % PARA_SIZE === 0) {
+                groups.push(curr);
+                curr = { sectionTitle: null, verses: [] };
+              }
+              curr.verses.push(v);
+            }
+            if (curr.verses.length > 0) groups.push(curr);
+
+            return (
+              <div>
+                {groups.map((group, gIdx) => (
+                  <div key={gIdx}>
+                    {group.sectionTitle && <SectionTitle title={group.sectionTitle} />}
                     <p
-                      data-chapter={currentChapter}
-                      onClick={() => handleVerseClick(v)}
-                      className={`leading-[var(--line-height)] cursor-pointer transition-all ${v.speaker === "Jesus" && !v.segments ? "jesus" : "text-[var(--text-primary)]"}`}
                       style={{
                         fontFamily: "var(--font-chapterless)",
                         fontSize: `${textSize * 16.5}px`,
-                        background: highlightColor || "transparent",
-                        border: isSelected
-                          ? "2px solid var(--text-accent)"
-                          : "none",
-                        borderRadius:
-                          isSelected || highlightColor ? "0.5rem" : "0",
-                        padding:
-                          isSelected || highlightColor ? "0.25rem 0.5rem" : "0",
-                        margin:
-                          isSelected || highlightColor ? "0.25rem 0" : "0",
-                        opacity: isSelected ? 0.8 : 1,
+                        lineHeight: "var(--line-height, 2.1)",
+                        color: "var(--text-primary)",
+                        marginBottom: "2.4em",
+                        textIndent: "1.5em",
                       }}
                     >
-                      {!hideVerseNumbers && (
-                        <sup
-                          className="mr-2 select-none text-[var(--text-accent)] opacity-[var(--verse-opacity)] font-[var(--font-verse)]"
-                          style={{ fontSize: `${textSize * 0.75}rem` }}
-                        >
-                          {v.verse}
-                        </sup>
-                      )}
-                      {renderVerseContent(v)}
+                      {group.verses.map((v) => {
+                        const isSelected = selectedVerses.some(sv => sv.verse === v.verse);
+                        const highlightColor = getVerseHighlightColor(v.verse);
+                        return (
+                          <span
+                            key={v.verse}
+                            data-chapter={currentChapter}
+                            onClick={() => handleVerseClick(v)}
+                            className={v.speaker === "Jesus" && !v.segments ? "jesus" : ""}
+                            style={{ cursor: "pointer" }}
+                          >
+                            {!hideVerseNumbers && (
+                              <sup
+                                className="select-none"
+                                style={{
+                                  marginRight: "3px",
+                                  fontSize: `${textSize * 0.7}rem`,
+                                  color: "var(--text-accent)",
+                                  opacity: "var(--verse-opacity, 0.5)",
+                                  fontFamily: "var(--font-verse)",
+                                  fontStyle: "normal",
+                                  verticalAlign: "super",
+                                }}
+                              >
+                                {v.verse}
+                              </sup>
+                            )}
+                            <span
+                              style={{
+                                background: highlightColor
+                                  ? highlightColor.replace(/[\d.]+\)$/, "0.55)")
+                                  : isSelected
+                                    ? selectionBg
+                                    : "transparent",
+                                borderRadius: "2px",
+                                padding: (highlightColor || isSelected) ? "1px 2px" : "0",
+                                transition: "background 0.12s ease",
+                                outline: isSelected
+                                  ? `1.5px solid ${selectionRing}`
+                                  : "none",
+                              }}
+                            >
+                              {renderVerseContent(v)}
+                            </span>
+                            {" "}
+                          </span>
+                        );
+                      })}
                     </p>
                   </div>
-                );
-              })}
-            </div>
-          )}
+                ))}
+              </div>
+            );
+          })()}
 
           {/* ── Chapterless Mode: Book Format ── */}
           {chapterlessMode && (
@@ -885,73 +948,76 @@ export default function SwipeReading({
                 />
               </div>
 
-              {/* Prose paragraphs */}
+              {/* Prose paragraphs — inline verse numbers + underline highlights */}
               <div>
                 {paragraphGroups.map((group, groupIdx) => {
-                  const isSpeakerJesus = group.some(
-                    (v) => v.speaker === "Jesus",
-                  );
-                  const paragraphText = group
-                    .map((v) =>
-                      v.segments
-                        ? v.segments.map((s) => s.text).join("")
-                        : safeText(v.text),
-                    )
-                    .join(" ");
-                  const groupSelected = group.some((v) =>
-                    selectedVerses.some((sv) => sv.verse === v.verse),
-                  );
-                  const groupHighlightColor = group.reduce(
-                    (color, v) => color || getVerseHighlightColor(v.verse),
-                    null,
-                  );
                   const sectionTitle = group[0]?.sectionTitle ?? null;
                   return (
                     <div key={groupIdx}>
                       {sectionTitle && <SectionTitle title={sectionTitle} />}
                       <p
-                        onClick={() => {
-                          if (group.length > 0) handleVerseClick(group[0]);
-                        }}
-                        className={isSpeakerJesus ? "jesus" : ""}
                         style={{
                           fontSize: `${textSize * 17}px`,
-                          lineHeight: 1.9,
+                          lineHeight: "var(--line-height, 2.1)",
                           fontFamily: "var(--font-chapterless)",
-                          color: isSpeakerJesus
-                            ? undefined
-                            : "var(--text-primary)",
-                          marginBottom: "1.5em",
+                          color: "var(--text-primary)",
+                          marginBottom: "2.4em",
                           textIndent: "1.75em",
-                          cursor: "pointer",
-                          background: groupHighlightColor || "transparent",
-                          borderRadius:
-                            groupSelected || groupHighlightColor
-                              ? "0.5rem"
-                              : "0",
-                          padding:
-                            groupSelected || groupHighlightColor
-                              ? "0.25rem 0.5rem"
-                              : "0",
-                          border: groupSelected
-                            ? "2px solid var(--text-accent)"
-                            : "none",
-                          opacity: groupSelected ? 0.8 : 1,
-                          transition: "all 0.15s ease",
                         }}
                       >
-                        {group.length === 1 && group[0].segments
-                          ? group[0].segments.map((seg, i) => (
+                        {group.map((v) => {
+                          const isSelected = selectedVerses.some(sv => sv.verse === v.verse);
+                          const highlightColor = getVerseHighlightColor(v.verse);
+                          return (
+                            <span
+                              key={v.verse}
+                              onClick={() => handleVerseClick(v)}
+                              className={v.speaker === "Jesus" && !v.segments ? "jesus" : ""}
+                              style={{ cursor: "pointer" }}
+                            >
+                              {!hideVerseNumbers && (
+                                <sup
+                                  className="select-none"
+                                  style={{
+                                    marginRight: "3px",
+                                    fontSize: `${textSize * 0.7}rem`,
+                                    color: "var(--text-accent)",
+                                    opacity: "var(--verse-opacity, 0.5)",
+                                    fontFamily: "var(--font-verse)",
+                                    fontStyle: "normal",
+                                    verticalAlign: "super",
+                                  }}
+                                >
+                                  {v.verse}
+                                </sup>
+                              )}
                               <span
-                                key={i}
-                                className={
-                                  seg.speaker === "Jesus" ? "jesus" : ""
-                                }
+                                style={{
+                                  background: highlightColor
+                                    ? highlightColor.replace(/[\d.]+\)$/, "0.55)")
+                                    : isSelected
+                                      ? "rgba(var(--accent-rgb),0.28)"
+                                      : "transparent",
+                                  borderRadius: "2px",
+                                  padding: (highlightColor || isSelected) ? "1px 2px" : "0",
+                                  transition: "background 0.12s ease",
+                                  outline: isSelected && !highlightColor
+                                    ? "1.5px solid rgba(var(--accent-rgb),0.5)"
+                                    : "none",
+                                }}
                               >
-                                {seg.text}
+                                {v.segments
+                                  ? v.segments.map((seg, i) => (
+                                      <span key={i} className={seg.speaker === "Jesus" ? "jesus" : ""}>
+                                        {seg.text}
+                                      </span>
+                                    ))
+                                  : safeText(v.text)}
                               </span>
-                            ))
-                          : paragraphText}
+                              {" "}
+                            </span>
+                          );
+                        })}
                       </p>
                     </div>
                   );
