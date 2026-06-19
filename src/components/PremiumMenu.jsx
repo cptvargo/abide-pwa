@@ -1,8 +1,6 @@
 /**
  * PremiumMenu.jsx
- * Full-screen slide-in menu — sacred, refined, luminous
- * Swipe-to-close, staggered entrance, ambient gold atmosphere
- * UPDATED: Settings removed — moved to bottom nav
+ * Full-screen slide-in menu — bold, warm, clean
  */
 
 import { useState, useRef, useEffect } from "react";
@@ -74,7 +72,6 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
       items: [
         {
           id: "dialogue",
-          icon: "✦",
           title: "Dialoguing with God",
           description: "Highlights, reflections & prayers",
           available: true,
@@ -86,21 +83,18 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
       items: [
         {
           id: "devotionals",
-          icon: "◇",
           title: "Devotionals",
           description: "Daily inspiration & study",
           available: true,
         },
         {
           id: "daily-abiding",
-          icon: "◈",
           title: "Daily Abiding",
           description: "Video devotional experiences",
           available: true,
         },
         {
           id: "abide-dictionary",
-          icon: "◉",
           title: "Abide Dictionary",
           description: "Your curated word study collection",
           available: true,
@@ -112,7 +106,6 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
       items: [
         {
           id: "christ-revealed",
-          icon: "✧",
           title: "Christ Revealed",
           description: "Jesus from Genesis to Revelation",
           available: true,
@@ -135,21 +128,20 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
   return (
     <>
       <style>{`
-        @keyframes pm-fade-up  { from { opacity:0; transform:translateY(14px) } to { opacity:1; transform:translateY(0) } }
-        @keyframes pm-rule-expand { from { transform:scaleX(0); opacity:0 } to { transform:scaleX(1); opacity:1 } }
-        @keyframes pm-glow-pulse { 0%,100% { opacity:0.35 } 50% { opacity:0.65 } }
-        .pm-greeting  { animation: pm-fade-up 0.5s ease 0.12s both }
-        .pm-rule      { animation: pm-rule-expand 0.6s cubic-bezier(0.22,1,0.36,1) 0.28s both; transform-origin:left }
-        .pm-section-0 { animation: pm-fade-up 0.45s ease 0.22s both }
-        .pm-section-1 { animation: pm-fade-up 0.45s ease 0.32s both }
-        .pm-section-2 { animation: pm-fade-up 0.45s ease 0.40s both }
-        .pm-footer    { animation: pm-fade-up 0.4s ease 0.48s both }
-        .pm-glow      { animation: pm-glow-pulse 5s ease-in-out infinite }
-        .pm-item { transition: background 0.18s ease, transform 0.15s ease, border-color 0.18s ease; -webkit-tap-highlight-color: transparent; }
-        .pm-item:active { transform: scale(0.975) }
-        .pm-item-available:hover { background: rgba(var(--accent-rgb,203,178,124), 0.14) !important; border-color: rgba(var(--accent-rgb,203,178,124), 0.35) !important; }
-        .pm-scroll::-webkit-scrollbar { display:none }
-        .pm-scroll { -ms-overflow-style:none; scrollbar-width:none }
+        @keyframes pm-fade-up { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
+        .pm-greeting  { animation: pm-fade-up 0.45s ease 0.10s both }
+        .pm-section-0 { animation: pm-fade-up 0.42s ease 0.20s both }
+        .pm-section-1 { animation: pm-fade-up 0.42s ease 0.28s both }
+        .pm-section-2 { animation: pm-fade-up 0.42s ease 0.34s both }
+        .pm-footer    { animation: pm-fade-up 0.38s ease 0.40s both }
+        .pm-item {
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
+          transition: opacity 0.15s ease;
+        }
+        .pm-item:active { opacity: 0.6; }
+        .pm-scroll::-webkit-scrollbar { display: none }
+        .pm-scroll { -ms-overflow-style: none; scrollbar-width: none }
       `}</style>
 
       <div
@@ -172,58 +164,31 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
         {/* Header */}
         <div
           style={{
-            position: "relative",
-            paddingTop: "calc(env(safe-area-inset-top, 0px) + 52px)",
-            paddingBottom: "32px",
+            paddingTop: "calc(env(safe-area-inset-top, 0px) + 56px)",
+            paddingBottom: "36px",
             paddingLeft: "28px",
             paddingRight: "28px",
-            overflow: "hidden",
           }}
         >
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: "220px",
-              background:
-                "radial-gradient(ellipse at 30% 0%, rgba(var(--accent-rgb,203,178,124),0.12), transparent 65%)",
-              pointerEvents: "none",
-            }}
-          />
-          <div
-            className="pm-glow"
-            style={{
-              position: "absolute",
-              top: 0,
-              left: "10%",
-              right: "10%",
-              height: "1px",
-              background:
-                "linear-gradient(90deg, transparent, rgba(var(--accent-rgb,203,178,124),0.7), transparent)",
-              filter: "blur(1px)",
-            }}
-          />
-
+          {/* Close */}
           <button
             onClick={onClose}
             style={{
               position: "absolute",
-              top: "calc(env(safe-area-inset-top, 0px) + 16px)",
-              right: "20px",
-              background: "rgba(var(--accent-rgb,203,178,124),0.08)",
-              border: "1px solid rgba(var(--accent-rgb,203,178,124),0.15)",
-              borderRadius: "100px",
+              top: "calc(env(safe-area-inset-top, 0px) + 18px)",
+              right: "22px",
               width: 36,
               height: 36,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              background: "rgba(var(--accent-rgb,203,178,124),0.07)",
+              border: "1px solid rgba(var(--accent-rgb,203,178,124),0.12)",
+              borderRadius: "50%",
+              color: "var(--text-primary)",
+              fontSize: 13,
+              opacity: 0.55,
               cursor: "pointer",
-              color: "var(--text-primary, #f0ebe0)",
-              fontSize: 14,
-              opacity: 0.6,
               WebkitTapHighlightColor: "transparent",
             }}
             aria-label="Close menu"
@@ -231,39 +196,31 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
             ✕
           </button>
 
-          <div
-            className="pm-greeting"
-            style={{ position: "relative", zIndex: 1 }}
-          >
+          {/* Greeting */}
+          <div className="pm-greeting">
             <div
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                marginBottom: 12,
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                color: "var(--text-accent)",
+                fontFamily: "var(--font-ui, system-ui)",
+                marginBottom: 14,
+                opacity: 0.7,
               }}
             >
-              <span
-                style={{
-                  fontSize: 10,
-                  color: "rgba(var(--accent-rgb,203,178,124),0.7)",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  fontFamily: "var(--font-ui, system-ui)",
-                }}
-              >
-                ✦ &nbsp;ABIDE
-              </span>
+              ABIDE
             </div>
             <h2
               style={{
                 fontFamily: "var(--font-ui, system-ui)",
-                fontSize: 30,
-                fontWeight: 300,
-                letterSpacing: "0.01em",
-                color: "var(--text-primary, #f0ebe0)",
-                lineHeight: 1.2,
-                marginBottom: 8,
+                fontSize: 34,
+                fontWeight: 800,
+                letterSpacing: "-0.02em",
+                color: "var(--text-primary)",
+                lineHeight: 1.15,
+                marginBottom: 10,
               }}
             >
               {getGreeting()}
@@ -271,9 +228,9 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
             <p
               style={{
                 fontFamily: "var(--font-body, Georgia, serif)",
-                fontSize: 14,
-                color: "var(--text-primary, #f0ebe0)",
-                opacity: 0.45,
+                fontSize: 15,
+                color: "var(--text-primary)",
+                opacity: 0.38,
                 fontStyle: "italic",
                 lineHeight: 1.5,
               }}
@@ -282,93 +239,75 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
             </p>
           </div>
 
+          {/* Rule */}
           <div
-            className="pm-rule"
             style={{
-              marginTop: 24,
+              marginTop: 28,
               height: "1px",
-              background:
-                "linear-gradient(90deg, rgba(var(--accent-rgb,203,178,124),0.5), rgba(var(--accent-rgb,203,178,124),0.05))",
+              background: "rgba(var(--accent-rgb,203,178,124),0.14)",
             }}
           />
         </div>
 
         {/* Menu sections */}
-        <div style={{ padding: "8px 20px 0" }}>
+        <div style={{ padding: "0 28px" }}>
           {menuItems.map((section, sIdx) => (
             <div
               key={sIdx}
               className={`pm-section-${sIdx}`}
-              style={{ marginBottom: 28 }}
+              style={{ marginBottom: 36 }}
             >
+              {/* Section label */}
               <div
                 style={{
                   fontFamily: "var(--font-ui, system-ui)",
                   fontSize: 10,
-                  fontWeight: 600,
+                  fontWeight: 700,
                   textTransform: "uppercase",
-                  letterSpacing: "0.14em",
-                  color: "rgba(var(--accent-rgb,203,178,124),0.55)",
-                  marginBottom: 10,
-                  paddingLeft: 4,
+                  letterSpacing: "0.16em",
+                  color: "var(--text-accent)",
+                  opacity: 0.45,
+                  marginBottom: 14,
                 }}
               >
                 {section.section}
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+
+              {/* Items */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 {section.items.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => item.available && onNavigate(item.id)}
                     disabled={!item.available}
-                    className={`pm-item ${item.available ? "pm-item-available" : ""}`}
+                    className="pm-item"
                     style={{
                       width: "100%",
                       textAlign: "left",
-                      padding: "14px 16px",
-                      borderRadius: 14,
-                      background: item.featured
-                        ? "linear-gradient(135deg, rgba(var(--accent-rgb,203,178,124),0.13), rgba(var(--accent-rgb,203,178,124),0.04))"
-                        : "rgba(var(--accent-rgb,203,178,124),0.06)",
-                      border: item.featured
-                        ? "1px solid rgba(var(--accent-rgb,203,178,124),0.35)"
-                        : "1px solid rgba(var(--accent-rgb,203,178,124),0.1)",
-                      opacity: item.available ? 1 : 0.42,
+                      padding: "14px 12px 14px 18px",
+                      borderRadius: 10,
+                      background: "transparent",
+                      border: "none",
+                      borderLeft: item.featured
+                        ? `3px solid rgba(var(--accent-rgb,203,178,124),1)`
+                        : `3px solid rgba(var(--accent-rgb,203,178,124),${item.available ? "0.35" : "0.15"})`,
+                      opacity: item.available ? 1 : 0.4,
                       cursor: item.available ? "pointer" : "default",
                       display: "flex",
                       alignItems: "center",
-                      gap: 14,
+                      gap: 0,
                     }}
                   >
-                    <div
-                      style={{
-                        width: 38,
-                        height: 38,
-                        borderRadius: 10,
-                        background: item.featured
-                          ? "rgba(var(--accent-rgb,203,178,124),0.18)"
-                          : "rgba(var(--accent-rgb,203,178,124),0.1)",
-                        border:
-                          "1px solid rgba(var(--accent-rgb,203,178,124),0.15)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 16,
-                        color: "rgba(var(--accent-rgb,203,178,124),0.9)",
-                        flexShrink: 0,
-                      }}
-                    >
-                      {item.icon}
-                    </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div
                         style={{
                           fontFamily: "var(--font-ui, system-ui)",
-                          fontSize: 15,
-                          fontWeight: 500,
-                          color: "var(--text-primary, #f0ebe0)",
+                          fontSize: 16,
+                          fontWeight: item.featured ? 700 : 600,
+                          color: "var(--text-primary)",
                           lineHeight: 1.3,
                           marginBottom: 3,
+                          letterSpacing: "-0.01em",
                         }}
                       >
                         {item.title}
@@ -377,9 +316,9 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
                         style={{
                           fontFamily: "var(--font-ui, system-ui)",
                           fontSize: 12,
-                          color: "var(--text-primary, #f0ebe0)",
-                          opacity: 0.45,
-                          lineHeight: 1.3,
+                          color: "var(--text-primary)",
+                          opacity: 0.38,
+                          lineHeight: 1.35,
                         }}
                       >
                         {item.description}
@@ -387,12 +326,13 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
                     </div>
                     <div
                       style={{
-                        fontFamily: "var(--font-ui, system-ui)",
-                        fontSize: item.available ? 16 : 10,
-                        color: "rgba(var(--accent-rgb,203,178,124),0.5)",
+                        fontSize: item.available ? 18 : 10,
+                        color: "var(--text-accent)",
+                        opacity: item.available ? (item.featured ? 0.9 : 0.4) : 0.3,
                         letterSpacing: item.available ? 0 : "0.06em",
                         textTransform: "uppercase",
                         flexShrink: 0,
+                        paddingLeft: 12,
                       }}
                     >
                       {item.available ? "→" : "Soon"}
@@ -404,33 +344,33 @@ export default function PremiumMenu({ open, onClose, onNavigate, theme }) {
           ))}
         </div>
 
-        {/* Footer — Settings removed, now in bottom nav */}
+        {/* Footer */}
         <div
           className="pm-footer"
           style={{
-            margin: "8px 20px 0",
-            paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 32px)",
+            padding: "0 28px",
+            paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 36px)",
           }}
         >
           <div
             style={{
               height: "1px",
-              background:
-                "linear-gradient(90deg, transparent, rgba(var(--accent-rgb,203,178,124),0.15), transparent)",
-              marginBottom: 20,
+              background: "rgba(var(--accent-rgb,203,178,124),0.1)",
+              marginBottom: 24,
             }}
           />
-          <div style={{ textAlign: "center" }}>
-            <div
-              style={{
-                fontSize: 14,
-                color: "rgba(var(--accent-rgb,203,178,124),0.25)",
-                marginBottom: 8,
-                letterSpacing: "0.2em",
-              }}
-            >
-              ✦ ✦ ✦
-            </div>
+          <div
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "var(--text-accent)",
+              opacity: 0.2,
+              fontFamily: "var(--font-ui, system-ui)",
+            }}
+          >
+            ABIDE
           </div>
         </div>
       </div>
