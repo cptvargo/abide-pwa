@@ -1923,6 +1923,26 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
 /* ===============================
    App Shell
 ================================ */
+const BOOK_ABBREV = {
+  genesis: "Gen", exodus: "Ex", leviticus: "Lev", numbers: "Num",
+  deuteronomy: "Dt", joshua: "Jos", judges: "Jdg", ruth: "Ru",
+  "1samuel": "1Sa", "2samuel": "2Sa", "1kings": "1Ki", "2kings": "2Ki",
+  "1chronicles": "1Ch", "2chronicles": "2Ch", ezra: "Ezr", nehemiah: "Neh",
+  esther: "Est", job: "Job", psalms: "Ps", proverbs: "Pr",
+  ecclesiastes: "Ec", songofsolomon: "SS", isaiah: "Isa", jeremiah: "Jer",
+  lamentations: "Lam", ezekiel: "Ezk", daniel: "Dan", hosea: "Hos",
+  joel: "Joel", amos: "Am", obadiah: "Ob", jonah: "Jon", micah: "Mic",
+  nahum: "Na", habakkuk: "Hab", zephaniah: "Zep", haggai: "Hag",
+  zechariah: "Zec", malachi: "Mal",
+  matthew: "Mt", mark: "Mk", luke: "Lk", john: "Jn", acts: "Ac",
+  romans: "Ro", "1corinthians": "1Co", "2corinthians": "2Co",
+  galatians: "Gal", ephesians: "Eph", philippians: "Ph", colossians: "Col",
+  "1thessalonians": "1Th", "2thessalonians": "2Th", "1timothy": "1Ti",
+  "2timothy": "2Ti", titus: "Tit", philemon: "Phm", hebrews: "Heb",
+  james: "Jas", "1peter": "1Pe", "2peter": "2Pe", "1john": "1Jn",
+  "2john": "2Jn", "3john": "3Jn", jude: "Jude", revelation: "Rev",
+};
+
 export default function AppShell() {
   // One-time migration — clears old translation-unaware Seek cache (v5 and earlier)
   // Safe: only removes abide_seek_ keys, leaves notes/highlights/settings untouched
@@ -1996,6 +2016,10 @@ export default function AppShell() {
     () => localStorage.getItem("lastBookId") || "genesis",
   );
   const [navigationTarget, setNavigationTarget] = useState(null);
+  const [passageTabs, setPassageTabs] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("passageTabs") || "[]"); }
+    catch { return []; }
+  });
   const [showChristRevealedIntro, setShowChristRevealedIntro] = useState(false);
 
   // Audio
@@ -2142,6 +2166,24 @@ export default function AppShell() {
     localStorage.setItem("lastReadingPosition", JSON.stringify({ book: displayName, chapter }));
   }
 
+  function pinCurrentPassage() {
+    const id = `${currentBookId}-${readingContext.chapter}`;
+    const alreadyPinned = passageTabs.some((t) => t.id === id);
+    const newTabs = alreadyPinned
+      ? passageTabs.filter((t) => t.id !== id)
+      : [...passageTabs, { id, bookId: currentBookId, displayName: readingContext.book, chapter: readingContext.chapter }];
+    setPassageTabs(newTabs);
+    if (newTabs.length > 0) localStorage.setItem("passageTabs", JSON.stringify(newTabs));
+    else localStorage.removeItem("passageTabs");
+  }
+
+  function closePassageTab(id) {
+    const newTabs = passageTabs.filter((t) => t.id !== id);
+    setPassageTabs(newTabs);
+    if (newTabs.length > 0) localStorage.setItem("passageTabs", JSON.stringify(newTabs));
+    else localStorage.removeItem("passageTabs");
+  }
+
   function handleSelectTranslation(t) {
     setTranslation(t);
     setTranslationPickerOpen(false);
@@ -2204,6 +2246,10 @@ export default function AppShell() {
     setQuickNoteOpen(false);
   }
 
+  const isCurrentPassagePinned = passageTabs.some(
+    (t) => t.bookId === currentBookId && t.chapter === readingContext.chapter,
+  );
+
   return (
     <div
       className="no-select flex flex-col relative bg-[var(--bg-app)] text-[var(--text-primary)] font-[var(--font-ui)]"
@@ -2243,11 +2289,13 @@ export default function AppShell() {
               border: "1px solid rgba(255,255,255,0.08)",
               boxShadow: "0 2px 20px rgba(0,0,0,0.4)",
               display: "flex",
-              alignItems: "center",
+              flexDirection: "column",
+              alignItems: "stretch",
               padding: "8px 10px",
-              gap: 10,
+              gap: 0,
             }}
           >
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {/* Book + chapter selector */}
             <button
               className="nav-item-btn"
@@ -2389,6 +2437,32 @@ export default function AppShell() {
               </button>
             )}
 
+            {/* Pin passage tab */}
+            <button
+              className="nav-item-btn"
+              onClick={pinCurrentPassage}
+              title={isCurrentPassagePinned ? "Remove tab" : "Pin as tab"}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                flexShrink: 0,
+                cursor: "pointer",
+                background: isCurrentPassagePinned ? "rgba(203,178,124,0.15)" : "rgba(255,255,255,0.06)",
+                border: isCurrentPassagePinned ? "1px solid rgba(203,178,124,0.35)" : "1px solid rgba(255,255,255,0.07)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <svg viewBox="0 0 24 24" width="15" height="15"
+                fill={isCurrentPassagePinned ? navAccent : "none"}
+                stroke={isCurrentPassagePinned ? navAccent : navMuted}
+                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+              </svg>
+            </button>
+
             {/* Pencil pill — sermon notes scratchpad, pushed to far right */}
             <button
               className="nav-item-btn"
@@ -2434,6 +2508,77 @@ export default function AppShell() {
                 Notes
               </span>
             </button>
+            </div>{/* end row 1 */}
+
+            {/* Passage tab strip — row 2 */}
+            {passageTabs.length > 0 && (
+              <div style={{
+                display: "flex",
+                gap: 5,
+                overflowX: "auto",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                minWidth: 0,
+                marginTop: 6,
+                paddingTop: 6,
+                borderTop: "1px solid rgba(255,255,255,0.07)",
+              }}>
+                {passageTabs.map((tab) => {
+                  const isActive =
+                    tab.bookId === currentBookId &&
+                    tab.chapter === readingContext.chapter;
+                  const label = `${BOOK_ABBREV[tab.bookId] || tab.displayName.slice(0, 3)} ${tab.chapter}`;
+                  return (
+                    <div key={tab.id} style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 3,
+                      background: isActive ? "rgba(203,178,124,0.18)" : "rgba(255,255,255,0.05)",
+                      border: `1px solid ${isActive ? "rgba(203,178,124,0.4)" : "rgba(255,255,255,0.08)"}`,
+                      borderRadius: 8,
+                      padding: "4px 6px 4px 9px",
+                      flexShrink: 0,
+                    }}>
+                      <button
+                        onClick={() => handleNavigate(tab.bookId, tab.chapter)}
+                        style={{
+                          background: "none", border: "none", cursor: "pointer", padding: 0,
+                          fontSize: 11, fontWeight: 600, letterSpacing: "0.04em",
+                          color: isActive ? "var(--text-accent)" : navPrimary,
+                          fontFamily: "var(--font-ui)", whiteSpace: "nowrap",
+                          WebkitTapHighlightColor: "transparent",
+                        }}
+                      >
+                        {label}
+                      </button>
+                      <button
+                        onClick={() => closePassageTab(tab.id)}
+                        style={{
+                          background: "none", border: "none", cursor: "pointer",
+                          padding: "0 2px", color: navMuted, fontSize: 10, lineHeight: 1,
+                          WebkitTapHighlightColor: "transparent",
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  );
+                })}
+                {passageTabs.length > 1 && (
+                  <button
+                    onClick={() => { setPassageTabs([]); localStorage.removeItem("passageTabs"); }}
+                    style={{
+                      background: "none", border: "none", cursor: "pointer",
+                      fontSize: 10, color: navMuted, opacity: 0.45, padding: "4px 8px",
+                      flexShrink: 0, fontFamily: "var(--font-ui)",
+                      WebkitTapHighlightColor: "transparent",
+                    }}
+                  >
+                    clear all
+                  </button>
+                )}
+              </div>
+            )}
           </nav>
         )}
 
