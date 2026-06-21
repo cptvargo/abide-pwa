@@ -143,11 +143,11 @@ function parseRef(ref) {
 }
 
 /* ── Inline Verse Preview ──────────────────────────────────────── */
-function VersePreview({ ref, translation, onNavigate, onClose }) {
+function VersePreview({ verseRef, translation, onNavigate, onClose }) {
   const [text, setText] = useState(null);
   const [loading, setLoading] = useState(true);
-  const parsed = parseRef(ref);
-  const displayRef = formatRefDisplay(ref);
+  const parsed = parseRef(verseRef);
+  const displayRef = formatRefDisplay(verseRef);
   const displayBook = parsed
     ? DISPLAY_NAMES[parsed.bookSlug] ||
       parsed.bookSlug.charAt(0).toUpperCase() + parsed.bookSlug.slice(1)
@@ -168,7 +168,7 @@ function VersePreview({ ref, translation, onNavigate, onClose }) {
       setText(t);
       setLoading(false);
     });
-  }, [ref, translation]);
+  }, [verseRef, translation]);
 
   return (
     <div
@@ -358,7 +358,7 @@ export default function ChapterReflectionPanel({
   chapter,
   summary, // legacy prop — ignored, AI takes over
   onNavigate,
-  translation = "VSV",
+  translation = "KJV",
 }) {
   const [visible, setVisible] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
@@ -1013,7 +1013,7 @@ export default function ChapterReflectionPanel({
                                 </div>
                                 {isExpanded && (
                                   <VersePreview
-                                    ref={ref}
+                                    verseRef={ref}
                                     translation={translation}
                                     onNavigate={(bookSlug, ch) => {
                                       if (onNavigate) onNavigate(bookSlug, ch);

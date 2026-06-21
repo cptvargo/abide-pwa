@@ -2162,6 +2162,7 @@ export default function AppShell() {
     setNavigationTarget({ book: bookId, chapter });
     setReadingContext({ book: displayName, chapter });
     setNavigatorOpen(false);
+    setActiveScreen("scripture");
     localStorage.setItem("lastBookId", bookId);
     localStorage.setItem("lastReadingPosition", JSON.stringify({ book: displayName, chapter }));
   }
