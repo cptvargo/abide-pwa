@@ -2001,9 +2001,10 @@ export default function AppShell() {
   const [theme, setTheme] = useState(
     () => localStorage.getItem("theme") || "classic",
   );
-  const [translation, setTranslation] = useState(
-    () => localStorage.getItem("translation") || "KJV",
-  );
+  const [translation, setTranslation] = useState(() => {
+    const stored = localStorage.getItem("translation");
+    return TRANSLATIONS.includes(stored) ? stored : "KJV";
+  });
   const [audioEnabled, setAudioEnabled] = useState(
     () => localStorage.getItem("audioEnabled") === "true",
   );
