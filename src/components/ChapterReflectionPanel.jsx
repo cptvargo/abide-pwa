@@ -227,7 +227,7 @@ function VersePreview({ verseRef, translation, onNavigate, onClose }) {
             {text}
           </p>
           <button
-            onClick={() => onNavigate(parsed.bookSlug, parsed.chapter)}
+            onClick={() => parsed && onNavigate(parsed.bookSlug, parsed.chapter)}
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -244,7 +244,7 @@ function VersePreview({ verseRef, translation, onNavigate, onClose }) {
               WebkitTapHighlightColor: "transparent",
             }}
           >
-            Go to {displayBook} {parsed.chapter}
+            Go to {displayBook} {parsed?.chapter}
             <svg
               viewBox="0 0 24 24"
               style={{
@@ -275,7 +275,7 @@ function VersePreview({ verseRef, translation, onNavigate, onClose }) {
             {displayRef}
           </p>
           <button
-            onClick={() => onNavigate(parsed.bookSlug, parsed.chapter)}
+            onClick={() => parsed && onNavigate(parsed.bookSlug, parsed.chapter)}
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -292,7 +292,7 @@ function VersePreview({ verseRef, translation, onNavigate, onClose }) {
               WebkitTapHighlightColor: "transparent",
             }}
           >
-            Go to {displayBook} {parsed.chapter}
+            Go to {displayBook} {parsed?.chapter}
             <svg
               viewBox="0 0 24 24"
               style={{

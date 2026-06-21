@@ -69,8 +69,12 @@ export default function SwipeReading({
   const [sections, setSections] = useState([]);
   const [book, setBook] = useState(() => localStorage.getItem("lastBookId") || "genesis");
   const [currentChapter, setCurrentChapter] = useState(() => {
-    const saved = localStorage.getItem("lastReadingPosition");
-    return saved ? (JSON.parse(saved).chapter ?? 1) : 1;
+    try {
+      const saved = localStorage.getItem("lastReadingPosition");
+      return saved ? (JSON.parse(saved).chapter ?? 1) : 1;
+    } catch {
+      return 1;
+    }
   });
   const [loading, setLoading] = useState(true);
 
