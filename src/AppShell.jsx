@@ -17,7 +17,7 @@ import {
 import { search, warmIndex } from "./lib/searchEngine";
 import RichTextJournal from "./RichTextJournal";
 import AbideDictionary, { saveDictionaryEntry } from "./components/AbideDictionary";
-import { getSeekCached, setSeekCached } from "./lib/seekCache";
+import { getSeekCached, setSeekCached, clearSeekCache } from "./lib/seekCache";
 
 const TRANSLATIONS = ["KJV", "ASR", "WAE"];
 const TRANSLATION_FULL = {
@@ -809,7 +809,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
     setSearching(true);
     try {
       const cacheKey = q.trim().toLowerCase();
-      const cached = await getSeekCached(cacheKey, translation);
+      const cached = await getSeekCached(cacheKey, translation, "scripture");
       if (cached) {
         setResults(cached);
         setSearching(false);
@@ -906,7 +906,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
         } catch { /* cross-ref unavailable */ }
       }
 
-      await setSeekCached(cacheKey, translation, finalResults);
+      await setSeekCached(cacheKey, translation, finalResults, "scripture");
       setResults(finalResults);
     } catch {
       setResults([]);
@@ -1025,7 +1025,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
     setFromCache(false);
     setSeekSaved(false);
     setSeekView("result");
-    const cached = await getSeekCached(q, translation);
+    const cached = await getSeekCached(q, translation, "seek");
     if (cached) {
       setSeekResult(cached);
       setFromCache(true);
@@ -1059,7 +1059,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
       if (parsed.verses?.length) {
         parsed.verses = await seekEnrichVerses(parsed.verses, translation);
       }
-      await setSeekCached(q, translation, parsed);
+      await setSeekCached(q, translation, parsed, "seek");
       setSeekResult(parsed);
     } catch (err) {
       setSeekError(`Something went wrong: ${err.message}`);
@@ -1335,10 +1335,8 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
 
               {/* Clear Seek cache */}
               <button
-                onClick={() => {
-                  Object.keys(localStorage)
-                    .filter((k) => k.startsWith("abide_seek_v"))
-                    .forEach((k) => localStorage.removeItem(k));
+                onClick={async () => {
+                  await clearSeekCache();
                   alert(
                     "Seek cache cleared. Results will refresh on next search.",
                   );
