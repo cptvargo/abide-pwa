@@ -759,14 +759,19 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
     localStorage.setItem("verseHighlights", JSON.stringify(next));
   }
 
-  function toggleHighlightTag(key, tag) {
-    const h = highlights[key];
+  function toggleHighlightTag(keys, tag) {
+    const keyList = Array.isArray(keys) ? keys : [keys];
+    const h = highlights[keyList[0]];
     if (!h) return;
     const current = h.tags || [];
     const next = current.includes(tag)
       ? current.filter((t) => t !== tag)
       : [...current, tag];
-    saveHighlights({ ...highlights, [key]: { ...h, tags: next } });
+    const updated = { ...highlights };
+    keyList.forEach((k) => {
+      if (updated[k]) updated[k] = { ...updated[k], tags: next };
+    });
+    saveHighlights(updated);
   }
 
   function getTagColor(tag) {
@@ -1645,9 +1650,34 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
       {/* ── HIGHLIGHTS ── */}
       {filter === "highlights" && (() => {
           const allHighlights = Object.entries(highlights).map(([key, h]) => ({ key, ...h }));
+
+          // Group individual verse entries that were highlighted together
+          const groupMap = {};
+          allHighlights.forEach((h) => {
+            const gid = h.groupId || h.key;
+            if (!groupMap[gid]) groupMap[gid] = [];
+            groupMap[gid].push(h);
+          });
+          const allGroups = Object.values(groupMap).map((entries) => {
+            const sv = [...entries].sort((a, b) => a.verse - b.verse);
+            return {
+              key: sv[0].key,
+              allKeys: sv.map((e) => e.key),
+              book: sv[0].book,
+              chapter: sv[0].chapter,
+              colorId: sv[0].colorId,
+              theme: sv[0].theme,
+              translation: sv[0].translation,
+              tags: sv[0].tags || [],
+              createdAt: sv[0].createdAt,
+              minVerse: sv[0].verse,
+              maxVerse: sv[sv.length - 1].verse,
+              text: sv.map((v) => v.text).join(" "),
+            };
+          });
           const filtered = highlightTag === "All"
-            ? allHighlights
-            : allHighlights.filter((h) => (h.tags || []).includes(highlightTag));
+            ? allGroups
+            : allGroups.filter((g) => (g.tags || []).includes(highlightTag));
           const sorted = [...filtered].sort(
             (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
           );
@@ -1679,21 +1709,24 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
               </div>
 
               {/* Empty states */}
-              {allHighlights.length === 0 && (
+              {allGroups.length === 0 && (
                 <p style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: 14, opacity: 0.55, marginTop: 48, fontFamily: "var(--font-body)", fontStyle: "italic", lineHeight: 1.8 }}>
                   No highlights yet.<br />Tap a verse while reading to highlight it.
                 </p>
               )}
-              {allHighlights.length > 0 && sorted.length === 0 && (
+              {allGroups.length > 0 && sorted.length === 0 && (
                 <p style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: 13, opacity: 0.5, marginTop: 48, fontFamily: "var(--font-ui)" }}>
                   No highlights tagged "{highlightTag}"
                 </p>
               )}
 
               {/* Highlight cards */}
-              {sorted.map((h) => {
-                const ref = `${h.book || ""} ${h.chapter}:${h.verse}`;
-                const appliedTags = h.tags || [];
+              {sorted.map((group) => {
+                const verseRange = group.minVerse === group.maxVerse
+                  ? `${group.minVerse}`
+                  : `${group.minVerse}-${group.maxVerse}`;
+                const ref = `${group.book || ""} ${group.chapter}:${verseRange}`;
+                const appliedTags = group.tags || [];
                 const highlightColor = (() => {
                   const themeColors = {
                     classic:          [{ id:"gold",color:"rgba(203,178,124,0.50)"},{id:"amber",color:"rgba(255,191,105,0.35)"},{id:"bronze",color:"rgba(139,115,85,0.45)"}],
@@ -1702,13 +1735,13 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                     "olive-parchment":[{ id:"sage",color:"rgba(143,151,121,0.40)"},{id:"wheat",color:"rgba(196,164,132,0.38)"},{id:"moss",color:"rgba(101,104,71,0.42)"}],
                     parchment:        [{ id:"sepia",color:"rgba(112,66,20,0.35)"},{id:"sand",color:"rgba(194,178,128,0.38)"},{id:"mahogany",color:"rgba(75,35,15,0.42)"}],
                   };
-                  const palette = themeColors[h.theme] || themeColors.classic;
-                  return (palette.find((c) => c.id === h.colorId) || palette[0]).color;
+                  const palette = themeColors[group.theme] || themeColors.classic;
+                  return (palette.find((c) => c.id === group.colorId) || palette[0]).color;
                 })();
 
                 return (
                   <div
-                    key={h.key}
+                    key={group.key}
                     style={{
                       background: "rgba(255,255,255,0.04)",
                       border: "1px solid rgba(255,255,255,0.07)",
@@ -1729,17 +1762,17 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                         flex: 1, fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 700,
                         letterSpacing: "0.1em", color: "var(--text-accent)", textTransform: "uppercase",
                       }}>
-                        {ref} · {h.translation}
+                        {ref} · {group.translation}
                       </div>
                       {/* Share */}
                       <button
                         onClick={async () => {
                           const { shareVerseAsImage } = await import("./ShareAsImage");
-                          const bookName = h.book ? h.book.charAt(0).toUpperCase() + h.book.slice(1) : "";
-                          const reference = `${bookName} ${h.chapter}:${h.verse} · ${h.translation}`;
-                          const ok = await shareVerseAsImage({ reference, text: h.text }, h.theme || "classic");
+                          const bookName = group.book ? group.book.charAt(0).toUpperCase() + group.book.slice(1) : "";
+                          const reference = `${bookName} ${group.chapter}:${verseRange} · ${group.translation}`;
+                          const ok = await shareVerseAsImage({ reference, text: group.text }, group.theme || "classic");
                           if (!ok && navigator.share) {
-                            navigator.share({ text: `"${h.text}"\n\n— ${reference}` }).catch(() => {});
+                            navigator.share({ text: `"${group.text}"\n\n— ${reference}` }).catch(() => {});
                           }
                         }}
                         style={{
@@ -1765,7 +1798,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                       fontFamily: "var(--font-body)", fontSize: 15, lineHeight: 1.65,
                       color: "var(--text-primary)", marginBottom: 12,
                     }}>
-                      {h.text}
+                      {group.text}
                     </div>
 
                     {/* Applied tags display */}
@@ -1794,7 +1827,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                     {/* + Tag button */}
                     <button
                       onClick={() => {
-                        setActiveTagCard(activeTagCard === h.key ? null : h.key);
+                        setActiveTagCard(activeTagCard === group.key ? null : group.key);
                         setNewTagName("");
                         setNewTagColor("#d4a843");
                       }}
@@ -1806,11 +1839,11 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                         WebkitTapHighlightColor: "transparent",
                       }}
                     >
-                      {activeTagCard === h.key ? "✕ Close" : "+ Tag"}
+                      {activeTagCard === group.key ? "✕ Close" : "+ Tag"}
                     </button>
 
                     {/* Per-card tag panel */}
-                    {activeTagCard === h.key && (
+                    {activeTagCard === group.key && (
                       <div style={{
                         background: "rgba(203,178,124,0.06)",
                         border: "1px solid rgba(203,178,124,0.15)",
@@ -1829,7 +1862,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                                 return (
                                   <button
                                     key={tag}
-                                    onClick={() => toggleHighlightTag(h.key, tag)}
+                                    onClick={() => toggleHighlightTag(group.allKeys, tag)}
                                     style={{
                                       fontSize: 11, padding: "4px 12px", borderRadius: 999,
                                       cursor: "pointer", fontFamily: "var(--font-ui)", fontWeight: 500,
@@ -1872,7 +1905,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                           <input
                             value={newTagName}
                             onChange={(e) => setNewTagName(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && addCustomTag(h.key)}
+                            onKeyDown={(e) => e.key === "Enter" && addCustomTag(group.allKeys)}
                             placeholder="Tag name…"
                             style={{
                               flex: 1, background: "rgba(0,0,0,0.2)",
@@ -1883,7 +1916,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
                             }}
                           />
                           <button
-                            onClick={() => addCustomTag(h.key)}
+                            onClick={() => addCustomTag(group.allKeys)}
                             style={{
                               padding: "6px 14px", borderRadius: 999, border: "none",
                               background: newTagColor, color: "#fff",
@@ -1899,7 +1932,7 @@ function SearchPanel({ open, onClose, onNavigate, translation }) {
 
                     {/* Read chapter */}
                     <button
-                      onClick={() => { onNavigate(h.book, h.chapter); onClose(); }}
+                      onClick={() => { onNavigate(group.book, group.chapter); onClose(); }}
                       style={{
                         background: "transparent", border: "1px solid rgba(203,178,124,0.25)",
                         borderRadius: 8, padding: "7px 14px", color: "var(--text-accent)",

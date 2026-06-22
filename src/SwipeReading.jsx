@@ -473,6 +473,7 @@ export default function SwipeReading({
     setHighlightPanelOpen(false);
 
     const newHighlights = { ...highlights };
+    const groupId = `${book}-${currentChapter}-${selectedVerses.map((v) => v.verse).join("-")}-${translation}`;
     selectedVerses.forEach((verse) => {
       newHighlights[getVerseKey(verse.verse)] = {
         colorId: colorOption.id,
@@ -484,6 +485,7 @@ export default function SwipeReading({
         text: verse.text,
         tags: tags,
         createdAt: new Date().toISOString(),
+        groupId,
       };
     });
 
