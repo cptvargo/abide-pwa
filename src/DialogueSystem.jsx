@@ -21,6 +21,12 @@ function loadDialogues() {
   return saved ? JSON.parse(saved) : [];
 }
 
+// Strip leading empty paragraphs that pasted content (e.g. from ChatGPT) adds
+function trimLeadingBlanks(html) {
+  if (!html) return "";
+  return html.replace(/^(\s*<p>(\s|<br\s*\/?>)*<\/p>\s*)+/gi, "");
+}
+
 function saveDialogues(dialogues) {
   localStorage.setItem("dialogues", JSON.stringify(dialogues));
 }
@@ -559,7 +565,7 @@ function DialogueCard({ entry, theme, onView, onShare }) {
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
           }}
-          dangerouslySetInnerHTML={{ __html: entry.reflection || entry.html || entry.text }}
+          dangerouslySetInnerHTML={{ __html: trimLeadingBlanks(entry.reflection || entry.html || entry.text) }}
         />
       </button>
 
@@ -854,14 +860,14 @@ function DialogueDetail({ entry, theme, onBack, onEdit, onDelete, onShare }) {
             <div
               className="prose prose-lg max-w-none"
               style={{ color: "var(--text-primary)" }}
-              dangerouslySetInnerHTML={{ __html: entry.reflection || entry.html || entry.text }}
+              dangerouslySetInnerHTML={{ __html: trimLeadingBlanks(entry.reflection || entry.html || entry.text) }}
             />
           </div>
         ) : (
           <div
             className="prose prose-lg max-w-none"
             style={{ color: "var(--text-primary)" }}
-            dangerouslySetInnerHTML={{ __html: entry.reflection || entry.html || entry.text }}
+            dangerouslySetInnerHTML={{ __html: trimLeadingBlanks(entry.reflection || entry.html || entry.text) }}
           />
         )}
       </div>
