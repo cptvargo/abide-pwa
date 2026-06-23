@@ -516,10 +516,14 @@ const DAILY_VERSES = [
   { book: "revelation",     chapter: 22,  verse: 20, ref: "Revelation 22:20"      },
 ];
 
-// Returns 0 on Jan 1, 364 on Dec 31
-function getDayOfYear() {
-  const now = new Date();
-  return Math.floor((now - new Date(now.getFullYear(), 0, 1)) / 86400000);
+// Returns a pseudo-random but date-stable index into DAILY_VERSES.
+// Same day always picks the same verse; consecutive days jump around the
+// full pool instead of walking the array in biblical book order.
+function getDayIndex(len) {
+  const d = new Date();
+  const seed = d.getFullYear() * 373 + (d.getMonth() + 1) * 31 + d.getDate();
+  const hash = (seed * 1103515245 + 12345) >>> 0;
+  return hash % len;
 }
 
 function getGreeting() {
@@ -691,7 +695,7 @@ function FeedCard({ item, onNavigate }) {
 }
 
 export default function HomeScreen({ theme, translation, onNavigate }) {
-  const todayVerse = DAILY_VERSES[getDayOfYear() % DAILY_VERSES.length];
+  const todayVerse = DAILY_VERSES[getDayIndex(DAILY_VERSES.length)];
   const [verseText, setVerseText] = useState(null);
   const [verseLoading, setVerseLoading] = useState(true);
 
