@@ -21,10 +21,16 @@ function loadDialogues() {
   return saved ? JSON.parse(saved) : [];
 }
 
-// Strip leading empty paragraphs that pasted content (e.g. from ChatGPT) adds
+// Remove all empty paragraphs (handles TipTap's <p><br class="...">, &nbsp;, etc.)
+function stripEmptyParagraphs(html) {
+  if (!html) return "";
+  return html.replace(/<p[^>]*>(\s|&nbsp;|<br[^>]*>)*<\/p>/gi, "").trim();
+}
+
+// Strip only leading empty paragraphs — preserves intentional spacing within content
 function trimLeadingBlanks(html) {
   if (!html) return "";
-  return html.replace(/^(\s*<p>(\s|<br\s*\/?>)*<\/p>\s*)+/gi, "");
+  return html.replace(/^(\s*<p[^>]*>(\s|&nbsp;|<br[^>]*>)*<\/p>\s*)+/gi, "");
 }
 
 function saveDialogues(dialogues) {
@@ -565,7 +571,7 @@ function DialogueCard({ entry, theme, onView, onShare }) {
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
           }}
-          dangerouslySetInnerHTML={{ __html: trimLeadingBlanks(entry.reflection || entry.html || entry.text) }}
+          dangerouslySetInnerHTML={{ __html: stripEmptyParagraphs(entry.reflection || entry.html || entry.text) }}
         />
       </button>
 
