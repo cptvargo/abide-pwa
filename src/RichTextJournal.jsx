@@ -166,6 +166,16 @@ export default function RichTextJournal({
       attributes: {
         class: "prose prose-lg focus:outline-none max-w-none px-6 py-4 min-h-[300px]",
       },
+      transformPastedHTML(html) {
+        // Strip leading empty block elements that arrive when pasting from external sources (ChatGPT, etc.)
+        return html
+          .replace(/^(\s*<(?:p|div|h[1-6])[^>]*>(\s|&nbsp;|<br[^>]*>)*<\/(?:p|div|h[1-6])>\s*)+/gi, "")
+          .trim();
+      },
+      transformPastedText(text) {
+        // Strip leading blank lines from plain-text pastes
+        return text.replace(/^\s*\n+/, "");
+      },
     },
   });
 
