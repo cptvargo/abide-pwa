@@ -136,6 +136,8 @@ export default function RichTextJournal({
   const scanRef = useRef(null);
   const autoSaveRef = useRef(null);
   const dismissedRefs = useRef(new Set());
+  const editorRef = useRef(null);
+  const postPasteClean = useRef(null);
 
   // Track keyboard height via visualViewport so content stays above keyboard
   useEffect(() => {
@@ -182,8 +184,34 @@ export default function RichTextJournal({
       transformPastedText(text) {
         return text.replace(/^\s+/, "").replace(/\s+$/, "");
       },
+      handlePaste() {
+        // Mobile fallback: iOS native paste can bypass transformPastedHTML.
+        // Re-run the same cleanup 150ms after the paste settles.
+        clearTimeout(postPasteClean.current);
+        postPasteClean.current = setTimeout(() => {
+          const ed = editorRef.current;
+          if (!ed) return;
+          const html = ed.getHTML();
+          try {
+            const doc = new DOMParser().parseFromString(html, "text/html");
+            const body = doc.body;
+            const isEmpty = (node) =>
+              (node.textContent?.trim() || "") === "" && !node.querySelector?.("img, video, iframe");
+            while (body.firstChild && isEmpty(body.firstChild)) body.removeChild(body.firstChild);
+            while (body.lastChild && isEmpty(body.lastChild)) body.removeChild(body.lastChild);
+            const cleaned = body.innerHTML;
+            if (cleaned !== html) {
+              ed.chain().setContent(cleaned, false).focus("end").run();
+            }
+          } catch {}
+        }, 150);
+        return false;
+      },
     },
   });
+
+  // Keep ref in sync so handlePaste closure can access the live editor
+  useEffect(() => { editorRef.current = editor; }, [editor]);
 
   // Scan editor text for verse references and show a suggestion chip
   useEffect(() => {
