@@ -167,14 +167,20 @@ export default function RichTextJournal({
         class: "prose prose-lg focus:outline-none max-w-none px-6 py-4 min-h-[300px]",
       },
       transformPastedHTML(html) {
-        const emptyBlock = "\\s*<(?:p|div|h[1-6])[^>]*>(\\s|&nbsp;|<br[^>]*>)*<\\/(?:p|div|h[1-6])>\\s*";
-        return html
-          .replace(new RegExp(`^(${emptyBlock})+`, "gi"), "")
-          .replace(new RegExp(`(${emptyBlock})+$`, "gi"), "")
-          .trim();
+        try {
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const body = doc.body;
+          const isEmpty = (node) =>
+            (node.textContent?.trim() || "") === "" && !node.querySelector?.("img, video, iframe");
+          while (body.firstChild && isEmpty(body.firstChild)) body.removeChild(body.firstChild);
+          while (body.lastChild && isEmpty(body.lastChild)) body.removeChild(body.lastChild);
+          return body.innerHTML;
+        } catch {
+          return html;
+        }
       },
       transformPastedText(text) {
-        return text.replace(/^\s*\n+/, "").replace(/\n+\s*$/, "");
+        return text.replace(/^\s+/, "").replace(/\s+$/, "");
       },
     },
   });
