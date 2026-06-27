@@ -22,9 +22,13 @@ function loadDialogues() {
 }
 
 // Remove all empty paragraphs (handles TipTap's <p><br class="...">, &nbsp;, etc.)
-function stripEmptyParagraphs(html) {
+// Extract plain text from HTML so card previews use line-clamp reliably on iOS.
+// Block elements like <p> have margins that break -webkit-line-clamp on mobile Safari.
+function htmlToPlainText(html) {
   if (!html) return "";
-  return html.replace(/<p[^>]*>(\s|&nbsp;|<br[^>]*>)*<\/p>/gi, "").trim();
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  return (tmp.textContent || tmp.innerText || "").replace(/\s+/g, " ").trim();
 }
 
 // Strip leading and trailing empty paragraphs — preserves intentional spacing within content
@@ -574,8 +578,7 @@ function DialogueCard({ entry, theme, onView, onShare }) {
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
           }}
-          dangerouslySetInnerHTML={{ __html: stripEmptyParagraphs(entry.reflection || entry.html || entry.text) }}
-        />
+          >{htmlToPlainText(entry.reflection || entry.html || entry.text)}</div>
       </button>
 
       {/* Footer */}
