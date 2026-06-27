@@ -3,7 +3,7 @@
  * Unified system for Scripture-linked dialogue (from highlights) and spontaneous entries
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { shareDialogueAsImage } from "./ShareAsImage";
 import RichTextJournal from "./RichTextJournal";
 
@@ -78,11 +78,19 @@ export default function DialogueSystem({ theme, translation, onBack }) {
   const [creatingEntry, setCreatingEntry] = useState(false);
   const [editorText, setEditorText] = useState("");
   const [editingEntry, setEditingEntry] = useState(null);
+  const listScrollRef = useRef(null);
 
   // Save to localStorage whenever dialogues change
   useEffect(() => {
     saveDialogues(dialogues);
   }, [dialogues]);
+
+  // Scroll list to top when editor closes so new entry is always visible
+  useEffect(() => {
+    if (!creatingEntry && listScrollRef.current) {
+      listScrollRef.current.scrollTop = 0;
+    }
+  }, [creatingEntry]);
 
   function deleteDialogue(id) {
     setDialogues((prev) => prev.filter((d) => d.id !== id));
@@ -263,6 +271,7 @@ export default function DialogueSystem({ theme, translation, onBack }) {
 
       {/* Scrollable Content Container */}
       <div
+        ref={listScrollRef}
         className="flex-1 overflow-y-auto"
         style={{
           paddingTop: "calc(env(safe-area-inset-top) + 160px)", // Header height + safe area
@@ -577,6 +586,7 @@ function DialogueCard({ entry, theme, onView, onShare }) {
             WebkitLineClamp: isScripture ? 3 : 4,
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
+            maxHeight: `${(isScripture ? 3 : 4) * 1.65 * 0.875}rem`,
           }}
           >{htmlToPlainText(entry.reflection || entry.html || entry.text)}</div>
       </button>
