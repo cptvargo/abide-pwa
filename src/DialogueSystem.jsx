@@ -27,10 +27,13 @@ function stripEmptyParagraphs(html) {
   return html.replace(/<p[^>]*>(\s|&nbsp;|<br[^>]*>)*<\/p>/gi, "").trim();
 }
 
-// Strip only leading empty paragraphs — preserves intentional spacing within content
+// Strip leading and trailing empty paragraphs — preserves intentional spacing within content
 function trimLeadingBlanks(html) {
   if (!html) return "";
-  return html.replace(/^(\s*<p[^>]*>(\s|&nbsp;|<br[^>]*>)*<\/p>\s*)+/gi, "");
+  const emptyP = "(\\s*<p[^>]*>(\\s|&nbsp;|<br[^>]*>)*<\\/p>\\s*)";
+  return html
+    .replace(new RegExp(`^(${emptyP})+`, "gi"), "")
+    .replace(new RegExp(`(${emptyP})+$`, "gi"), "");
 }
 
 function saveDialogues(dialogues) {
