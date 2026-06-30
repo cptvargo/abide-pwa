@@ -162,7 +162,7 @@ BIBLE_SECTIONS.forEach(({ section, books }) =>
 /* ===============================
    Icons
 ================================ */
-function BibleIcon({ size = 22, color = "currentColor", strokeWidth = 2.2 }) {
+function BibleIcon({ size = 22, color = "currentColor", strokeWidth = 2.5 }) {
   return (
     <svg
       width={size}
@@ -182,7 +182,7 @@ function BibleIcon({ size = 22, color = "currentColor", strokeWidth = 2.2 }) {
   );
 }
 
-function SearchIcon({ size = 22 }) {
+function SearchIcon({ size = 22, strokeWidth = 2.5 }) {
   return (
     <svg
       width={size}
@@ -190,7 +190,7 @@ function SearchIcon({ size = 22 }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
@@ -218,7 +218,7 @@ function MenuIcon({ size = 22 }) {
   );
 }
 
-function SettingsIcon({ size = 22 }) {
+function SettingsIcon({ size = 22, strokeWidth = 2.5 }) {
   return (
     <svg
       width={size}
@@ -226,7 +226,7 @@ function SettingsIcon({ size = 22 }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
@@ -2687,12 +2687,12 @@ export default function AppShell() {
               left: 24,
               right: 24,
               zIndex: 40,
-              background: "rgba(15,12,8,0.85)",
+              background: "rgba(15,12,8,0.92)",
               backdropFilter: "blur(24px)",
               WebkitBackdropFilter: "blur(24px)",
               borderRadius: 999,
-              border: "1px solid rgba(255,255,255,0.08)",
-              boxShadow: "0 4px 28px rgba(0,0,0,0.5)",
+              border: "1px solid rgba(255,255,255,0.14)",
+              boxShadow: "0 4px 32px rgba(0,0,0,0.65), 0 1px 0 rgba(255,255,255,0.06) inset",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-around",
@@ -2723,7 +2723,7 @@ export default function AppShell() {
               }}
             >
               <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
                   style={{ color: activeScreen === "home" ? navAccent : navInactive }}>
                   <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                   <polyline points="9 22 9 12 15 12 15 22" />
@@ -2736,7 +2736,7 @@ export default function AppShell() {
                 )}
               </div>
               <span style={{
-                fontSize: 10, fontWeight: 500,
+                fontSize: 10, fontWeight: 600,
                 color: activeScreen === "home" ? navAccent : navInactive,
                 letterSpacing: "0.04em", fontFamily: "var(--font-ui)",
               }}>
@@ -2790,7 +2790,7 @@ export default function AppShell() {
               <span
                 style={{
                   fontSize: 10,
-                  fontWeight: 500,
+                  fontWeight: 600,
                   letterSpacing: "0.04em",
                   fontFamily: "var(--font-ui)",
                   color: isScriptureActive ? navAccent : navInactive,
@@ -2822,7 +2822,7 @@ export default function AppShell() {
               <span
                 style={{
                   fontSize: 10,
-                  fontWeight: 500,
+                  fontWeight: 600,
                   color: navInactive,
                   letterSpacing: "0.04em",
                   fontFamily: "var(--font-ui)",
@@ -2854,7 +2854,7 @@ export default function AppShell() {
               <span
                 style={{
                   fontSize: 10,
-                  fontWeight: 500,
+                  fontWeight: 600,
                   color: navInactive,
                   letterSpacing: "0.04em",
                   fontFamily: "var(--font-ui)",
