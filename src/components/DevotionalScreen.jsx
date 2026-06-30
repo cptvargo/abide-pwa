@@ -247,6 +247,16 @@ const SERIES_LIST = [
       "The approval of others is a counterfeit for what God alone can give. Seven days sitting with what it means to be chosen, loved, and validated by God — and what it costs when we seek that from people instead.",
   },
   {
+    id: "lucifer-light-and-fall",
+    title: "Lucifer — Light, Law, and the Fall",
+    subtitle: "A 5-Day Devotional",
+    author: "ABIDE",
+    totalDays: 5,
+    hasAudio: false,
+    description:
+      "Lucifer was not heaven's worship leader. Scripture reveals something more sobering — he was heaven's chief prosecutor, created to uphold divine justice. Five days uncovering who he was, how he fell, and what his story means for how we live.",
+  },
+  {
     id: "fear-of-god",
     title: "The Fear of God",
     subtitle: "A 10-Day Devotional",
