@@ -247,6 +247,16 @@ const SERIES_LIST = [
       "The approval of others is a counterfeit for what God alone can give. Seven days sitting with what it means to be chosen, loved, and validated by God — and what it costs when we seek that from people instead.",
   },
   {
+    id: "fear-of-god",
+    title: "The Fear of God",
+    subtitle: "A 10-Day Devotional",
+    author: "ABIDE",
+    totalDays: 10,
+    hasAudio: false,
+    description:
+      "The fear of the Lord is the beginning of wisdom. Ten days sitting with what it truly means to fear God — not as terror, but as holy reverence that produces wisdom, obedience, worship, and intimacy with the One who is worthy.",
+  },
+  {
     id: "slow-to-anger",
     title: "Slow to Anger",
     subtitle: "A 7-Day Devotional",
