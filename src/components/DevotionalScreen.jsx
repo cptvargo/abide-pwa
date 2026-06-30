@@ -303,11 +303,30 @@ export default function DevotionalScreen({ onBack, theme }) {
   const [scriptureResult, setScriptureResult] = useState(null);
   const [scripturesResults, setScripturesResults] = useState([]);
   const [loadingScripture, setLoadingScripture] = useState(false);
+  const [dayTitleCache, setDayTitleCache] = useState({});
   const scrollRef = useRef(null);
 
   useEffect(() => {
     if (activeSeries) setCompletedDays(getCompletedDays(activeSeries.id));
   }, [activeSeries]);
+
+  // Fetch all day titles for the active series when the series view opens.
+  // Cached per series so switching back is instant. Day JSON is the single
+  // source of truth — no hardcoded title arrays needed anywhere.
+  useEffect(() => {
+    if (view !== "series" || !activeSeries) return;
+    const seriesId = activeSeries.id;
+    if (dayTitleCache[seriesId]) return;
+    Promise.all(
+      Array.from({ length: activeSeries.totalDays }, (_, i) =>
+        fetchDay(seriesId, i + 1)
+          .then((d) => d.title || `Day ${i + 1}`)
+          .catch(() => `Day ${i + 1}`)
+      )
+    ).then((titles) =>
+      setDayTitleCache((prev) => ({ ...prev, [seriesId]: titles }))
+    );
+  }, [view, activeSeries?.id]);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
@@ -686,103 +705,7 @@ export default function DevotionalScreen({ onBack, theme }) {
                       letterSpacing: "0.01em",
                     }}
                   >
-                    {activeSeries.id === "beauty-of-holiness"
-                      ? [
-                          "The Glory of the Creature",
-                          "The Secret of Redemption",
-                          "Humility in the Life of Jesus",
-                          "Humility in the Teaching of Jesus",
-                          "Humility in the Disciples",
-                          "Humility in Daily Life",
-                          "Humility and Holiness",
-                          "Humility and Sin",
-                          "Humility and Faith",
-                          "Humility and Death to Self",
-                          "Humility and Happiness",
-                          "The Beauty of Holiness",
-                        ][dayNum - 1]
-                      : activeSeries.id === "discipleship-guide"
-                        ? [
-                            "The Trinity — One God, Three Persons",
-                            "God as Creator and Sustainer",
-                            "God as Father",
-                            "God's Love and Authority",
-                            "God's Discipline",
-                            "Jesus as the Son of God",
-                            "Jesus as the Son of Man",
-                            "The Deity of Christ",
-                            "The Humanity of Christ",
-                            "The Finished Work of Christ",
-                            "The Personhood and Deity of the Holy Spirit",
-                            "The Work of the Holy Spirit",
-                            "The Indwelling of the Holy Spirit",
-                            "The Baptism and Filling of the Holy Spirit",
-                            "The Gifts of the Holy Spirit",
-                            "The Seven-Fold Spirit of God",
-                            "Born Again — A New Creation",
-                            "Who You Are in Christ — Part 1",
-                            "Who You Are in Christ — Part 2",
-                            "What You Have in Christ",
-                            "Walking in the Spirit-Filled Life",
-                            "Praying in Tongues",
-                          ][dayNum - 1]
-                        : activeSeries.id === "living-close-to-jesus"
-                          ? [
-                              "Withdraw to Walk",
-                              "Snuggle, Don't Struggle",
-                              "Less Thinking, More Drinking",
-                              "Behold Before You Behave",
-                              "Seek Intimacy, Not Power",
-                            ][dayNum - 1]
-                          : activeSeries.id === "validated-by-god"
-                            ? [
-                                "Who Gets to Validate You?",
-                                "Fearfully and Wonderfully Made",
-                                "Loved at Your Worst",
-                                "Chosen Before You Could Choose",
-                                "I Feared the People",
-                                "The High Cost of People Pleasing",
-                                "Do Everything As to the Lord",
-                              ][dayNum - 1]
-                          : activeSeries.id === "slow-to-anger"
-                            ? [
-                                "Human Anger Does Not Produce Righteousness",
-                                "Quick to Listen",
-                                "Slow to Speak",
-                                "Slow to Become Angry",
-                                "Anger at the Door — The Story of Cain",
-                                "When Anger Takes the Throne — The Story of Saul",
-                                "Hope Beyond Anger",
-                              ][dayNum - 1]
-                          : activeSeries.id === "fear-of-god"
-                            ? [
-                                "Understanding the Fear of God",
-                                "The Fear of God Begins with His Holiness",
-                                "The Fear of God Produces Obedience",
-                                "The Fear of God Protects from Sin",
-                                "The Fear of God Brings Wisdom",
-                                "The Fear of God and Worship",
-                                "The Fear of God and God's Blessings",
-                                "The Fear of God in the Early Church",
-                                "The Fear of God Leads to Intimacy",
-                                "The Fear of God in Eternity",
-                              ][dayNum - 1]
-                          : [
-                              "The Two Sons",
-                              "What God Sees in the Heart",
-                              "Learning Through Obedience",
-                              "Jesus Shows Us True Humility",
-                              "The Grumbling Heart",
-                              "Choosing What Is Right",
-                              "A New Heart",
-                              "Jesus Came to Serve",
-                              "Learning to Be Last",
-                              "The Quiet Work of God",
-                              "Letting Go of Pride",
-                              "The Beauty of Holiness",
-                              "Walking Like Jesus",
-                              "A Heart That Abides",
-                            ][dayNum - 1]}
+                    {dayTitleCache[activeSeries.id]?.[dayNum - 1] ?? ""}
                   </div>
                 </div>
                 {!locked && (
