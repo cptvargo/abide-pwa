@@ -162,7 +162,7 @@ BIBLE_SECTIONS.forEach(({ section, books }) =>
 /* ===============================
    Icons
 ================================ */
-function BibleIcon({ size = 22, color = "currentColor", strokeWidth = 2.5 }) {
+function BibleIcon({ size = 22, color = "currentColor", strokeWidth = 3 }) {
   return (
     <svg
       width={size}
@@ -182,7 +182,7 @@ function BibleIcon({ size = 22, color = "currentColor", strokeWidth = 2.5 }) {
   );
 }
 
-function SearchIcon({ size = 22, strokeWidth = 2.5 }) {
+function SearchIcon({ size = 22, strokeWidth = 3 }) {
   return (
     <svg
       width={size}
@@ -218,7 +218,7 @@ function MenuIcon({ size = 22 }) {
   );
 }
 
-function SettingsIcon({ size = 22, strokeWidth = 2.5 }) {
+function SettingsIcon({ size = 22, strokeWidth = 3 }) {
   return (
     <svg
       width={size}
@@ -2253,7 +2253,7 @@ export default function AppShell() {
   const isParchment = theme === "parchment";
   const navAccent   = isParchment ? "rgba(203,178,124,0.95)" : "var(--text-accent)";
   const navPrimary  = isParchment ? "rgba(255,255,255,0.92)" : "var(--text-primary)";
-  const navInactive = isParchment ? "rgba(255,255,255,0.55)" : "var(--text-secondary)";
+  const navInactive = isParchment ? "rgba(255,255,255,0.82)" : "var(--text-primary)";
   const navMuted    = isParchment ? "rgba(255,255,255,0.35)" : "var(--text-secondary)";
 
   function handleScratchpadSave({ html, text }) {
@@ -2723,7 +2723,7 @@ export default function AppShell() {
               }}
             >
               <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
                   style={{ color: activeScreen === "home" ? navAccent : navInactive }}>
                   <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                   <polyline points="9 22 9 12 15 12 15 22" />
