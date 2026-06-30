@@ -257,6 +257,16 @@ const SERIES_LIST = [
       "Lucifer was not heaven's worship leader. Scripture reveals something more sobering — he was heaven's chief prosecutor, created to uphold divine justice. Five days uncovering who he was, how he fell, and what his story means for how we live.",
   },
   {
+    id: "seven-spirits-of-god",
+    title: "School of the Seven Spirits of God",
+    subtitle: "A 10-Day Devotional",
+    author: "ABIDE",
+    totalDays: 10,
+    hasAudio: false,
+    description:
+      "Isaiah 11:2 describes seven expressions of the Holy Spirit resting on the Messiah. Ten days studying each spirit individually — and how they work together in pairs — to understand how God moves, leads, empowers, and transforms.",
+  },
+  {
     id: "fear-of-god",
     title: "The Fear of God",
     subtitle: "A 10-Day Devotional",
