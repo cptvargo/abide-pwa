@@ -754,6 +754,19 @@ export default function DevotionalScreen({ onBack, theme }) {
                                 "When Anger Takes the Throne — The Story of Saul",
                                 "Hope Beyond Anger",
                               ][dayNum - 1]
+                          : activeSeries.id === "fear-of-god"
+                            ? [
+                                "Understanding the Fear of God",
+                                "The Fear of God Begins with His Holiness",
+                                "The Fear of God Produces Obedience",
+                                "The Fear of God Protects from Sin",
+                                "The Fear of God Brings Wisdom",
+                                "The Fear of God and Worship",
+                                "The Fear of God and God's Blessings",
+                                "The Fear of God in the Early Church",
+                                "The Fear of God Leads to Intimacy",
+                                "The Fear of God in Eternity",
+                              ][dayNum - 1]
                           : [
                               "The Two Sons",
                               "What God Sees in the Heart",
