@@ -2253,7 +2253,7 @@ export default function AppShell() {
   const isParchment = theme === "parchment";
   const navAccent   = isParchment ? "rgba(203,178,124,0.95)" : "var(--text-accent)";
   const navPrimary  = isParchment ? "rgba(255,255,255,0.92)" : "var(--text-primary)";
-  const navInactive = isParchment ? "rgba(255,255,255,0.82)" : "var(--text-primary)";
+  const navInactive = isParchment ? "rgba(203,178,124,0.55)" : "rgba(var(--accent-rgb),0.65)";
   const navMuted    = isParchment ? "rgba(255,255,255,0.35)" : "var(--text-secondary)";
 
   function handleScratchpadSave({ html, text }) {

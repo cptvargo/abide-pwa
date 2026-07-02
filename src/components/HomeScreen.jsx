@@ -533,87 +533,27 @@ function getGreeting() {
   return name ? `${g}, ${name}` : g;
 }
 
-/* ── Card art panels — gradient backgrounds with white icons ── */
-
-const panelBase = {
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  flexShrink: 0,
-};
-
-function ArtDialogue() {
+function ArtImage({ src, alt }) {
   return (
-    <div style={{ ...panelBase, background: "linear-gradient(150deg, rgba(var(--accent-rgb),0.55) 0%, rgba(var(--accent-rgb),0.18) 100%)" }}>
-      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        <line x1="9" y1="10" x2="15" y2="10" />
-        <line x1="9" y1="14" x2="13" y2="14" />
-      </svg>
+    <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden", flexShrink: 0 }}>
+      <img
+        src={src}
+        alt={alt}
+        style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
+      />
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(0,0,0,0.18) 0%, transparent 60%)" }} />
     </div>
   );
 }
 
-function ArtDevotionals() {
-  return (
-    <div style={{ ...panelBase, background: "linear-gradient(135deg, rgba(var(--accent-rgb),0.65) 0%, rgba(var(--accent-rgb),0.22) 100%)" }}>
-      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z" />
-      </svg>
-    </div>
-  );
-}
-
-function ArtDailyAbiding() {
-  return (
-    <div style={{ ...panelBase, background: "linear-gradient(160deg, rgba(var(--accent-rgb),0.70) 0%, rgba(var(--accent-rgb),0.20) 100%)" }}>
-      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10" />
-        <polygon points="10 8 16 12 10 16 10 8" fill="rgba(255,255,255,0.85)" stroke="none" />
-      </svg>
-    </div>
-  );
-}
-
-function ArtDictionary() {
-  return (
-    <div style={{ ...panelBase, background: "linear-gradient(120deg, rgba(var(--accent-rgb),0.60) 0%, rgba(var(--accent-rgb),0.18) 100%)" }}>
-      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 3z" />
-        <path d="M17 4h3v16h-3" />
-        <line x1="9" y1="9" x2="13" y2="9" />
-        <line x1="9" y1="13" x2="13" y2="13" />
-      </svg>
-    </div>
-  );
-}
-
-function ArtChristRevealed() {
-  return (
-    <div style={{ ...panelBase, background: "linear-gradient(145deg, rgba(var(--accent-rgb),0.80) 0%, rgba(var(--accent-rgb),0.30) 100%)" }}>
-      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="4" />
-        <line x1="12" y1="2" x2="12" y2="5" />
-        <line x1="12" y1="19" x2="12" y2="22" />
-        <line x1="2" y1="12" x2="5" y2="12" />
-        <line x1="19" y1="12" x2="22" y2="12" />
-        <line x1="4.93" y1="4.93" x2="7.05" y2="7.05" />
-        <line x1="16.95" y1="16.95" x2="19.07" y2="19.07" />
-        <line x1="4.93" y1="19.07" x2="7.05" y2="16.95" />
-        <line x1="16.95" y1="7.05" x2="19.07" y2="4.93" />
-      </svg>
-    </div>
-  );
-}
+const base = import.meta.env.BASE_URL;
 
 const FEED_ITEMS = [
-  { id: "dialogue",         label: "Dialoguing with God", title: "Reflect, pray, and listen",       sub: "Write spontaneous notes, reflections & prayers", art: <ArtDialogue /> },
-  { id: "devotionals",      label: "Devotionals",          title: "Daily inspiration & study",       sub: "Guided devotional reading",                      art: <ArtDevotionals /> },
-  { id: "daily-abiding",    label: "Daily Abiding",        title: "Video devotional experiences",    sub: "Watch and meditate on the Word",                 art: <ArtDailyAbiding /> },
-  { id: "abide-dictionary", label: "Abide Dictionary",     title: "Your word study collection",      sub: "Curated words from your time in Scripture",      art: <ArtDictionary /> },
-  { id: "christ-revealed",  label: "Christ Revealed",      title: "Jesus from Genesis to Revelation",sub: "See Christ woven through all of Scripture",      art: <ArtChristRevealed />, featured: true },
+  { id: "dialogue",         label: "Dialoguing with God", title: "Reflect, pray, and listen",        sub: "Write spontaneous notes, reflections & prayers", art: <ArtImage src={`${base}practice-dialogue.png`}      alt="Dialoguing with God" /> },
+  { id: "devotionals",      label: "Devotionals",         title: "Daily inspiration & study",        sub: "Guided devotional reading",                      art: <ArtImage src={`${base}practice-devotionals.png`}    alt="Devotionals" /> },
+  { id: "daily-abiding",    label: "Daily Abiding",       title: "Video devotional experiences",     sub: "Watch and meditate on the Word",                 art: <ArtImage src={`${base}practice-daily-abiding.png`}  alt="Daily Abiding" /> },
+  { id: "abide-dictionary", label: "Abide Dictionary",    title: "Your word study collection",       sub: "Curated words from your time in Scripture",      art: <ArtImage src={`${base}practice-dictionary.png`}     alt="Abide Dictionary" /> },
+  { id: "christ-revealed",  label: "Christ Revealed",     title: "Jesus from Genesis to Revelation", sub: "See Christ woven through all of Scripture",      art: <ArtImage src={`${base}practice-christ-revealed.png`} alt="Christ Revealed" />, featured: true },
 ];
 
 function VerseHeroCard({ verseText, verseLoading, todayVerse, translation, onReadChapter }) {

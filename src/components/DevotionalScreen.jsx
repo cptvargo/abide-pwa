@@ -184,7 +184,7 @@ const AUTHORS = {
   },
   "ABIDE": {
     subtitle: "Devotionals · Inspired by the Word",
-    image: null,
+    image: "abide_author.png",
     description:
       "A collection of devotionals written by those whose lives have been shaped by the Word of God.",
     about:
