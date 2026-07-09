@@ -10,7 +10,7 @@
 
     "4": {
       "segments": [
-        { "text": "But Jesus answered, ", "speaker": "narrator" },
+        { "text": "But Jesus answered, ", "speaker": null },
         { "text": "“It is written: ‘Man shall not live on bread alone, but on every word that comes from the mouth of God.’”", "speaker": "Jesus" }
       ]
     },
@@ -21,7 +21,7 @@
 
     "7": {
       "segments": [
-        { "text": "Jesus replied, ", "speaker": "narrator" },
+        { "text": "Jesus replied, ", "speaker": null },
         { "text": "“It is also written: ‘Do not put the Lord your God to the test.’”", "speaker": "Jesus" }
       ]
     },
@@ -33,7 +33,7 @@
 "10": {
   "segments": [
     { "text": "“Away from Me, Satan!”", "speaker": "Jesus" },
-    { "text": " Jesus told him. ", "speaker": "narrator" },
+    { "text": " Jesus told him. ", "speaker": null },
     { "text": "“For it is written: ‘Worship the Lord your God and serve Him only.’”", "speaker": "Jesus" }
   ]
 },
@@ -52,7 +52,7 @@
 
     "17": {
       "segments": [
-        { "text": "From that time on Jesus began to preach, ", "speaker": "narrator" },
+        { "text": "From that time on Jesus began to preach, ", "speaker": null },
         { "text": "“Repent, for the kingdom of heaven is near.”", "speaker": "Jesus" }
       ]
     },
@@ -62,7 +62,7 @@
 "19": {
   "segments": [
     { "text": "“Come, follow Me,”", "speaker": "Jesus" },
-    { "text": " Jesus said, ", "speaker": "narrator" },
+    { "text": " Jesus said, ", "speaker": null },
     { "text": "“and I will make you fishers of men.”", "speaker": "Jesus" }
   ]
 },

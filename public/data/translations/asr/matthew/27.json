@@ -14,7 +14,10 @@
     "8": "That is why it has been called the Field of Blood to this day.",
     "9": "Then what was spoken through Jeremiah the prophet was fulfilled: “They took the thirty pieces of silver, the price set on Him by the people of Israel,",
     "10": "and they gave them for the potter’s field, as the Lord had commanded me.”",
-    "11": "Meanwhile Jesus stood before the governor, who questioned Him: “Are You the King of the Jews?” “You have said so,” Jesus replied.",
+    "11": {
+      "text": "Meanwhile Jesus stood before the governor, who questioned Him: “Are You the King of the Jews?” “You have said so,” Jesus replied.",
+      "speaker": "Jesus"
+    },
     "12": "And when He was accused by the chief priests and elders, He gave no answer.",
     "13": "Then Pilate asked Him, “Do You not hear how many charges they are bringing against You?”",
     "14": "But Jesus gave no answer, not even to a single charge, much to the governor’s amazement.",
@@ -49,7 +52,10 @@
     "43": "He trusts in God. Let God deliver Him now if He wants Him. For He said, ‘I am the Son of God.’”",
     "44": "In the same way, even the robbers who were crucified with Him berated Him.",
     "45": "From the sixth hour until the ninth hour darkness came over all the land.",
-    "46": "About the ninth hour Jesus cried out in a loud voice, “Eli, Eli, lema sabachthani?” which means, “My God, My God, why have You forsaken Me?”",
+    "46": {
+      "text": "About the ninth hour Jesus cried out in a loud voice, “Eli, Eli, lema sabachthani?” which means, “My God, My God, why have You forsaken Me?”",
+      "speaker": "Jesus"
+    },
     "47": "When some of those standing there heard this, they said, “He is calling Elijah.”",
     "48": "One of them quickly ran and brought a sponge. He filled it with sour wine, put it on a reed, and held it up for Jesus to drink.",
     "49": "But the others said, “Leave Him alone. Let us see if Elijah comes to save Him.”",

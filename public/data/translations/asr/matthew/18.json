@@ -15,7 +15,7 @@
     "2": "Jesus invited a little child to stand among them.",
     "3": {
       "segments": [
-        { "text": "He said,", "speaker": "narrator" },
+        { "text": "He said,", "speaker": null },
         { "text": "“Truly I tell you, unless you change and become like little children, you will never enter the kingdom of heaven.", "speaker": "Jesus" }
       ]
     },
@@ -39,7 +39,7 @@
     "21": "Then Peter came to Jesus and asked, “Lord, how many times shall I forgive my brother who sins against me? Up to seven times?”",
     "22": {
       "segments": [
-        { "text": "Jesus answered,", "speaker": "narrator" },
+        { "text": "Jesus answered,", "speaker": null },
         { "text": "“I tell you, not just seven times, but seventy-seven times!", "speaker": "Jesus" }
       ]
     },

@@ -152,8 +152,10 @@
       "speaker": "Jesus"
     },
     "49": {
-      "text": "And stretching out His hand toward His disciples, He said, \"Here are My mother and My brothers.",
-      "speaker": "Jesus"
+      "segments": [
+        { "text": "And stretching out His hand toward His disciples, He said, ", "speaker": null },
+        { "text": "\"Here are My mother and My brothers.", "speaker": "Jesus" }
+      ]
     },
     "50": {
       "text": "For whoever does the will of My Father in heaven is My brother and sister and mother.\"",
