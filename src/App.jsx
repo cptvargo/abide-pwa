@@ -41,10 +41,9 @@ export default function App() {
     },
   });
 
-  // Check onboarding status
+  // Onboarding handled by Flutter app — PWA goes straight to reader
   useEffect(() => {
-    const onboarded = localStorage.getItem("abide_onboarded");
-    setIsOnboarded(onboarded === "true");
+    setIsOnboarded(true);
   }, []);
 
   function handleUpdate() {
